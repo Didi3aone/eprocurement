@@ -75,7 +75,7 @@
                                     </td>
                                     <td>
                                         <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('department_category_show')): ?>
-                                            <a class="btn btn-xs btn-primary" href="<?php echo e(route('admin.permissions.show', $val->id)); ?>">
+                                            <a class="btn btn-xs btn-primary" href="<?php echo e(route('admin.department-category.show', $val->id)); ?>">
                                                 <?php echo e(trans('global.view')); ?>
 
                                             </a>
@@ -89,11 +89,8 @@
                                         <?php endif; ?>
 
                                         <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('department_category_delete')): ?>
-                                            <form action="<?php echo e(route('admin.permissions.destroy', $val->id)); ?>" method="POST" onsubmit="return confirm('<?php echo e(trans('global.areYouSure')); ?>');" style="display: inline-block;">
-                                                <input type="hidden" name="_method" value="DELETE">
-                                                <input type="hidden" name="_token" value="<?php echo e(csrf_token()); ?>">
-                                                <input type="submit" class="btn btn-xs btn-danger" value="<?php echo e(trans('global.delete')); ?>">
-                                            </form>
+                                            
+                                            <button class="btn btn-xs btn-danger" onclick="deleteConfirmation(<?php echo e($val->id); ?>)">Delete</button>
                                         <?php endif; ?>
 
                                     </td>
@@ -109,17 +106,52 @@
 </div>
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('scripts'); ?>
-##parent-placeholder-16728d18790deb58b3b8c1df74f06e536b532695##
+
 <script>
-$("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
-    $("#success-alert").slideUp(500);
-});
-$('#datatables-run').DataTable({
-    dom: 'Bfrtip',
-    buttons: [
-        'copy', 'csv', 'excel', 'pdf', 'print'
-    ]
-});
+    $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
+        $("#success-alert").slideUp(500);
+    });
+    $('#datatables-run').DataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    });
+
+    function deleteConfirmation(id) {
+        swal({
+            title: "Delete?",
+            text: "Please ensure and then confirm!",
+            type: "warning",
+            showCancelButton: !0,
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "No, cancel!",
+            reverseButtons: !0
+        }).then(function (e) {
+
+            if (e.value === true) {
+                var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                $.ajax({
+                    type: 'POST',
+                    url: "<?php echo e(url('admin.department-category.destroy')); ?>"+id ,
+                    data: {_token: CSRF_TOKEN},
+                    dataType: 'JSON',
+                    success: function (results) {
+                        if (results.success === true) {
+                            swal("Done!", results.message, "success");
+                        } else {
+                            swal("Error!", results.message, "error");
+                        }
+                    }
+                });
+            } else {
+                e.dismiss;
+            }
+        }, function (dismiss) {
+            return false;
+        })
+    }
+
 </script>
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.admin', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /Users/whoami/Sites/eprocurement/resources/views/admin/department/category/index.blade.php ENDPATH**/ ?>

@@ -23,6 +23,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
 
     //department
     Route::resource('department', 'DepartmentController');
+    Route::post('department-category-destroy/{id}', 'DepartmentCategoryController@destroy')->name('department-category-destroy');
     Route::resource('department-category', 'DepartmentCategoryController');
 
     // Users

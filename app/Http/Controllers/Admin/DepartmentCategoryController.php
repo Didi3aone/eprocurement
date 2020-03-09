@@ -54,9 +54,9 @@ class DepartmentCategoryController extends Controller
      */
     public function show($id)
     {
-        $category = DepartmentCategory::findOrFaile($id);
+        $category = DepartmentCategory::findOrFail($id);
 
-        return view('admin.department.category.create',compact('category'));
+        return view('admin.department.category.show',compact('category'));
     }
 
     /**
@@ -100,6 +100,21 @@ class DepartmentCategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $delete = DepartmentCategory::where('id', $id)->delete();
+
+        // check data deleted or not
+        if ($delete == 1) {
+            $success = true;
+            $message = "Department category deleted successfully";
+        } else {
+            $success = true;
+            $message = "Department category not found";
+        }
+
+        //  Return response
+        return response()->json([
+            'success' => $success,
+            'message' => $message,
+        ]);
     }
 }

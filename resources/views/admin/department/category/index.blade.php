@@ -68,7 +68,7 @@
                                     </td>
                                     <td>
                                         @can('department_category_show')
-                                            <a class="btn btn-xs btn-primary" href="{{ route('admin.permissions.show', $val->id) }}">
+                                            <a class="btn btn-xs btn-primary" href="{{ route('admin.department-category.show', $val->id) }}">
                                                 {{ trans('global.view') }}
                                             </a>
                                         @endcan
@@ -80,11 +80,12 @@
                                         @endcan
 
                                         @can('department_category_delete')
-                                            <form action="{{ route('admin.permissions.destroy', $val->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
+                                            {{-- <form action="{{ route('admin.permissions.destroy', $val->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                                 <input type="hidden" name="_method" value="DELETE">
                                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                 <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
-                                            </form>
+                                            </form> --}}
+                                            <button class="btn btn-xs btn-danger" onclick="deleteConfirmation({{$val->id}})">Delete</button>
                                         @endcan
 
                                     </td>
@@ -102,14 +103,49 @@
 @section('scripts')
 @parent
 <script>
-$("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
-    $("#success-alert").slideUp(500);
-});
-$('#datatables-run').DataTable({
-    dom: 'Bfrtip',
-    buttons: [
-        'copy', 'csv', 'excel', 'pdf', 'print'
-    ]
-});
+    $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
+        $("#success-alert").slideUp(500);
+    });
+    $('#datatables-run').DataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    });
+
+    function deleteConfirmation(id) {
+        swal({
+            title: "Delete?",
+            text: "Please ensure and then confirm!",
+            type: "warning",
+            showCancelButton: !0,
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "No, cancel!",
+            reverseButtons: !0
+        }).then(function (e) {
+
+            if (e.value === true) {
+                var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ url('admin.department-category.destroy') }}"+id ,
+                    data: {_token: CSRF_TOKEN},
+                    dataType: 'JSON',
+                    success: function (results) {
+                        if (results.success === true) {
+                            swal("Done!", results.message, "success");
+                        } else {
+                            swal("Error!", results.message, "error");
+                        }
+                    }
+                });
+            } else {
+                e.dismiss;
+            }
+        }, function (dismiss) {
+            return false;
+        })
+    }
+
 </script>
 @endsection
