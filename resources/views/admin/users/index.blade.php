@@ -38,9 +38,9 @@
                                 <th>
                                     {{ trans('cruds.user.fields.email') }}
                                 </th>
-                                <th>
+                                {{-- <th>
                                     {{ trans('cruds.user.fields.department_id') }}
-                                </th>
+                                </th> --}}
                                 <th>
                                     {{ trans('cruds.user.fields.roles') }}
                                 </th>
@@ -64,9 +64,9 @@
                                     <td>
                                         {{ $user->email ?? '' }}
                                     </td>
-                                    <td>
+                                    {{-- <td>
                                         {{ $user['department']->name ?? '' }}
-                                    </td>
+                                    </td> --}}
                                     <td>
                                         @foreach($user->roles as $key => $item)
                                             <span class="badge badge-info">{{ $item->title }}</span>
