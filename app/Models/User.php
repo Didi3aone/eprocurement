@@ -70,6 +70,6 @@ class User extends Authenticatable
 
     public function department()
     {
-        return $this->hasOne(\App\Models\Department::class,'id','department_id');
+        return $this->hasOne(\App\Models\Department::class,'code','department_id');
     }
 }
