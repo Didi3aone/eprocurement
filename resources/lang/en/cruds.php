@@ -9,6 +9,18 @@ return [
         'title'          => 'Master',
         'title_singular' => 'Master',
     ],
+    'masterVendor'    => [
+        'title'          => 'Vendor',
+        'title_singular' => 'Vendor',
+        'fields'        => [
+            'id' => 'ID',
+            'no_vendor' => 'No Vendor',
+            'nama_vendor' => 'Nama Vendor',
+            'departemen_peminta' => 'Departemen Peminta',
+            'status'    => 'Status',
+            'created_at' => 'Created at'
+        ]
+    ],
     'masterDepartment' => [
         'title'          => 'Department',
         'title_singular' => 'Department',
@@ -57,6 +69,19 @@ return [
             'deleted_at'        => 'Deleted at',
             'deleted_at_helper' => '',
         ],
+    ],
+    'vendors' => [
+        'title' => 'Vendors',
+        'title_singular' => 'Vendor',
+        'fields' => [
+            'id' => 'ID',
+            'no_vendor' => 'No Vendor',
+            'nama_vendor' => 'Nama Vendor',
+            'departemen_peminta' => 'Departemen Peminta',
+            'status'    => 'Status',
+            'created_at' => 'Created at',
+            'updated_at' => 'Updated at',
+        ]
     ],
     'role'              => [
         'title'          => 'Roles',

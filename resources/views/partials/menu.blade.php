@@ -16,31 +16,20 @@
                             <span class="hide-menu"> {{ trans('cruds.masterManagement.title') }} </span>
                         </a>
                         <ul aria-expanded="false" class="collapse">
-                            @can('user_management_access')
+                            @can('vendor_management_access')
                                 <li>
-                                    <a href="#" class="has-arrow "> 
-                                        <i class="fa fa-users">
-
-                                        </i> <span class="hide-menu"> {{ trans('cruds.userManagement.title') }}</span>
+                                    <a href="#" class="has-arrow">
+                                        <i class="fa fa-truck">
+                                        </i> {{ trans('cruds.masterVendor.title') }}
                                     </a>
                                     <ul aria-expanded="false" class="collapse">
-                                        <li>
-                                            @can('user_access')
-                                                <a href="{{ route("admin.users.index") }}" class="{{ request()->is('admin/users') || request()->is('admin/users/*') ? 'active' : '' }}">
-                                                    <i class="fa fa-user"></i> {{ trans('cruds.user.title') }}
+                                        @can('vendor_access')
+                                            <li>
+                                                <a href="{{ route('admin.vendors.index') }}" class="">
+                                                    <i class="fa fas fa-caret-right"></i> {{ trans('cruds.masterVendor.title') }}
                                                 </a>
-                                            @endcan
-                                            @can('role_access')
-                                                <a href="{{ route("admin.roles.index") }}" class="{{ request()->is('admin/roles') || request()->is('admin/roles/*') ? 'active' : '' }}">
-                                                    <i class="fa fa-briefcase"></i> {{ trans('cruds.role.title') }}
-                                                </a>
-                                            @endcan
-                                            @can('permission_access')
-                                                <a href="{{ route("admin.permissions.index") }}" class="{{ request()->is('admin/permissions') || request()->is('admin/permissions/*') ? 'active' : '' }}">
-                                                    <i class="fa fa-unlock-alt"></i> {{ trans('cruds.permission.title') }}
-                                                </a>
-                                            @endcan
-                                        </li>
+                                            </li>
+                                        @endcan
                                     </ul>
                                 </li>
                             @endcan
@@ -66,6 +55,34 @@
                                                 </a>
                                             </li>
                                         @endcan
+                                    </ul>
+                                </li>
+                            @endcan
+                            @can('user_management_access')
+                                <li>
+                                    <a href="#" class="has-arrow "> 
+                                        <i class="fa fa-users">
+
+                                        </i> <span class="hide-menu"> {{ trans('cruds.userManagement.title') }}</span>
+                                    </a>
+                                    <ul aria-expanded="false" class="collapse">
+                                        <li>
+                                            @can('user_access')
+                                                <a href="{{ route("admin.users.index") }}" class="{{ request()->is('admin/users') || request()->is('admin/users/*') ? 'active' : '' }}">
+                                                    <i class="fa fa-user"></i> {{ trans('cruds.user.title') }}
+                                                </a>
+                                            @endcan
+                                            @can('role_access')
+                                                <a href="{{ route("admin.roles.index") }}" class="{{ request()->is('admin/roles') || request()->is('admin/roles/*') ? 'active' : '' }}">
+                                                    <i class="fa fa-briefcase"></i> {{ trans('cruds.role.title') }}
+                                                </a>
+                                            @endcan
+                                            @can('permission_access')
+                                                <a href="{{ route("admin.permissions.index") }}" class="{{ request()->is('admin/permissions') || request()->is('admin/permissions/*') ? 'active' : '' }}">
+                                                    <i class="fa fa-unlock-alt"></i> {{ trans('cruds.permission.title') }}
+                                                </a>
+                                            @endcan
+                                        </li>
                                     </ul>
                                 </li>
                             @endcan

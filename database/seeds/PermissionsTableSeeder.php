@@ -105,6 +105,30 @@ class PermissionsTableSeeder extends Seeder
                 'id'    => '24',
                 'title' => 'department_edit',
             ],
+            [
+                'id'    => '25',
+                'title' => 'vendor_management_access',
+            ],
+            [
+                'id'    => '26',
+                'title' => 'vendor_create',
+            ],
+            [
+                'id'    => '27',
+                'title' => 'vendor_edit',
+            ],
+            [
+                'id'    => '28',
+                'title' => 'vendor_delete',
+            ],
+            [
+                'id'    => '29',
+                'title' => 'vendor_show',
+            ],
+            [
+                'id'    => '30',
+                'title' => 'vendor_access',
+            ],
         ];
         // DB::beginTransaction();
         // DB::unprepared('SET IDENTITY_INSERT permissions ON');
