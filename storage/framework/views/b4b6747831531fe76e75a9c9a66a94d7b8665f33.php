@@ -41,7 +41,10 @@
                                     <?php echo e(trans('cruds.user.fields.email')); ?>
 
                                 </th>
-                                
+                                <th>
+                                    <?php echo e(trans('cruds.user.fields.department_id')); ?>
+
+                                </th>
                                 <th>
                                     <?php echo e(trans('cruds.user.fields.roles')); ?>
 
@@ -69,7 +72,10 @@
                                         <?php echo e($user->email ?? ''); ?>
 
                                     </td>
-                                    
+                                    <td>
+                                        <?php echo e($user['department']->name ?? ''); ?>
+
+                                    </td>
                                     <td>
                                         <?php $__currentLoopData = $user->roles; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <span class="badge badge-info"><?php echo e($item->title); ?></span>

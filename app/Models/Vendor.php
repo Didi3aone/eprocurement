@@ -16,8 +16,9 @@ class Vendor extends Model
     ];
 
     protected $fillable = [
+        'code',
         'no_vendor',
-        'nama_vendor',
+        'name',
         'departemen_peminta',
         'status',
         'created_at',
