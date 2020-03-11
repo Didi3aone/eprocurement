@@ -17,7 +17,7 @@
                 <form class="form-material m-t-40" action="{{ route("admin.department.store") }}" enctype="multipart/form-data" method="post">
                     @csrf
                     <div class="form-group">
-                        <label>{{ trans('cruds.masterCategoryDept.fields.id') }}</label>
+                        <label>{{ trans('cruds.masterCategoryDept.fields.code') }}</label>
                         <input type="text" class="form-control form-control-line {{ $errors->has('code') ? 'is-invalid' : '' }}" name="code" value="{{ old('code', '') }}"> 
                         @if($errors->has('code'))
                             <div class="invalid-feedback">

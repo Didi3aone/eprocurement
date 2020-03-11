@@ -4,7 +4,7 @@
     <div class="col-md-5 col-8 align-self-center">
         <h3 class="text-themecolor">Master</h3>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="javascript:void(0)">Vendor</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Material</a></li>
             <li class="breadcrumb-item active">View</li>
         </ol>
     </div>
@@ -17,42 +17,42 @@
                     <tbody>
                         <tr>
                             <th>
-                                {{ trans('cruds.vendors.fields.id') }}
+                                {{ trans('cruds.masterMaterial.fields.id') }}
                             </th>
                             <td>
-                                {{ $vendors->id }}
+                                {{ $material->id }}
                             </td>
                         </tr>
                         <tr>
                             <th>
-                                {{ trans('cruds.vendors.fields.code') }}
+                                {{ trans('cruds.masterMaterial.fields.code') }}
                             </th>
                             <td>
-                                {{ $vendors->code }}
+                                {{ $material->code }}
                             </td>
                         </tr>
                         <tr>
                             <th>
-                                {{ trans('cruds.vendors.fields.name') }}
+                                {{ trans('cruds.masterMaterial.fields.name') }}
                             </th>
                             <td>
-                                {{ $vendors->name }}
+                                {{ $material->name }}
                             </td>
                         </tr>
                         <tr>
                             <th>
-                                {{ trans('cruds.vendors.fields.departemen_peminta') }}
+                                {{ trans('cruds.masterMaterial.fields.departemen_peminta') }}
                             </th>
                             <td>
-                                {{ isset($vendors->departments->name) ? $vendors->departments->name : '' }}
+                                {{ isset($material->departments->name) ? $material->departments->name : '' }}
                             </td>
                         </tr>
                         <tr>
                             <th>
-                                {{ trans('cruds.vendors.fields.status') }}
+                                {{ trans('cruds.masterMaterial.fields.status') }}
                             </th>
                             <td>
-                                {{ $vendors->status == 1 ? 'Active' : 'Inactive' }}
+                                {{ $material->status == 1 ? 'Active' : 'Inactive' }}
                             </td>
                         </tr>
                     </tbody>

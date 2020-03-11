@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Department extends BaseModel
 {
     use SoftDeletes;
+
     public $table = 'department';
+    
     protected $fillable = [
         'id',
         'code',

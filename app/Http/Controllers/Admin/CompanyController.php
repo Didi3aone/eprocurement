@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Company;
+use Gate;
+use Symfony\Component\HttpFoundation\Response;
 
 class CompanyController extends Controller
 {
@@ -14,7 +17,10 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        //
+        abort_if(Gate::denies('company_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $company = Company::all();
+        return view('admin.department.company.index',compact('company'));
     }
 
     /**
@@ -24,7 +30,7 @@ class CompanyController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.department.company.create');
     }
 
     /**
@@ -35,7 +41,9 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $company = Company::create($request->all());
+
+        return redirect()->route('admin.company.index')->with('status', trans('cruds.masterCompany.alert_success_insert'));
     }
 
     /**
@@ -46,7 +54,9 @@ class CompanyController extends Controller
      */
     public function show($id)
     {
-        //
+        $company = Company::findOrFail($id);
+
+        return view('admin.department.company.show',compact('company'));
     }
 
     /**
@@ -57,7 +67,9 @@ class CompanyController extends Controller
      */
     public function edit($id)
     {
-        //
+        $company = Company::findOrFail($id);
+
+        return view('admin.department.company.edit',compact('company'));
     }
 
     /**
@@ -69,7 +81,13 @@ class CompanyController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $company = Company::findOrFail($id);
+        
+        $company->name = $request->get('name');
+
+        $company->save();
+        
+        return redirect()->route('admin.company.index')->with('status', trans('cruds.masterCompany.alert_success_update'));
     }
 
     /**
@@ -80,6 +98,21 @@ class CompanyController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $delete = Company::where('id', $id)->delete();
+
+        // check data deleted or not
+        if ($delete == 1) {
+            $success = true;
+            $message = "Company deleted successfully";
+        } else {
+            $success = true;
+            $message = "Company not found";
+        }
+
+        //  Return response
+        return response()->json([
+            'success' => $success,
+            'message' => $message,
+        ]);
     }
 }

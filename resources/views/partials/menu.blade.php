@@ -33,6 +33,23 @@
                                     </ul>
                                 </li>
                             @endcan
+                            @can('material_management_access')
+                                <li>
+                                    <a href="#" class="has-arrow">
+                                        <i class="fa fa-truck">
+                                        </i> {{ trans('cruds.masterMaterial.title') }}
+                                    </a>
+                                    <ul aria-expanded="false" class="collapse">
+                                        @can('material_access')
+                                            <li>
+                                                <a href="{{ route('admin.material.index') }}" class="">
+                                                    <i class="fa fas fa-caret-right"></i> {{ trans('cruds.masterMaterial.title') }}
+                                                </a>
+                                            </li>
+                                        @endcan
+                                    </ul>
+                                </li>
+                            @endcan
                             @can('department_management_access')
                                 <li>
                                     <a href="#" class="has-arrow">
@@ -52,6 +69,13 @@
                                             <li>
                                                 <a href="{{ route('admin.department-category.index') }}" class="">
                                                     <i class="fa fas fa-caret-right"></i> {{ trans('cruds.masterCategoryDept.title') }}
+                                                </a>
+                                            </li>
+                                        @endcan
+                                        @can('company_access')
+                                            <li>
+                                                <a href="{{ route('admin.company.index') }}" class="">
+                                                    <i class="fa fas fa-caret-right"></i> {{ trans('cruds.masterCompany.title') }}
                                                 </a>
                                             </li>
                                         @endcan

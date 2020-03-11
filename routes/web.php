@@ -26,7 +26,15 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::delete('vendors/destroy', 'VendorController@massDestroy')->name('vendors.massDestroy');
     Route::resource('vendors', 'VendorController');
 
-    //department
+    // Company
+    Route::delete('company/destroy', 'CompanyController@massDestroy')->name('company.massDestroy');
+    Route::resource('company', 'CompanyController');
+
+    // Material
+    Route::delete('material/destroy', 'MaterialController@massDestroy')->name('material.massDestroy');
+    Route::resource('material', 'MaterialController');
+
+    // Department
     Route::resource('department', 'DepartmentController');
     Route::post('department-category-destroy/{id}', 'DepartmentCategoryController@destroy')->name('department-category-destroy');
     Route::resource('department-category', 'DepartmentCategoryController');

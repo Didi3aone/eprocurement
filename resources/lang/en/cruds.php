@@ -12,12 +12,47 @@ return [
     'masterVendor'    => [
         'title'          => 'Vendor',
         'title_singular' => 'Vendor',
+        'alert_success_insert' => 'Vendor successfully saved',
+        'alert_success_update' => 'Vendor successfully updated',
+        'alert_success_delete' => 'Vendor successfully deleted',
+        'alert_success'        => 'Vendor successfully saved',
         'fields'        => [
             'id' => 'ID',
             'no_vendor' => 'No Vendor',
             'nama_vendor' => 'Nama Vendor',
             'departemen_peminta' => 'Departemen Peminta',
             'status'    => 'Status',
+            'created_at' => 'Created at'
+        ]
+    ],
+    'masterCompany'    => [
+        'title'          => 'Company',
+        'title_singular' => 'Company',
+        'alert_success_insert' => 'Company successfully saved',
+        'alert_success_update' => 'Company successfully updated',
+        'alert_success_delete' => 'Company successfully deleted',
+        'alert_success'        => 'Company successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'name' => 'Name',
+            'created_at' => 'Created at'
+        ]
+    ],
+    'masterMaterial'    => [
+        'title'          => 'Material',
+        'title_singular' => 'Material',
+        'alert_success_insert' => 'Material successfully saved',
+        'alert_success_update' => 'Material successfully updated',
+        'alert_success_delete' => 'Material successfully deleted',
+        'alert_success'        => 'Material successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'name' => 'Name',
+            'departemen_peminta' => 'Departemen Peminta',
+            'status' => 'Status',
+            'status_active'    => 'Active',
+            'status_inactive'    => 'Inactive',
             'created_at' => 'Created at'
         ]
     ],
@@ -73,12 +108,18 @@ return [
     'vendors' => [
         'title' => 'Vendors',
         'title_singular' => 'Vendor',
+        'alert_success_insert' => 'Vendor successfully saved',
+        'alert_success_update' => 'Vendor successfully updated',
+        'alert_success_delete' => 'Vendor successfully deleted',
+        'alert_success'        => 'Vendor successfully saved',
         'fields' => [
             'id' => 'ID',
-            'no_vendor' => 'No Vendor',
-            'nama_vendor' => 'Nama Vendor',
+            'code' => 'Code',
+            'name' => 'Name',
             'departemen_peminta' => 'Departemen Peminta',
             'status'    => 'Status',
+            'status_active'    => 'Active',
+            'status_inactive'    => 'Inactive',
             'created_at' => 'Created at',
             'updated_at' => 'Updated at',
         ]

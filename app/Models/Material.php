@@ -4,25 +4,24 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Vendor extends Model
+class Material extends Model
 {
-    // use SoftDeletes;
-
-    public $table = 'vendors';
-
-    protected $dates = [
-        'created_at',
-        'updated_at',
-    ];
+    public $table = 'materials';
 
     protected $fillable = [
-        'no_vendor',
-        'nama_vendor',
+        'id',
+        'code',
+        'name',
         'departemen_peminta',
         'status',
         'created_at',
-        'updated_at',
+        'updated_at'
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+    }
 
     public function departments()
     {

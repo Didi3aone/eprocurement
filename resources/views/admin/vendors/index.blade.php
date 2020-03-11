@@ -33,10 +33,10 @@
                                     {{ trans('cruds.vendors.fields.id') }}
                                 </th>
                                 <th>
-                                    {{ trans('cruds.vendors.fields.no_vendor') }}
+                                    {{ trans('cruds.vendors.fields.code') }}
                                 </th>
                                 <th>
-                                    {{ trans('cruds.vendors.fields.nama_vendor') }}
+                                    {{ trans('cruds.vendors.fields.name') }}
                                 </th>
                                 <th>
                                     {{ trans('cruds.vendors.fields.departemen_peminta') }}
@@ -56,10 +56,10 @@
 
                                     </td>
                                     <td>{{ $vendor->id ?? '' }}</td>
-                                    <td>{{ $vendor->no_vendor ?? '' }}</td>
-                                    <td>{{ $vendor->nama_vendor ?? '' }}</td>
-                                    <td>{{ $vendor['department']->name ?? '' }}</td>
-                                    <td>{{ $vendor->status }}</td>
+                                    <td>{{ $vendor->code ?? '' }}</td>
+                                    <td>{{ $vendor->name ?? '' }}</td>
+                                    <td>{{ isset($vendor->departments->name) ? $vendor->departments->name : '' }}</td>
+                                    <td>{{ $vendor->status == 1 ? 'Active' : 'Inactive' }}</td>
                                     <td>
                                         @can('vendor_show')
                                             <a class="btn btn-xs btn-primary" href="{{ route('admin.vendors.show', $vendor->id) }}">

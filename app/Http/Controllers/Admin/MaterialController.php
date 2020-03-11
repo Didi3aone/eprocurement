@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Vendor;
+use App\Models\Material;
 use App\Models\Department;
 use Gate;
 use Symfony\Component\HttpFoundation\Response;
 
-class VendorController extends Controller
+class MaterialController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,11 +18,11 @@ class VendorController extends Controller
      */
     public function index()
     {
-        abort_if(Gate::denies('vendor_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('material_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $vendors = Vendor::all();
+        $material = Material::all();
 
-        return view('admin.vendors.index',compact('vendors'));
+        return view('admin.material.index',compact('material'));
     }
 
     /**
@@ -32,11 +32,11 @@ class VendorController extends Controller
      */
     public function create()
     {
-        abort_if(Gate::denies('vendor_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('material_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $departments = Department::all();
 
-        return view('admin.vendors.create', compact('departments'));
+        return view('admin.material.create', compact('departments'));
     }
 
     /**
@@ -47,9 +47,9 @@ class VendorController extends Controller
      */
     public function store(Request $request)
     {
-        $vendors = Vendor::create($request->all());
+        $material = Material::create($request->all());
 
-        return redirect()->route('admin.vendors.index')->with('status', trans('cruds.vendors.alert_success_insert'));
+        return redirect()->route('admin.material.index')->with('status', trans('cruds.masterMaterial.alert_success_insert'));
     }
 
     /**
@@ -60,11 +60,11 @@ class VendorController extends Controller
      */
     public function show($id)
     {
-        abort_if(Gate::denies('vendor_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('material_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $vendors = Vendor::findOrFail($id);
+        $material = Material::findOrFail($id);
 
-        return view('admin.vendors.show', compact('vendors'));
+        return view('admin.material.show', compact('material'));
     }
 
     /**
@@ -75,12 +75,12 @@ class VendorController extends Controller
      */
     public function edit($id)
     {
-        abort_if(Gate::denies('vendor_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('material_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $vendors = Vendor::findOrFail($id);
+        $material = Material::findOrFail($id);
         $departments = Department::all();
 
-        return view('admin.vendors.edit', compact('vendors', 'departments'));
+        return view('admin.material.edit', compact('material', 'departments'));
     }
 
     /**
@@ -92,16 +92,16 @@ class VendorController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $vendors = Vendor::findOrFail($id);
+        $material = Material::findOrFail($id);
         
-        $vendors->code = $request->get('code');
-        $vendors->name = $request->get('name');
-        $vendors->departemen_peminta = $request->get('departemen_peminta');
-        $vendors->status = $request->get('status');
+        $material->code = $request->get('code');
+        $material->name = $request->get('name');
+        $material->departemen_peminta = $request->get('departemen_peminta');
+        $material->status = $request->get('status');
 
-        $vendors->save();
+        $material->save();
         
-        return redirect()->route('admin.vendors.index')->with('status', trans('cruds.vendors.alert_success_update'));
+        return redirect()->route('admin.material.index')->with('status', trans('cruds.masterMaterial.alert_success_update'));
     }
 
     /**
@@ -112,17 +112,17 @@ class VendorController extends Controller
      */
     public function destroy($id)
     {
-        abort_if(Gate::denies('vendor_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('material_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $delete = Vendor::where('id', $id)->delete();
+        $delete = Material::where('id', $id)->delete();
 
         // check data deleted or not
         if ($delete == 1) {
             $success = true;
-            $message = "Vendor deleted successfully";
+            $message = "Material deleted successfully";
         } else {
             $success = true;
-            $message = "Vendor not found";
+            $message = "Material not found";
         }
 
         //  Return response
