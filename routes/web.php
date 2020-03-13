@@ -42,4 +42,11 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     // Users
     Route::delete('users/destroy', 'UsersController@massDestroy')->name('users.massDestroy');
     Route::resource('users', 'UsersController');
+
+    /*
+     * Issue Transaction Routes below
+     */
+    // RN
+    Route::delete('rn/destroy', 'RnController@massDestroy')->name('rn.massDestroy');
+    Route::resource('rn', 'RnController');
 });

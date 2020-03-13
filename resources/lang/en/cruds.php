@@ -169,4 +169,194 @@ return [
             'deleted_at_helper'        => '',
         ],
     ],
+
+    // transaction
+    'masterTransaction'    => [
+        'title'          => 'Issue Transaction',
+        'title_singular' => 'Issue Transaction',
+    ],
+    'inputRN'    => [
+        'title'          => 'Input RN',
+        'title_singular' => 'Input RN',
+        'alert_success_insert' => 'Input RN successfully saved',
+        'alert_success_update' => 'Input RN successfully updated',
+        'alert_success_delete' => 'Input RN successfully deleted',
+        'alert_success'        => 'Input RN successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'notes' => 'Notes',
+            'category' => 'Category',
+            'detail' => 'Detail',
+            'created_at' => 'Created at',
+        ]
+    ],
+    'inputPR'    => [
+        'title'          => 'Input PR',
+        'title_singular' => 'Input PR',
+        'alert_success_insert' => 'Input PR successfully saved',
+        'alert_success_update' => 'Input PR successfully updated',
+        'alert_success_delete' => 'Input PR successfully deleted',
+        'alert_success'        => 'Input PR successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'name' => 'Name',
+            'departemen_peminta' => 'Departemen Peminta',
+            'status' => 'Status',
+            'status_active'    => 'Active',
+            'status_inactive'    => 'Inactive',
+            'created_at' => 'Created at'
+        ]
+    ],
+    'inputPO'    => [
+        'title'          => 'Input PO',
+        'title_singular' => 'Input PO',
+        'alert_success_insert' => 'Input PO successfully saved',
+        'alert_success_update' => 'Input PO successfully updated',
+        'alert_success_delete' => 'Input PO successfully deleted',
+        'alert_success'        => 'Input PO successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'name' => 'Name',
+            'departemen_peminta' => 'Departemen Peminta',
+            'status' => 'Status',
+            'status_active'    => 'Active',
+            'status_inactive'    => 'Inactive',
+            'created_at' => 'Created at'
+        ]
+    ],
+    'inputBidding'    => [
+        'title'          => 'Input Bidding',
+        'title_singular' => 'Input Bidding',
+        'alert_success_insert' => 'Input Bidding successfully saved',
+        'alert_success_update' => 'Input Bidding successfully updated',
+        'alert_success_delete' => 'Input Bidding successfully deleted',
+        'alert_success'        => 'Input Bidding successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'name' => 'Name',
+            'departemen_peminta' => 'Departemen Peminta',
+            'status' => 'Status',
+            'status_active'    => 'Active',
+            'status_inactive'    => 'Inactive',
+            'created_at' => 'Created at'
+        ]
+    ],
+    'approval'    => [
+        'title'          => 'Approval Transaction',
+        'title_singular' => 'Approval Transaction',
+        'alert_success_insert' => 'Approval Transaction successfully saved',
+        'alert_success_update' => 'Approval Transaction successfully updated',
+        'alert_success_delete' => 'Approval Transaction successfully deleted',
+        'alert_success'        => 'Approval Transaction successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'name' => 'Name',
+            'departemen_peminta' => 'Departemen Peminta',
+            'status' => 'Status',
+            'status_active'    => 'Active',
+            'status_inactive'    => 'Inactive',
+            'created_at' => 'Created at'
+        ]
+    ],
+
+    // report
+    'masterReport'    => [
+        'title'          => 'Report',
+        'title_singular' => 'Report',
+    ],
+    'reportStatus'    => [
+        'title'          => 'Report Status',
+        'title_singular' => 'Report Status',
+        'alert_success_insert' => 'Report Status successfully saved',
+        'alert_success_update' => 'Report Status successfully updated',
+        'alert_success_delete' => 'Report Status successfully deleted',
+        'alert_success'        => 'Report Status successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'name' => 'Name',
+            'departemen_peminta' => 'Departemen Peminta',
+            'status' => 'Status',
+            'status_active'    => 'Active',
+            'status_inactive'    => 'Inactive',
+            'created_at' => 'Created at'
+        ]
+    ],
+    'reportGR'    => [
+        'title'          => 'Report GR',
+        'title_singular' => 'Report GR',
+        'alert_success_insert' => 'Report GR successfully saved',
+        'alert_success_update' => 'Report GR successfully updated',
+        'alert_success_delete' => 'Report GR successfully deleted',
+        'alert_success'        => 'Report GR successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'name' => 'Name',
+            'departemen_peminta' => 'Departemen Peminta',
+            'status' => 'Status',
+            'status_active'    => 'Active',
+            'status_inactive'    => 'Inactive',
+            'created_at' => 'Created at'
+        ]
+    ],
+    'reportVendor'    => [
+        'title'          => 'Report Vendor',
+        'title_singular' => 'Report Vendor',
+        'alert_success_insert' => 'Report Vendor successfully saved',
+        'alert_success_update' => 'Report Vendor successfully updated',
+        'alert_success_delete' => 'Report Vendor successfully deleted',
+        'alert_success'        => 'Report Vendor successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'name' => 'Name',
+            'departemen_peminta' => 'Departemen Peminta',
+            'status' => 'Status',
+            'status_active'    => 'Active',
+            'status_inactive'    => 'Inactive',
+            'created_at' => 'Created at'
+        ]
+    ],
+    'reportMaterial'    => [
+        'title'          => 'Report Material',
+        'title_singular' => 'Report Material',
+        'alert_success_insert' => 'Report Material successfully saved',
+        'alert_success_update' => 'Report Material successfully updated',
+        'alert_success_delete' => 'Report Material successfully deleted',
+        'alert_success'        => 'Report Material successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'name' => 'Name',
+            'departemen_peminta' => 'Departemen Peminta',
+            'status' => 'Status',
+            'status_active'    => 'Active',
+            'status_inactive'    => 'Inactive',
+            'created_at' => 'Created at'
+        ]
+    ],
+    'reportStock'    => [
+        'title'          => 'Report Stock',
+        'title_singular' => 'Report Stock',
+        'alert_success_insert' => 'Report Stock successfully saved',
+        'alert_success_update' => 'Report Stock successfully updated',
+        'alert_success_delete' => 'Report Stock successfully deleted',
+        'alert_success'        => 'Report Stock successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'name' => 'Name',
+            'departemen_peminta' => 'Departemen Peminta',
+            'status' => 'Status',
+            'status_active'    => 'Active',
+            'status_inactive'    => 'Inactive',
+            'created_at' => 'Created at'
+        ]
+    ],
 ];
