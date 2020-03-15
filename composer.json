@@ -15,6 +15,7 @@
         "laravel/framework": "^6.2",
         "laravel/passport": "^8.3",
         "laravel/tinker": "^1.0",
+        "maatwebsite/excel": "^3.1",
         "nuovo/spreadsheet-reader": "^0.5.11",
         "yajra/laravel-datatables-oracle": "^9.7"
     },

@@ -9,12 +9,25 @@
         </ol>
     </div>
 </div>
+@if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
+        {{ session('success') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+@endif
 @can('vendor_create')
     <div style="margin-bottom: 10px;" class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-6">
             <a class="btn btn-success" href="{{ route("admin.vendors.create") }}">
                 <i class='fa fa-plus'></i> {{ trans('global.add') }} {{ trans('cruds.vendors.title_singular') }}
             </a>
+        </div>
+        <div class="col-lg-6 text-right">
+            <button class="btn btn-info" data-toggle="modal" data-target="#modal_import">
+                <i class="fa fa-download"></i> {{ trans('cruds.vendors.import') }}
+            </button>
         </div>
     </div>
 @endcan
@@ -87,6 +100,29 @@
                     </table>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal_import" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">{{ trans('cruds.vendors.import') }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('admin.vendors.import') }}" method="post" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body">
+                    <input type="file" name="xls_file" id="xls_file">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Vendor;
 use App\Models\Department;
+use App\Imports\VendorsImport;
 use Gate;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -23,6 +25,25 @@ class VendorController extends Controller
         $vendors = Vendor::all();
 
         return view('admin.vendors.index',compact('vendors'));
+    }
+
+    public function import(Request $request)
+    {
+        // abort_if(Gate::denies('vendor_import_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $this->validate($request, [
+            'xls_file' => 'required|file|mimes:csv,xls,xlsx',
+        ]);
+
+        $path = 'xls/';
+        $file = $request->file('xls_file');
+        $filename = $file->getClientOriginalName();
+
+        $file->move($path, $filename);
+
+        Excel::import(new VendorsImport, public_path($path . $filename));
+
+        return redirect('admin/vendors')->with('success', 'Vendors has been successfully imported');
     }
 
     /**

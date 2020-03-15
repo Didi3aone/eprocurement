@@ -41,6 +41,7 @@ return [
     'masterMaterial'    => [
         'title'          => 'Material',
         'title_singular' => 'Material',
+        'import' => 'Import Materials',
         'alert_success_insert' => 'Material successfully saved',
         'alert_success_update' => 'Material successfully updated',
         'alert_success_delete' => 'Material successfully deleted',
@@ -108,6 +109,7 @@ return [
     'vendors' => [
         'title' => 'Vendors',
         'title_singular' => 'Vendor',
+        'import' => 'Import Vendors',
         'alert_success_insert' => 'Vendor successfully saved',
         'alert_success_update' => 'Vendor successfully updated',
         'alert_success_delete' => 'Vendor successfully deleted',

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\MaterialsImport;
 use App\Models\Material;
 use App\Models\Department;
 use Gate;
@@ -23,6 +25,25 @@ class MaterialController extends Controller
         $material = Material::all();
 
         return view('admin.material.index',compact('material'));
+    }
+
+    public function import(Request $request)
+    {
+        // abort_if(Gate::denies('vendor_import_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $this->validate($request, [
+            'xls_file' => 'required|file|mimes:csv,xls,xlsx',
+        ]);
+
+        $path = 'xls/';
+        $file = $request->file('xls_file');
+        $filename = $file->getClientOriginalName();
+
+        $file->move($path, $filename);
+
+        Excel::import(new MaterialsImport, public_path($path . $filename));
+
+        return redirect('admin/material')->with('success', 'Materials has been successfully imported');
     }
 
     /**
