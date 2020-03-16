@@ -1,0 +1,39 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateCosts extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('costs', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('area');
+            $table->string('cost_center');
+            $table->string('company_code');
+            $table->string('profit_center');
+            $table->string('hierarchy_area');
+            $table->string('name');
+            $table->string('description');
+            $table->string('short_text');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('costs');
+    }
+}
