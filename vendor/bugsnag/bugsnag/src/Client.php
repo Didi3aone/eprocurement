@@ -16,8 +16,9 @@ use Bugsnag\Middleware\NotificationSkipper;
 use Bugsnag\Middleware\SessionData;
 use Bugsnag\Request\BasicResolver;
 use Bugsnag\Request\ResolverInterface;
+use Bugsnag\Shutdown\PhpShutdownStrategy;
+use Bugsnag\Shutdown\ShutdownStrategyInterface;
 use Composer\CaBundle\CaBundle;
-use Dotenv\Environment\DotenvFactory;
 use GuzzleHttp\Client as Guzzle;
 use GuzzleHttp\ClientInterface;
 use ReflectionClass;
@@ -87,7 +88,8 @@ class Client
      */
     public static function make($apiKey = null, $endpoint = null, $defaults = true)
     {
-        $env = (new DotenvFactory())->create();
+        // Retrieves environment variables
+        $env = new Env();
 
         $config = new Configuration($apiKey ?: $env->get('BUGSNAG_API_KEY'));
         $guzzle = static::makeGuzzle($endpoint ?: $env->get('BUGSNAG_ENDPOINT'));
@@ -104,13 +106,14 @@ class Client
     /**
      * Create a new client instance.
      *
-     * @param \Bugsnag\Configuration                  $config
-     * @param \Bugsnag\Request\ResolverInterface|null $resolver
-     * @param \GuzzleHttp\ClientInterface|null        $guzzle
+     * @param \Bugsnag\Configuration                            $config
+     * @param \Bugsnag\Request\ResolverInterface|null           $resolver
+     * @param \GuzzleHttp\ClientInterface|null                  $guzzle
+     * @param \Bugsnag\Shutdown\ShutdownStrategyInterface|null  $shutdownStrategy
      *
      * @return void
      */
-    public function __construct(Configuration $config, ResolverInterface $resolver = null, ClientInterface $guzzle = null)
+    public function __construct(Configuration $config, ResolverInterface $resolver = null, ClientInterface $guzzle = null, ShutdownStrategyInterface $shutdownStrategy = null)
     {
         $this->config = $config;
         $this->resolver = $resolver ?: new BasicResolver();
@@ -123,7 +126,9 @@ class Client
         $this->registerMiddleware(new BreadcrumbData($this->recorder));
         $this->registerMiddleware(new SessionData($this));
 
-        register_shutdown_function([$this, 'flush']);
+        // Shutdown strategy is used to trigger flush() calls when batch sending is enabled
+        $shutdownStrategy = $shutdownStrategy ?: new PhpShutdownStrategy();
+        $shutdownStrategy->registerShutdownStrategy($this);
     }
 
     /**
@@ -136,7 +141,7 @@ class Client
      */
     public static function makeGuzzle($base = null, array $options = [])
     {
-        $key = version_compare(ClientInterface::VERSION, '6') === 1 ? 'base_uri' : 'base_url';
+        $key = method_exists(ClientInterface::class, 'request') ? 'base_uri' : 'base_url';
 
         $options[$key] = $base ?: static::ENDPOINT;
 
@@ -154,7 +159,7 @@ class Client
      */
     protected static function getCaBundlePath()
     {
-        if (!class_exists(CaBundle::class)) {
+        if (version_compare(PHP_VERSION, '5.6.0') >= 0 || !class_exists(CaBundle::class)) {
             return false;
         }
 
@@ -242,8 +247,6 @@ class Client
         } catch (ReflectionException $e) {
             //
         }
-
-        $name = substr((string) $name, 0, Breadcrumb::MAX_LENGTH);
 
         $type = in_array($type, Breadcrumb::getTypes(), true) ? $type : Breadcrumb::MANUAL_TYPE;
 
