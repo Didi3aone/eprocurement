@@ -52,6 +52,40 @@
                             </ul>
                         </li>
                         @endcan
+                        @can('gl_management_access')
+                        <li>
+                            <a href="#" class="has-arrow">
+                                <i class="fa fa-truck">
+                                </i> {{ trans('cruds.gl.title') }}
+                            </a>
+                            <ul aria-expanded="false" class="collapse">
+                                @can('gl_access')
+                                <li>
+                                    <a href="{{ route('admin.gl.index') }}" class="">
+                                        <i class="fa fas fa-caret-right"></i> {{ trans('cruds.gl.title') }}
+                                    </a>
+                                </li>
+                                @endcan
+                            </ul>
+                        </li>
+                        @endcan
+                        @can('cost_management_access')
+                        <li>
+                            <a href="#" class="has-arrow">
+                                <i class="fa fa-truck">
+                                </i> {{ trans('cruds.cost.title') }}
+                            </a>
+                            <ul aria-expanded="false" class="collapse">
+                                @can('cost_access')
+                                <li>
+                                    <a href="{{ route('admin.cost.index') }}" class="">
+                                        <i class="fa fas fa-caret-right"></i> {{ trans('cruds.cost.title') }}
+                                    </a>
+                                </li>
+                                @endcan
+                            </ul>
+                        </li>
+                        @endcan
                         @can('department_management_access')
                         <li>
                             <a href="#" class="has-arrow">

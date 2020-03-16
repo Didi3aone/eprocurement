@@ -19,6 +19,7 @@ class CreateGl extends Migration
             $table->string('account');
             $table->string('balance');
             $table->string('short_text');
+            $table->string('acct_long_text');
             $table->string('long_text');
             $table->timestamps();
         });

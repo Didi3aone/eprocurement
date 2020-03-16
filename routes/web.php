@@ -27,6 +27,16 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::post('vendors/import', 'VendorController@import')->name('vendors.import');
     Route::resource('vendors', 'VendorController');
 
+    // GLs
+    Route::delete('gl/destroy', 'GlController@massDestroy')->name('gl.massDestroy');
+    Route::post('gl/import', 'GlController@import')->name('gl.import');
+    Route::resource('gl', 'GlController');
+
+    // Cost
+    Route::delete('cost/destroy', 'CostController@massDestroy')->name('cost.massDestroy');
+    Route::post('cost/import', 'CostController@import')->name('cost.import');
+    Route::resource('cost', 'CostController');
+
     // Company
     Route::delete('company/destroy', 'CompanyController@massDestroy')->name('company.massDestroy');
     Route::resource('company', 'CompanyController');

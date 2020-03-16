@@ -126,6 +126,48 @@ return [
             'updated_at' => 'Updated at',
         ]
     ],
+    'gl' => [
+        'title' => 'Init GL',
+        'title_singular' => 'Init GL',
+        'import' => 'Import Init GL',
+        'alert_success_insert' => 'Init GL successfully saved',
+        'alert_success_update' => 'Init GL successfully updated',
+        'alert_success_delete' => 'Init GL successfully deleted',
+        'alert_success'        => 'Init GL successfully saved',
+        'fields' => [
+            'id' => 'ID',
+            'code' => 'Chart of Accounts',
+            'account' => 'G/L',
+            'balance' => 'Balance Sheet',
+            'short_text' => 'Short Text',
+            'acct_long_text' => 'Acct Long Text',
+            'long_text' => 'Long Text',
+            'created_at' => 'Created at',
+            'updated_at' => 'Updated at',
+        ]
+    ],
+    'cost' => [
+        'title' => 'Cost Center',
+        'title_singular' => 'Cost Center',
+        'import' => 'Import Cost Center',
+        'alert_success_insert' => 'Cost Center successfully saved',
+        'alert_success_update' => 'Cost Center successfully updated',
+        'alert_success_delete' => 'Cost Center successfully deleted',
+        'alert_success'        => 'Cost Center successfully saved',
+        'fields' => [
+            'id' => 'ID',
+            'area' => 'Controlling Area',
+            'cost_center' => 'Cost Center',
+            'company_code' => 'Company Code',
+            'profit_center' => 'Profit Center',
+            'hierarchy_area' => 'Hierarchy Area',
+            'name' => 'Name',
+            'description' => 'Description',
+            'short_text' => 'Cost Ctr Short Text',
+            'created_at' => 'Created at',
+            'updated_at' => 'Updated at',
+        ]
+    ],
     'role'              => [
         'title'          => 'Roles',
         'title_singular' => 'Role',

@@ -20,6 +20,7 @@ class Gl extends Model
         'account',
         'balance',
         'short_text',
+        'acct_long_text',
         'long_text',
         'created_at',
         'updated_at',

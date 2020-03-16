@@ -177,6 +177,54 @@ class PermissionsTableSeeder extends Seeder
                 'id'    => '42',
                 'title' => 'rn_access',
             ],
+            [
+                'id'    => '43',
+                'title' => 'gl_management_access',
+            ],
+            [
+                'id'    => '44',
+                'title' => 'gl_create',
+            ],
+            [
+                'id'    => '45',
+                'title' => 'gl_edit',
+            ],
+            [
+                'id'    => '46',
+                'title' => 'gl_delete',
+            ],
+            [
+                'id'    => '47',
+                'title' => 'gl_show',
+            ],
+            [
+                'id'    => '48',
+                'title' => 'gl_access',
+            ],
+            [
+                'id'    => '49',
+                'title' => 'cost_management_access',
+            ],
+            [
+                'id'    => '50',
+                'title' => 'cost_create',
+            ],
+            [
+                'id'    => '51',
+                'title' => 'cost_edit',
+            ],
+            [
+                'id'    => '52',
+                'title' => 'cost_delete',
+            ],
+            [
+                'id'    => '53',
+                'title' => 'cost_show',
+            ],
+            [
+                'id'    => '54',
+                'title' => 'cost_access',
+            ],
         ];
         // DB::beginTransaction();
         // DB::unprepared('SET IDENTITY_INSERT permissions ON');
