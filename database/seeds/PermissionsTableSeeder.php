@@ -225,6 +225,218 @@ class PermissionsTableSeeder extends Seeder
                 'id'    => '54',
                 'title' => 'cost_access',
             ],
+            [
+                'id'    => '55',
+                'title' => 'bidding_management_access',
+            ],
+            [
+                'id'    => '56',
+                'title' => 'bidding_create',
+            ],
+            [
+                'id'    => '57',
+                'title' => 'bidding_edit',
+            ],
+            [
+                'id'    => '58',
+                'title' => 'bidding_delete',
+            ],
+            [
+                'id'    => '59',
+                'title' => 'bidding_show',
+            ],
+            [
+                'id'    => '60',
+                'title' => 'bidding_access',
+            ],
+            [
+                'id'    => '61',
+                'title' => 'faktur_management_access',
+            ],
+            [
+                'id'    => '62',
+                'title' => 'faktur_create',
+            ],
+            [
+                'id'    => '63',
+                'title' => 'faktur_edit',
+            ],
+            [
+                'id'    => '64',
+                'title' => 'faktur_delete',
+            ],
+            [
+                'id'    => '65',
+                'title' => 'faktur_show',
+            ],
+            [
+                'id'    => '66',
+                'title' => 'faktur_access',
+            ],
+            // approvalRN
+            [
+                'id'    => '67',
+                'title' => 'approvalRN_management_access',
+            ],
+            [
+                'id'    => '68',
+                'title' => 'approvalRN_create',
+            ],
+            [
+                'id'    => '69',
+                'title' => 'approvalRN_edit',
+            ],
+            [
+                'id'    => '71',
+                'title' => 'approvalRN_delete',
+            ],
+            [
+                'id'    => '72',
+                'title' => 'approvalRN_show',
+            ],
+            [
+                'id'    => '73',
+                'title' => 'approvalRN_access',
+            ],
+            // listRN
+            [
+                'id'    => '74',
+                'title' => 'listRN_management_access',
+            ],
+            [
+                'id'    => '75',
+                'title' => 'listRN_create',
+            ],
+            [
+                'id'    => '76',
+                'title' => 'listRN_edit',
+            ],
+            [
+                'id'    => '77',
+                'title' => 'listRN_delete',
+            ],
+            [
+                'id'    => '78',
+                'title' => 'listRN_show',
+            ],
+            [
+                'id'    => '79',
+                'title' => 'listRN_access',
+            ],
+            // procListRN2PR
+            [
+                'title' => 'procListRN2PR_management_access',
+            ],
+            [
+                'title' => 'procListRN2PR_create',
+            ],
+            [
+                'title' => 'procListRN2PR_edit',
+            ],
+            [
+                'title' => 'procListRN2PR_delete',
+            ],
+            [
+                'title' => 'procListRN2PR_show',
+            ],
+            [
+                'title' => 'procListRN2PR_access',
+            ],
+            // procApprovalRN2PR
+            [
+                'title' => 'procApprovalRN2PR_management_access',
+            ],
+            [
+                'title' => 'procApprovalRN2PR_create',
+            ],
+            [
+                'title' => 'procApprovalRN2PR_edit',
+            ],
+            [
+                'title' => 'procApprovalRN2PR_delete',
+            ],
+            [
+                'title' => 'procApprovalRN2PR_show',
+            ],
+            [
+                'title' => 'procApprovalRN2PR_access',
+            ],
+            // procValidasiAset
+            [
+                'title' => 'procValidasiAset_management_access',
+            ],
+            [
+                'title' => 'procValidasiAset_create',
+            ],
+            [
+                'title' => 'procValidasiAset_edit',
+            ],
+            [
+                'title' => 'procValidasiAset_delete',
+            ],
+            [
+                'title' => 'procValidasiAset_show',
+            ],
+            [
+                'title' => 'procValidasiAset_access',
+            ],
+            // procPR2PO
+            [
+                'title' => 'procPR2PO_management_access',
+            ],
+            [
+                'title' => 'procPR2PO_create',
+            ],
+            [
+                'title' => 'procPR2PO_edit',
+            ],
+            [
+                'title' => 'procPR2PO_delete',
+            ],
+            [
+                'title' => 'procPR2PO_show',
+            ],
+            [
+                'title' => 'procPR2PO_access',
+            ],
+            // procBidding
+            [
+                'title' => 'procBidding_management_access',
+            ],
+            [
+                'title' => 'procBidding_create',
+            ],
+            [
+                'title' => 'procBidding_edit',
+            ],
+            [
+                'title' => 'procBidding_delete',
+            ],
+            [
+                'title' => 'procBidding_show',
+            ],
+            [
+                'title' => 'procBidding_access',
+            ],
+            // procVerifikasiFaktur
+            [
+                'title' => 'procVerifikasiFaktur_management_access',
+            ],
+            [
+                'title' => 'procVerifikasiFaktur_create',
+            ],
+            [
+                'title' => 'procVerifikasiFaktur_edit',
+            ],
+            [
+                'title' => 'procVerifikasiFaktur_delete',
+            ],
+            [
+                'title' => 'procVerifikasiFaktur_show',
+            ],
+            [
+                'title' => 'procVerifikasiFaktur_access',
+            ],
         ];
         // DB::beginTransaction();
         // DB::unprepared('SET IDENTITY_INSERT permissions ON');

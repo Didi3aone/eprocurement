@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\MaterialSheet;
+use App\Imports\PurchasingGroupImport;
 use App\Imports\MaterialsImport;
 use App\Models\Material;
 use App\Models\Department;
@@ -25,6 +27,33 @@ class MaterialController extends Controller
         $material = Material::all();
 
         return view('admin.material.index',compact('material'));
+    }
+    
+    public function worksheet (Request $request)
+    {
+        $this->validate($request, [
+            'xls_file' => 'required|file|mimes:csv,xls,xlsx',
+        ]);
+
+        $path = 'xls/';
+        $file = $request->file('xls_file');
+        $filename = $file->getClientOriginalName();
+
+        $file->move($path, $filename);
+        
+        Excel::import(new PurchasingGroupImport, public_path($path . $filename));
+
+        return redirect('admin/material')->with('success', 'Purchasing groups has been successfully imported');
+        // $sheet = Excel::load(public_path($path . $filename), function ($reader) {
+        //     $data = [];
+        //     $reader->each(function ($sheet) {
+        //         print_r($sheet);
+        //         foreach ($sheet->toArray() as $row) {
+        //             $data[] = $row;
+        //         }
+        //     });
+        //     dd($data);
+        // });
     }
 
     public function import(Request $request)

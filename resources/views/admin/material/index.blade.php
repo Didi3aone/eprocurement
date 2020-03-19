@@ -36,6 +36,9 @@
             <button class="btn btn-info" data-toggle="modal" data-target="#modal_import">
                 <i class="fa fa-download"></i> {{ trans('cruds.masterMaterial.import') }}
             </button>
+            <button class="btn btn-warning" data-toggle="modal" data-target="#modal_sheet">
+                <i class="fa fa-download"></i> {{ trans('cruds.masterMaterial.sheet') }}
+            </button>
         </div>
     </div>
 @endcan
@@ -125,16 +128,39 @@
     </div>
 </div>
 
-<div class="modal fade" id="modal_import" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modal_import" tabindex="-1" role="dialog" aria-labelledby="modal_import" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">{{ trans('cruds.masterMaterial.import') }}</h5>
+                <h5 class="modal-title">{{ trans('cruds.masterMaterial.import') }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <form action="{{ route('admin.material.import') }}" method="post" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body">
+                    <input type="file" name="xls_file" id="xls_file">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal_sheet" tabindex="-1" role="dialog" aria-labelledby="modal_sheet" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ trans('cruds.masterMaterial.sheet') }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('admin.material.worksheet') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
                     <input type="file" name="xls_file" id="xls_file">

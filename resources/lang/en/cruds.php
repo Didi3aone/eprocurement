@@ -42,6 +42,7 @@ return [
         'title'          => 'Material',
         'title_singular' => 'Material',
         'import' => 'Import Materials',
+        'sheet' => 'Sheet Materials',
         'alert_success_insert' => 'Material successfully saved',
         'alert_success_update' => 'Material successfully updated',
         'alert_success_delete' => 'Material successfully deleted',
@@ -107,13 +108,53 @@ return [
         ],
     ],
     'vendors' => [
-        'title' => 'Vendors',
-        'title_singular' => 'Vendor',
+        'title' => 'Registrasi Vendors',
+        'title_singular' => 'Registrasi Vendor',
         'import' => 'Import Vendors',
         'alert_success_insert' => 'Vendor successfully saved',
         'alert_success_update' => 'Vendor successfully updated',
         'alert_success_delete' => 'Vendor successfully deleted',
         'alert_success'        => 'Vendor successfully saved',
+        'fields' => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'name' => 'Name',
+            'departemen_peminta' => 'Departemen Peminta',
+            'status'    => 'Status',
+            'status_active'    => 'Active',
+            'status_inactive'    => 'Inactive',
+            'created_at' => 'Created at',
+            'updated_at' => 'Updated at',
+        ]
+    ],
+    'biddings' => [
+        'title' => 'Biddings',
+        'title_singular' => 'Bidding',
+        'import' => 'Import Biddings',
+        'alert_success_insert' => 'Bidding successfully saved',
+        'alert_success_update' => 'Bidding successfully updated',
+        'alert_success_delete' => 'Bidding successfully deleted',
+        'alert_success'        => 'Bidding successfully saved',
+        'fields' => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'name' => 'Name',
+            'departemen_peminta' => 'Departemen Peminta',
+            'status'    => 'Status',
+            'status_active'    => 'Active',
+            'status_inactive'    => 'Inactive',
+            'created_at' => 'Created at',
+            'updated_at' => 'Updated at',
+        ]
+    ],
+    'faktur' => [
+        'title' => 'Tukar Faktur',
+        'title_singular' => 'Tukar Faktur',
+        'import' => 'Import Faktur',
+        'alert_success_insert' => 'Tukar Faktur successfully saved',
+        'alert_success_update' => 'Tukar Faktur successfully updated',
+        'alert_success_delete' => 'Tukar Faktur successfully deleted',
+        'alert_success'        => 'Tukar Faktur successfully saved',
         'fields' => [
             'id' => 'ID',
             'code' => 'Code',
@@ -214,6 +255,91 @@ return [
         ],
     ],
 
+    // material
+    'purchasing_group'    => [
+        'title'          => 'Purchasing Group',
+        'title_singular' => 'Purchasing Group',
+        'import' => 'Purchasing Group Import',
+        'alert_success_insert' => 'Purchasing Group successfully saved',
+        'alert_success_update' => 'Purchasing Group successfully updated',
+        'alert_success_delete' => 'Purchasing Group successfully deleted',
+        'alert_success'        => 'Purchasing Group successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'description' => 'Description',
+            'created_at' => 'Created at',
+            'updated_at' => 'Updated at',
+        ]
+    ],
+    'material_group'    => [
+        'title'          => 'Material Group',
+        'title_singular' => 'Material Group',
+        'import' => 'Material Group Import',
+        'alert_success_insert' => 'Material Group successfully saved',
+        'alert_success_update' => 'Material Group successfully updated',
+        'alert_success_delete' => 'Material Group successfully deleted',
+        'alert_success'        => 'Material Group successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'language' => 'Language',
+            'code' => 'Code',
+            'description' => 'Description',
+            'created_at' => 'Created at',
+            'updated_at' => 'Updated at',
+        ]
+    ],
+    'material_type'    => [
+        'title'          => 'Material Type',
+        'title_singular' => 'Material Type',
+        'import' => 'Material Type Import',
+        'alert_success_insert' => 'Material Type successfully saved',
+        'alert_success_update' => 'Material Type successfully updated',
+        'alert_success_delete' => 'Material Type successfully deleted',
+        'alert_success'        => 'Material Type successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'description' => 'Description',
+            'created_at' => 'Created at',
+            'updated_at' => 'Updated at',
+        ]
+    ],
+    'plant'    => [
+        'title'          => 'Plant',
+        'title_singular' => 'Plant',
+        'import' => 'Plant Import',
+        'alert_success_insert' => 'Plant successfully saved',
+        'alert_success_update' => 'Plant successfully updated',
+        'alert_success_delete' => 'Plant successfully deleted',
+        'alert_success'        => 'Plant successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'description' => 'Description',
+            'created_at' => 'Created at',
+            'updated_at' => 'Updated at',
+        ]
+    ],
+    'profit_center'    => [
+        'title'          => 'Profit Center',
+        'title_singular' => 'Profit Center',
+        'import' => 'Profit Center Import',
+        'alert_success_insert' => 'Profit Center successfully saved',
+        'alert_success_update' => 'Profit Center successfully updated',
+        'alert_success_delete' => 'Profit Center successfully deleted',
+        'alert_success'        => 'Profit Center successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'name' => 'Name',
+            'small_description' => 'Small Description',
+            'description' => 'Description',
+            'created_at' => 'Created at',
+            'updated_at' => 'Updated at',
+        ]
+    ],
+
     // transaction
     'masterTransaction'    => [
         'title'          => 'Issue Transaction',
@@ -235,13 +361,131 @@ return [
             'created_at' => 'Created at',
         ]
     ],
-    'inputPR'    => [
-        'title'          => 'Input PR',
-        'title_singular' => 'Input PR',
-        'alert_success_insert' => 'Input PR successfully saved',
-        'alert_success_update' => 'Input PR successfully updated',
-        'alert_success_delete' => 'Input PR successfully deleted',
-        'alert_success'        => 'Input PR successfully saved',
+    'approvalRN'    => [
+        'title'          => 'Approval RN',
+        'title_singular' => 'Approval RN',
+        'alert_success_insert' => 'Approval RN successfully saved',
+        'alert_success_update' => 'Approval RN successfully updated',
+        'alert_success_delete' => 'Approval RN successfully deleted',
+        'alert_success'        => 'Approval RN successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'notes' => 'Notes',
+            'category' => 'Category',
+            'detail' => 'Detail',
+            'created_at' => 'Created at',
+        ]
+    ],
+    'listRN'    => [
+        'title'          => 'List RN DPJ Admin',
+        'title_singular' => 'List RN DPJ Admin',
+        'alert_success_insert' => 'List RN DPJ Admin successfully saved',
+        'alert_success_update' => 'List RN DPJ Admin successfully updated',
+        'alert_success_delete' => 'List RN DPJ Admin successfully deleted',
+        'alert_success'        => 'List RN DPJ Admin successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'notes' => 'Notes',
+            'category' => 'Category',
+            'detail' => 'Detail',
+            'created_at' => 'Created at',
+        ]
+    ],
+    'procListRN2PR'    => [
+        'title'          => 'List RN to PR DPJ',
+        'title_singular' => 'List RN to PR DPJ',
+        'alert_success_insert' => 'List RN to PR DPJ successfully saved',
+        'alert_success_update' => 'List RN to PR DPJ successfully updated',
+        'alert_success_delete' => 'List RN to PR DPJ successfully deleted',
+        'alert_success'        => 'List RN to PR DPJ successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'notes' => 'Notes',
+            'category' => 'Category',
+            'detail' => 'Detail',
+            'created_at' => 'Created at',
+        ]
+    ],
+    'procApprovalRN2PR'    => [
+        'title'          => 'List Approval RN to PR',
+        'title_singular' => 'List Approval RN to PR',
+        'alert_success_insert' => 'List Approval RN to PR successfully saved',
+        'alert_success_update' => 'List Approval RN to PR successfully updated',
+        'alert_success_delete' => 'List Approval RN to PR successfully deleted',
+        'alert_success'        => 'List Approval RN to PR successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'notes' => 'Notes',
+            'category' => 'Category',
+            'detail' => 'Detail',
+            'created_at' => 'Created at',
+        ]
+    ],
+    'procValidasiAset'    => [
+        'title'          => 'Validasi Aset',
+        'title_singular' => 'Validasi Aset',
+        'alert_success_insert' => 'Validasi Aset successfully saved',
+        'alert_success_update' => 'Validasi Aset successfully updated',
+        'alert_success_delete' => 'Validasi Aset successfully deleted',
+        'alert_success'        => 'Validasi Aset successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'name' => 'Name',
+            'departemen_peminta' => 'Departemen Peminta',
+            'status' => 'Status',
+            'status_active'    => 'Active',
+            'status_inactive'    => 'Inactive',
+            'created_at' => 'Created at'
+        ]
+    ],
+    'procPR2PO'    => [
+        'title'          => 'PR to PO',
+        'title_singular' => 'PR to PO',
+        'alert_success_insert' => 'PR to PO successfully saved',
+        'alert_success_update' => 'PR to PO successfully updated',
+        'alert_success_delete' => 'PR to PO successfully deleted',
+        'alert_success'        => 'PR to PO successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'name' => 'Name',
+            'departemen_peminta' => 'Departemen Peminta',
+            'status' => 'Status',
+            'status_active'    => 'Active',
+            'status_inactive'    => 'Inactive',
+            'created_at' => 'Created at'
+        ]
+    ],
+    'procBidding'    => [
+        'title'          => 'Bidding',
+        'title_singular' => 'Bidding',
+        'alert_success_insert' => 'Bidding successfully saved',
+        'alert_success_update' => 'Bidding successfully updated',
+        'alert_success_delete' => 'Bidding successfully deleted',
+        'alert_success'        => 'Bidding successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'name' => 'Name',
+            'departemen_peminta' => 'Departemen Peminta',
+            'status' => 'Status',
+            'status_active'    => 'Active',
+            'status_inactive'    => 'Inactive',
+            'created_at' => 'Created at'
+        ]
+    ],
+    'procVerifikasiFaktur'    => [
+        'title'          => 'Verifikasi Tukar Faktur',
+        'title_singular' => 'Verifikasi Tukar Faktur',
+        'alert_success_insert' => 'Verifikasi Tukar Faktur successfully saved',
+        'alert_success_update' => 'Verifikasi Tukar Faktur successfully updated',
+        'alert_success_delete' => 'Verifikasi Tukar Faktur successfully deleted',
+        'alert_success'        => 'Verifikasi Tukar Faktur successfully saved',
         'fields'        => [
             'id' => 'ID',
             'code' => 'Code',
