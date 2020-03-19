@@ -27,7 +27,7 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.masterMaterial.fields.small_description') }}</label>
-                        <input type="text" class="form-control form-control-line {{ $errors->has('small_description') ? 'is-invalid' : '' }}" name="small_description" value="{{ old('small_description', '') }}"> 
+                        <input type="text" class="form-control form-control-line {{ $errors->has('small_description') ? 'is-invalid' : '' }}" name="small_description" value="{{ $material->small_description ?? old('small_description', '') }}"> 
                         @if($errors->has('small_description'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('small_description') }}
@@ -36,7 +36,7 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.masterMaterial.fields.description') }}</label>
-                        <input type="text" class="form-control form-control-line {{ $errors->has('description') ? 'is-invalid' : '' }}" name="description" value="{{ old('description', '') }}"> 
+                        <input type="text" class="form-control form-control-line {{ $errors->has('description') ? 'is-invalid' : '' }}" name="description" value="{{ $material->description ?? old('description', '') }}"> 
                         @if($errors->has('description'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('description') }}
@@ -45,10 +45,6 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.masterMaterial.fields.m_group_id') }}</label>
-                        <div style="padding-bottom: 4px">
-                            <span class="btn btn-info btn-xs select-all" style="border-radius: 0">{{ trans('global.select_all') }}</span>
-                            <span class="btn btn-info btn-xs deselect-all" style="border-radius: 0">{{ trans('global.deselect_all') }}</span>
-                        </div>
                         <select class="form-control select2 {{ $errors->has('m_group_id') ? 'is-invalid' : '' }}" name="m_group_id" id="m_group_id" required>
                             @foreach($materialGroups as $id => $mg)
                                 <option value="{{ $id }}" {{ old('m_group_id', '') ? 'selected' : '' }}>{{ $mg->code }} - {{ $mg->description }}</option>
@@ -57,10 +53,6 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.masterMaterial.fields.m_type_id') }}</label>
-                        <div style="padding-bottom: 4px">
-                            <span class="btn btn-info btn-xs select-all" style="border-radius: 0">{{ trans('global.select_all') }}</span>
-                            <span class="btn btn-info btn-xs deselect-all" style="border-radius: 0">{{ trans('global.deselect_all') }}</span>
-                        </div>
                         <select class="form-control select2 {{ $errors->has('m_type_id') ? 'is-invalid' : '' }}" name="m_type_id" id="m_type_id" required>
                             @foreach($materialTypes as $id => $mt)
                                 <option value="{{ $id }}" {{ old('m_type_id', '') ? 'selected' : '' }}>{{ $mt->code }} - {{ $mt->description }}</option>
@@ -69,10 +61,6 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.masterMaterial.fields.m_plant_id') }}</label>
-                        <div style="padding-bottom: 4px">
-                            <span class="btn btn-info btn-xs select-all" style="border-radius: 0">{{ trans('global.select_all') }}</span>
-                            <span class="btn btn-info btn-xs deselect-all" style="border-radius: 0">{{ trans('global.deselect_all') }}</span>
-                        </div>
                         <select class="form-control select2 {{ $errors->has('m_plant_id') ? 'is-invalid' : '' }}" name="m_plant_id" id="m_plant_id" required>
                             @foreach($plants as $id => $pl)
                                 <option value="{{ $id }}" {{ old('m_plant_id', '') ? 'selected' : '' }}>{{ $pl->code }} - {{ $pl->description }}</option>
@@ -81,10 +69,6 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.masterMaterial.fields.m_purchasing_id') }}</label>
-                        <div style="padding-bottom: 4px">
-                            <span class="btn btn-info btn-xs select-all" style="border-radius: 0">{{ trans('global.select_all') }}</span>
-                            <span class="btn btn-info btn-xs deselect-all" style="border-radius: 0">{{ trans('global.deselect_all') }}</span>
-                        </div>
                         <select class="form-control select2 {{ $errors->has('m_purchasing_id') ? 'is-invalid' : '' }}" name="m_purchasing_id" id="m_purchasing_id" required>
                             @foreach($purchasingGroups as $id => $pg)
                                 <option value="{{ $id }}" {{ old('m_purchasing_id', '') ? 'selected' : '' }}>{{ $pg->code }} - {{ $pg->description }}</option>
@@ -93,10 +77,6 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.masterMaterial.fields.m_profit_id') }}</label>
-                        <div style="padding-bottom: 4px">
-                            <span class="btn btn-info btn-xs select-all" style="border-radius: 0">{{ trans('global.select_all') }}</span>
-                            <span class="btn btn-info btn-xs deselect-all" style="border-radius: 0">{{ trans('global.deselect_all') }}</span>
-                        </div>
                         <select class="form-control select2 {{ $errors->has('m_profit_id') ? 'is-invalid' : '' }}" name="m_profit_id" id="m_profit_id" required>
                             @foreach($profitCenters as $id => $pc)
                                 <option value="{{ $id }}" {{ old('m_profit_id', '') ? 'selected' : '' }}>{{ $pc->code }} - {{ $pc->description }}</option>
