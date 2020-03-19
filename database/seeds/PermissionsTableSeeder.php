@@ -437,6 +437,101 @@ class PermissionsTableSeeder extends Seeder
             [
                 'title' => 'procVerifikasiFaktur_access',
             ],
+            // purchasing_group
+            [
+                'title' => 'purchasing_group_management_access',
+            ],
+            [
+                'title' => 'purchasing_group_create',
+            ],
+            [
+                'title' => 'purchasing_group_edit',
+            ],
+            [
+                'title' => 'purchasing_group_delete',
+            ],
+            [
+                'title' => 'purchasing_group_show',
+            ],
+            [
+                'title' => 'purchasing_group_access',
+            ],
+            // material_group
+            [
+                'title' => 'material_group_management_access',
+            ],
+            [
+                'title' => 'material_group_create',
+            ],
+            [
+                'title' => 'material_group_edit',
+            ],
+            [
+                'title' => 'material_group_delete',
+            ],
+            [
+                'title' => 'material_group_show',
+            ],
+            [
+                'title' => 'material_group_access',
+            ],
+            // material_type
+            [
+                'title' => 'material_type_management_access',
+            ],
+            [
+                'title' => 'material_type_create',
+            ],
+            [
+                'title' => 'material_type_edit',
+            ],
+            [
+                'title' => 'material_type_delete',
+            ],
+            [
+                'title' => 'material_type_show',
+            ],
+            [
+                'title' => 'material_type_access',
+            ],
+            // plant
+            [
+                'title' => 'plant_management_access',
+            ],
+            [
+                'title' => 'plant_create',
+            ],
+            [
+                'title' => 'plant_edit',
+            ],
+            [
+                'title' => 'plant_delete',
+            ],
+            [
+                'title' => 'plant_show',
+            ],
+            [
+                'title' => 'plant_access',
+            ],
+            // profit_center
+            [
+                'title' => 'profit_center_management_access',
+            ],
+            [
+                'title' => 'profit_center_create',
+            ],
+            [
+                'title' => 'profit_center_edit',
+            ],
+            [
+                'title' => 'profit_center_delete',
+            ],
+            [
+                'title' => 'profit_center_show',
+            ],
+            [
+                'title' => 'profit_center_access',
+            ],
         ];
         // DB::beginTransaction();
         // DB::unprepared('SET IDENTITY_INSERT permissions ON');
