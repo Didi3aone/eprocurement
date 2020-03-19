@@ -36,9 +36,6 @@
             <button class="btn btn-info" data-toggle="modal" data-target="#modal_import">
                 <i class="fa fa-download"></i> {{ trans('cruds.masterMaterial.import') }}
             </button>
-            <button class="btn btn-warning" data-toggle="modal" data-target="#modal_sheet">
-                <i class="fa fa-download"></i> {{ trans('cruds.masterMaterial.sheet') }}
-            </button>
         </div>
     </div>
 @endcan
@@ -60,13 +57,25 @@
                                 {{ trans('cruds.masterMaterial.fields.code') }}
                             </th>
                             <th>
-                                {{ trans('cruds.masterMaterial.fields.name') }}
+                                {{ trans('cruds.masterMaterial.fields.small_description') }}
                             </th>
                             <th>
-                                {{ trans('cruds.masterMaterial.fields.departemen_peminta') }}
+                                {{ trans('cruds.masterMaterial.fields.description') }}
                             </th>
                             <th>
-                                {{ trans('cruds.masterMaterial.fields.status') }}
+                                {{ trans('cruds.masterMaterial.fields.m_group_id') }}
+                            </th>
+                            <th>
+                                {{ trans('cruds.masterMaterial.fields.m_type_id') }}
+                            </th>
+                            <th>
+                                {{ trans('cruds.masterMaterial.fields.m_plant_id') }}
+                            </th>
+                            <th>
+                                {{ trans('cruds.masterMaterial.fields.m_purchasing_id') }}
+                            </th>
+                            <th>
+                                {{ trans('cruds.masterMaterial.fields.m_profit_id') }}
                             </th>
                             <th>
                                 &nbsp;
@@ -86,13 +95,25 @@
                                         {{ $val->code ?? '' }}
                                     </td>
                                     <td>
-                                        {{ $val->name ?? '' }}
+                                        {{ $val->small_description ?? '' }}
                                     </td>
                                     <td>
-                                        {{ isset($val->departments->name) ? $val->departments->name : '' }}
+                                        {{ $val->description ?? '' }}
                                     </td>
                                     <td>
-                                        {{ $val->status == 1 ? 'Active' : 'Inactive' }}
+                                        {{ isset($val->material_group->code) ? $val->material_group->code . ' - ' . $val->material_group->description : '' }}
+                                    </td>
+                                    <td>
+                                        {{ isset($val->material_type->code) ? $val->material_type->code . ' - ' . $val->material_type->description : '' }}
+                                    </td>
+                                    <td>
+                                        {{ isset($val->plant->code) ? $val->plant->code . ' - ' . $val->plant->description : '' }}
+                                    </td>
+                                    <td>
+                                        {{ isset($val->purchasing_group->code) ? $val->purchasing_group->code . ' - ' . $val->purchasing_group->description : '' }}
+                                    </td>
+                                    <td>
+                                        {{ isset($val->profit_center->code) ? $val->profit_center->code . ' - ' . $val->profit_center->description : '' }}
                                     </td>
                                     <td>
                                         @can('material_show')
@@ -138,29 +159,6 @@
                 </button>
             </div>
             <form action="{{ route('admin.material.import') }}" method="post" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-body">
-                    <input type="file" name="xls_file" id="xls_file">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modal_sheet" tabindex="-1" role="dialog" aria-labelledby="modal_sheet" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">{{ trans('cruds.masterMaterial.sheet') }}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form action="{{ route('admin.material.worksheet') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
                     <input type="file" name="xls_file" id="xls_file">

@@ -11,9 +11,13 @@ class Material extends Model
     protected $fillable = [
         'id',
         'code',
-        'name',
-        'departemen_peminta',
-        'status',
+        'small_description',
+        'description',
+        'm_group_id',
+        'm_type_id',
+        'm_plant_id',
+        'm_purchasing_id',
+        'm_profit_id',
         'created_at',
         'updated_at'
     ];
@@ -23,8 +27,28 @@ class Material extends Model
         parent::boot();
     }
 
-    public function departments()
+    public function material_group()
     {
-        return $this->hasOne(\App\Models\Department::class, 'id', 'departemen_peminta');
+        return $this->hasOne(\App\Models\MaterialGroup::class, 'id', 'm_group_id');
+    }
+
+    public function material_type()
+    {
+        return $this->hasOne(\App\Models\MaterialType::class, 'id', 'm_type_id');
+    }
+
+    public function plant()
+    {
+        return $this->hasOne(\App\Models\Plant::class, 'id', 'm_plant_id');
+    }
+
+    public function purchasing_group()
+    {
+        return $this->hasOne(\App\Models\PurchasingGroup::class, 'id', 'm_purchasing_id');
+    }
+
+    public function profit_center()
+    {
+        return $this->hasOne(\App\Models\ProfitCenter::class, 'id', 'm_profit_id');
     }
 }

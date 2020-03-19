@@ -244,23 +244,6 @@
                             </ul>
                         </li>
                         @endcan
-                        {{-- @can('bidding_management_access')
-                        <li>
-                            <a href="#" class="has-arrow">
-                                <i class="fa fa-truck">
-                                </i> {{ trans('cruds.inputBidding.title') }}
-                            </a>
-                            <ul aria-expanded="false" class="collapse">
-                                @can('bidding_access')
-                                <li>
-                                    <a href="{{ route('admin.bidding.index') }}" class="">
-                                        <i class="fa fas fa-caret-right"></i> {{ trans('cruds.inputBidding.title') }}
-                                    </a>
-                                </li>
-                                @endcan
-                            </ul>
-                        </li>
-                        @endcan --}}
                         @can('approval_management_access')
                         <li>
                             <a href="#" class="has-arrow">
@@ -413,20 +396,20 @@
                 @can('bidding_access')
                 <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-list"></i>
-                        <span class="hide-menu"> {{ trans('cruds.biddings.title') }} </span>
+                        <span class="hide-menu"> {{ trans('cruds.bidding.title') }} </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">
                         @can('bidding_management_access')
                         <li>
                             <a href="#" class="has-arrow">
                                 <i class="fa fa-truck">
-                                </i> {{ trans('cruds.biddings.title') }}
+                                </i> {{ trans('cruds.bidding.title') }}
                             </a>
                             <ul aria-expanded="false" class="collapse">
                                 @can('bidding_access')
                                 <li>
-                                    <a href="{{ route('admin.biddings.index') }}" class="">
-                                        <i class="fa fas fa-caret-right"></i> {{ trans('cruds.biddings.title') }}
+                                    <a href="{{ route('admin.bidding.index') }}" class="">
+                                        <i class="fa fas fa-caret-right"></i> {{ trans('cruds.bidding.title') }}
                                     </a>
                                 </li>
                                 @endcan

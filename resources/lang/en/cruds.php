@@ -42,7 +42,6 @@ return [
         'title'          => 'Material',
         'title_singular' => 'Material',
         'import' => 'Import Materials',
-        'sheet' => 'Sheet Materials',
         'alert_success_insert' => 'Material successfully saved',
         'alert_success_update' => 'Material successfully updated',
         'alert_success_delete' => 'Material successfully deleted',
@@ -50,11 +49,13 @@ return [
         'fields'        => [
             'id' => 'ID',
             'code' => 'Code',
-            'name' => 'Name',
-            'departemen_peminta' => 'Departemen Peminta',
-            'status' => 'Status',
-            'status_active'    => 'Active',
-            'status_inactive'    => 'Inactive',
+            'small_description' => 'Small Description',
+            'description' => 'Description',
+            'm_group_id' => 'Material Group',
+            'm_type_id' => 'Material Type',
+            'm_plant_id' => 'Plant',
+            'm_purchasing_id' => 'Purchasing Group',
+            'm_profit_id' => 'Profit Center',
             'created_at' => 'Created at'
         ]
     ],

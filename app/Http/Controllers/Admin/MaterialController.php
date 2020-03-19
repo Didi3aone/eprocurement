@@ -6,8 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\MaterialSheet;
-use App\Imports\PurchasingGroupImport;
-use App\Imports\MaterialsImport;
+use App\Imports\MaterialImport;
 use App\Models\Material;
 use App\Models\Department;
 use Gate;
@@ -26,34 +25,7 @@ class MaterialController extends Controller
 
         $material = Material::all();
 
-        return view('admin.material.index',compact('material'));
-    }
-    
-    public function worksheet (Request $request)
-    {
-        $this->validate($request, [
-            'xls_file' => 'required|file|mimes:csv,xls,xlsx',
-        ]);
-
-        $path = 'xls/';
-        $file = $request->file('xls_file');
-        $filename = $file->getClientOriginalName();
-
-        $file->move($path, $filename);
-        
-        Excel::import(new PurchasingGroupImport, public_path($path . $filename));
-
-        return redirect('admin/material')->with('success', 'Purchasing groups has been successfully imported');
-        // $sheet = Excel::load(public_path($path . $filename), function ($reader) {
-        //     $data = [];
-        //     $reader->each(function ($sheet) {
-        //         print_r($sheet);
-        //         foreach ($sheet->toArray() as $row) {
-        //             $data[] = $row;
-        //         }
-        //     });
-        //     dd($data);
-        // });
+        return view('admin.material.index', compact('material'));
     }
 
     public function import(Request $request)
@@ -70,7 +42,7 @@ class MaterialController extends Controller
 
         $file->move($path, $filename);
 
-        Excel::import(new MaterialsImport, public_path($path . $filename));
+        Excel::import(new MaterialImport, public_path($path . $filename));
 
         return redirect('admin/material')->with('success', 'Materials has been successfully imported');
     }
@@ -128,9 +100,8 @@ class MaterialController extends Controller
         abort_if(Gate::denies('material_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $material = Material::findOrFail($id);
-        $departments = Department::all();
 
-        return view('admin.material.edit', compact('material', 'departments'));
+        return view('admin.material.edit', compact('material'));
     }
 
     /**
@@ -145,9 +116,13 @@ class MaterialController extends Controller
         $material = Material::findOrFail($id);
         
         $material->code = $request->get('code');
-        $material->name = $request->get('name');
-        $material->departemen_peminta = $request->get('departemen_peminta');
-        $material->status = $request->get('status');
+        $material->small_description = $request->get('small_description');
+        $material->description = $request->get('description');
+        $material->m_group_id = $request->get('m_group_id');
+        $material->m_type_id = $request->get('m_type_id');
+        $material->m_plant_id = $request->get('m_plant_id');
+        $material->m_purchasing_id = $request->get('m_purchasing_id');
+        $material->m_profit_id = $request->get('m_profit_id');
 
         $material->save();
         
