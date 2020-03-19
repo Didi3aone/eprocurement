@@ -65,6 +65,11 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::resource('profit_center', 'ProfitCenterController');
     // ======== END MATERIAL routes =========
 
+    // bidding
+    Route::delete('bidding/destroy', 'BiddingController@massDestroy')->name('bidding.massDestroy');
+    Route::post('bidding/import', 'BiddingController@import')->name('bidding.import');
+    Route::resource('bidding', 'BiddingController');
+
     // Cost
     Route::delete('cost/destroy', 'CostController@massDestroy')->name('cost.massDestroy');
     Route::post('cost/import', 'CostController@import')->name('cost.import');
