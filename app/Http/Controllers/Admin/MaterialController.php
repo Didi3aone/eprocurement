@@ -8,7 +8,11 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\MaterialSheet;
 use App\Imports\MaterialImport;
 use App\Models\Material;
-use App\Models\Department;
+use App\Models\MaterialGroup;
+use App\Models\MaterialType;
+use App\Models\Plant;
+use App\Models\PurchasingGroup;
+use App\Models\ProfitCenter;
 use Gate;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -44,7 +48,50 @@ class MaterialController extends Controller
 
         Excel::import(new MaterialImport, public_path($path . $filename));
 
-        return redirect('admin/material')->with('success', 'Materials has been successfully imported');
+        // // Import CSV to Database
+        // $filepath = public_path($path . $filename);
+        
+        // // Reading file
+        // $file = fopen($filepath, "r");
+
+        // $importData_arr = array();
+        // $i = 0;
+
+        // while (($filedata = fgetcsv($file, 1000, ",")) !== FALSE) {
+        //     $num = count($filedata);
+            
+        //     // Skip first row (Remove below comment if you want to skip the first row)
+        //     if($i == 0){
+        //         $i++;
+        //         continue; 
+        //     }
+
+        //     for ($c = 0; $c < $num; $c++) {
+        //         $importData_arr[$i][] = $filedata[$c];
+        //     }
+
+        //     $i++;
+        // }
+        // fclose($file);
+
+        // // Insert to MySQL database
+        // $data = [];
+        // foreach ($importData_arr as $importData) {
+        //     $data[] = $importData;
+        //     // $insertData = array(
+        //     //     "username" => $importData[1],
+        //     //     "name" => $importData[2],
+        //     //     "gender" => $importData[3],
+        //     //     "email" => $importData[4]
+        //     // );
+
+        //     // Page::insertData($insertData);
+        // }
+
+        // dd($data);
+        // exit;
+
+        // return redirect('admin/material')->with('success', 'Materials has been successfully imported');
     }
 
     /**
@@ -56,9 +103,19 @@ class MaterialController extends Controller
     {
         abort_if(Gate::denies('material_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $departments = Department::all();
+        $materialGroups = MaterialGroup::all();
+        $materialTypes = MaterialType::all();
+        $plants = Plant::all();
+        $purchasingGroups = PurchasingGroup::all();
+        $profitCenters = ProfitCenter::all();
 
-        return view('admin.material.create', compact('departments'));
+        return view('admin.material.create', compact(
+            'materialGroups',
+            'materialTypes',
+            'plants',
+            'purchasingGroups',
+            'profitCenters',
+        ));
     }
 
     /**
@@ -101,7 +158,20 @@ class MaterialController extends Controller
 
         $material = Material::findOrFail($id);
 
-        return view('admin.material.edit', compact('material'));
+        $materialGroups = MaterialGroup::all();
+        $materialTypes = MaterialType::all();
+        $plants = Plant::all();
+        $purchasingGroups = PurchasingGroup::all();
+        $profitCenters = ProfitCenter::all();
+
+        return view('admin.material.edit', compact(
+            'material',
+            'materialGroups',
+            'materialTypes',
+            'plants',
+            'purchasingGroups',
+            'profitCenters',
+        ));
     }
 
     /**

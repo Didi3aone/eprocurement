@@ -4,7 +4,7 @@
     <div class="col-md-5 col-8 align-self-center">
         <h3 class="text-themecolor">Master</h3>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="javascript:void(0)">Material</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">{{ trans('cruds.masterMaterial.title') }}</a></li>
             <li class="breadcrumb-item active">View</li>
         </ol>
     </div>
@@ -33,26 +33,58 @@
                         </tr>
                         <tr>
                             <th>
-                                {{ trans('cruds.masterMaterial.fields.name') }}
+                                {{ trans('cruds.masterMaterial.fields.small_description') }}
                             </th>
                             <td>
-                                {{ $material->name }}
+                                {{ $material->small_description }}
                             </td>
                         </tr>
                         <tr>
                             <th>
-                                {{ trans('cruds.masterMaterial.fields.departemen_peminta') }}
+                                {{ trans('cruds.masterMaterial.fields.description') }}
                             </th>
                             <td>
-                                {{ isset($material->departments->name) ? $material->departments->name : '' }}
+                                {{ $material->description }}
                             </td>
                         </tr>
                         <tr>
                             <th>
-                                {{ trans('cruds.masterMaterial.fields.status') }}
+                                {{ trans('cruds.masterMaterial.fields.m_group_id') }}
                             </th>
                             <td>
-                                {{ $material->status == 1 ? 'Active' : 'Inactive' }}
+                                {{ isset($material->material_group->code) ? $material->material_group->code . ' - ' . $material->material_group->description : '' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                {{ trans('cruds.masterMaterial.fields.m_type_id') }}
+                            </th>
+                            <td>
+                                {{ isset($material->material_type->code) ? $material->material_type->code . ' - ' . $material->material_type->description : '' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                {{ trans('cruds.masterMaterial.fields.m_plant_id') }}
+                            </th>
+                            <td>
+                                {{ isset($material->plant->code) ? $material->plant->code . ' - ' . $material->plant->description : '' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                {{ trans('cruds.masterMaterial.fields.m_purchasing_id') }}
+                            </th>
+                            <td>
+                                {{ isset($material->purchasing_group->code) ? $material->purchasing_group->code . ' - ' . $material->purchasing_group->description : '' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                {{ trans('cruds.masterMaterial.fields.m_profit_id') }}
+                            </th>
+                            <td>
+                                {{ isset($material->profit_center->code) ? $material->profit_center->code . ' - ' . $material->profit_center->description : '' }}
                             </td>
                         </tr>
                     </tbody>

@@ -25,41 +25,82 @@
                         @endif
                     </div>
                     <div class="form-group">
-                        <label>{{ trans('cruds.masterMaterial.fields.name') }}</label>
-                        <input type="text" class="form-control form-control-line {{ $errors->has('name') ? 'is-invalid' : '' }}" name="name" value="{{ old('name', '') }}"> 
-                        @if($errors->has('name'))
+                        <label>{{ trans('cruds.masterMaterial.fields.small_description') }}</label>
+                        <input type="text" class="form-control form-control-line {{ $errors->has('small_description') ? 'is-invalid' : '' }}" name="small_description" value="{{ old('small_description', '') }}"> 
+                        @if($errors->has('small_description'))
                             <div class="invalid-feedback">
-                                {{ $errors->first('name') }}
+                                {{ $errors->first('small_description') }}
                             </div>
                         @endif
                     </div>
                     <div class="form-group">
-                        <label>{{ trans('cruds.masterMaterial.fields.departemen_peminta') }}</label>
-                        <select class="form-control select2 {{ $errors->has('departemen_peminta') ? 'is-invalid' : '' }}" name="departemen_peminta" id="departemen_peminta" required>
-                            @foreach($departments as $id => $dept)
-                                <option value="{{ $dept->id }}" {{ in_array($dept->id, old('departemen_peminta', [])) ? 'selected' : '' }}>{{ $dept->code }} - {{ $dept->name }}</option>
+                        <label>{{ trans('cruds.masterMaterial.fields.description') }}</label>
+                        <input type="text" class="form-control form-control-line {{ $errors->has('description') ? 'is-invalid' : '' }}" name="description" value="{{ old('description', '') }}"> 
+                        @if($errors->has('description'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('description') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.masterMaterial.fields.m_group_id') }}</label>
+                        <div style="padding-bottom: 4px">
+                            <span class="btn btn-info btn-xs select-all" style="border-radius: 0">{{ trans('global.select_all') }}</span>
+                            <span class="btn btn-info btn-xs deselect-all" style="border-radius: 0">{{ trans('global.deselect_all') }}</span>
+                        </div>
+                        <select class="form-control select2 {{ $errors->has('m_group_id') ? 'is-invalid' : '' }}" name="m_group_id[]" id="m_group_id" multiple required>
+                            @foreach($materialGroups as $id => $mg)
+                                <option value="{{ $id }}" {{ in_array($id, old('m_group_id', [])) ? 'selected' : '' }}>{{ $mg->code }} - {{ $mg->description }}</option>
                             @endforeach
                         </select>
-                        @if($errors->has('departemen_peminta'))
-                            <div class="invalid-feedback">
-                                {{ $errors->first('departemen_peminta') }}
-                            </div>
-                        @endif
                     </div>
                     <div class="form-group">
-                        <label>{{ trans('cruds.masterMaterial.fields.status') }}</label>
-                        <div class="">
-                            <div class="form-check form-check-inline mr-1">
-                                <input class="form-check-input" id="inline-radio-active" type="radio" value="1"
-                                    name="status">
-                                <label class="form-check-label" for="inline-radio-active">{{ trans('cruds.masterMaterial.fields.status_active') }}</label>
-                            </div>
-                            <div class="form-check form-check-inline mr-1">
-                                <input class="form-check-input" id="inline-radio-non-active" type="radio" value="0"
-                                    name="status" checked>
-                                <label class="form-check-label" for="inline-radio-non-active">{{ trans('cruds.masterMaterial.fields.status_inactive') }}</label>
-                            </div>
+                        <label>{{ trans('cruds.masterMaterial.fields.m_type_id') }}</label>
+                        <div style="padding-bottom: 4px">
+                            <span class="btn btn-info btn-xs select-all" style="border-radius: 0">{{ trans('global.select_all') }}</span>
+                            <span class="btn btn-info btn-xs deselect-all" style="border-radius: 0">{{ trans('global.deselect_all') }}</span>
                         </div>
+                        <select class="form-control select2 {{ $errors->has('m_type_id') ? 'is-invalid' : '' }}" name="m_type_id[]" id="m_type_id" multiple required>
+                            @foreach($materialTypes as $id => $mt)
+                                <option value="{{ $id }}" {{ in_array($id, old('m_type_id', [])) ? 'selected' : '' }}>{{ $mt->code }} - {{ $mt->description }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.masterMaterial.fields.m_plant_id') }}</label>
+                        <div style="padding-bottom: 4px">
+                            <span class="btn btn-info btn-xs select-all" style="border-radius: 0">{{ trans('global.select_all') }}</span>
+                            <span class="btn btn-info btn-xs deselect-all" style="border-radius: 0">{{ trans('global.deselect_all') }}</span>
+                        </div>
+                        <select class="form-control select2 {{ $errors->has('m_plant_id') ? 'is-invalid' : '' }}" name="m_plant_id[]" id="m_plant_id" multiple required>
+                            @foreach($plants as $id => $pl)
+                                <option value="{{ $id }}" {{ in_array($id, old('m_plant_id', [])) ? 'selected' : '' }}>{{ $pl->code }} - {{ $pl->description }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.masterMaterial.fields.m_purchasing_id') }}</label>
+                        <div style="padding-bottom: 4px">
+                            <span class="btn btn-info btn-xs select-all" style="border-radius: 0">{{ trans('global.select_all') }}</span>
+                            <span class="btn btn-info btn-xs deselect-all" style="border-radius: 0">{{ trans('global.deselect_all') }}</span>
+                        </div>
+                        <select class="form-control select2 {{ $errors->has('m_purchasing_id') ? 'is-invalid' : '' }}" name="m_purchasing_id[]" id="m_purchasing_id" multiple required>
+                            @foreach($purchasingGroups as $id => $pg)
+                                <option value="{{ $id }}" {{ in_array($id, old('m_purchasing_id', [])) ? 'selected' : '' }}>{{ $pg->code }} - {{ $pg->description }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.masterMaterial.fields.m_profit_id') }}</label>
+                        <div style="padding-bottom: 4px">
+                            <span class="btn btn-info btn-xs select-all" style="border-radius: 0">{{ trans('global.select_all') }}</span>
+                            <span class="btn btn-info btn-xs deselect-all" style="border-radius: 0">{{ trans('global.deselect_all') }}</span>
+                        </div>
+                        <select class="form-control select2 {{ $errors->has('m_profit_id') ? 'is-invalid' : '' }}" name="m_profit_id[]" id="m_profit_id" multiple required>
+                            @foreach($profitCenters as $id => $pc)
+                                <option value="{{ $id }}" {{ in_array($id, old('m_profit_id', [])) ? 'selected' : '' }}>{{ $pc->code }} - {{ $pc->description }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.save') }}</button>

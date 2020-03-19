@@ -128,10 +128,10 @@ return [
             'updated_at' => 'Updated at',
         ]
     ],
-    'biddings' => [
-        'title' => 'Biddings',
+    'bidding' => [
+        'title' => 'Bidding',
         'title_singular' => 'Bidding',
-        'import' => 'Import Biddings',
+        'import' => 'Import Bidding',
         'alert_success_insert' => 'Bidding successfully saved',
         'alert_success_update' => 'Bidding successfully updated',
         'alert_success_delete' => 'Bidding successfully deleted',

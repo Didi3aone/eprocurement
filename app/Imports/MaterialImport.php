@@ -8,9 +8,12 @@ use App\Models\MaterialType;
 use App\Models\Plant;
 use App\Models\PurchasingGroup;
 use App\Models\ProfitCenter;
-use Maatwebsite\Excel\Concerns\ToModel;
 
-class MaterialImport implements ToModel
+use Maatwebsite\Excel\Concerns\ToModel;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
+
+class MaterialImport implements ToModel, WithChunkReading, ShouldQueue
 {
     /**
     * @param array $row
@@ -44,5 +47,10 @@ class MaterialImport implements ToModel
             'm_purchasing_id' => $pg,
             'm_profit_id' => $pc,
         ]);
+    }
+
+    public function chunkSize(): int
+    {
+        return 1000;
     }
 }
