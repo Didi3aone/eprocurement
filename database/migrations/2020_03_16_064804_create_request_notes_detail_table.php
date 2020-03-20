@@ -21,6 +21,8 @@ class CreateRequestNotesDetailTable extends Migration
             $table->bigInteger('qty')->nullable();
             $table->string('unit',10)->nullable();
             $table->string('notes', 200)->nullable();
+            $table->integer('is_available_stock')->nullable();
+            $table->bigInteger('price')->nullable()->default(0);
             $table->timestamps();
         });
     }

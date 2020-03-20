@@ -16,7 +16,7 @@
                 <form class="form-material m-t-40" action="<?php echo e(route("admin.department.store")); ?>" enctype="multipart/form-data" method="post">
                     <?php echo csrf_field(); ?>
                     <div class="form-group">
-                        <label><?php echo e(trans('cruds.masterCategoryDept.fields.id')); ?></label>
+                        <label><?php echo e(trans('cruds.masterCategoryDept.fields.code')); ?></label>
                         <input type="text" class="form-control form-control-line <?php echo e($errors->has('code') ? 'is-invalid' : ''); ?>" name="code" value="<?php echo e(old('code', '')); ?>"> 
                         <?php if($errors->has('code')): ?>
                             <div class="invalid-feedback">

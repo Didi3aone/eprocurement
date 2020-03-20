@@ -17,7 +17,9 @@ class CreateRequestNotesTable extends Migration
             $table->bigIncrements('id');
             $table->string('request_no');
             $table->string('notes')->nullable();
-            $table->integer('category_id')->unsigned()->nullable();
+            $table->integer('dept_id')->unsigned()->nullable();
+            $table->integer('purchasing_group_id')->unsigned()->nullable();
+            $table->integer('status')->nullable();
             $table->timestamps();
             $table->integer('created_by')->nullable();
             $table->integer('updated_')->nullable();

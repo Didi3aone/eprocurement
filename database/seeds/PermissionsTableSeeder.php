@@ -325,212 +325,278 @@ class PermissionsTableSeeder extends Seeder
             ],
             // procListRN2PR
             [
+                'id'    => '80',
                 'title' => 'procListRN2PR_management_access',
             ],
             [
+                'id'    => '81',
                 'title' => 'procListRN2PR_create',
             ],
             [
+                'id'    => '82',
                 'title' => 'procListRN2PR_edit',
             ],
             [
+                'id'    => '83',
                 'title' => 'procListRN2PR_delete',
             ],
             [
+                'id'    => '84',
                 'title' => 'procListRN2PR_show',
             ],
             [
+                'id'    => '85',
                 'title' => 'procListRN2PR_access',
             ],
             // procApprovalRN2PR
             [
+                'id'    => '86',
                 'title' => 'procApprovalRN2PR_management_access',
             ],
             [
+                'id'    => '87',
                 'title' => 'procApprovalRN2PR_create',
             ],
             [
+                'id'    => '88',
                 'title' => 'procApprovalRN2PR_edit',
             ],
             [
+                'id'    => '89',
                 'title' => 'procApprovalRN2PR_delete',
             ],
             [
+                'id'    => '90',
                 'title' => 'procApprovalRN2PR_show',
             ],
             [
+                'id'    => '91',
                 'title' => 'procApprovalRN2PR_access',
             ],
             // procValidasiAset
             [
+                'id'    => '92',
                 'title' => 'procValidasiAset_management_access',
             ],
             [
+                'id'    => '93',
                 'title' => 'procValidasiAset_create',
             ],
             [
+                'id'    => '94',
                 'title' => 'procValidasiAset_edit',
             ],
             [
+                'id'    => '95',
                 'title' => 'procValidasiAset_delete',
             ],
             [
+                'id'    => '96',
                 'title' => 'procValidasiAset_show',
             ],
             [
+                'id'    => '97',
                 'title' => 'procValidasiAset_access',
             ],
             // procPR2PO
             [
+                'id'    => '98',
                 'title' => 'procPR2PO_management_access',
             ],
             [
+                'id'    => '99',
                 'title' => 'procPR2PO_create',
             ],
             [
+                'id'    => '100',
                 'title' => 'procPR2PO_edit',
             ],
             [
+                'id'    => '101',
                 'title' => 'procPR2PO_delete',
             ],
             [
+                'id'    => '102',
                 'title' => 'procPR2PO_show',
             ],
             [
+                'id'    => '103',
                 'title' => 'procPR2PO_access',
             ],
             // procBidding
             [
-                'title' => 'procBidding_management_access',
-            ],
-            [
+                'id'    => '104',
                 'title' => 'procBidding_create',
             ],
             [
+                'id'    => '105',
                 'title' => 'procBidding_edit',
             ],
             [
+                'id'    => '106',
                 'title' => 'procBidding_delete',
             ],
             [
+                'id'    => '107',
                 'title' => 'procBidding_show',
             ],
             [
+                'id'    => '108',
                 'title' => 'procBidding_access',
             ],
             // procVerifikasiFaktur
             [
+                'id'    => '109',
                 'title' => 'procVerifikasiFaktur_management_access',
             ],
             [
+                'id'    => '110',
                 'title' => 'procVerifikasiFaktur_create',
             ],
             [
+                'id'    => '111',
                 'title' => 'procVerifikasiFaktur_edit',
             ],
             [
+                'id'    => '112',
                 'title' => 'procVerifikasiFaktur_delete',
             ],
             [
+                'id'    => '113',
                 'title' => 'procVerifikasiFaktur_show',
             ],
             [
+                'id'    => '114',
                 'title' => 'procVerifikasiFaktur_access',
             ],
             // purchasing_group
             [
+                'id'    => '115',
                 'title' => 'purchasing_group_management_access',
             ],
             [
+                'id'    => '116',
                 'title' => 'purchasing_group_create',
             ],
             [
+                'id'    => '117',
                 'title' => 'purchasing_group_edit',
             ],
             [
+                'id'    => '118',
                 'title' => 'purchasing_group_delete',
             ],
             [
+                'id'    => '119',
                 'title' => 'purchasing_group_show',
             ],
             [
+                'id'    => '120',
                 'title' => 'purchasing_group_access',
             ],
             // material_group
             [
+                'id'    => '121',
                 'title' => 'material_group_management_access',
             ],
             [
+                'id'    => '122',
                 'title' => 'material_group_create',
             ],
             [
+                'id'    => '123',
                 'title' => 'material_group_edit',
             ],
             [
+                'id'    => '124',
                 'title' => 'material_group_delete',
             ],
             [
+                'id'    => '125',
                 'title' => 'material_group_show',
             ],
             [
+                'id'    => '126',
                 'title' => 'material_group_access',
             ],
             // material_type
             [
+                'id'    => '127',
                 'title' => 'material_type_management_access',
             ],
             [
+                'id'    => '128',
                 'title' => 'material_type_create',
             ],
             [
+                'id'    => '129',
                 'title' => 'material_type_edit',
             ],
             [
+                'id'    => '130',
                 'title' => 'material_type_delete',
             ],
             [
+                'id'    => '131',
                 'title' => 'material_type_show',
             ],
             [
+                'id'    => '132',
                 'title' => 'material_type_access',
             ],
             // plant
             [
+                'id'    => '133',
                 'title' => 'plant_management_access',
             ],
             [
+                'id'    => '134',
                 'title' => 'plant_create',
             ],
             [
+                'id'    => '135',
                 'title' => 'plant_edit',
             ],
             [
+                'id'    => '136',
                 'title' => 'plant_delete',
             ],
             [
+                'id'    => '137',
                 'title' => 'plant_show',
             ],
             [
+                'id'    => '138',
                 'title' => 'plant_access',
             ],
             // profit_center
             [
+                'id'    => '139',
                 'title' => 'profit_center_management_access',
             ],
             [
+                'id'    => '140',
                 'title' => 'profit_center_create',
             ],
             [
+                'id'    => '141',
                 'title' => 'profit_center_edit',
             ],
             [
+                'id'    => '142',
                 'title' => 'profit_center_delete',
             ],
             [
+                'id'    => '143',
                 'title' => 'profit_center_show',
             ],
             [
+                'id'    => '144',
                 'title' => 'profit_center_access',
+            ],
+            [
+                'id'    => '145',
+                'title' => 'procBidding_management_access',
             ],
         ];
         // DB::beginTransaction();

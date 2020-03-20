@@ -66,11 +66,11 @@ return [
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST_PGSQL', '192.168.1.37'),
+            'host' => env('DB_HOST_PGSQL', '206.253.167.243'),
             'port' => env('DB_PORT_PGSQL', '5432'),
             'database' => env('DB_DATABASE_PGSQL', 'db_procurement'),
             'username' => env('DB_USERNAME_PGSQL', 'postgres'),
-            'password' => env('DB_PASSWORD_PGSQL', 'employee2020'),
+            'password' => env('DB_PASSWORD_PGSQL', 'dbadmin123@A'),
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
