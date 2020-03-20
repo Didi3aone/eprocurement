@@ -58,37 +58,11 @@
                                         <th style="width: 10%">Unit</th>
                                         <th>Notes</th>
                                         <th>
-                                            <button type="button" id="add_item" class="btn btn-primary btn-sm">Add Item</button>
+                                            <button type="button" id="add_item" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add Item</button>
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody id="rn_items">
-                                    <tr>
-                                        <td>
-                                            <input type="text" name="rn_no" id="rn_no" value="1" disabled>
-                                        </td>
-                                        <td>
-                                            <select name="material_id" id="material_id" class="material_id form-control select2">
-                                                @foreach($material as $id => $mat)
-                                                    <option value="{{ $mat->id }}" {{ in_array($mat->id, old('material', [])) ? 'selected' : '' }}>{{ $mat->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input class="form-control" type="text" name="rn_description" id="rn_description">
-                                        </td>
-                                        <td>
-                                            <input class="form-control" type="number" name="rn_qty" id="rn_qty">
-                                        </td>
-                                        <td>
-                                            <input class="form-control" type="number" name="rn_unit" id="rn_unit">
-                                        </td>
-                                        <td>
-                                            <input class="form-control" type="text" name="rn_notes" id="rn_notes">
-                                        </td>
-                                        <td><a href="javascript:;" class="add-item btn btn-success btn-sm"><i class="fa fa-plus-square"></i> Add</a></td>
-                                    </tr>
-                                </tbody>
+                                <tbody id="rn_items"></tbody>
                             </table>
                         </div>
                     </div>
@@ -107,140 +81,71 @@
 <script>
     let index = 1
 
-    document.getElementById('add_item').addEventListener('click', function (e) {
-        e.preventDefault()
+    $(document).ready(function () {
+        let inc = 1
+       
+        $('#add_item').on('click', function (e) {
+            e.preventDefault()
 
-        createItem(index)
-    })
+            const html = `
+<tr>
+    <td>
+        <input type="text" class="form-control" name="rn_no[]" value="${inc}" disabled="disabled">
+    </td>
+    <td>
+        <select name="material_id[]" class="material_id select2 form-control"></select>
+    </td>
+    <td>
+        <input class="form-control" type="text" name="rn_description[]">
+    </td>
+    <td>
+        <input class="form-control" type="number" name="rn_qty[]">
+    </td>
+    <td>
+        <input class="form-control" type="number" name="rn_unit[]">
+    </td>
+    <td>
+        <input class="form-control" type="text" name="rn_notes[]">
+    </td>
+    <td>
+        <a href="javascript:;" class="remove-item btn btn-danger btn-sm">
+            <i class="fa fa-times"></i> hapus
+        </a>
+    </td>
+</tr>
+            `
 
-    let createItem = function (idx) {
-        let tr = document.createElement('tr')
+            inc++
 
-        let add_select = function (name, id) {
-            let td = document.createElement('td')
-            let select = document.createElement('select')
+            $('#rn_items').append(html)
+        })
 
-            select.id = name + '_' + id
-            select.name = name + '_' + id
-            select.classList.add('material_id', 'form-control', 'select2')
+        $('#category').on('change', function (e) {
+            e.preventDefault()
 
-            td.appendChild(select)
+            const url = '{{ route('admin.material.select') }}'
 
-            return td
-        }
+            $.getJSON(url, { code: $(this).val() }, function (items) {
+                var newOptions = '<option value="">-- Select --</option>';
 
-        let add_item = function (name, type, id, disabled = false) {
-            let td = document.createElement('td')
-            let input = document.createElement('input')
+                for (var id in items) {
+                    newOptions += '<option value="'+ id +'">'+ items[id] +'</option>';
+                }
 
-            input.type = 'text'
-            input.value = name == 'no' ? id : ''
-            input.type = type == 'number' ? 'number' : ''
-            input.id = name + '_' + id
-            input.name = name + '_' + id
-            input.classList = 'form-control'
-
-            if (disabled == true)
-                input.setAttribute('disabled', 'disabled')
-
-            td.appendChild(input)
-
-            return td
-        }
-
-        let add_remove_button = function (id) {
-            let td = document.createElement('td')
-            let button = document.createElement('button')
-
-            button.id = 'remove_' + id
-            button.name = 'remove_' + id
-            button.type = 'button'
-            button.innerHTML = '<i className="fa fa-times"></i> Delete'
-            button.setAttribute('data-id', id)
-            button.classList = 'btn btn-danger btn-sm'
-            button.addEventListener('click', function (e) {
-                e.preventDefault()
-
-                this.parentNode.parentNode.remove()
-                index--
+                $('.material_id').html(newOptions)
             })
+        })
 
-            td.appendChild(button)
+        $(document).on('click', 'a.remove_item', function (e) {
+            console.log($(this))
+            e.stopPropagation()
+            e.stopImmediatePropagation()
+            e.preventDefault()
 
-            return td
-        }
+            inc--
 
-        td_no = add_item('no', 'input', idx, true)
-        td_item = add_select('item', idx)
-        td_description = add_item('description', 'input', idx)
-        td_qty = add_item('qty', 'number', idx)
-        td_unit = add_item('unit', 'number', idx)
-        td_note = add_item('note', 'input', idx)
-        td_remove = add_remove_button(idx)
-
-        tr.appendChild(td_no)
-        tr.appendChild(td_item)
-        tr.appendChild(td_description)
-        tr.appendChild(td_qty)
-        tr.appendChild(td_unit)
-        tr.appendChild(td_note)
-        tr.appendChild(td_remove)
-
-        document.getElementById('rn_items').appendChild(tr)
-
-        index++
-    }
-
-    var Select2Cascade = (function (window, $) {
-        function Select2Cascade(parent, child, url, select2Options) {
-            var afterActions = [];
-            var options = select2Options || {};
-
-            // Register functions to be called after cascading data loading done
-            this.then = function(callback) {
-                afterActions.push(callback);
-                return this;
-            };
-
-            parent.select2(select2Options).on("change", function (e) {
-
-                child.prop("disabled", true);
-
-                var _this = this;
-                $.getJSON(url, { code: $(this).val() }, function(items) {
-                    var newOptions = '<option value="">-- Select --</option>';
-                    for(var id in items) {
-                        newOptions += '<option value="'+ id +'">'+ items[id] +'</option>';
-                    }
-
-                    child.select2('destroy').html(newOptions).prop("disabled", false)
-                        .select2(options);
-                    
-                    afterActions.forEach(function (callback) {
-                        callback(parent, child, items);
-                    });
-                });
-            });
-        }
-
-        return Select2Cascade;
-
-    })( window, $);
-
-    $(document).ready(function() {
-        const url = '{{ route('admin.material.select') }}';
-
-        var select2Options = { width: 'resolve' };
-
-        // Loading raw JSON files of a secret gist - https://gist.github.com/ajaxray/32c5a57fafc3f6bc4c430153d66a55f5
-        $('select').select2(select2Options);
-
-        var cascadLoading = new Select2Cascade($('#category'), $('.material_id'), url, select2Options);
-
-        cascadLoading.then( function(parent, child, items) {
-            // Dump response data
-            console.log(items);
-        });
-    });
+            $(this).parent().parent().remove()
+        })
+    })
 </script>
 @endsection
