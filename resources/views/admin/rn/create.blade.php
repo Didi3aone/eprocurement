@@ -36,8 +36,8 @@
                     <div class="form-group">
                         <label>{{ trans('cruds.inputRN.fields.category') }}</label>
                         <select class="form-control select2 {{ $errors->has('category') ? 'is-invalid' : '' }}" name="category" id="category" required>
-                            @foreach($category as $id => $cat)
-                                <option value="{{ $cat->id }}" {{ in_array($cat->id, old('category', [])) ? 'selected' : '' }}>{{ $cat->name }}</option>
+                            @foreach($purchasingGroups as $id => $pg)
+                                <option value="{{ $pg->code }}" {{ in_array($pg->code, old('category', [])) ? 'selected' : '' }}>{{ $pg->code }} - {{ $pg->description }}</option>
                             @endforeach
                         </select>
                         @if($errors->has('category'))
@@ -63,10 +63,12 @@
                                     </tr>
                                 </thead>
                                 <tbody id="rn_items">
-                                    {{-- <tr>
-                                        <td>1</td>
+                                    <tr>
                                         <td>
-                                            <select class="form-control" name="rn_item" id="rn_item">
+                                            <input type="text" name="rn_no" id="rn_no" value="1" disabled>
+                                        </td>
+                                        <td>
+                                            <select name="material_id" id="material_id" class="material_id form-control select2">
                                                 @foreach($material as $id => $mat)
                                                     <option value="{{ $mat->id }}" {{ in_array($mat->id, old('material', [])) ? 'selected' : '' }}>{{ $mat->name }}</option>
                                                 @endforeach
@@ -85,7 +87,7 @@
                                             <input class="form-control" type="text" name="rn_notes" id="rn_notes">
                                         </td>
                                         <td><a href="javascript:;" class="add-item btn btn-success btn-sm"><i class="fa fa-plus-square"></i> Add</a></td>
-                                    </tr> --}}
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -120,14 +122,14 @@
 
             select.id = name + '_' + id
             select.name = name + '_' + id
-            select.classList = 'form-control'
+            select.classList.add('material_id', 'form-control', 'select2')
 
             td.appendChild(select)
 
             return td
         }
 
-        let add_item = function (name, type, id) {
+        let add_item = function (name, type, id, disabled = false) {
             let td = document.createElement('td')
             let input = document.createElement('input')
 
@@ -137,6 +139,9 @@
             input.id = name + '_' + id
             input.name = name + '_' + id
             input.classList = 'form-control'
+
+            if (disabled == true)
+                input.setAttribute('disabled', 'disabled')
 
             td.appendChild(input)
 
@@ -165,7 +170,7 @@
             return td
         }
 
-        td_no = add_item('no', 'input', idx)
+        td_no = add_item('no', 'input', idx, true)
         td_item = add_select('item', idx)
         td_description = add_item('description', 'input', idx)
         td_qty = add_item('qty', 'number', idx)
@@ -185,5 +190,57 @@
 
         index++
     }
+
+    var Select2Cascade = (function (window, $) {
+        function Select2Cascade(parent, child, url, select2Options) {
+            var afterActions = [];
+            var options = select2Options || {};
+
+            // Register functions to be called after cascading data loading done
+            this.then = function(callback) {
+                afterActions.push(callback);
+                return this;
+            };
+
+            parent.select2(select2Options).on("change", function (e) {
+
+                child.prop("disabled", true);
+
+                var _this = this;
+                $.getJSON(url, { code: $(this).val() }, function(items) {
+                    var newOptions = '<option value="">-- Select --</option>';
+                    for(var id in items) {
+                        newOptions += '<option value="'+ id +'">'+ items[id] +'</option>';
+                    }
+
+                    child.select2('destroy').html(newOptions).prop("disabled", false)
+                        .select2(options);
+                    
+                    afterActions.forEach(function (callback) {
+                        callback(parent, child, items);
+                    });
+                });
+            });
+        }
+
+        return Select2Cascade;
+
+    })( window, $);
+
+    $(document).ready(function() {
+        const url = '{{ route('admin.material.select') }}';
+
+        var select2Options = { width: 'resolve' };
+
+        // Loading raw JSON files of a secret gist - https://gist.github.com/ajaxray/32c5a57fafc3f6bc4c430153d66a55f5
+        $('select').select2(select2Options);
+
+        var cascadLoading = new Select2Cascade($('#category'), $('.material_id'), url, select2Options);
+
+        cascadLoading.then( function(parent, child, items) {
+            // Dump response data
+            console.log(items);
+        });
+    });
 </script>
 @endsection
