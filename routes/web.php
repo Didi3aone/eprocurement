@@ -35,6 +35,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     // ====== MATERIAL ==========
     // Material
     Route::delete('material/destroy', 'MaterialController@massDestroy')->name('material.massDestroy');
+    Route::get('material/select', 'MaterialController@select')->name('material.select');
     Route::post('material/import', 'MaterialController@import')->name('material.import');
     Route::resource('material', 'MaterialController');
 

@@ -32,6 +32,19 @@ class MaterialController extends Controller
         return view('admin.material.index', compact('material'));
     }
 
+    public function select (Request $request)
+    {
+        $pg = PurchasingGroup::where('code', $request->input('code'))->first();
+        $material = Material::where('m_purchasing_id', $pg->id)->get();
+        
+        $data = [];
+        foreach ($material as $row) {
+            $data[$row->code] = $row->code . ' - ' . $row->description;
+        }
+
+        return response()->json($data);
+    }
+
     public function import(Request $request)
     {
         // abort_if(Gate::denies('vendor_import_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');

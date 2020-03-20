@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Rn;
 use App\Models\Material;
+use App\Models\PurchasingGroup;
 use App\Models\DepartmentCategory;
 use Gate;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,8 +38,9 @@ class RnController extends Controller
 
         $category = DepartmentCategory::all();
         $material = Material::all();
+        $purchasingGroups = PurchasingGroup::all();
 
-        return view('admin.rn.create', compact('category', 'material'));
+        return view('admin.rn.create', compact('category', 'material', 'purchasingGroups'));
     }
 
     /**
