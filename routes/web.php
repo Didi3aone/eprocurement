@@ -75,16 +75,6 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::post('faktur/import', 'FakturController@import')->name('faktur.import');
     Route::resource('faktur', 'FakturController');
 
-    // approvalRN
-    Route::delete('approvalRN/destroy', 'ApprovalRNController@massDestroy')->name('approvalRN.massDestroy');
-    Route::post('approvalRN/import', 'ApprovalRNController@import')->name('approvalRN.import');
-    Route::resource('approvalRN', 'ApprovalRNController');
-
-    // listRN
-    Route::delete('listRN/destroy', 'ListRNController@massDestroy')->name('listRN.massDestroy');
-    Route::post('listRN/import', 'ListRNController@import')->name('listRN.import');
-    Route::resource('listRN', 'ListRNController');
-
     // procListRN2PR
     Route::delete('procListRN2PR/destroy', 'ProcListRN2PRController@massDestroy')->name('procListRN2PR.massDestroy');
     Route::post('procListRN2PR/import', 'ProcListRN2PRController@import')->name('procListRN2PR.import');
@@ -124,21 +114,13 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::delete('company/destroy', 'CompanyController@massDestroy')->name('company.massDestroy');
     Route::resource('company', 'CompanyController');
 
-    // Department
-    Route::resource('department', 'DepartmentController');
-    Route::post('department-category-destroy/{id}', 'DepartmentCategoryController@destroy')->name('department-category-destroy');
-    Route::resource('department-category', 'DepartmentCategoryController');
-
     // Users
     Route::delete('users/destroy', 'UsersController@massDestroy')->name('users.massDestroy');
     Route::resource('users', 'UsersController');
 
-    /*
-     * Issue Transaction Routes below
-     */
-    // RN
-    Route::delete('rn/destroy', 'RnController@massDestroy')->name('rn.massDestroy');
-    Route::resource('rn', 'RnController');
+    //purchase request
+    Route::get('request-note','RequestNoteController@index')->name('request-note');
+
 });
 
 /*

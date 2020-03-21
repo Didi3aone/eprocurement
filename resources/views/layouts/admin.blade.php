@@ -165,7 +165,7 @@
                                 <ul class="dropdown-user">
                                     <li>
                                         <div class="dw-user-box">
-                                            <div class="u-img"><img src="{{ asset('mages/users/1.jpg') }}" alt="user"></div>
+                                            {{-- <div class="u-img"><img src="{{ asset('mages/users/1.jpg') }}" alt="user"></div> --}}
                                             <div class="u-text">
                                             <h4>{{ Auth::user()->nik }}</h4>
                                         </div>
@@ -179,12 +179,12 @@
                         <!-- ============================================================== -->
                         <!-- Language -->
                         <!-- ============================================================== -->
-                        <li class="nav-item dropdown">
+                        {{-- <li class="nav-item dropdown">
                             @if(count(config('panel.available_languages', [])) > 1)
                                 <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
-                                    {{ strtoupper(app()->getLocale()) }}
+                                    {{ strtoupper(app()->getLocale()) }} --}}
                                     {{-- <i class="flag-icon flag-icon-gb"></i> --}}
-                                </a>
+                                {{-- </a>
                                 <div class="dropdown-menu dropdown-menu-right scale-up"> 
                                     @foreach(config('panel.available_languages') as $langLocale => $langName)
                                         <a class="dropdown-item" href="{{ url()->current() }}?change_language={{ $langLocale }}">
@@ -193,7 +193,7 @@
                                     @endforeach
                                 </div>
                             @endif
-                        </li>
+                        </li> --}}
                     </ul>
                 </div>
             </nav>

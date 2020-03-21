@@ -59,39 +59,6 @@ return [
             'created_at' => 'Created at'
         ]
     ],
-    'masterDepartment' => [
-        'title'          => 'Department',
-        'title_singular' => 'Department',
-        'alert_success_insert' => 'Document successfully saved',
-        'alert_success_update' => 'Document successfully updated',
-        'alert_success_delete' => 'Document successfully deleted',
-        'alert_success'        => 'Document successfully saved',
-        'fields'        => [
-            'id' => 'ID',
-            'code' => 'Code',
-            'name' => 'Name',
-            'company_id' => 'Company',
-            'category_id' => 'Category',
-            'status'    => 'status',
-            'status_active'    => 'Active',
-            'status_inactive'    => 'Inactive',
-            'created_at' => 'Created at'
-        ]
-    ],
-    'masterCategoryDept' => [
-        'title'          => 'Department Category',
-        'title_singular' => 'Department Category',
-        'alert_success_insert' => 'Document successfully saved',
-        'alert_success_update' => 'Document successfully updated',
-        'alert_success_delete' => 'Document successfully deleted',
-        'alert_success'        => 'Document successfully saved',
-        'fields' => [
-            'id' => 'ID',
-            'code' => 'Code',
-            'name' => 'Name',
-            'created_at' => 'Created at'
-        ]
-    ],
     'permission'        => [
         'title'          => 'Permissions',
         'title_singular' => 'Permission',
@@ -107,6 +74,26 @@ return [
             'deleted_at'        => 'Deleted at',
             'deleted_at_helper' => '',
         ],
+    ],
+    'purchase_request' => [
+        'title' => 'Purchase Request',
+        'title_singular' => 'Purchase Request',
+        'import' => 'Import Vendors',
+        'alert_success_insert' => 'PR successfully saved',
+        'alert_success_update' => 'PR successfully updated',
+        'alert_success_delete' => 'PR successfully deleted',
+        'alert_success'        => 'PR successfully saved',
+        'fields' => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'name' => 'Name',
+            'departemen_peminta' => 'Departemen Peminta',
+            'status'    => 'Status',
+            'status_active'    => 'Active',
+            'status_inactive'    => 'Inactive',
+            'created_at' => 'Created at',
+            'updated_at' => 'Updated at',
+        ]
     ],
     'vendors' => [
         'title' => 'Registrasi Vendors',
@@ -341,145 +328,6 @@ return [
         ]
     ],
 
-    // transaction
-    'masterTransaction'    => [
-        'title'          => 'Issue Transaction',
-        'title_singular' => 'Issue Transaction',
-    ],
-    'inputRN'    => [
-        'title'          => 'Input RN',
-        'title_singular' => 'Input RN',
-        'alert_success_insert' => 'Input RN successfully saved',
-        'alert_success_update' => 'Input RN successfully updated',
-        'alert_success_delete' => 'Input RN successfully deleted',
-        'alert_success'        => 'Input RN successfully saved',
-        'fields'        => [
-            'id' => 'ID',
-            'code' => 'Code',
-            'notes' => 'Notes',
-            'category' => 'Category',
-            'detail' => 'Detail',
-            'created_at' => 'Created at',
-        ]
-    ],
-    'approvalRN'    => [
-        'title'          => 'Approval RN',
-        'title_singular' => 'Approval RN',
-        'alert_success_insert' => 'Approval RN successfully saved',
-        'alert_success_update' => 'Approval RN successfully updated',
-        'alert_success_delete' => 'Approval RN successfully deleted',
-        'alert_success'        => 'Approval RN successfully saved',
-        'fields'        => [
-            'id' => 'ID',
-            'code' => 'Code',
-            'notes' => 'Notes',
-            'category' => 'Category',
-            'detail' => 'Detail',
-            'created_at' => 'Created at',
-        ]
-    ],
-    'listRN'    => [
-        'title'          => 'List RN DPJ Admin',
-        'title_singular' => 'List RN DPJ Admin',
-        'alert_success_insert' => 'List RN DPJ Admin successfully saved',
-        'alert_success_update' => 'List RN DPJ Admin successfully updated',
-        'alert_success_delete' => 'List RN DPJ Admin successfully deleted',
-        'alert_success'        => 'List RN DPJ Admin successfully saved',
-        'fields'        => [
-            'id' => 'ID',
-            'code' => 'Code',
-            'notes' => 'Notes',
-            'category' => 'Category',
-            'detail' => 'Detail',
-            'created_at' => 'Created at',
-        ]
-    ],
-    'procListRN2PR'    => [
-        'title'          => 'List RN to PR DPJ',
-        'title_singular' => 'List RN to PR DPJ',
-        'alert_success_insert' => 'List RN to PR DPJ successfully saved',
-        'alert_success_update' => 'List RN to PR DPJ successfully updated',
-        'alert_success_delete' => 'List RN to PR DPJ successfully deleted',
-        'alert_success'        => 'List RN to PR DPJ successfully saved',
-        'fields'        => [
-            'id' => 'ID',
-            'code' => 'Code',
-            'notes' => 'Notes',
-            'category' => 'Category',
-            'detail' => 'Detail',
-            'created_at' => 'Created at',
-        ]
-    ],
-    'procApprovalRN2PR'    => [
-        'title'          => 'List Approval RN to PR',
-        'title_singular' => 'List Approval RN to PR',
-        'alert_success_insert' => 'List Approval RN to PR successfully saved',
-        'alert_success_update' => 'List Approval RN to PR successfully updated',
-        'alert_success_delete' => 'List Approval RN to PR successfully deleted',
-        'alert_success'        => 'List Approval RN to PR successfully saved',
-        'fields'        => [
-            'id' => 'ID',
-            'code' => 'Code',
-            'notes' => 'Notes',
-            'category' => 'Category',
-            'detail' => 'Detail',
-            'created_at' => 'Created at',
-        ]
-    ],
-    'procValidasiAset'    => [
-        'title'          => 'Validasi Aset',
-        'title_singular' => 'Validasi Aset',
-        'alert_success_insert' => 'Validasi Aset successfully saved',
-        'alert_success_update' => 'Validasi Aset successfully updated',
-        'alert_success_delete' => 'Validasi Aset successfully deleted',
-        'alert_success'        => 'Validasi Aset successfully saved',
-        'fields'        => [
-            'id' => 'ID',
-            'code' => 'Code',
-            'name' => 'Name',
-            'departemen_peminta' => 'Departemen Peminta',
-            'status' => 'Status',
-            'status_active'    => 'Active',
-            'status_inactive'    => 'Inactive',
-            'created_at' => 'Created at'
-        ]
-    ],
-    'procPR2PO'    => [
-        'title'          => 'PR to PO',
-        'title_singular' => 'PR to PO',
-        'alert_success_insert' => 'PR to PO successfully saved',
-        'alert_success_update' => 'PR to PO successfully updated',
-        'alert_success_delete' => 'PR to PO successfully deleted',
-        'alert_success'        => 'PR to PO successfully saved',
-        'fields'        => [
-            'id' => 'ID',
-            'code' => 'Code',
-            'name' => 'Name',
-            'departemen_peminta' => 'Departemen Peminta',
-            'status' => 'Status',
-            'status_active'    => 'Active',
-            'status_inactive'    => 'Inactive',
-            'created_at' => 'Created at'
-        ]
-    ],
-    'procBidding'    => [
-        'title'          => 'Bidding',
-        'title_singular' => 'Bidding',
-        'alert_success_insert' => 'Bidding successfully saved',
-        'alert_success_update' => 'Bidding successfully updated',
-        'alert_success_delete' => 'Bidding successfully deleted',
-        'alert_success'        => 'Bidding successfully saved',
-        'fields'        => [
-            'id' => 'ID',
-            'code' => 'Code',
-            'name' => 'Name',
-            'departemen_peminta' => 'Departemen Peminta',
-            'status' => 'Status',
-            'status_active'    => 'Active',
-            'status_inactive'    => 'Inactive',
-            'created_at' => 'Created at'
-        ]
-    ],
     'procVerifikasiFaktur'    => [
         'title'          => 'Verifikasi Tukar Faktur',
         'title_singular' => 'Verifikasi Tukar Faktur',

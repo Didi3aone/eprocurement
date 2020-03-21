@@ -142,7 +142,7 @@
                                 <ul class="dropdown-user">
                                     <li>
                                         <div class="dw-user-box">
-                                            <div class="u-img"><img src="<?php echo e(asset('mages/users/1.jpg')); ?>" alt="user"></div>
+                                            
                                             <div class="u-text">
                                             <h4><?php echo e(Auth::user()->nik); ?></h4>
                                         </div>
@@ -156,22 +156,9 @@
                         <!-- ============================================================== -->
                         <!-- Language -->
                         <!-- ============================================================== -->
-                        <li class="nav-item dropdown">
-                            <?php if(count(config('panel.available_languages', [])) > 1): ?>
-                                <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
-                                    <?php echo e(strtoupper(app()->getLocale())); ?>
-
+                        
                                     
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right scale-up"> 
-                                    <?php $__currentLoopData = config('panel.available_languages'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $langLocale => $langName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <a class="dropdown-item" href="<?php echo e(url()->current()); ?>?change_language=<?php echo e($langLocale); ?>">
-                                                <?php echo e(strtoupper($langLocale)); ?> (<?php echo e($langName); ?>)
-                                        </a> 
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                </div>
-                            <?php endif; ?>
-                        </li>
+                                
                     </ul>
                 </div>
             </nav>

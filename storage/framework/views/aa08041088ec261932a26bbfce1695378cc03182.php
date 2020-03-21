@@ -30,17 +30,15 @@
                             <?php endif; ?>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <div class="col-md-12">
-                            <div class="checkbox checkbox-primary pull-left p-t-0">
-                                <input id="checkbox-signup" type="checkbox">
-                                <label for="checkbox-signup"> Remember me </label>
-                            </div> 
-                        </div>
-                    </div>
+                    
                     <div class="form-group text-center m-t-20">
                         <div class="col-xs-12">
                             <button class="btn btn-success btn-lg btn-block text-uppercase waves-effect waves-light" type="submit">Log In</button>
+                        </div>
+                    </div>
+                    <div class="form-group m-b-0">
+                        <div class="col-sm-12 text-center">
+                            <p>Don't have an account? <a href="<?php echo e(route('register')); ?>" class="text-info m-l-5"><b>Sign Up</b></a></p>
                         </div>
                     </div>
                 </form>
