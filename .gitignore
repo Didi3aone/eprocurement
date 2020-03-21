@@ -4,7 +4,9 @@ yarn-error.log
 # Laravel 6
 public/xls/*
 vendor/*.*
+vendor/*
 storage/**
+storage/framework/views/*.*
 storage/logs/laravel.log
 node_modules/
 
