@@ -17,15 +17,15 @@
         </button>
     </div>
 @endif
-@can('rn_create')
+{{-- @can('rn_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
-            <a class="btn btn-success float-rigth" href="{{ route("admin.rn.create") }}">
+            <a class="btn btn-success float-rigth" href="{{ route("admin.request-note.create") }}">
                 <i class="fa fa-plus"></i> {{ trans('global.add') }} {{ trans('cruds.inputRN.title_singular') }}
             </a>
         </div>
     </div>
-@endcan
+@endcan --}}
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -62,7 +62,7 @@
                                     </td>
                                     <td>
                                         @can('purchase_request_create')
-                                            <a class="btn btn-xs btn-primary" href="{{ route('admin.rn.show', $val->id) }}">
+                                            <a class="btn btn-xs btn-primary" href="{{ route('admin.request-note.show', $val->id) }}">
                                                 <i class="fa fa-pencil"></i> Create PR
                                             </a>
                                         @endcan
@@ -104,7 +104,7 @@
                 var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
                 $.ajax({
                     type: 'POST',
-                    url: "{{ url('admin.rn.destroy') }}"+id ,
+                    url: "{{ url('admin.request-note.destroy') }}"+id ,
                     data: {_token: CSRF_TOKEN},
                     dataType: 'JSON',
                     success: function (results) {

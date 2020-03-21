@@ -18,4 +18,11 @@ class RequestNoteController extends Controller
         $rn = RequestNotesDetail::where('is_available_stock',0)->get();
         return view('admin.purchase-request.rn.index',compact('rn'));
     }
+
+    // public function create ()
+    // {
+    //     abort_if(Gate::denies('request_notes_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+    //     return view('admin.purchase-request.rn.create');
+    // }
 }

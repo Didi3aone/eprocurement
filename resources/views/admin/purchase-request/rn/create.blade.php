@@ -4,7 +4,7 @@
     <div class="col-md-5 col-8 align-self-center">
         <h3 class="text-themecolor">Issue Transaction</h3>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="javascript:void(0)">RN</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">{{ trans('cruds.inputRN.title') }}</a></li>
             <li class="breadcrumb-item active">Create</li>
         </ol>
     </div>

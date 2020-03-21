@@ -75,6 +75,8 @@ return [
             'deleted_at_helper' => '',
         ],
     ],
+
+    // purchase_request
     'purchase_request' => [
         'title' => 'Purchase Request',
         'title_singular' => 'Purchase Request',
@@ -95,6 +97,28 @@ return [
             'updated_at' => 'Updated at',
         ]
     ],
+    'approval_pr' => [
+        'title' => 'Approval Purchase Request',
+        'title_singular' => 'Approval Purchase Request',
+        'import' => 'Import Purchase Request',
+        'alert_success_insert' => 'Approval Purchase Request successfully saved',
+        'alert_success_update' => 'Approval Purchase Request successfully updated',
+        'alert_success_delete' => 'Approval Purchase Request successfully deleted',
+        'alert_success'        => 'Approval Purchase Request successfully saved',
+        'fields' => [
+            'id' => 'ID',
+            'pr_no' => 'PR No',
+            'approval_position' => 'Approval Position',
+            'nik' => 'NIK',
+            'status'    => 'Status',
+            'status_active'    => 'Active',
+            'status_inactive'    => 'Inactive',
+            'created_at' => 'Created at',
+            'updated_at' => 'Updated at',
+        ]
+    ],
+
+    // vendors
     'vendors' => [
         'title' => 'Registrasi Vendors',
         'title_singular' => 'Registrasi Vendor',
@@ -353,6 +377,24 @@ return [
         'alert_success_update' => 'Input PO successfully updated',
         'alert_success_delete' => 'Input PO successfully deleted',
         'alert_success'        => 'Input PO successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'name' => 'Name',
+            'departemen_peminta' => 'Departemen Peminta',
+            'status' => 'Status',
+            'status_active'    => 'Active',
+            'status_inactive'    => 'Inactive',
+            'created_at' => 'Created at'
+        ]
+    ],
+    'inputRN'    => [
+        'title'          => 'Input RN',
+        'title_singular' => 'Input RN',
+        'alert_success_insert' => 'Input RN successfully saved',
+        'alert_success_update' => 'Input RN successfully updated',
+        'alert_success_delete' => 'Input RN successfully deleted',
+        'alert_success'        => 'Input RN successfully saved',
         'fields'        => [
             'id' => 'ID',
             'code' => 'Code',

@@ -18,7 +18,7 @@
                     <ul aria-expanded="false" class="collapse">
                         @can('request_notes_access')
                         <li>
-                            <a href="{{ route('admin.request-note') }}" class="">
+                            <a href="{{ route('admin.request-note.index') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
                                 List Rn
                             </a>
@@ -35,11 +35,20 @@
                     <ul aria-expanded="false" class="collapse">
                         @can('purchase_request_access')
                         <li>
-                            
                             <li>
                                 <a href="" class="">
                                     <i class="fa fas fa-caret-right"></i> 
                                     List PR
+                                </a>
+                            </li>
+                        </li>
+                        @endcan
+                        @can('approval_purchase_request_access')
+                        <li>
+                            <li>
+                                <a href="{{ route('admin.approval_pr.index') }}" class="">
+                                    <i class="fa fas fa-caret-right"></i> 
+                                    Approval PR
                                 </a>
                             </li>
                         </li>
