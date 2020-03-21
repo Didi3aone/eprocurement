@@ -6,6 +6,7 @@ public/xls/*
 vendor/*.*
 vendor/*
 storage/**
+config/database.php
 storage/framework/views/*.*
 storage/logs/laravel.log
 node_modules/
