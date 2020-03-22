@@ -87,7 +87,7 @@
                             <li>
                                 <a href="#" class="">
                                     <i class="fa fas fa-caret-right"></i> 
-                                    List PR
+                                    List PO
                                 </a>
                             </li>
                         </li>
