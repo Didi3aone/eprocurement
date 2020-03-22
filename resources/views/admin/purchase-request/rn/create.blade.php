@@ -51,7 +51,6 @@
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>No</th>
                                         <th>Item Code</th>
                                         <th>Description</th>
                                         <th style="width: 10%">Qty</th>
@@ -79,10 +78,8 @@
 
 @section('scripts')
 <script>
-    let index = 1
-
     $(document).ready(function () {
-        let inc = 1
+        let index = 1
        
         $('#add_item').on('click', function (e) {
             e.preventDefault()
@@ -90,10 +87,7 @@
             const html = `
 <tr>
     <td>
-        <input type="text" class="form-control" name="rn_no[]" value="${inc}" disabled="disabled">
-    </td>
-    <td>
-        <select name="material_id[]" id="material_${inc}" class="material_id form-control"></select>
+        <select name="material_id[]" id="material_${index}" class="material_id form-control"></select>
     </td>
     <td>
         <input class="form-control" type="text" name="rn_description[]">
@@ -108,7 +102,7 @@
         <input class="form-control" type="text" name="rn_notes[]">
     </td>
     <td>
-        <a href="javascript:;" class="remove-item btn btn-danger btn-sm">
+        <a href="javascript:;" onclick="this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode)" class="remove-item btn btn-danger btn-sm">
             <i class="fa fa-times"></i> hapus
         </a>
     </td>
@@ -117,8 +111,8 @@
 
             $('#rn_items').append(html)
 
-            listMaterial($('#category').val(), inc)
-            inc++
+            listMaterial($('#category').val(), index)
+            index++
         })
 
         const url = '{{ route('admin.material.select') }}'
@@ -143,17 +137,6 @@
             const code = $(this).val()
 
             listMaterial(code, 0)
-        })
-
-        $(document).on('click', 'a.remove_item', function (e) {
-            console.log($(this))
-            e.stopPropagation()
-            e.stopImmediatePropagation()
-            e.preventDefault()
-
-            inc--
-
-            $(this).parent().parent().remove()
         })
     })
 </script>

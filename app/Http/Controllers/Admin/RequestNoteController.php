@@ -38,6 +38,17 @@ class RequestNoteController extends Controller
     public function store(Request $request)
     {
         $request_note = RequestNotes::create($request->all());
+        
+        for ($i = 0; $i < count($request->input('material_id')); $i++) {
+            $detail = new RequestNotesDetail;
+            $detail->request_id = $request_note->id;
+            $detail->material_id = $request->input('material_id')[$i];
+            $detail->rn_description = $request->input('rn_description')[$i];
+            $detail->rn_qty = $request->input('rn_qty')[$i];
+            $detail->rn_unit = $request->input('rn_unit')[$i];
+            $detail->rn_notes = $request->input('rn_notes')[$i];
+            $detail->save();
+        }
 
         return redirect()->route('admin.request-note.index')->with('status', trans('cruds.request_note.alert_success_insert'));
     }
