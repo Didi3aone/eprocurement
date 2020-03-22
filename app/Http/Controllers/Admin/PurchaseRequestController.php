@@ -298,7 +298,7 @@ class PurchaseRequestController extends Controller
         if( $request->has('purchase_id') ) {
             PurchaseRequest::where('id', $request->get('purchase_id'))
                 ->update([
-                    'approval_status' => 13
+                    'is_validate' => 1
                 ]);
             PurchaseRequestsDetail::where('purchase_id', $request->get('purchase_id'))->delete();
 

@@ -40,7 +40,7 @@
                                             <td>
                                                 <select name="is_assets[]" class="form-control">
                                                     <option value="1">Assets</option>
-                                                    <option value="2">Service</option>
+                                                    <option value="2">Non-Assets</option>
                                                 </select>
                                             </td>
                                         </tr>
