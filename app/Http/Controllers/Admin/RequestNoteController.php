@@ -42,16 +42,24 @@ class RequestNoteController extends Controller
      */
     public function store(Request $request)
     {
-        $request_note = RequestNotes::create($request->all());
+        $request_note = new RequestNotes;
+        $request_note->request_no = $request->input('request_no');
+        $request_note->notes = $request->input('notes');
+
+        $category = PurchasingGroup::where('code', $request->input('category_id'));
+        $category_id = !empty($category->first()) ? $category->first()->id : null;
+
+        $request_note->category_id = $category_id;
+        $request_note->save();
         
         for ($i = 0; $i < count($request->input('material_id')); $i++) {
             $detail = new RequestNotesDetail;
             $detail->request_id = $request_note->id;
             $detail->material_id = $request->input('material_id')[$i];
-            $detail->rn_description = $request->input('rn_description')[$i];
-            $detail->rn_qty = $request->input('rn_qty')[$i];
-            $detail->rn_unit = $request->input('rn_unit')[$i];
-            $detail->rn_notes = $request->input('rn_notes')[$i];
+            $detail->description = $request->input('rn_description')[$i];
+            $detail->qty = $request->input('rn_qty')[$i];
+            $detail->unit = $request->input('rn_unit')[$i];
+            $detail->notes = $request->input('rn_notes')[$i];
             $detail->save();
         }
 

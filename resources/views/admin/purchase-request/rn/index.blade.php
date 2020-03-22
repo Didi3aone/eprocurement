@@ -21,7 +21,7 @@
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
             <a class="btn btn-success float-rigth" href="{{ route("admin.request-note.create") }}">
-                <i class="fa fa-plus"></i> {{ trans('global.add') }} {{ trans('cruds.inputRN.title_singular') }}
+                <i class="fa fa-plus"></i> {{ trans('global.add') }} {{ trans('cruds.request-note.title_singular') }}
             </a>
         </div>
     </div>

@@ -399,7 +399,7 @@ return [
             'id' => 'ID',
             'request_no' => 'Request No',
             'notes' => 'Notes',
-            'category' => 'Category',
+            'category_id' => 'Category',
             'created_at' => 'Created at'
         ]
     ],

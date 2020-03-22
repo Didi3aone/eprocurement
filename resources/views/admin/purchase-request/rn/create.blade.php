@@ -26,7 +26,7 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.request-note.fields.notes') }}</label>
-                        <input type="text" class="form-control form-control-line {{ $errors->has('notes') ? 'is-invalid' : '' }}" notes="notes" value="{{ old('notes', '') }}"> 
+                        <input type="text" class="form-control form-control-line {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" value="{{ old('notes', '') }}"> 
                         @if($errors->has('notes'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('notes') }}
@@ -34,15 +34,15 @@
                         @endif
                     </div>
                     <div class="form-group">
-                        <label>{{ trans('cruds.request-note.fields.category') }}</label>
-                        <select class="form-control select2 {{ $errors->has('category') ? 'is-invalid' : '' }}" name="category" id="category" required>
+                        <label>{{ trans('cruds.request-note.fields.category_id') }}</label>
+                        <select class="form-control select2 {{ $errors->has('category_id') ? 'is-invalid' : '' }}" name="category_id" id="category_id" required>
                             @foreach($purchasingGroups as $id => $pg)
-                                <option value="{{ $pg->code }}" {{ in_array($pg->code, old('category', [])) ? 'selected' : '' }}>{{ $pg->code }} - {{ $pg->description }}</option>
+                                <option value="{{ $pg->code }}" {{ in_array($pg->code, old('category_id', [])) ? 'selected' : '' }}>{{ $pg->code }} - {{ $pg->description }}</option>
                             @endforeach
                         </select>
-                        @if($errors->has('category'))
+                        @if($errors->has('category_id'))
                             <div class="invalid-feedback">
-                                {{ $errors->first('category') }}
+                                {{ $errors->first('category_id') }}
                             </div>
                         @endif
                     </div>
@@ -111,7 +111,7 @@
 
             $('#rn_items').append(html)
 
-            listMaterial($('#category').val(), index)
+            listMaterial($('#category_id').val(), index)
             index++
         })
 
@@ -131,7 +131,7 @@
             })
         }
 
-        $('#category').on('change', function (e) {
+        $('#category_id').on('change', function (e) {
             e.preventDefault()
 
             const code = $(this).val()
