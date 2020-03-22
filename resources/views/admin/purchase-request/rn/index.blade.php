@@ -38,13 +38,16 @@
 
                             </th>
                             <th>
-                                Code
+                                Request No.
                             </th>
                             <th>
                                 Notes
                             </th>
                             <th>
-                                &nbsp;
+                                Date
+                            </th>
+                            <th>
+                                &nbsp; 
                             </th>
                         </tr>
                         </thead>
@@ -55,14 +58,17 @@
                                         {{ ($key + 1) }}
                                     </td>
                                     <td>
-                                        {{ $val->code ?? '' }}
+                                        {{ $val->request_no ?? '' }}
                                     </td>
                                     <td>
                                         {{ $val->notes ?? '' }}
                                     </td>
                                     <td>
+                                        {{ $val->created_at ?? '' }}
+                                    </td>
+                                    <td>
                                         @can('purchase_request_create')
-                                            <a class="btn btn-xs btn-primary" href="{{ route('admin.request-note.show', $val->id) }}">
+                                            <a class="btn btn-xs btn-primary" href="{{ route('admin.purchase-request-create-from-rn', $val->id) }}">
                                                 <i class="fa fa-pencil"></i> Create PR
                                             </a>
                                         @endcan

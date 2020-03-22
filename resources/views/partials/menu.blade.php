@@ -33,7 +33,7 @@
                         <span class="hide-menu"> {{ trans('cruds.purchase_request.title') }} </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">
-                        @can('purchase_request_access')
+                        {{-- @can('purchase_request_access')
                         <li>
                             <li>
                                 <a href="{{ route('admin.request-note.index') }}" class="">
@@ -42,11 +42,11 @@
                                 </a>
                             </li>
                         </li>
-                        @endcan
+                        @endcan --}}
                         @can('purchase_request_access')
                         <li>
                             <li>
-                                <a href="" class="">
+                                <a href="#" class="">
                                     <i class="fa fas fa-caret-right"></i> 
                                     List PR
                                 </a>

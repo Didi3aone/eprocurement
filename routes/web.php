@@ -129,6 +129,9 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::delete('users/destroy', 'UsersController@massDestroy')->name('users.massDestroy');
     Route::resource('users', 'UsersController');
 
+    Route::get('purchase-request-create-from-rn/{id}','PurchaseRequestController@create_from_rn')->name('purchase-request-create-from-rn');
+    Route::resource('purchase-request', 'PurchaseRequestController');
+
     //purchase request
     // Route::get('request-note','RequestNoteController@index')->name('request-note');
 
