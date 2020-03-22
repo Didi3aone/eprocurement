@@ -403,6 +403,21 @@ return [
             'created_at' => 'Created at'
         ]
     ],
+    'purchase-request'    => [
+        'title'          => 'Purchase Request',
+        'title_singular' => 'Purchase Request',
+        'alert_success_insert' => 'Purchase Request successfully saved',
+        'alert_success_update' => 'Purchase Request successfully updated',
+        'alert_success_delete' => 'Purchase Request successfully deleted',
+        'alert_success'        => 'Purchase Request successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'request_no' => 'Request No',
+            'date' => 'Date',
+            'notes' => 'Notes',
+            'created_at' => 'Created at'
+        ]
+    ],
     'inputBidding'    => [
         'title'          => 'Input Bidding',
         'title_singular' => 'Input Bidding',
