@@ -16,13 +16,18 @@ class RequestNoteController extends Controller
     {
         abort_if(Gate::denies('request_notes_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $rn = RequestNotesDetail::where('is_available_stock',0)->get();
+        $rn = RequestNotes::with([
+                'requestDetail' => function ($q) {
+                    $q->where('is_available_stock',3);
+                }
+            ])
+            ->get();
         return view('admin.purchase-request.rn.index',compact('rn'));
     }
 
     public function create ()
     {
-        abort_if(Gate::denies('request_notes_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        // abort_if(Gate::denies('request_notes_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $purchasingGroups = PurchasingGroup::all();
 

@@ -8,6 +8,6 @@ class RequestNotesDetail extends Model
 {
     public function getRnNo()
     {
-    	return $this->hasOne(\App\Models\RequestNote::class,'id','request_id');
+    	return $this->hasOne(\App\Models\RequestNotes::class,'id','request_id');
     }
 }
