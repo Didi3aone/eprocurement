@@ -93,7 +93,7 @@
         <input type="text" class="form-control" name="rn_no[]" value="${inc}" disabled="disabled">
     </td>
     <td>
-        <select name="material_id[]" class="material_id form-control"></select>
+        <select name="material_id[]" id="material_${inc}" class="material_id form-control"></select>
     </td>
     <td>
         <input class="form-control" type="text" name="rn_description[]">
@@ -115,16 +115,15 @@
 </tr>
             `
 
-            inc++
-
             $('#rn_items').append(html)
 
-            listMaterial($('#category').val())
+            listMaterial($('#category').val(), inc)
+            inc++
         })
 
         const url = '{{ route('admin.material.select') }}'
 
-        function listMaterial (code) {
+        function listMaterial (code, i) {
             $.getJSON(url, { code: code }, function (items) {
                 var newOptions = '<option value="">-- Select --</option>';
 
@@ -132,7 +131,9 @@
                     newOptions += '<option value="'+ id +'">'+ items[id] +'</option>';
                 }
 
-                $('.material_id').html(newOptions)
+                if (i > 0) {
+                    $('#material_' + i).html(newOptions)
+                }
             })
         }
 
@@ -141,7 +142,7 @@
 
             const code = $(this).val()
 
-            listMaterial(code)
+            listMaterial(code, 0)
         })
 
         $(document).on('click', 'a.remove_item', function (e) {
