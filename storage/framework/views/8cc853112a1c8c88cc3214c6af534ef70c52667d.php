@@ -27,6 +27,7 @@
     <link href="<?php echo e(asset('css/colors/green.css')); ?>" id="theme" rel="stylesheet">
     <link href="<?php echo e(asset('css/select2.min.css')); ?>" rel="stylesheet"/>
     <link href="<?php echo e(asset('plugins/sweetalert/sweetalert.css')); ?>" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -222,7 +223,8 @@
     <!-- ============================================================== -->
     <!-- All Jquery -->
     <!-- ============================================================== -->
-    <script src="<?php echo e(asset('plugins/jquery/jquery.min.js')); ?>"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    
     <!-- Bootstrap tether Core JavaScript -->
     <script src="<?php echo e(asset('plugins/bootstrap/js/popper.min.js')); ?>"></script>
     <script src="<?php echo e(asset('plugins/bootstrap/js/bootstrap.min.js')); ?>"></script>
@@ -265,6 +267,7 @@
     <script src="<?php echo e(asset('js/select2.full.min.js')); ?>"></script>
     <script src="<?php echo e(asset('plugins/sweetalert/sweetalert.min.js')); ?>"></script>
     <script src="<?php echo e(asset('plugins/sweetalert/jquery.sweet-alert.custom.js')); ?>"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script src="<?php echo e(asset('js/global.js')); ?>"></script>
     <?php echo $__env->yieldContent('scripts'); ?>
 </body>

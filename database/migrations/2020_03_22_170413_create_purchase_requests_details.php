@@ -1,0 +1,37 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreatePurchaseRequestsDetails extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('purchase_requests_details', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->integer('purchase_id')->unsigned();
+            $table->string('description');
+            $table->bigInteger('qty');
+            $table->string('unit');
+            $table->string('notes');
+            $table->bigInteger('price');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('purchase_requests_details');
+    }
+}

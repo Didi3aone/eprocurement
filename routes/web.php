@@ -130,11 +130,15 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::resource('users', 'UsersController');
 
     Route::get('purchase-request-create-from-rn/{id}','PurchaseRequestController@create_from_rn')->name('purchase-request-create-from-rn');
+    Route::get('purchase-request-list-approval','PurchaseRequestController@listApproval')->name('purchase-request-list-approval');
+    Route::get('purchase-request-list-validate','PurchaseRequestController@listValidate')->name('purchase-request-list-validate');
     Route::post('purchase-request-save-from-rn','PurchaseRequestController@save_from_rn')->name('purchase-request-save-from-rn');
+    Route::post('purchase-request-save-validate-pr','PurchaseRequestController@saveValidate')->name('purchase-request-save-validate-pr');
+    Route::put('purchase-request-approval','PurchaseRequestController@approvalPr')->name('purchase-request-approval');
     Route::resource('purchase-request', 'PurchaseRequestController');
 
     //purchase request
-    // Route::get('request-note','RequestNoteController@index')->name('request-note');
+    Route::get('request-note','RequestNoteController@index')->name('request-note');
 
 });
 

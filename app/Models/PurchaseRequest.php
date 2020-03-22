@@ -6,10 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class PurchaseRequest extends Model
 {
-    public $table = 'purchase_requests';
-
+    protected $fillable = [
+        'id',
+        'request_no',
+        'notes',
+        'request_date',
+        'total',
+        'approval_status',
+        'status',
+        'created_at',
+        'updated_at'
+    ];
+    
     public function purchaseDetail()
     {
-        return $this->hasMany(\App\Models\PurchaseRequestDetail::class, 'id', 'purchase_id');
+        return $this->hasMany(\App\Models\PurchaseRequestsDetail::class, 'id', 'purchase_id');
     }
 }

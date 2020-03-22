@@ -8,7 +8,6 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\Role;
 use App\Models\User;
-use App\Models\Department;
 use Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,9 +28,8 @@ class UsersController extends Controller
         abort_if(Gate::denies('user_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $roles = Role::all()->pluck('title', 'id');
-        $department = Department::all()->pluck('name', 'id');
 
-        return view('admin.users.create', compact('roles','department'));
+        return view('admin.users.create', compact('roles'));
     }
 
     public function store(StoreUserRequest $request)
@@ -49,7 +47,6 @@ class UsersController extends Controller
         $roles = Role::all()->pluck('title', 'id');
 
         $user->load('roles');
-        $department = Department::all()->pluck('name', 'id');
 
         return view('admin.users.edit', compact('roles', 'user', 'department'));
     }

@@ -18,7 +18,7 @@
                     <ul aria-expanded="false" class="collapse">
                         @can('request_notes_access')
                         <li>
-                            <a href="{{ route('admin.request-note.index') }}" class="">
+                            <a href="{{ route('admin.request-note') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
                                 List Rn
                             </a>
@@ -46,19 +46,29 @@
                         @can('purchase_request_access')
                         <li>
                             <li>
-                                <a href="#" class="">
+                                <a href="{{ route('admin.purchase-request.index') }}" class="">
                                     <i class="fa fas fa-caret-right"></i> 
                                     List PR
                                 </a>
                             </li>
                         </li>
                         @endcan
-                        @can('approval_purchase_request_access')
+                        @can('purchase_request_approval_access')
                         <li>
                             <li>
-                                <a href="{{ route('admin.approval_pr.index') }}" class="">
+                                <a href="{{ route('admin.purchase-request-list-approval') }}" class="">
                                     <i class="fa fas fa-caret-right"></i> 
                                     Approval PR
+                                </a>
+                            </li>
+                        </li>
+                        @endcan
+                        @can('purchase_request_validate_access')
+                        <li>
+                            <li>
+                                <a href="{{ route('admin.purchase-request-list-validate') }}" class="">
+                                    <i class="fa fas fa-caret-right"></i> 
+                                    Validate Assets PR
                                 </a>
                             </li>
                         </li>
@@ -75,7 +85,7 @@
                         <li>
                             
                             <li>
-                                <a href="" class="">
+                                <a href="#" class="">
                                     <i class="fa fas fa-caret-right"></i> 
                                     List PR
                                 </a>

@@ -68,7 +68,7 @@ return [
             'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST_PGSQL', '192.168.1.37'),
             'port' => env('DB_PORT_PGSQL', '5432'),
-            'database' => env('DB_DATABASE_PGSQL', 'db_procurement'),
+            'database' => env('DB_DATABASE_PGSQL', 'db_eprocurement'),
             'username' => env('DB_USERNAME_PGSQL', 'postgres'),
             'password' => env('DB_PASSWORD_PGSQL', 'employee2020'),
             'charset' => 'utf8',

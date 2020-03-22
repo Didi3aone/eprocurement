@@ -14,7 +14,7 @@ class AlterRequestNotesAddField extends Migration
     public function up()
     {
         Schema::table('request_notes', function (Blueprint $table) {
-            $table->integer('dept_id')->unsigned()->nullable();
+            $table->string('dept_id')->unsigned()->nullable();
             $table->string('purchasing_group_id')->unsigned()->nullable();
         });
     }

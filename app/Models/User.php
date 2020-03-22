@@ -67,9 +67,4 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Role::class);
     }
-
-    public function department()
-    {
-        return $this->hasOne(\App\Models\Department::class,'code','department_id');
-    }
 }

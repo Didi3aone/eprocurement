@@ -30,13 +30,33 @@
                         <span class="hide-menu"> <?php echo e(trans('cruds.purchase_request.title')); ?> </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">
+                        
                         <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('purchase_request_access')): ?>
                         <li>
-                            
                             <li>
-                                <a href="" class="">
+                                <a href="<?php echo e(route('admin.purchase-request.index')); ?>" class="">
                                     <i class="fa fas fa-caret-right"></i> 
                                     List PR
+                                </a>
+                            </li>
+                        </li>
+                        <?php endif; ?>
+                        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('purchase_request_approval_access')): ?>
+                        <li>
+                            <li>
+                                <a href="<?php echo e(route('admin.purchase-request-list-approval')); ?>" class="">
+                                    <i class="fa fas fa-caret-right"></i> 
+                                    Approval PR
+                                </a>
+                            </li>
+                        </li>
+                        <?php endif; ?>
+                        <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('purchase_request_validate_access')): ?>
+                        <li>
+                            <li>
+                                <a href="<?php echo e(route('admin.purchase-request-list-validate')); ?>" class="">
+                                    <i class="fa fas fa-caret-right"></i> 
+                                    Validate Assets PR
                                 </a>
                             </li>
                         </li>
@@ -53,7 +73,7 @@
                         <li>
                             
                             <li>
-                                <a href="" class="">
+                                <a href="#" class="">
                                     <i class="fa fas fa-caret-right"></i> 
                                     List PR
                                 </a>

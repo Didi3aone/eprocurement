@@ -62,19 +62,6 @@
                             </div>
                         @endif
                     </div>
-                    <div class="form-group">
-                        <label>{{ trans('cruds.user.fields.department_id') }}</label>
-                        <select class="form-control select2 {{ $errors->has('roles') ? 'is-invalid' : '' }}" name="department_id" id="department_id" required>
-                            @foreach($department as $id => $dept)
-                                <option value="{{ $id }}" {{ in_array($id, old('department_id', [])) ? 'selected' : '' }}>{{ $dept }}</option>
-                            @endforeach
-                        </select>
-                        @if($errors->has('roles'))
-                            <div class="invalid-feedback">
-                                {{ $errors->first('roles') }}
-                            </div>
-                        @endif
-                    </div>
                     <div class="form-actions">
                         <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.save') }}</button>
                         <a href="{{ route('admin.users.index') }}" type="button" class="btn btn-inverse">Cancel</a>

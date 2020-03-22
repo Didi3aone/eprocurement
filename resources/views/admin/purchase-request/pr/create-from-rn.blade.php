@@ -60,7 +60,7 @@
                                         <tr>
                                             <td><input type="text" class="form-control" name="rn_description[]" readonly value="{{ $value->description }}"></td>
                                             <td><input type="number" class="form-control" name="rn_qty[]" readonly value="{{ $value->qty }}" required></td>
-                                            <td><input type="number" class="form-control" name="rn_unit[]" readonly value="{{ $value->unit }}" required></td>
+                                            <td><input type="text" class="form-control" name="rn_unit[]" readonly value="{{ $value->unit }}" required></td>
                                             <td><input type="text" class="form-control" name="rn_notes[]" readonly value="{{ $value->notes }}"></td>
                                             <td><input type="number" class="form-control" name="rn_price[]" readonly value="{{ $value->price }}" required></td>
                                         </tr>

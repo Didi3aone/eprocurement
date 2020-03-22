@@ -5,7 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PurchaseRequest;
-use App\Models\PurchaseRequestDetail;
+use App\Models\PurchaseRequestsDetail;
+use App\Models\PurchaseRequestsApproval;
+use App\Models\RequestNotes;
+use App\Models\RequestNotesDetail;
+use App\Models\WorkFlowApproval;
+use App\Models\WorkFlow;
+use DB,Gate;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Auth;
 
 class PurchaseRequestController extends Controller
 {
@@ -18,14 +26,9 @@ class PurchaseRequestController extends Controller
     {
         abort_if(Gate::denies('purchase_request_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $pr = PurchaseRequest::with([
-                'purchaseRequestDetail' => function ($q) {
-                    $q->where('is_available_stock', 3);
-                }
-            ])
-            ->get();
+        $pr = PurchaseRequest::where('status',0)->get();
 
-        return view('admin.purchase-request.index', compact('pr'));
+        return view('admin.purchase-request.pr.index', compact('pr'));
     }
 
     /**
@@ -57,7 +60,9 @@ class PurchaseRequestController extends Controller
      */
     public function show($id)
     {
-        //
+        $pr = PurchaseRequestsDetail::where('purchase_id',$id)->get();
+
+        return view('admin.purchase-request.pr.show',compact('pr'));
     }
 
     /**
@@ -113,46 +118,203 @@ class PurchaseRequestController extends Controller
 
     public function save_from_rn (Request $request)
     {
-        $purchaseRequest = new PurchaseRequest;
-        $purchaseRequest->request_no = $request->input('request_no');
-        $purchaseRequest->date = $request->input('date');
-        $purchaseRequest->notes = $request->input('notes');
-        
-        $firstApproval = 10000000;
-        $secondApproval = 100000000;
-        $thirdApproval = 1000000000;
+        try {
+            DB::beginTransaction();
+            $purchaseRequest = new PurchaseRequest;
+            $purchaseRequest->request_no   = $request->input('request_no');
+            $purchaseRequest->request_date = $request->input('date');
+            $purchaseRequest->notes        = $request->input('notes');
+            $purchaseRequest->total        = $request->input('total');
+            $purchaseRequest->save();
 
-        if (0 <= $firstApproval) {
-            $approvalPosition = 1;
-            $rateFrom = 0;
-            $rateTo = $firstApproval;
-        } else if ($firstApproval <= $secondApproval) {
-            $approvalPosition = 2;
-            $rateFrom = $firstApproval;
-            $rateTo = $secondApproval;
-        } else if ($secondApproval <= $thirdApproval) {
-            $approvalPosition = 3;
-            $rateFrom = $secondApproval;
-            $rateTo = $thirdApproval;
-        }
-        
-        $purchaseRequest->rate_from = $rateFrom;
-        $purchaseRequest->rate_to = $rateTo;
-        $purchaseRequest->approval_position = $approvalPosition;
-        $purchaseRequest->total = $request->input('total');
-        $purchaseRequest->save();
+            $total = $request->input('total');
 
-        for ($i = 0; $i < count($request->input('price')); $i++) {
-            $purchaseRequestDetail = new PurchaseRequestDetail;
-            $purchaseRequestDetail->purchase_id = $purchaseRequest->id;
-            $purchaseRequestDetail->description = $request->input('rn_description')[$i];
-            $purchaseRequestDetail->qty = $request->input('rn_qty')[$i];
-            $purchaseRequestDetail->unit = $request->input('rn_unit')[$i];
-            $purchaseRequestDetail->notes = $request->input('rn_notes')[$i];
-            $purchaseRequestDetail->price = $request->input('rn_price')[$i];
-            $purchaseRequestDetail->save();
+            $workFlow = WorkFlow::get();
+
+            //update table rn
+            RequestNotes::where('request_no',$request->request_no)->update([
+                'is_pr' => 1
+            ]);
+
+            if( ($total >= 0) && ($total <= 200000000) ) {
+                $workFlowAppr = WorkFlowApproval::where('workflow_id',1)->get();
+                foreach( $workFlowAppr as $rows ) {
+                    $flag = 0;
+                    if( $rows->approval_position == 1 ) {
+                        $flag = 1;
+                    }
+
+                    PurchaseRequestsApproval::create([
+                        'nik'                   => $rows->nik,
+                        'approval_position'     => $rows->approval_position,
+                        'status'                => 0,
+                        'purchase_request_id'   => $purchaseRequest->id,
+                        'flag'                  => $flag,
+                    ]);
+                }
+            } else if( $total >= 200000000 && $total <= 1000000000) {
+                $workFlowAppr = WorkFlowApproval::where('workflow_id',2)->get();
+                foreach( $workFlowAppr as $rows ) {
+                    $flag = 0;
+                    if( $rows->approval_position == 1 ) {
+                        $flag = 1;
+                    }
+
+                    PurchaseRequestsApproval::create([
+                        'nik'                   => $rows->nik,
+                        'approval_position'     => $rows->approval_position,
+                        'status'                => 0,
+                        'purchase_request_id'   => $purchaseRequest->id,
+                        'flag'                  => $flag,
+                    ]);
+                }
+            } else {
+                $workFlowAppr = WorkFlowApproval::where('workflow_id',3)->get();
+                foreach( $workFlowAppr as $rows ) {
+                    $flag = 0;
+                    if( $rows->approval_position == 1 ) {
+                        $flag = 1;
+                    }
+
+                    PurchaseRequestsApproval::create([
+                        'nik'                   => $rows->nik,
+                        'approval_position'     => $rows->approval_position,
+                        'status'                => 0,
+                        'purchase_request_id'   => $purchaseRequest->id,
+                        'flag'                  => $flag,
+                    ]);
+                }
+            }
+
+            for ($i = 0; $i < count($request->get('rn_description')); $i++) {
+                $purchaseRequestDetail = new PurchaseRequestsDetail;
+                $purchaseRequestDetail->purchase_id = $purchaseRequest->id;
+                $purchaseRequestDetail->description = $request->input('rn_description')[$i];
+                $purchaseRequestDetail->qty = $request->input('rn_qty')[$i];
+                $purchaseRequestDetail->unit = $request->input('rn_unit')[$i];
+                $purchaseRequestDetail->notes = $request->input('rn_notes')[$i];
+                $purchaseRequestDetail->price = $request->input('rn_price')[$i];
+                $purchaseRequestDetail->save();
+            }
+
+            DB::commit();
+
+        } catch (\Throwable $th) {
+            //throw $th;
+            echo $th;
+            DB::rollback();
+            return redirect()->route('admin.purchase-request.index')->withInputs();
         }
 
         return redirect()->route('admin.purchase-request.index')->with('status', trans('cruds.purchase-request.alert_success_insert'));
+    }
+
+    public function listApproval()
+    {
+        abort_if(Gate::denies('purchase_request_approval_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        
+        $pr = PurchaseRequestsApproval::with('getPurchaseRequest')
+                ->where('nik',Auth::user()->nik)->where('flag',1)->get();
+
+        return view('admin.purchase-request.pr.approval', compact('pr'));
+    }
+
+    public function listValidate()
+    {
+        abort_if(Gate::denies('purchase_request_approval_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        
+        $pr = PurchaseRequest::where('status',0)->get();
+
+        return view('admin.purchase-request.pr.validate', compact('pr'));
+    }
+
+    public function approvalPr(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $posisi = PurchaseRequestsApproval::where('id',$request->id)->first();
+
+            $total = PurchaseRequestsApproval::where('purchase_request_id',$request->req_id)
+                        ->get();
+                        // dd($total);
+            $dt = [];
+            if( $posisi->approval_position == count($total) ) {
+                PurchaseRequestsApproval::where('id',$request->id)->update([
+                    'status' => 1,
+                    'approve_date' => date('Y-m-d H:i:s'),
+                    'flag' => 2
+                ]);
+                PurchaseRequest::where('id', $request->req_id)
+                ->update([
+                    'approval_status' => 12
+                ]);
+                
+            } else if( $posisi->approval_position < count($total) ) {
+                $posisi = $posisi->approval_position + 1;
+                // dd($posisi);
+                PurchaseRequestsApproval::where('purchase_request_id',$request->req_id)
+                    ->where('approval_position', $posisi)
+                        ->update([
+                        'status' => 0,
+                        'flag' => 1,
+                    ]);
+                PurchaseRequest::where('id', $request->req_id)
+                    ->update([
+                        'approval_status' => 11
+                    ]);
+            }
+
+            $updates = PurchaseRequestsApproval::where('id',$request->id)->update([
+                'status' => 1,
+                'flag' => 2,
+                'approve_date' => date('Y-m-d H:i:s'),
+            ]);
+
+            DB::commit();
+            // dd($updates);
+            if ($updates == 1) {
+                $success = true;
+                $message = "Purchase request has been approved";
+            } else {
+                $success = false;
+                $message = "Purchase not found";
+            }
+        } catch (\Exception $th) {
+            //throw $th;
+            $success = false;
+            $message = "error db".$th;
+            DB::rollback();
+        }
+        //  Return response
+        return response()->json([
+            'success' => $success,
+            'message' => $message,
+        ]);
+        
+    }
+
+    public function saveValidate(Request $request)
+    {
+        if( $request->has('purchase_id') ) {
+            PurchaseRequest::where('id', $request->get('purchase_id'))
+                ->update([
+                    'approval_status' => 13
+                ]);
+            PurchaseRequestsDetail::where('purchase_id', $request->get('purchase_id'))->delete();
+
+            for ($i = 0; $i < count($request->get('rn_description')); $i++) {
+                $purchaseRequestDetail = new PurchaseRequestsDetail;
+                $purchaseRequestDetail->purchase_id = $request->get('purchase_id');
+                $purchaseRequestDetail->description = $request->input('rn_description')[$i];
+                $purchaseRequestDetail->qty = $request->input('rn_qty')[$i];
+                $purchaseRequestDetail->unit = $request->input('rn_unit')[$i];
+                $purchaseRequestDetail->notes = $request->input('rn_notes')[$i];
+                $purchaseRequestDetail->price = $request->input('rn_price')[$i];
+                $purchaseRequestDetail->is_assets = $request->input('is_assets')[$i];
+                $purchaseRequestDetail->save();
+            }
+        }
+
+        return redirect()->route('admin.purchase-request-list-validate')->with('status', 'Validate successfuly saved');
     }
 }
