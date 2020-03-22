@@ -388,21 +388,18 @@ return [
             'created_at' => 'Created at'
         ]
     ],
-    'inputRN'    => [
-        'title'          => 'Input RN',
-        'title_singular' => 'Input RN',
-        'alert_success_insert' => 'Input RN successfully saved',
-        'alert_success_update' => 'Input RN successfully updated',
-        'alert_success_delete' => 'Input RN successfully deleted',
-        'alert_success'        => 'Input RN successfully saved',
+    'request-note'    => [
+        'title'          => 'Request Note',
+        'title_singular' => 'Request Note',
+        'alert_success_insert' => 'Request Note successfully saved',
+        'alert_success_update' => 'Request Note successfully updated',
+        'alert_success_delete' => 'Request Note successfully deleted',
+        'alert_success'        => 'Request Note successfully saved',
         'fields'        => [
             'id' => 'ID',
-            'code' => 'Code',
-            'name' => 'Name',
-            'departemen_peminta' => 'Departemen Peminta',
-            'status' => 'Status',
-            'status_active'    => 'Active',
-            'status_inactive'    => 'Inactive',
+            'request_no' => 'Request No',
+            'notes' => 'Notes',
+            'category' => 'Category',
             'created_at' => 'Created at'
         ]
     ],

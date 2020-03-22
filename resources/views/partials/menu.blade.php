@@ -36,6 +36,16 @@
                         @can('purchase_request_access')
                         <li>
                             <li>
+                                <a href="{{ route('admin.request-note.index') }}" class="">
+                                    <i class="fa fas fa-caret-right"></i> 
+                                    RN to PR
+                                </a>
+                            </li>
+                        </li>
+                        @endcan
+                        @can('purchase_request_access')
+                        <li>
+                            <li>
                                 <a href="" class="">
                                     <i class="fa fas fa-caret-right"></i> 
                                     List PR
