@@ -101,19 +101,19 @@
                                         {{ $val->description ?? '' }}
                                     </td>
                                     <td>
-                                        {{ isset($val->material_group->code) ? $val->material_group->code . ' - ' . $val->material_group->description : '' }}
+                                        {{ isset($val->material_group) ? $val->material_group->code . ' - ' . $val->material_group->description : '' }}
                                     </td>
                                     <td>
-                                        {{ isset($val->material_type->code) ? $val->material_type->code . ' - ' . $val->material_type->description : '' }}
+                                        {{ isset($val->material_type) ? $val->material_type->code . ' - ' . $val->material_type->description : '' }}
                                     </td>
                                     <td>
-                                        {{ isset($val->plant->code) ? $val->plant->code . ' - ' . $val->plant->description : '' }}
+                                        {{ isset($val->plant) ? $val->plant->code . ' - ' . $val->plant->description : '' }}
                                     </td>
                                     <td>
-                                        {{ isset($val->purchasing_group->code) ? $val->purchasing_group->code . ' - ' . $val->purchasing_group->description : '' }}
+                                        {{ isset($val->purchasing_group) ? $val->purchasing_group->code . ' - ' . $val->purchasing_group->description : '' }}
                                     </td>
                                     <td>
-                                        {{ isset($val->profit_center->code) ? $val->profit_center->code . ' - ' . $val->profit_center->description : '' }}
+                                        {{ isset($val->profit_center) ? $val->profit_center->code . ' - ' . $val->profit_center->description : '' }}
                                     </td>
                                     <td>
                                         @can('material_show')
