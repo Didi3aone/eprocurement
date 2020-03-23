@@ -80,11 +80,9 @@ class PurchaseOrderController extends Controller
      */
     public function show($id)
     {
-        abort_if(Gate::denies('purchase_order_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
         $purchaseOrder = PurchaseOrder::findOrFail($id);
 
-        return view('admin.purchase-order.show', compact('profitCenter'));
+        return view('admin.purchase-order.show', compact('purchaseOrder'));
     }
 
     /**

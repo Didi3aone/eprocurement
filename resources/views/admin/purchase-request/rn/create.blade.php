@@ -25,7 +25,7 @@
                         @endif
                     </div>
                     <div class="form-group">
-                        <label>{{ trans('cruds.request-note.fields.notes') }}</label>
+                        <label>Request Date</label>
                         <input type="text" class="form-control form-control-line {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" value="{{ old('notes', '') }}"> 
                         @if($errors->has('notes'))
                             <div class="invalid-feedback">

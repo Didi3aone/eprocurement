@@ -59,9 +59,14 @@
                                     <td>{{ $value->request_date }}</td>
                                     <td>{{ $value->total }}</td>
                                     <td>
+                                        @if( $value->is_validate == 1 && $value->approval_status == 12)
                                         <a class="open_modal_bidding btn btn-xs btn-success" href="{{ route('admin.purchase-order-create-po',$value->id) }}" >
                                             <i class="fa fa-truck"></i> Create PO
                                         </a>
+                                        @endif
+                                        <a class="open_modal_bidding btn btn-xs btn-info" href="{{ route('admin.purchase-request-show',$value->id) }}" >
+                                            <i class="fa fa-eye"></i> Show
+                                        </a> 
                                     </td>
                                 </tr>
                             @endforeach

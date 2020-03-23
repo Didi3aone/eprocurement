@@ -136,6 +136,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::post('purchase-request-save-from-rn','PurchaseRequestController@save_from_rn')->name('purchase-request-save-from-rn');
     Route::post('purchase-request-save-validate-pr','PurchaseRequestController@saveValidate')->name('purchase-request-save-validate-pr');
     Route::put('purchase-request-approval','PurchaseRequestController@approvalPr')->name('purchase-request-approval');
+    Route::get('purchase-request-show/{id}','PurchaseRequestController@showDetail')->name('purchase-request-show');
     Route::resource('purchase-request', 'PurchaseRequestController');
 
     // request note

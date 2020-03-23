@@ -17,7 +17,7 @@
                     @csrf
                     <div class="form-group">
                         <label>{{ trans('cruds.request-note.fields.request_no') }}</label>
-                        <input type="text" class="form-control form-control-line {{ $errors->has('request_no') ? 'is-invalid' : '' }}" name="request_no" value="{{ $rn->request_no ?? old('request_no', '') }}"> 
+                        <input type="text" class="form-control form-control-line {{ $errors->has('request_no') ? 'is-invalid' : '' }}" name="request_no" readonly value="{{ $rn->request_no ?? old('request_no', '') }}"> 
                         @if($errors->has('request_no'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('request_no') }}
@@ -25,7 +25,7 @@
                         @endif
                     </div>
                     <div class="form-group">
-                        <label>{{ trans('cruds.purchase-request.fields.date') }}</label>
+                        <label>{{ 'Request Date' }} *</label>
                         <input type="text" class="form-control datepicker form-control-line {{ $errors->has('date') ? 'is-invalid' : '' }}" name="date" value="{{ $rn->date ?? old('date', '') }}"> 
                         @if($errors->has('date'))
                             <div class="invalid-feedback">
@@ -34,7 +34,7 @@
                         @endif
                     </div>
                     <div class="form-group">
-                        <label>{{ trans('cruds.purchase-request.fields.notes') }}</label>
+                        <label>{{ trans('cruds.purchase-request.fields.notes') }} *</label>
                         <input type="text" class="form-control form-control-line {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" value="{{ old('notes', '') }}"> 
                         @if($errors->has('notes'))
                             <div class="invalid-feedback">

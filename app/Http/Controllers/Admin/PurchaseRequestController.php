@@ -317,4 +317,19 @@ class PurchaseRequestController extends Controller
 
         return redirect()->route('admin.purchase-request-list-validate')->with('status', 'Validate successfuly saved');
     }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showDetail($id)
+    {
+        $prDetail = PurchaseRequestsDetail::where('purchase_id', $id)->get();
+        $pr       = PurchaseRequest::find($id);
+        $papproval = PurchaseRequestsApproval::where('purchase_request_id',$id)->orderBy('approval_position','asc')->get();
+
+        return view('admin.purchase-request.pr.show-detail', compact('pr','prDetail','papproval'));
+    }
 }
