@@ -8,7 +8,8 @@ use App\Models\Vendor\Vendor;
 
 class VendorController extends Controller
 {
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware('auth:vendor');
     }
     /**
@@ -18,7 +19,7 @@ class VendorController extends Controller
      */
     public function index()
     {
-        return view('vendor');
+        return view('vendor.home');
     }
 
     /**
