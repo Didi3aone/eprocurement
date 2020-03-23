@@ -11,8 +11,9 @@ class PurchaseOrder extends Model
         'request_id',
         'bidding',
         'notes',
-        'request_date',
+        'po_date',
         'status',
+        'po_no',
         'created_at',
         'updated_at'
     ];

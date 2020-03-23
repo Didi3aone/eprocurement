@@ -59,7 +59,7 @@
                                     <td>{{ $value->request_date }}</td>
                                     <td>{{ $value->total }}</td>
                                     <td>
-                                        <a class="open_modal_bidding btn btn-xs btn-success" href="javascript:;" data-id="{{ $value->id }}" data-target="#chooseBidding" data-toggle="modal">
+                                        <a class="open_modal_bidding btn btn-xs btn-success" href="{{ route('admin.purchase-order-create-po',$value->id) }}" >
                                             <i class="fa fa-truck"></i> Create PO
                                         </a>
                                     </td>
@@ -67,38 +67,6 @@
                             @endforeach
                         </tbody>
                     </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="chooseBidding" tabindex="-1" role="dialog" aria-labelledby="chooseBidding" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="chooseBidding">Pilih Bidding atau Quotation</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-lg-6">
-                        <form action="{{ route('admin.purchase-order-make-quotation') }}" method="post">
-                            @csrf
-                            <input type="hidden" name="request_id" class="request_id" value="">
-                            <button type="submit" class="float-left form-control btn btn-success btn-lg" style="color: white">Buat Quotation</button>
-                        </form>
-                    </div>
-                    <div class="col-lg-6">
-                        <form action="{{ route('admin.purchase-order-make-bidding') }}" method="post">
-                            @csrf
-                            <input type="hidden" name="request_id" class="request_id" value="">
-                            <button type="submit" class="float-left form-control btn btn-primary btn-lg" style="color: white">Bidding</button>
-                        </form>
-                    </div>
                 </div>
             </div>
         </div>

@@ -17,20 +17,6 @@
         </button>
     </div>
 @endif
-@can('purchase_request_create')
-    <div style="margin-bottom: 10px;" class="row">
-        <div class="col-lg-6">
-            <a class="btn btn-success" href="{{ route("admin.purchase-order.create") }}">
-                <i class='fa fa-plus'></i> {{ trans('global.add') }} {{ trans('cruds.purchase-order.title_singular') }}
-            </a>
-        </div>
-        {{-- <div class="col-lg-6 text-right">
-            <button class="btn btn-info" data-toggle="modal" data-target="#modal_import">
-                <i class="fa fa-download"></i> {{ trans('cruds.purchase-order.import') }}
-            </button>
-        </div> --}}
-    </div>
-@endcan
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -46,19 +32,13 @@
                                     {{ trans('cruds.purchase-order.fields.id') }}
                                 </th>
                                 <th>
-                                    {{ trans('cruds.purchase-order.fields.request_no') }}
+                                    PO No.
                                 </th>
                                 <th>
                                     {{ trans('cruds.purchase-order.fields.bidding') }}
                                 </th>
                                 <th>
                                     {{ trans('cruds.purchase-order.fields.request_date') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.purchase-order.fields.approval_status') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.purchase-order.fields.status') }}
                                 </th>
                                 <th>
                                     &nbsp;
@@ -72,11 +52,9 @@
 
                                     </td>
                                     <td>{{ $po->id ?? '' }}</td>
-                                    <td>{{ isset($po->purchaseRequest) ? $po->purchaseRequest->request_no : '' }}</td>
-                                    <td>{{ $po->bidding == 1 ? 'Bidding' : 'Quotation' }}</td>
-                                    <td>{{ $po->request_date ?? '' }}</td>
-                                    <td>{{ $po->approval_status ?? '' }}</td>
-                                    <td>{{ $po->status == 1 ? 'Active' : 'Inactive' }}</td>
+                                    <td>{{ $po->po_no }}</td>
+                                    <td>{{ $po->bidding == 1 ? 'Yes' : 'No' }}</td>
+                                    <td>{{ $po->po_date ?? '' }}</td>
                                     <td>
                                         @can('purchase_request_show')
                                             <a class="btn btn-xs btn-primary" href="{{ route('admin.purchase-order.show', $po->id) }}">

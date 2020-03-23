@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\PurchaseRequest;
+use App\Models\PurchaseRequestsDetail;
 use App\Models\Vendor;
 use App\Models\PurchaseOrder;
+use App\Models\PurchaseOrdersDetail;
 use App\Imports\PurchaseOrderImport;
 use Gate;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,35 +30,20 @@ class PurchaseOrderController extends Controller
         return view('admin.purchase-order.index', compact('purchaseOrders'));
     }
 
-    // public function import(Request $request)
-    // {
-    //     // abort_if(Gate::denies('purchase_order_import_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-    //     $this->validate($request, [
-    //         'xls_file' => 'required|file|mimes:csv,xls,xlsx',
-    //     ]);
-
-    //     $path = 'xls/';
-    //     $file = $request->file('xls_file');
-    //     $filename = $file->getClientOriginalName();
-
-    //     $file->move($path, $filename);
-
-    //     Excel::import(new ProfitCenterImport, public_path($path . $filename));
-
-    //     return redirect('admin/purchase_order')->with('success', 'Profit Center has been successfully imported');
-    // }
 
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function createPo($id)
     {
-        abort_if(Gate::denies('purchase_order_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        // abort_if(Gate::denies('purchase_order_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $pr = PurchaseRequest::find($id);
+        $prDetail = PurchaseRequestsDetail::where('purchase_id', $id)->get();
+        $vendor   = Vendor::get();
 
-        return view('admin.purchase-order.create');
+        return view('admin.purchase-order.create',compact('pr','prDetail','vendor'));
     }
 
     /**
@@ -68,6 +55,19 @@ class PurchaseOrderController extends Controller
     public function store(Request $request)
     {
         $purchaseOrder = PurchaseOrder::create($request->all());
+
+        if( $request->has('description') ) {
+            foreach( $request->get('description') as $key => $row ) {
+                PurchaseOrdersDetail::create([
+                    'purchase_order_id' => $purchaseOrder->id,
+                    'description'       => $row,
+                    'qty'               => $request->get('qty')[$key],
+                    'unit'              => $request->get('unit')[$key],
+                    'notes'             => $request->get('notes_detail')[$key],
+                    'price'             => $request->get('price')[$key]
+                ]);
+            }
+        }
 
         return redirect()->route('admin.purchase-order.index')->with('status', trans('cruds.purchase_order.alert_success_insert'));
     }

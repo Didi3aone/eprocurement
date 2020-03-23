@@ -144,6 +144,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     // purchase order
     Route::post('purchase-order-make-quotation', 'PurchaseOrderController@makeQuotation')->name('purchase-order-make-quotation');
     Route::post('purchase-order-make-bidding', 'PurchaseOrderController@makeBidding')->name('purchase-order-make-bidding');
+    Route::get('purchase-order-create-po/{id}', 'PurchaseOrderController@createPo')->name('purchase-order-create-po');
     Route::resource('purchase-order', 'PurchaseOrderController');
 
 });
