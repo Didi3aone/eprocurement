@@ -418,6 +418,24 @@ return [
             'created_at' => 'Created at'
         ]
     ],
+    'purchase-order'    => [
+        'title'          => 'Purchase Order',
+        'title_singular' => 'Purchase Order',
+        'alert_success_insert' => 'Purchase Order successfully saved',
+        'alert_success_update' => 'Purchase Order successfully updated',
+        'alert_success_delete' => 'Purchase Order successfully deleted',
+        'alert_success'        => 'Purchase Order successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'bidding' => 'Bidding',
+            'request_no' => 'Request No',
+            'request_date' => 'Date',
+            'notes' => 'Notes',
+            'approval_status' => 'Approval Status',
+            'status' => 'Status',
+            'created_at' => 'Created at'
+        ]
+    ],
     'inputBidding'    => [
         'title'          => 'Input Bidding',
         'title_singular' => 'Input Bidding',

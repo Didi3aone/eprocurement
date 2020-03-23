@@ -129,6 +129,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::delete('users/destroy', 'UsersController@massDestroy')->name('users.massDestroy');
     Route::resource('users', 'UsersController');
 
+    // purchase request
     Route::get('purchase-request-create-from-rn/{id}','PurchaseRequestController@create_from_rn')->name('purchase-request-create-from-rn');
     Route::get('purchase-request-list-approval','PurchaseRequestController@listApproval')->name('purchase-request-list-approval');
     Route::get('purchase-request-list-validate','PurchaseRequestController@listValidate')->name('purchase-request-list-validate');
@@ -137,8 +138,13 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::put('purchase-request-approval','PurchaseRequestController@approvalPr')->name('purchase-request-approval');
     Route::resource('purchase-request', 'PurchaseRequestController');
 
-    //purchase request
+    // request note
     Route::get('request-note','RequestNoteController@index')->name('request-note');
+
+    // purchase order
+    Route::post('purchase-order-make-quotation', 'PurchaseOrderController@makeQuotation')->name('purchase-order-make-quotation');
+    Route::post('purchase-order-make-bidding', 'PurchaseOrderController@makeBidding')->name('purchase-order-make-bidding');
+    Route::resource('purchase-order', 'PurchaseOrderController');
 
 });
 

@@ -85,7 +85,7 @@
                         <li>
                             
                             <li>
-                                <a href="#" class="">
+                                <a href="{{ route('admin.purchase-order.index') }}" class="">
                                     <i class="fa fas fa-caret-right"></i> 
                                     List PR
                                 </a>

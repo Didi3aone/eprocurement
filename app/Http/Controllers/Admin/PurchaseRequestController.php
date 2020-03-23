@@ -60,9 +60,9 @@ class PurchaseRequestController extends Controller
      */
     public function show($id)
     {
-        $pr = PurchaseRequestsDetail::where('purchase_id',$id)->get();
+        $pr = PurchaseRequestsDetail::where('purchase_id', $id)->get();
 
-        return view('admin.purchase-request.pr.show',compact('pr'));
+        return view('admin.purchase-request.pr.show', compact('pr'));
     }
 
     /**
@@ -131,7 +131,7 @@ class PurchaseRequestController extends Controller
 
             $workFlow = WorkFlow::get();
 
-            //update table rn
+            // update table rn
             RequestNotes::where('request_no',$request->request_no)->update([
                 'is_pr' => 1
             ]);
