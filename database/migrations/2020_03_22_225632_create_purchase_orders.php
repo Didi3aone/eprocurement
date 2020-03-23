@@ -19,7 +19,7 @@ class CreatePurchaseOrders extends Migration
             $table->integer('bidding')->nullable();
             $table->string('notes')->nullable();
             $table->date('request_date')->nullable();
-            $table->integer('approval_status')->nullable();
+            $table->bigInteger('vendor_id')->nullable();
             $table->integer('status')->nullable();
             $table->timestamps();
         });

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\PurchaseRequest;
+use App\Models\Vendor;
 use App\Models\PurchaseOrder;
 use App\Imports\PurchaseOrderImport;
 use Gate;
@@ -149,16 +151,10 @@ class PurchaseOrderController extends Controller
 
     public function makeQuotation (Request $request)
     {
-        $order = new PurchaseOrder;
-        $order->request_id = $request->input('request_id');
-        $order->bidding = 0;
-        $order->notes = 'make quotation';
-        $order->request_date = date('Y-m-d');
-        $order->approval_status = 0;
-        $order->status = 1;
-        $order->save();
+        $purchaseRequest = PurchaseRequest::find($request->input('request_id'));
+        $vendors = Vendor::all();
 
-        return redirect()->route('admin.purchase-order.index')->with('status', trans('cruds.purchase_order.alert_success_update'));
+        return view('admin.purchase-order.quotation', compact('purchaseRequest', 'vendors'));
     }
 
     public function makeBidding (Request $request)
@@ -168,7 +164,6 @@ class PurchaseOrderController extends Controller
         $order->bidding = 1;
         $order->notes = 'make bidding';
         $order->request_date = date('Y-m-d');
-        $order->approval_status = 0;
         $order->status = 1;
         $order->save();
 

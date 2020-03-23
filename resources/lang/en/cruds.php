@@ -413,7 +413,8 @@ return [
         'fields'        => [
             'id' => 'ID',
             'request_no' => 'Request No',
-            'date' => 'Date',
+            'request_date' => 'Request Date',
+            'total' => 'Total',
             'notes' => 'Notes',
             'created_at' => 'Created at'
         ]
@@ -431,7 +432,7 @@ return [
             'request_no' => 'Request No',
             'request_date' => 'Date',
             'notes' => 'Notes',
-            'approval_status' => 'Approval Status',
+            'vendor_id' => 'Vendor',
             'status' => 'Status',
             'created_at' => 'Created at'
         ]
