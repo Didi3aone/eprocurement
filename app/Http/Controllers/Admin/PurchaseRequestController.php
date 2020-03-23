@@ -223,7 +223,7 @@ class PurchaseRequestController extends Controller
     {
         abort_if(Gate::denies('purchase_request_approval_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         
-        $pr = PurchaseRequest::where('status',0)->get();
+        $pr = PurchaseRequest::where('is_validate',0)->get();
 
         return view('admin.purchase-request.pr.validate', compact('pr'));
     }
