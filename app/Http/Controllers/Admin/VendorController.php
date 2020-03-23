@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Vendor;
-use App\Models\Department;
 use App\Imports\VendorsImport;
 use Gate;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,24 +26,24 @@ class VendorController extends Controller
         return view('admin.vendors.index',compact('vendors'));
     }
 
-    public function import(Request $request)
-    {
-        // abort_if(Gate::denies('vendor_import_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+    // public function import(Request $request)
+    // {
+    //     // abort_if(Gate::denies('vendor_import_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $this->validate($request, [
-            'xls_file' => 'required|file|mimes:csv,xls,xlsx',
-        ]);
+    //     $this->validate($request, [
+    //         'xls_file' => 'required|file|mimes:csv,xls,xlsx',
+    //     ]);
 
-        $path = 'xls/';
-        $file = $request->file('xls_file');
-        $filename = $file->getClientOriginalName();
+    //     $path = 'xls/';
+    //     $file = $request->file('xls_file');
+    //     $filename = $file->getClientOriginalName();
 
-        $file->move($path, $filename);
+    //     $file->move($path, $filename);
 
-        Excel::import(new VendorsImport, public_path($path . $filename));
+    //     Excel::import(new VendorsImport, public_path($path . $filename));
 
-        return redirect('admin/vendors')->with('success', 'Vendors has been successfully imported');
-    }
+    //     return redirect('admin/vendors')->with('success', 'Vendors has been successfully imported');
+    // }
 
     /**
      * Show the form for creating a new resource.
@@ -55,9 +54,7 @@ class VendorController extends Controller
     {
         abort_if(Gate::denies('vendor_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $departments = Department::all();
-
-        return view('admin.vendors.create', compact('departments'));
+        return view('admin.vendors.create');
     }
 
     /**
@@ -99,9 +96,8 @@ class VendorController extends Controller
         abort_if(Gate::denies('vendor_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $vendors = Vendor::findOrFail($id);
-        $departments = Department::all();
 
-        return view('admin.vendors.edit', compact('vendors', 'departments'));
+        return view('admin.vendors.edit', compact('vendors'));
     }
 
     /**
@@ -115,9 +111,12 @@ class VendorController extends Controller
     {
         $vendors = Vendor::findOrFail($id);
         
-        $vendors->code = $request->get('code');
         $vendors->name = $request->get('name');
-        $vendors->departemen_peminta = $request->get('departemen_peminta');
+        $vendors->email = $request->get('email');
+        $vendors->npwp = $request->get('npwp');
+        $vendors->address = $request->get('address');
+        $vendors->company_type = $request->get('company_type');
+        $vendors->company_from = $request->get('company_from');
         $vendors->status = $request->get('status');
 
         $vendors->save();

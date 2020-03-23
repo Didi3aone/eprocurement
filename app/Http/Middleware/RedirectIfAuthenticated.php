@@ -17,9 +17,22 @@ class RedirectIfAuthenticated
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if (Auth::guard($guard)->check()) {
-            return redirect('/home');
+        switch($guard){
+            case 'vendor':
+                if (Auth::guard($guard)->check()) {
+                    return redirect()->route('vendor.home');
+                }
+
+                break;
+            default:
+                if (Auth::guard($guard)->check()) {
+                    return redirect('/home');
+                }
+                break;
         }
+        // if (Auth::guard($guard)->check()) {
+        //     return redirect('/home');
+        // }
 
         return $next($request);
     }

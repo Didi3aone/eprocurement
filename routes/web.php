@@ -153,6 +153,15 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
 /*
  * Vendor routes
  */
-Route::group([ 'prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor', 'middleware' => [ 'auth' ] ], function () {
+Route::get('vendor/login', '\App\Http\Controllers\AuthVendor\LoginController@showLoginForm');
+Route::get('vendor/register', '\App\Http\Controllers\AuthVendor\LoginController@showRegisterForm')->name('vendor.register');
+Route::post('vendor/register', '\App\Http\Controllers\AuthVendor\LoginController@register')->name('vendor.register');
+Route::post('vendor/login', '\App\Http\Controllers\AuthVendor\LoginController@login')->name('vendor.login');
 
+Route::group([ 'prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor', 'middleware' => [ 'auth:vendor' ] ], function () {
+    Route::get('/', 'VendorController@index')->name('home');
+    Route::get('purchase-order', 'PurchaseOrderController@index')->name('purchase-order');
+    Route::get('purchase-order/create', 'PurchaseOrderController@create')->name('purchase-order.create');
+    Route::get('bidding', 'BiddingController@index')->name('bidding');
+    Route::post('logout', '\App\Http\Controllers\AuthVendor\LoginController@logout')->name('logout');
 });

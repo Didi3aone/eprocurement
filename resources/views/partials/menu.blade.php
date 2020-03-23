@@ -153,6 +153,23 @@
                             </ul>
                         </li>
                         @endcan
+                        @can('vendor_management_access')
+                        <li>
+                            <a href="#" class="has-arrow">
+                                <i class="fa fa-truck">
+                                </i> {{ trans('cruds.masterVendor.title') }}
+                            </a>
+                            <ul aria-expanded="false" class="collapse">
+                                @can('vendor_access')
+                                <li>
+                                    <a href="{{ route('admin.vendors.index') }}" class="">
+                                        <i class="fa fas fa-caret-right"></i> {{ trans('cruds.masterVendor.title') }}
+                                    </a>
+                                </li>
+                                @endcan
+                            </ul>
+                        </li>
+                        @endcan
                         @can('gl_management_access')
                         <li>
                             <a href="#" class="has-arrow">

@@ -22,6 +22,7 @@ class RequestNoteController extends Controller
                 }
             ])
             ->get();
+
         return view('admin.purchase-request.rn.index',compact('rn'));
     }
 
@@ -63,7 +64,7 @@ class RequestNoteController extends Controller
             $detail->save();
         }
 
-        return redirect()->route('admin.request-note.index')->with('status', trans('cruds.request_note.alert_success_insert'));
+        return redirect()->route('admin.request-note')->with('status', trans('cruds.request_note.alert_success_insert'));
     }
 
     /**
