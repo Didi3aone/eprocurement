@@ -75,7 +75,7 @@ class LoginController extends Controller
         $model->regencies_id = 1;
         $model->district_id = 1;
         $model->address = $request->input('address');
-        $model->status = 1;
+        $model->status = 0;
         $model->save();
 
         return redirect()->route('vendor.home');
