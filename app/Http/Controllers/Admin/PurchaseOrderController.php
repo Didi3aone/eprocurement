@@ -69,7 +69,7 @@ class PurchaseOrderController extends Controller
             }
         }
 
-        return redirect()->route('admin.purchase-order.index')->with('status', trans('cruds.purchase_order.alert_success_insert'));
+        return redirect()->route('admin.purchase-order.index')->with('status', trans('cruds.purchase-order.alert_success_insert'));
     }
 
     /**

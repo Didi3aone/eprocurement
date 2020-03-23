@@ -25,7 +25,7 @@
                         @endif
                     </div>
                     <div class="form-group">
-                        <label>{{ trans('cruds.purchase-request.fields.date') }}</label>
+                        <label>{{ trans('cruds.purchase-request.fields.request_date') }}</label>
                         <input type="text" class="form-control datepicker form-control-line {{ $errors->has('date') ? 'is-invalid' : '' }}" name="date" value="{{ $rn->date ?? old('date', '') }}"> 
                         @if($errors->has('date'))
                             <div class="invalid-feedback">

@@ -22,6 +22,7 @@ class RequestNoteController extends Controller
                 }
             ])
             ->get();
+
         return view('admin.purchase-request.rn.index',compact('rn'));
     }
 

@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Vendor;
 
+use Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Models\Bidding;
-use App\Models\BiddingDetail;
+use App\Models\PurchaseOrder;
+use App\Models\PurchaseOrderDetail;
 // use Gate;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -14,8 +15,8 @@ class BiddingController extends Controller
 {
     public function index ()
     {
-        $biddings = Bidding::all();
+        $purchaseOrders = PurchaseOrder::where('vendor_id', Auth::user()->id);
 
-        return view('vendor.bidding.index', compact('biddings'));
+        return view('vendor.bidding.index', compact('purchaseOrders'));
     }
 }

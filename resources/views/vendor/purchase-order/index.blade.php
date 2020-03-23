@@ -17,13 +17,13 @@
         </button>
     </div>
 @endif
-<div style="margin-bottom: 10px;" class="row">
+{{-- <div style="margin-bottom: 10px;" class="row">
     <div class="col-lg-12">
         <a class="btn btn-success float-rigth" href="{{ route("vendor.purchase-order.create") }}">
             <i class="fa fa-plus"></i> {{ trans('global.add') }} {{ trans('cruds.purchase-order.title_singular') }}
         </a>
     </div>
-</div>
+</div> --}}
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -63,20 +63,23 @@
                                     <td>{{ $po->bidding == 1 ? 'Yes' : 'No' }}</td>
                                     <td>{{ $po->po_date ?? '' }}</td>
                                     <td>
+                                        <a class="btn btn-xs btn-primary" href="{{ route('vendor.purchase-order.bidding', $po->id, Auth::user()->id) }}">
+                                            {{ trans('cruds.purchase-order.bidding') }}
+                                        </a>
                                         @can('purchase_order_show')
-                                            <a class="btn btn-xs btn-primary" href="{{ route('admin.purchase-order.show', $po->id) }}">
+                                            <a class="btn btn-xs btn-primary" href="{{ route('vendor.purchase-order.show', $po->id) }}">
                                                 {{ trans('global.view') }}
                                             </a>
                                         @endcan
 
                                         @can('purchase_order_edit')
-                                            <a class="btn btn-xs btn-info" href="{{ route('admin.purchase-order.edit', $po->id) }}">
+                                            <a class="btn btn-xs btn-info" href="{{ route('vendor.purchase-order.edit', $po->id) }}">
                                                 {{ trans('global.edit') }}
                                             </a>
                                         @endcan
 
                                         @can('purchase_order_delete')
-                                            <form action="{{ route('admin.purchase-order.destroy', $po->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
+                                            <form action="{{ route('vendor.purchase-order.destroy', $po->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                                 <input type="hidden" name="_method" value="DELETE">
                                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                 <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
@@ -120,7 +123,7 @@
                 var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
                 $.ajax({
                     type: 'POST',
-                    url: "{{ url('admin.request-note.destroy') }}"+id ,
+                    url: "{{ url('vendor.request-note.destroy') }}"+id ,
                     data: {_token: CSRF_TOKEN},
                     dataType: 'JSON',
                     success: function (results) {

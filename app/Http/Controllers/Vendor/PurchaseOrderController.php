@@ -23,4 +23,14 @@ class PurchaseOrderController extends Controller
     {
         return view('vendor.purchase-order.create');
     }
+
+    public Function bidding ($id, $vendor_id)
+    {
+        $po = PurchaseOrder::find($id);
+        $po->bidding = 1;
+        $po->vendor_id = $vendor_id;
+        $po->save();
+
+        return redirect()->route('vendor.purchase-order')->with('status', trans('cruds.purchase-order.alert_success_bidding'));
+    }
 }
