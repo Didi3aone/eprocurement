@@ -16,33 +16,56 @@
                 <form class="form-material m-t-40" action="{{ route("admin.vendors.store") }}" enctype="multipart/form-data" method="post">
                     @csrf
                     <div class="form-group">
-                        <label>{{ trans('cruds.vendors.fields.code') }}</label>
-                        <input type="text" class="form-control form-control-line {{ $errors->has('code') ? 'is-invalid' : '' }}" name="code" value="{{ $vendors->code ?? old('code', '') }}"> 
-                        @if($errors->has('code'))
-                            <div class="invalid-feedback">
-                                {{ $errors->first('code') }}
-                            </div>
-                        @endif
-                    </div>
-                    <div class="form-group">
                         <label>{{ trans('cruds.vendors.fields.name') }}</label>
                         <input type="text" class="form-control form-control-line {{ $errors->has('name') ? 'is-invalid' : '' }}" name="name" value="{{ $vendors->name ?? old('name', '') }}"> 
                         @if($errors->has('name'))
+                        <div class="invalid-feedback">
+                            {{ $errors->first('name') }}
+                        </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.vendors.fields.email') }}</label>
+                        <input type="text" class="form-control form-control-line {{ $errors->has('email') ? 'is-invalid' : '' }}" name="email" value="{{ $vendors->email ?? old('email', '') }}"> 
+                        @if($errors->has('email'))
                             <div class="invalid-feedback">
-                                {{ $errors->first('name') }}
+                                {{ $errors->first('email') }}
                             </div>
                         @endif
                     </div>
                     <div class="form-group">
-                        <label>{{ trans('cruds.vendors.fields.departemen_peminta') }}</label>
-                        <select class="form-control select2 {{ $errors->has('departemen_peminta') ? 'is-invalid' : '' }}" name="departemen_peminta" id="departemen_peminta" required>
-                            @foreach($departments as $id => $dept)
-                                <option value="{{ $dept->id }}" {{ in_array($dept->id, old('departemen_peminta', [])) ? 'selected' : '' }}>{{ $dept->code }} - {{ $dept->name }}</option>
-                            @endforeach
-                        </select>
-                        @if($errors->has('departemen_peminta'))
+                        <label>{{ trans('cruds.vendors.fields.company_type') }}</label>
+                        <input type="text" class="form-control form-control-line {{ $errors->has('company_type') ? 'is-invalid' : '' }}" name="company_type" value="{{ $vendors->company_type ?? old('company_type', '') }}"> 
+                        @if($errors->has('company_type'))
                             <div class="invalid-feedback">
-                                {{ $errors->first('departemen_peminta') }}
+                                {{ $errors->first('company_type') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.vendors.fields.company_from') }}</label>
+                        <input type="text" class="form-control form-control-line {{ $errors->has('company_from') ? 'is-invalid' : '' }}" name="company_from" value="{{ $vendors->company_from ?? old('company_from', '') }}"> 
+                        @if($errors->has('company_from'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('company_from') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.vendors.fields.address') }}</label>
+                        <input type="text" class="form-control form-control-line {{ $errors->has('address') ? 'is-invalid' : '' }}" name="address" value="{{ $vendors->address ?? old('address', '') }}"> 
+                        @if($errors->has('address'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('address') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.vendors.fields.npwp') }}</label>
+                        <input type="text" class="form-control form-control-line {{ $errors->has('npwp') ? 'is-invalid' : '' }}" name="npwp" value="{{ $vendors->npwp ?? old('npwp', '') }}"> 
+                        @if($errors->has('npwp'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('npwp') }}
                             </div>
                         @endif
                     </div>

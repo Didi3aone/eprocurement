@@ -80,7 +80,7 @@ return [
     'purchase_request' => [
         'title' => 'Purchase Request',
         'title_singular' => 'Purchase Request',
-        'import' => 'Import Vendors',
+        'import' => 'Import Purchase Request',
         'alert_success_insert' => 'PR successfully saved',
         'alert_success_update' => 'PR successfully updated',
         'alert_success_delete' => 'PR successfully deleted',
@@ -129,9 +129,12 @@ return [
         'alert_success'        => 'Vendor successfully saved',
         'fields' => [
             'id' => 'ID',
-            'code' => 'Code',
+            'email' => 'Email',
             'name' => 'Name',
-            'departemen_peminta' => 'Departemen Peminta',
+            'npwp' => 'NPWP',
+            'address' => 'Address',
+            'company_type' => 'Company Type',
+            'company_from' => 'Company From',
             'status'    => 'Status',
             'status_active'    => 'Active',
             'status_inactive'    => 'Inactive',

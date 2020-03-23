@@ -25,14 +25,6 @@
                         </tr>
                         <tr>
                             <th>
-                                {{ trans('cruds.vendors.fields.code') }}
-                            </th>
-                            <td>
-                                {{ $vendors->code }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
                                 {{ trans('cruds.vendors.fields.name') }}
                             </th>
                             <td>
@@ -41,10 +33,42 @@
                         </tr>
                         <tr>
                             <th>
-                                {{ trans('cruds.vendors.fields.departemen_peminta') }}
+                                {{ trans('cruds.vendors.fields.email') }}
                             </th>
                             <td>
-                                {{ isset($vendors->departments->name) ? $vendors->departments->name : '' }}
+                                {{ $vendors->email }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                {{ trans('cruds.vendors.fields.npwp') }}
+                            </th>
+                            <td>
+                                {{ $vendors->npwp }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                {{ trans('cruds.vendors.fields.address') }}
+                            </th>
+                            <td>
+                                {{ $vendors->address }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                {{ trans('cruds.vendors.fields.company_type') }}
+                            </th>
+                            <td>
+                                {{ $vendors->company_type }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                {{ trans('cruds.vendors.fields.company_from') }}
+                            </th>
+                            <td>
+                                {{ $vendors->company_from }}
                             </td>
                         </tr>
                         <tr>
@@ -53,6 +77,22 @@
                             </th>
                             <td>
                                 {{ $vendors->status == 1 ? 'Active' : 'Inactive' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                {{ trans('cruds.vendors.fields.created_at') }}
+                            </th>
+                            <td>
+                                {{ $vendors->created_at }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                {{ trans('cruds.vendors.fields.updated_at') }}
+                            </th>
+                            <td>
+                                {{ $vendors->updated_at }}
                             </td>
                         </tr>
                     </tbody>

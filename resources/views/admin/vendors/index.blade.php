@@ -46,13 +46,16 @@
                                     {{ trans('cruds.vendors.fields.id') }}
                                 </th>
                                 <th>
-                                    {{ trans('cruds.vendors.fields.code') }}
-                                </th>
-                                <th>
                                     {{ trans('cruds.vendors.fields.name') }}
                                 </th>
                                 <th>
-                                    {{ trans('cruds.vendors.fields.departemen_peminta') }}
+                                    {{ trans('cruds.vendors.fields.email') }}
+                                </th>
+                                <th>
+                                    {{ trans('cruds.vendors.fields.npwp') }}
+                                </th>
+                                <th>
+                                    {{ trans('cruds.vendors.fields.address') }}
                                 </th>
                                 <th>
                                     {{ trans('cruds.vendors.fields.status') }}
@@ -69,9 +72,10 @@
 
                                     </td>
                                     <td>{{ $vendor->id ?? '' }}</td>
-                                    <td>{{ $vendor->code ?? '' }}</td>
                                     <td>{{ $vendor->name ?? '' }}</td>
-                                    <td>{{ isset($vendor->departments->name) ? $vendor->departments->name : '' }}</td>
+                                    <td>{{ $vendor->email ?? '' }}</td>
+                                    <td>{{ $vendor->npwp ?? '' }}</td>
+                                    <td>{{ $vendor->address ?? '' }}</td>
                                     <td>{{ $vendor->status == 1 ? 'Active' : 'Inactive' }}</td>
                                     <td>
                                         @can('vendor_show')
