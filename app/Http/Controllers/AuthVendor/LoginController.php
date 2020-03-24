@@ -40,7 +40,7 @@ class LoginController extends Controller
     {
         $this->validate($request,[
             'email' => 'required:email',
-            'password' => 'required|min:6'
+            'password' => 'required'
         ]);
 
         $credential = [
@@ -48,7 +48,11 @@ class LoginController extends Controller
             'password' => $request->password
         ];
 
-        // dd(Auth::guard('vendor')->attempt($credential));
+        $model = Vendor::where('email', $request->email)->first();
+
+        if ($model->status == 0)
+            return redirect()->route('vendor.login')->with('error', trans('validation.vendor_not_validate'));
+
         if (Auth::guard('vendor')->attempt($request->only('email', 'password'))) {
             return redirect()->intended(route('vendor.home'));
         }
@@ -78,7 +82,7 @@ class LoginController extends Controller
         $model->status = 0;
         $model->save();
 
-        return redirect()->route('vendor.home');
+        return redirect()->route('vendor.login');
     }
 
     public function logout ()

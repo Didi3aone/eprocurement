@@ -4,6 +4,14 @@
     <div class="login-register" style="background-image:url({{ asset('images/background/login-register.jpg') }};">        
         <div class="login-box card">
             <div class="card-body">
+                @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert" id="danger-alert">
+                        {{ session('error') }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif
                 <form class="form-horizontal form-material" method="POST" id="loginform" action="{{ route('vendor.login') }}">
                     @csrf
                     {{-- <h3 class="box-title m-b-20"> --}}
@@ -52,4 +60,13 @@
         </div>
     </div>
 </section>
+@endsection
+
+@section('script')
+@parent
+<script>
+    $("#danger-alert").fadeTo(2000, 500).slideUp(500, function() {
+        $("#danger-alert").slideUp(500);
+    });
+</script>    
 @endsection

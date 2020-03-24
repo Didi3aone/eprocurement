@@ -111,4 +111,5 @@ return [
     'dont_allow_first_letter_number' => 'The \":input\" field can\'t have first letter as a number',
     'exceeds_maximum_number'         => 'The :attribute exceeds maximum model length',
     'attributes'                     => [],
+    'vendor_not_validate'            => 'Vendor butuh validasi',
 ];
