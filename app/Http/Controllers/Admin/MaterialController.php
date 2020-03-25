@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Artisan;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\MaterialSheet;
 use App\Imports\MaterialImport;
+use App\Imports\NewMaterialImport;
+use App\Jobs\ImportMaterial;
 use App\Models\Material;
 use App\Models\MaterialGroup;
 use App\Models\MaterialType;
@@ -48,63 +51,19 @@ class MaterialController extends Controller
     public function import(Request $request)
     {
         // abort_if(Gate::denies('vendor_import_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        $this->validate($request, [
-            'xls_file' => 'required|file|mimes:csv,xls,xlsx',
-        ]);
-
+        
         $path = 'xls/';
         $file = $request->file('xls_file');
+        
         $filename = $file->getClientOriginalName();
 
         $file->move($path, $filename);
 
-        Excel::import(new MaterialImport, public_path($path . $filename));
+        $real_filename = public_path($path . $filename);
 
-        // // Import CSV to Database
-        // $filepath = public_path($path . $filename);
-        
-        // // Reading file
-        // $file = fopen($filepath, "r");
+        Artisan::call('import:material', ['filename' => $real_filename]);
 
-        // $importData_arr = array();
-        // $i = 0;
-
-        // while (($filedata = fgetcsv($file, 1000, ",")) !== FALSE) {
-        //     $num = count($filedata);
-            
-        //     // Skip first row (Remove below comment if you want to skip the first row)
-        //     if($i == 0){
-        //         $i++;
-        //         continue; 
-        //     }
-
-        //     for ($c = 0; $c < $num; $c++) {
-        //         $importData_arr[$i][] = $filedata[$c];
-        //     }
-
-        //     $i++;
-        // }
-        // fclose($file);
-
-        // // Insert to MySQL database
-        // $data = [];
-        // foreach ($importData_arr as $importData) {
-        //     $data[] = $importData;
-        //     // $insertData = array(
-        //     //     "username" => $importData[1],
-        //     //     "name" => $importData[2],
-        //     //     "gender" => $importData[3],
-        //     //     "email" => $importData[4]
-        //     // );
-
-        //     // Page::insertData($insertData);
-        // }
-
-        // dd($data);
-        // exit;
-
-        // return redirect('admin/material')->with('success', 'Materials has been successfully imported');
+        return redirect('admin/material')->with('success', 'Materials has been successfully imported');
     }
 
     /**

@@ -47,6 +47,19 @@ class PurchaseOrderController extends Controller
     }
 
     /**
+     * Approval Purchase Order
+     */
+    public function approvalPo ($id)
+    {
+        $po = PurchaseOrder::find($id);
+        $po->status = 1;
+
+        if ($po->save()) {
+            // send to WSDL
+        }
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -150,7 +163,10 @@ class PurchaseOrderController extends Controller
     public function makeQuotation (Request $request)
     {
         $purchaseRequest = PurchaseRequest::find($request->input('request_id'));
-        $vendors = Vendor::all();
+        $vendors = Vendor::where([
+            'status' => 1,
+            'bidding' => 0
+        ])->get();
 
         return view('admin.purchase-order.quotation', compact('purchaseRequest', 'vendors'));
     }

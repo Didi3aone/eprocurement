@@ -18,8 +18,16 @@
     </div>
 @endif
 @if(session('status'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
+    <div class="alert alert-info alert-dismissible fade show" role="alert" id="info-alert">
         {{ session('status') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+@endif
+@if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" id="danger-alert">
+        {{ session('error') }}
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -161,7 +169,7 @@
             <form action="{{ route('admin.material.import') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
-                    <input type="file" name="xls_file" id="xls_file">
+                    <input type="file" name="xls_file" id="xls_file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -178,6 +186,15 @@
     $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
         $("#success-alert").slideUp(500);
     });
+
+    $("#info-alert").fadeTo(2000, 500).slideUp(500, function(){
+        $("#info-alert").slideUp(500);
+    });
+
+    $("#danger-alert").fadeTo(2000, 500).slideUp(500, function(){
+        $("#danger-alert").slideUp(500);
+    });
+
     $('#datatables-run').DataTable({
         dom: 'Bfrtip',
         buttons: [
