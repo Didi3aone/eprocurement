@@ -38,6 +38,9 @@
                                     {{ trans('cruds.purchase-order.fields.bidding') }}
                                 </th>
                                 <th>
+                                    {{ trans('cruds.purchase-order.fields.vendor_id') }}
+                                </th>
+                                <th>
                                     {{ trans('cruds.purchase-order.fields.request_date') }}
                                 </th>
                                 <th>
@@ -54,8 +57,14 @@
                                     <td>{{ $po->id ?? '' }}</td>
                                     <td>{{ $po->po_no }}</td>
                                     <td>{{ $po->bidding == 1 ? 'Yes' : 'No' }}</td>
+                                    <td>{{ !empty($po->vendor_id) ? $po->vendor->name . ' - ' . $po->vendor->email : '' }}</td>
                                     <td>{{ $po->po_date ?? '' }}</td>
                                     <td>
+                                        @can('purchase_order_approval')                                            
+                                            <a class="btn btn-xs btn-success" href="{{ route('admin.purchase-order-approval-po', $po->id) }}">
+                                                {{ trans('cruds.purchase-order.approval') }}
+                                            </a>
+                                        @endcan
                                         @can('purchase_request_show')
                                             <a class="btn btn-xs btn-primary" href="{{ route('admin.purchase-order.show', $po->id) }}">
                                                 {{ trans('global.view') }}

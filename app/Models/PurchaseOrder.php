@@ -10,6 +10,7 @@ class PurchaseOrder extends Model
         'id',
         'request_id',
         'bidding',
+        'vendor_id',
         'notes',
         'po_date',
         'status',
@@ -21,5 +22,10 @@ class PurchaseOrder extends Model
     public function purchaseRequest ()
     {
         return $this->hasOne(\App\Models\PurchaseRequest::class, 'id', 'request_id');
+    }
+
+    public function vendor ()
+    {
+        return $this->hasOne(\App\Models\Vendor::class, 'id', 'vendor_id');
     }
 }

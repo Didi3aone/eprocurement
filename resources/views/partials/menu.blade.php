@@ -45,32 +45,26 @@
                         @endcan --}}
                         @can('purchase_request_access')
                         <li>
-                            <li>
-                                <a href="{{ route('admin.purchase-request.index') }}" class="">
-                                    <i class="fa fas fa-caret-right"></i> 
-                                    List PR
-                                </a>
-                            </li>
+                            <a href="{{ route('admin.purchase-request.index') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> 
+                                List PR
+                            </a>
                         </li>
                         @endcan
                         @can('purchase_request_approval_access')
                         <li>
-                            <li>
-                                <a href="{{ route('admin.purchase-request-list-approval') }}" class="">
-                                    <i class="fa fas fa-caret-right"></i> 
-                                    Approval PR
-                                </a>
-                            </li>
+                            <a href="{{ route('admin.purchase-request-list-approval') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> 
+                                Approval PR
+                            </a>
                         </li>
                         @endcan
                         @can('purchase_request_validate_access')
                         <li>
-                            <li>
-                                <a href="{{ route('admin.purchase-request-list-validate') }}" class="">
-                                    <i class="fa fas fa-caret-right"></i> 
-                                    Validate Assets PR
-                                </a>
-                            </li>
+                            <a href="{{ route('admin.purchase-request-list-validate') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> 
+                                Validate Assets PR
+                            </a>
                         </li>
                         @endcan
                     </ul>
@@ -83,13 +77,10 @@
                     </a>
                     <ul aria-expanded="false" class="collapse">
                         <li>
-                            
-                            <li>
-                                <a href="{{ route('admin.purchase-order.index') }}" class="">
-                                    <i class="fa fas fa-caret-right"></i> 
-                                    List PO
-                                </a>
-                            </li>
+                            <a href="{{ route('admin.purchase-order.index') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> 
+                                List PO
+                            </a>
                         </li>
                     </ul>
                 </li>
