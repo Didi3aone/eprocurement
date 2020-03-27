@@ -141,6 +141,13 @@
                                     </a>
                                 </li>
                                 @endcan
+                                @can('asset_access')
+                                <li>
+                                    <a href="{{ route('admin.asset.index') }}" class="">
+                                        <i class="fa fas fa-caret-right"></i> {{ trans('cruds.asset.title') }}
+                                    </a>
+                                </li>
+                                @endcan
                             </ul>
                         </li>
                         @endcan

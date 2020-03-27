@@ -116,6 +116,26 @@ class PurchaseRequestController extends Controller
         return view('admin.purchase-request.pr.create-from-rn', compact('rnDetail', 'rn'));
     }
 
+    private function workflowApproval ($id, $pr_id)
+    {
+        $workFlowAppr = WorkFlowApproval::where('workflow_id', $id)->get();
+
+        foreach( $workFlowAppr as $rows ) {
+            $flag = 0;
+            if( $rows->approval_position == 1 ) {
+                $flag = 1;
+            }
+
+            PurchaseRequestsApproval::create([
+                'nik'                   => $rows->nik,
+                'approval_position'     => $rows->approval_position,
+                'status'                => 0,
+                'purchase_request_id'   => $pr_id,
+                'flag'                  => $flag,
+            ]);
+        }
+    }
+
     public function save_from_rn (Request $request)
     {
         try {
@@ -137,53 +157,11 @@ class PurchaseRequestController extends Controller
             ]);
 
             if( ($total >= 0) && ($total <= 200000000) ) {
-                $workFlowAppr = WorkFlowApproval::where('workflow_id',1)->get();
-                foreach( $workFlowAppr as $rows ) {
-                    $flag = 0;
-                    if( $rows->approval_position == 1 ) {
-                        $flag = 1;
-                    }
-
-                    PurchaseRequestsApproval::create([
-                        'nik'                   => $rows->nik,
-                        'approval_position'     => $rows->approval_position,
-                        'status'                => 0,
-                        'purchase_request_id'   => $purchaseRequest->id,
-                        'flag'                  => $flag,
-                    ]);
-                }
+                $this->workflowApproval(1, $purchaseRequest->id);
             } else if( $total >= 200000000 && $total <= 1000000000) {
-                $workFlowAppr = WorkFlowApproval::where('workflow_id',2)->get();
-                foreach( $workFlowAppr as $rows ) {
-                    $flag = 0;
-                    if( $rows->approval_position == 1 ) {
-                        $flag = 1;
-                    }
-
-                    PurchaseRequestsApproval::create([
-                        'nik'                   => $rows->nik,
-                        'approval_position'     => $rows->approval_position,
-                        'status'                => 0,
-                        'purchase_request_id'   => $purchaseRequest->id,
-                        'flag'                  => $flag,
-                    ]);
-                }
+                $this->workflowApproval(2, $purchaseRequest->id);
             } else {
-                $workFlowAppr = WorkFlowApproval::where('workflow_id',3)->get();
-                foreach( $workFlowAppr as $rows ) {
-                    $flag = 0;
-                    if( $rows->approval_position == 1 ) {
-                        $flag = 1;
-                    }
-
-                    PurchaseRequestsApproval::create([
-                        'nik'                   => $rows->nik,
-                        'approval_position'     => $rows->approval_position,
-                        'status'                => 0,
-                        'purchase_request_id'   => $purchaseRequest->id,
-                        'flag'                  => $flag,
-                    ]);
-                }
+                $this->workflowApproval(3, $purchaseRequest->id);
             }
 
             for ($i = 0; $i < count($request->get('rn_description')); $i++) {
@@ -214,7 +192,9 @@ class PurchaseRequestController extends Controller
         abort_if(Gate::denies('purchase_request_approval_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         
         $pr = PurchaseRequestsApproval::with('getPurchaseRequest')
-                ->where('nik',Auth::user()->nik)->where('flag',1)->get();
+            ->where('nik', Auth::user()->nik)
+            ->where('flag', 1)
+            ->get();
 
         return view('admin.purchase-request.pr.approval', compact('pr'));
     }
@@ -235,8 +215,8 @@ class PurchaseRequestController extends Controller
             $posisi = PurchaseRequestsApproval::where('id',$request->id)->first();
 
             $total = PurchaseRequestsApproval::where('purchase_request_id',$request->req_id)
-                        ->get();
-                        // dd($total);
+                ->get();
+
             $dt = [];
             if( $posisi->approval_position == count($total) ) {
                 PurchaseRequestsApproval::where('id',$request->id)->update([
@@ -244,20 +224,22 @@ class PurchaseRequestController extends Controller
                     'approve_date' => date('Y-m-d H:i:s'),
                     'flag' => 2
                 ]);
+
                 PurchaseRequest::where('id', $request->req_id)
-                ->update([
-                    'approval_status' => 12
-                ]);
+                    ->update([
+                        'approval_status' => 12
+                    ]);
                 
             } else if( $posisi->approval_position < count($total) ) {
                 $posisi = $posisi->approval_position + 1;
-                // dd($posisi);
+
                 PurchaseRequestsApproval::where('purchase_request_id',$request->req_id)
                     ->where('approval_position', $posisi)
                         ->update([
                         'status' => 0,
                         'flag' => 1,
                     ]);
+
                 PurchaseRequest::where('id', $request->req_id)
                     ->update([
                         'approval_status' => 11
@@ -271,7 +253,7 @@ class PurchaseRequestController extends Controller
             ]);
 
             DB::commit();
-            // dd($updates);
+
             if ($updates == 1) {
                 $success = true;
                 $message = "Purchase request has been approved";
@@ -285,12 +267,12 @@ class PurchaseRequestController extends Controller
             $message = "error db".$th;
             DB::rollback();
         }
+
         //  Return response
         return response()->json([
             'success' => $success,
             'message' => $message,
         ]);
-        
     }
 
     public function saveValidate(Request $request)

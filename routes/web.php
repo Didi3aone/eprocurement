@@ -121,6 +121,11 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::post('cost/import', 'CostController@import')->name('cost.import');
     Route::resource('cost', 'CostController');
 
+    // asset
+    Route::delete('asset/destroy', 'AssetController@massDestroy')->name('asset.massDestroy');
+    Route::post('asset/import', 'AssetController@import')->name('asset.import');
+    Route::resource('asset', 'AssetController');
+
     // Company
     Route::delete('company/destroy', 'CompanyController@massDestroy')->name('company.massDestroy');
     Route::resource('company', 'CompanyController');
@@ -166,6 +171,7 @@ Route::group([ 'prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor',
     Route::get('/', 'VendorController@index')->name('home');
     Route::get('purchase-order', 'PurchaseOrderController@index')->name('purchase-order');
     Route::get('purchase-order/create', 'PurchaseOrderController@create')->name('purchase-order.create');
+    Route::get('purchase-order/bidding', 'PurchaseOrderController@bidding')->name('purchase-order.bidding');
     Route::get('bidding', 'BiddingController@index')->name('bidding');
     Route::post('logout', '\App\Http\Controllers\AuthVendor\LoginController@logout')->name('logout');
 });

@@ -1,4 +1,5 @@
 @extends('layouts.admin')
+
 @section('content')
 <div class="row page-titles">
     <div class="col-md-5 col-8 align-self-center">
@@ -59,7 +60,6 @@
                                     <td>{{ $value->getPurchaseRequest['request_date'] }}</td>
                                     <td>{{ $value->getPurchaseRequest['total'] }}</td>
                                     <td>
-                                        
                                         <a class="btn btn-xs btn-success approve" data-req="{{ $value->getPurchaseRequest['id'] }}" data-id="{{ $value->id }}" href="#">
                                             <i class="fa fa-check"></i> Approve
                                         </a>

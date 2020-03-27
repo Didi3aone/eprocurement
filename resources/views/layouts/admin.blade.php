@@ -26,8 +26,8 @@
     <!-- You can change the theme colors from here -->
     <link href="{{ asset('css/colors/green.css') }}" id="theme" rel="stylesheet">
     <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet"/>
-    <link href="{{ asset('plugins/sweetalert/sweetalert.css') }}" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+    {{-- <link href="{{ asset('plugins/sweetalert/sweetalert.css') }}" rel="stylesheet" type="text/css"> --}}
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -300,8 +300,9 @@
     <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js"></script>
     <script src="{{ asset('js/select2.full.min.js') }}"></script>
-    <script src="{{ asset('plugins/sweetalert/sweetalert.min.js') }}"></script>
-    <script src="{{ asset('plugins/sweetalert/jquery.sweet-alert.custom.js') }}"></script>
+    {{-- <script src="{{ asset('plugins/sweetalert/sweetalert.min.js') }}"></script>
+    <script src="{{ asset('plugins/sweetalert/jquery.sweet-alert.custom.js') }}"></script> --}}
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script src="{{ asset('js/global.js') }}"></script>
     @yield('scripts')
