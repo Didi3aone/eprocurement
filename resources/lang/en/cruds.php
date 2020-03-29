@@ -38,6 +38,22 @@ return [
             'created_at' => 'Created at'
         ]
     ],
+    'asset'    => [
+        'title'          => 'Asset',
+        'title_singular' => 'Asset',
+        'import' => 'Import Asset',
+        'alert_success_insert' => 'Asset successfully saved',
+        'alert_success_update' => 'Asset successfully updated',
+        'alert_success_delete' => 'Asset successfully deleted',
+        'alert_success'        => 'Asset successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'company_id' => 'Company',
+            'code' => 'Code',
+            'description' => 'Description',
+            'created_at' => 'Created at'
+        ]
+    ],
     'masterMaterial'    => [
         'title'          => 'Material',
         'title_singular' => 'Material',

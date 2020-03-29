@@ -26,7 +26,7 @@
                     </div>
                     <div class="form-group">
                         <label>Request Date</label>
-                        <input type="text" class="form-control form-control-line {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" value="{{ old('notes', '') }}"> 
+                        <input type="text" class="form-control datepicker form-control-line {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" value="{{ old('notes', '') }}"> 
                         @if($errors->has('notes'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('notes') }}
