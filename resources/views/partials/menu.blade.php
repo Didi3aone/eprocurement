@@ -10,39 +10,14 @@
                     </ul>
                 </li> --}}
                 <li><a href="{{ route('admin.home') }}">Dashboard</a></li>
-                @can('request_notes_access')
-                <li class=""> 
-                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-clipboard"></i>
-                        <span class="hide-menu"> {{ 'Request Note' }} </span>
-                    </a>
-                    <ul aria-expanded="false" class="collapse">
-                        @can('request_notes_access')
-                        <li>
-                            <a href="{{ route('admin.request-note') }}" class="">
-                                <i class="fa fas fa-caret-right"></i> 
-                                List Rn
-                            </a>
-                        </li>
-                        @endcan
-                    </ul>
-                </li>
-                @endcan
+               
                 @can('purchase_request_access')
                 <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-file"></i>
                         <span class="hide-menu"> {{ trans('cruds.purchase_request.title') }} </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">
-                        {{-- @can('purchase_request_access')
-                        <li>
-                            <li>
-                                <a href="{{ route('admin.request-note.index') }}" class="">
-                                    <i class="fa fas fa-caret-right"></i> 
-                                    RN to PR
-                                </a>
-                            </li>
-                        </li>
-                        @endcan --}}
+                    
                         @can('purchase_request_access')
                         <li>
                             <a href="{{ route('admin.purchase-request.index') }}" class="">
@@ -51,22 +26,7 @@
                             </a>
                         </li>
                         @endcan
-                        @can('purchase_request_approval_access')
-                        <li>
-                            <a href="{{ route('admin.purchase-request-list-approval') }}" class="">
-                                <i class="fa fas fa-caret-right"></i> 
-                                Approval PR
-                            </a>
-                        </li>
-                        @endcan
-                        @can('purchase_request_validate_access')
-                        <li>
-                            <a href="{{ route('admin.purchase-request-list-validate') }}" class="">
-                                <i class="fa fas fa-caret-right"></i> 
-                                Validate Assets PR
-                            </a>
-                        </li>
-                        @endcan
+                        
                     </ul>
                 </li>
                 @endcan
