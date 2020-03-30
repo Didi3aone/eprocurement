@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Asset;
+use App\Models\AccountAssignment;
 use Gate, Artisan;
 use Symfony\Component\HttpFoundation\Response;
 
-class AssetController extends Controller
+class AccountAssignmentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,19 +17,19 @@ class AssetController extends Controller
      */
     public function index()
     {
-        abort_if(Gate::denies('asset_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('account_assignment_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $assets = Asset::all();
+        $account_assignments = AccountAssignment::all();
 
-        return view('admin.asset.index', compact('assets'));
+        return view('admin.account_assignment.index', compact('account_assignments'));
     }
 
     public function select (Request $request)
     {
-        $material = Asset::all();
+        $account_assignment = AccountAssignment::all();
         
         $data = [];
-        foreach ($material as $row) {
+        foreach ($account_assignment as $row) {
             $data[$row->code] = $row->code . ' - ' . $row->description;
         }
 
@@ -43,7 +43,7 @@ class AssetController extends Controller
      */
     public function create()
     {
-        return view('admin.asset.create');
+        return view('admin.account_assignment.create');
     }
 
     public function import(Request $request)
@@ -59,9 +59,9 @@ class AssetController extends Controller
 
         $real_filename = public_path($path . $filename);
 
-        Artisan::call('import:asset', ['filename' => $real_filename]);
+        Artisan::call('import:account_assignment', ['filename' => $real_filename]);
 
-        return redirect('admin/asset')->with('success', 'Assets has been successfully imported');
+        return redirect('admin/account_assignment')->with('success', trans('cruds.account_assignment.success_import'));
     }
 
     /**
@@ -72,9 +72,9 @@ class AssetController extends Controller
      */
     public function store(Request $request)
     {
-        $asset = Asset::create($request->all());
+        $account_assignment = AccountAssignment::create($request->all());
 
-        return redirect()->route('admin.asset.index')->with('status', trans('cruds.asset.alert_success_insert'));
+        return redirect()->route('admin.account_assignment.index')->with('status', trans('cruds.account_assignment.alert_success_insert'));
     }
 
     /**
@@ -85,9 +85,9 @@ class AssetController extends Controller
      */
     public function show($id)
     {
-        $asset = Asset::findOrFail($id);
+        $account_assignment = AccountAssignment::findOrFail($id);
 
-        return view('admin.asset.show', compact('asset'));
+        return view('admin.account_assignment.show', compact('account_assignment'));
     }
 
     /**
@@ -98,9 +98,9 @@ class AssetController extends Controller
      */
     public function edit($id)
     {
-        $asset = Asset::findOrFail($id);
+        $account_assignment = AccountAssignment::findOrFail($id);
 
-        return view('admin.asset.edit', compact('asset'));
+        return view('admin.account_assignment.edit', compact('account_assignment'));
     }
 
     /**
@@ -112,13 +112,13 @@ class AssetController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $asset = Asset::find($id);
-        $asset->company_id = $request->input('company_id');
-        $asset->code = $request->input('code');
-        $asset->description = $request->input('description');
-        $asset->save();
+        $account_assignment = AccountAssignment::find($id);
+        $account_assignment->company_id = $request->input('company_id');
+        $account_assignment->code = $request->input('code');
+        $account_assignment->description = $request->input('description');
+        $account_assignment->save();
         
-        return redirect()->route('admin.asset.index')->with('status', trans('cruds.asset.alert_success_update'));
+        return redirect()->route('admin.account_assignment.index')->with('status', trans('cruds.account_assignment.alert_success_update'));
     }
 
     /**
@@ -129,15 +129,15 @@ class AssetController extends Controller
      */
     public function destroy($id)
     {
-        $delete = Asset::where('id', $id)->delete();
+        $delete = AccountAssignment::where('id', $id)->delete();
 
         // check data deleted or not
         if ($delete == 1) {
             $success = true;
-            $message = "Asset deleted successfully";
+            $message = "account_assignment deleted successfully";
         } else {
             $success = true;
-            $message = "Asset not found";
+            $message = "account_assignment not found";
         }
 
         // return response

@@ -54,6 +54,22 @@ return [
             'created_at' => 'Created at'
         ]
     ],
+    'account_assignment'    => [
+        'title'          => 'Account Assignment',
+        'title_singular' => 'Account Assignment',
+        'import' => 'Import Account Assignment',
+        'success_import' => 'Account Assignment successfully imported',
+        'alert_success_insert' => 'Account Assignment successfully saved',
+        'alert_success_update' => 'Account Assignment successfully updated',
+        'alert_success_delete' => 'Account Assignment successfully deleted',
+        'alert_success'        => 'Account Assignment successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'description' => 'Description',
+            'created_at' => 'Created at'
+        ]
+    ],
     'masterMaterial'    => [
         'title'          => 'Material',
         'title_singular' => 'Material',

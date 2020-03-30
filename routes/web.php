@@ -121,8 +121,14 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::post('cost/import', 'CostController@import')->name('cost.import');
     Route::resource('cost', 'CostController');
 
+    // account_assignment
+    Route::delete('account_assignment/destroy', 'AccountAssignmentController@massDestroy')->name('account_assignment.massDestroy');
+    Route::post('account_assignment/import', 'AccountAssignmentController@import')->name('account_assignment.import');
+    Route::resource('account_assignment', 'AccountAssignmentController');
+
     // asset
     Route::delete('asset/destroy', 'AssetController@massDestroy')->name('asset.massDestroy');
+    Route::get('asset/select', 'AssetController@select')->name('asset.select');
     Route::post('asset/import', 'AssetController@import')->name('asset.import');
     Route::resource('asset', 'AssetController');
 
