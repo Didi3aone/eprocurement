@@ -54,6 +54,21 @@ return [
             'created_at' => 'Created at'
         ]
     ],
+    'material-category'    => [
+        'title'          => 'Material Category',
+        'title_singular' => 'Material Category',
+        'import' => 'Import Material Category',
+        'alert_success_insert' => 'Material Category successfully saved',
+        'alert_success_update' => 'Material Category successfully updated',
+        'alert_success_delete' => 'Material Category successfully deleted',
+        'alert_success'        => 'Material Category successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'description' => 'Description',
+            'created_at' => 'Created at'
+        ]
+    ],
     'account_assignment'    => [
         'title'          => 'Account Assignment',
         'title_singular' => 'Account Assignment',

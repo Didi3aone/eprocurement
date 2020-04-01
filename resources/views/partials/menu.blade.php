@@ -115,6 +115,13 @@
                                     </a>
                                 </li>
                                 @endcan
+                                @can('material_category_access')
+                                <li>
+                                    <a href="{{ route('admin.material-category.index') }}" class="">
+                                        <i class="fa fas fa-caret-right"></i> {{ trans('cruds.material-category.title') }}
+                                    </a>
+                                </li>
+                                @endcan
                             </ul>
                         </li>
                         @endcan

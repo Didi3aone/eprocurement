@@ -280,8 +280,24 @@ class PermissionsTableSeeder extends Seeder
                 'title' => 'purchase_request_access',
             ],
             [
-                'id'    => '67',
-                'title' => 'request_notes_access',
+                'id'    => '68',
+                'title' => 'material_category_access',
+            ],
+            [
+                'id'    => '69',
+                'title' => 'material_category_create',
+            ],
+            [
+                'id'    => '70',
+                'title' => 'material_category_show',
+            ],
+            [
+                'id'    => '71',
+                'title' => 'material_category_edit',
+            ],
+            [
+                'id'    => '72',
+                'title' => 'material_category_delete',
             ],
         ];
         // DB::beginTransaction();
