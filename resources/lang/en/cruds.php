@@ -54,6 +54,22 @@ return [
             'created_at' => 'Created at'
         ]
     ],
+    'unit'    => [
+        'title'          => 'Unit',
+        'title_singular' => 'Unit',
+        'import' => 'Import Unit',
+        'alert_success_insert' => 'Unit successfully saved',
+        'alert_success_update' => 'Unit successfully updated',
+        'alert_success_delete' => 'Unit successfully deleted',
+        'alert_success'        => 'Unit successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'uom' => 'Internal UoM',
+            'iso' => 'ISO Code',
+            'text' => 'Measurement Unit Text',
+            'created_at' => 'Created at'
+        ]
+    ],
     'material-category'    => [
         'title'          => 'Material Category',
         'title_singular' => 'Material Category',

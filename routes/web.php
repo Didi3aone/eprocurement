@@ -132,6 +132,12 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::post('asset/import', 'AssetController@import')->name('asset.import');
     Route::resource('asset', 'AssetController');
 
+    // unit
+    Route::delete('unit/destroy', 'UnitController@massDestroy')->name('unit.massDestroy');
+    Route::get('unit/select', 'UnitController@select')->name('unit.select');
+    Route::post('unit/import', 'UnitController@import')->name('unit.import');
+    Route::resource('unit', 'UnitController');
+
     // material-category
     Route::delete('material-category/destroy', 'MaterialCategoryController@massDestroy')->name('material-category.massDestroy');
     Route::get('material-category/select', 'MaterialCategoryController@select')->name('material-category.select');

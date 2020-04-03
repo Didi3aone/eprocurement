@@ -108,6 +108,13 @@
                                     </a>
                                 </li>
                                 @endcan
+                                @can('unit_access')
+                                <li>
+                                    <a href="{{ route('admin.unit.index') }}" class="">
+                                        <i class="fa fas fa-caret-right"></i> {{ trans('cruds.unit.title') }}
+                                    </a>
+                                </li>
+                                @endcan
                                 @can('account_assignment_access')
                                 <li>
                                     <a href="{{ route('admin.account_assignment.index') }}" class="">
