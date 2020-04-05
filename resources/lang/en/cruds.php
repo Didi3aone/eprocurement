@@ -54,6 +54,23 @@ return [
             'created_at' => 'Created at'
         ]
     ],
+    'storage-location'    => [
+        'title'          => 'Storage Location',
+        'title_singular' => 'Storage Location',
+        'import' => 'Import Storage Location',
+        'alert_success_insert' => 'Storage Location successfully saved',
+        'alert_success_update' => 'Storage Location successfully updated',
+        'alert_success_delete' => 'Storage Location successfully deleted',
+        'alert_success'        => 'Storage Location successfully saved',
+        'import_success'        => 'Storage Location successfully imported',
+        'fields'        => [
+            'id' => 'ID',
+            'code' => 'Code',
+            'status' => 'Maintenance Status',
+            'description' => 'Description',
+            'created_at' => 'Created at'
+        ]
+    ],
     'unit'    => [
         'title'          => 'Unit',
         'title_singular' => 'Unit',

@@ -138,6 +138,12 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::post('unit/import', 'UnitController@import')->name('unit.import');
     Route::resource('unit', 'UnitController');
 
+    // storage-location
+    Route::delete('storage-location/destroy', 'StorageLocationController@massDestroy')->name('storage-location.massDestroy');
+    Route::get('storage-location/select', 'StorageLocationController@select')->name('storage-location.select');
+    Route::post('storage-location/import', 'StorageLocationController@import')->name('storage-location.import');
+    Route::resource('storage-location', 'StorageLocationController');
+
     // material-category
     Route::delete('material-category/destroy', 'MaterialCategoryController@massDestroy')->name('material-category.massDestroy');
     Route::get('material-category/select', 'MaterialCategoryController@select')->name('material-category.select');

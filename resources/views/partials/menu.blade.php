@@ -94,6 +94,13 @@
                                     </a>
                                 </li>
                                 @endcan
+                                @can('storage_location_access')
+                                <li>
+                                    <a href="{{ route('admin.storage-location.index') }}" class="">
+                                        <i class="fa fas fa-caret-right"></i> {{ trans('cruds.storage-location.title') }}
+                                    </a>
+                                </li>
+                                @endcan
                                 @can('profit_center_access')
                                 <li>
                                     <a href="{{ route('admin.profit_center.index') }}" class="">
