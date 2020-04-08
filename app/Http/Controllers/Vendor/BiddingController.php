@@ -15,7 +15,7 @@ class BiddingController extends Controller
 {
     public function index ()
     {
-        $purchaseOrders = PurchaseOrder::where('vendor_id', Auth::user()->id);
+        $purchaseOrders = PurchaseOrder::where('vendor_id', Auth::user()->id)->get();
 
         return view('vendor.bidding.index', compact('purchaseOrders'));
     }

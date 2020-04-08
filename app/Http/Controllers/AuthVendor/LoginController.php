@@ -50,6 +50,9 @@ class LoginController extends Controller
 
         $model = Vendor::where('email', $request->email)->first();
 
+        if (empty($model))
+            return redirect()->route('vendor.login')->with('error', trans('global.vendor_not_found'));
+            
         if ($model->status == 0)
             return redirect()->route('vendor.login')->with('error', trans('validation.vendor_not_validate'));
 

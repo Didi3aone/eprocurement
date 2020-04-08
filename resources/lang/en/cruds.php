@@ -496,6 +496,7 @@ return [
         'fields'        => [
             'id' => 'ID',
             'request_no' => 'Request No',
+            'plant_id' => 'Plant',
             'request_date' => 'Request Date',
             'total' => 'Total',
             'notes' => 'Notes',
@@ -506,11 +507,34 @@ return [
         'title'          => 'Purchase Order',
         'title_singular' => 'Purchase Order',
         'approval' => 'PO Approval',
+        'bidding' => 'Bidding',
         'alert_success_insert' => 'Purchase Order successfully saved',
         'alert_success_bidding' => 'Purchase Order successfully bidding',
+        'alert_success_quotation' => 'Purchase Order successfully quotation',
         'alert_success_update' => 'Purchase Order successfully updated',
         'alert_success_delete' => 'Purchase Order successfully deleted',
         'alert_success'        => 'Purchase Order successfully saved',
+        'fields'        => [
+            'id' => 'ID',
+            'bidding' => 'Bidding',
+            'request_no' => 'Request No',
+            'request_date' => 'Date',
+            'notes' => 'Notes',
+            'vendor_id' => 'Vendor',
+            'status' => 'Status',
+            'created_at' => 'Created at'
+        ]
+    ],
+    'purchase-order-quotation' => [
+        'title'          => 'Quotation',
+        'title_singular' => 'Quotation',
+        'approval' => 'Quotation Approve',
+        'alert_success_insert' => 'Quotation successfully saved',
+        'alert_success_bidding' => 'Quotation successfully bidding',
+        'alert_success_quotation' => 'Quotation successfully quotation',
+        'alert_success_update' => 'Quotation successfully updated',
+        'alert_success_delete' => 'Quotation successfully deleted',
+        'alert_success'        => 'Quotation successfully saved',
         'fields'        => [
             'id' => 'ID',
             'bidding' => 'Bidding',

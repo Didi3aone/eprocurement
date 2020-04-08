@@ -26,7 +26,9 @@ class PurchaseRequestController extends Controller
     {
         abort_if(Gate::denies('purchase_request_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $pr = PurchaseRequest::where('approval_status',12)->get();
+        $pr = PurchaseRequest::where([
+            'approval_status' => 12
+        ])->get();
 
         return view('admin.purchase-request.pr.index', compact('pr'));
     }

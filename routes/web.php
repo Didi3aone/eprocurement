@@ -170,9 +170,15 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
 
     // request note
     Route::get('request-note','RequestNoteController@index')->name('request-note');
+    Route::get('rn-get-material', 'RequestNoteController@getMaterial')->name('rn-get-material');
+    Route::get('rn-get-plant', 'RequestNoteController@getPlant')->name('rn-get-plant');
+    Route::get('rn-get-unit', 'RequestNoteController@getUnit')->name('rn-get-unit');
 
     // purchase order
+    Route::get('purchase-order-quotation', 'PurchaseOrderController@quotation')->name('purchase-order-quotation');
     Route::post('purchase-order-make-quotation', 'PurchaseOrderController@makeQuotation')->name('purchase-order-make-quotation');
+    Route::post('purchase-order-quotation-approval/{id}', 'PurchaseOrderController@approveQuotation')->name('purchase-order-quotation-approval');
+    Route::get('purchase-order-quotation-show', 'PurchaseOrderController@viewQuotation')->name('purchase-order-quotation-show');
     Route::post('purchase-order-make-bidding', 'PurchaseOrderController@makeBidding')->name('purchase-order-make-bidding');
     Route::get('purchase-order-create-po/{id}', 'PurchaseOrderController@createPo')->name('purchase-order-create-po');
     Route::get('purchase-order-approval-po/{id}', 'PurchaseOrderController@approvalPo')->name('purchase-order-approval-po');
@@ -186,7 +192,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
 /*
  * Vendor routes
  */
-Route::get('vendor/login', '\App\Http\Controllers\AuthVendor\LoginController@showLoginForm');
+Route::get('vendor/login', '\App\Http\Controllers\AuthVendor\LoginController@showLoginForm')->name('vendor.login');
 Route::get('vendor/register', '\App\Http\Controllers\AuthVendor\LoginController@showRegisterForm')->name('vendor.register');
 Route::post('vendor/register', '\App\Http\Controllers\AuthVendor\LoginController@register')->name('vendor.register');
 Route::post('vendor/login', '\App\Http\Controllers\AuthVendor\LoginController@login')->name('vendor.login');
@@ -195,6 +201,8 @@ Route::group([ 'prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor',
     Route::get('/', 'VendorController@index')->name('home');
     Route::get('purchase-order', 'PurchaseOrderController@index')->name('purchase-order');
     Route::get('purchase-order/create', 'PurchaseOrderController@create')->name('purchase-order.create');
+    Route::get('purchase-order-make-quotation/{id}', 'PurchaseOrderController@makeQuotation')->name('purchase-order-make-quotation');
+    Route::post('purchase-order-save-quotation', 'PurchaseOrderController@saveQuotation')->name('purchase-order-save-quotation');
     Route::get('purchase-order/bidding', 'PurchaseOrderController@bidding')->name('purchase-order.bidding');
     Route::get('bidding', 'BiddingController@index')->name('bidding');
     Route::post('logout', '\App\Http\Controllers\AuthVendor\LoginController@logout')->name('logout');

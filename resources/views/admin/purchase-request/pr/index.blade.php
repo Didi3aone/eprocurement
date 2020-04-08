@@ -82,13 +82,6 @@
 @section('scripts')
 @parent
 <script>
-    $('#chooseBidding').on('show.bs.modal', function (event) {
-        var request = $(event.relatedTarget);
-        var id = request.data('id');
-
-        $('.request_id').val(id);
-    });
-
     $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
         $("#success-alert").slideUp(500);
     });

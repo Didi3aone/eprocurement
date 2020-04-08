@@ -42,6 +42,12 @@
                                 List PO
                             </a>
                         </li>
+                        <li>
+                            <a href="{{ route('admin.purchase-order-quotation') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> 
+                                Quotation
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 @endcan

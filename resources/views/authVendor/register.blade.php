@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 <section id="wrapper">
-    <div class="login-register" style="background-color:green;">
+    <div class="login-register" style="background-color: green; padding: 3% 0">
         @if(session('error'))
             <div class="alert alert-danger alert-dismissible fade show" role="alert" id="danger-alert">
                 {{ session('error') }}

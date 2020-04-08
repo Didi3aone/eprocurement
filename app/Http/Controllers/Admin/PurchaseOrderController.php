@@ -8,8 +8,11 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Models\PurchaseRequest;
 use App\Models\PurchaseRequestsDetail;
 use App\Models\Vendor;
+use App\Models\Plant;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrdersDetail;
+use App\Models\Vendor\Quotation;
+use App\Models\Vendor\QuotationDetail;
 use App\Imports\PurchaseOrderImport;
 use Gate;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,20 +33,53 @@ class PurchaseOrderController extends Controller
         return view('admin.purchase-order.index', compact('purchaseOrders'));
     }
 
-
     /**
-     * Show the form for creating a new resource.
+     * Display a listing of the quotation resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function createPo($id)
+    public function quotation ()
     {
-        // abort_if(Gate::denies('purchase_order_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-        $pr = PurchaseRequest::find($id);
-        $prDetail = PurchaseRequestsDetail::where('purchase_id', $id)->get();
-        $vendor   = Vendor::get();
+        $quotations = Quotation::all();
 
-        return view('admin.purchase-order.create',compact('pr','prDetail','vendor'));
+        return view('admin.purchase-order.quotation', compact('quotations'));
+    }
+
+    public function viewQuotation ($id)
+    {
+        $quotation = Quotation::find($id);
+        $quotationDetail = QuotationDetail::where('quotation_order_id', $id)->get();
+
+        return view('admin.purchase-order.view-quotation', compact('quotation', 'quotationDetail'));
+    }
+
+    public function approveQuotation (Request $request, $id)
+    {
+        \DB::beginTransaction();
+
+        try {
+            $quotation = Quotation::find($id);
+            $quotation->status = 1;
+            $quotation->save();
+
+            // approval each items
+            if ($request->has('description')) {
+                foreach ($request->get('description') as $key => $value) {
+                    $quotationDetail = QuotationDetail::find($key);
+
+                    if ($value->flag == 1)
+                        $quotationDetail->flag = 1;
+
+                    $quotationDetail->save();
+                }
+            }
+
+            \DB::commit();
+        } catch (Exception $e) {
+            \DB::rollBack();
+        }
+
+        return redirect()->route('admin.purchase-order.quotation')->with('success', trans('cruds.purchase-order.alert_quotation_approval'));
     }
 
     /**
@@ -60,6 +96,22 @@ class PurchaseOrderController extends Controller
     }
 
     /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function createPo($id)
+    {
+        // abort_if(Gate::denies('purchase_order_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $pr         = PurchaseRequest::find($id);
+        $prDetail   = PurchaseRequestsDetail::where('purchase_id', $id)->get();
+        $plant      = Plant::get();
+        $vendor     = Vendor::get();
+
+        return view('admin.purchase-order.create',compact('pr', 'prDetail', 'plant', 'vendor'));
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -67,19 +119,43 @@ class PurchaseOrderController extends Controller
      */
     public function store(Request $request)
     {
-        $purchaseOrder = PurchaseOrder::create($request->all());
+        \DB::beginTransaction();
 
-        if( $request->has('description') ) {
-            foreach( $request->get('description') as $key => $row ) {
-                PurchaseOrdersDetail::create([
-                    'purchase_order_id' => $purchaseOrder->id,
-                    'description'       => $row,
-                    'qty'               => $request->get('qty')[$key],
-                    'unit'              => $request->get('unit')[$key],
-                    'notes'             => $request->get('notes_detail')[$key],
-                    'price'             => $request->get('price')[$key]
-                ]);
+        try {
+            $purchaseOrder = new PurchaseOrder;
+
+            if ($request->get('bidding') == 0) {
+                $purchaseOrder->bidding = 0;
+                $purchaseOrder->vendor_id = $request->get('vendor_id');
+            } else {
+                $purchaseOrder->bidding = 1;
+                $purchaseOrder->vendor_id = null;
             }
+
+            $purchaseOrder->po_no = str_replace('PR', 'PO', $request->get('po_no'));
+            $purchaseOrder->po_date = $request->get('po_date');
+            $purchaseOrder->notes = str_replace('PR', 'PO', $request->get('notes'));
+            $purchaseOrder->request_id = $request->get('request_id');
+            $purchaseOrder->status = $request->get('status');
+            $purchaseOrder->save();
+
+            if( $request->has('description') ) {
+                foreach( $request->get('description') as $key => $row ) {
+                    $model = new PurchaseOrdersDetail;
+                    $model->purchase_order_id = $purchaseOrder->id;
+                    $model->description       = $row;
+                    $model->qty               = $request->get('qty')[$key];
+                    $model->unit              = $request->get('unit')[$key];
+                    $model->notes             = $request->get('notes_detail')[$key];
+                    $model->price             = $request->get('price')[$key];
+                    $model->save();
+                }
+            }
+
+            \DB::commit();
+        } catch (Exception $e) {
+            \DB::rollBack();
+            dd($e);
         }
 
         return redirect()->route('admin.purchase-order.index')->with('status', trans('cruds.purchase-order.alert_success_insert'));

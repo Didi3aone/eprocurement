@@ -18,7 +18,7 @@
     </div>
 @endif
 @can('vendor_create')
-    <div style="margin-bottom: 10px;" class="row">
+    {{-- <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-6">
             <a class="btn btn-success" href="{{ route("admin.vendors.create") }}">
                 <i class='fa fa-plus'></i> {{ trans('global.add') }} {{ trans('cruds.vendors.title_singular') }}
@@ -29,7 +29,7 @@
                 <i class="fa fa-download"></i> {{ trans('cruds.vendors.import') }}
             </button>
         </div>
-    </div>
+    </div> --}}
 @endcan
 <div class="row">
     <div class="col-12">

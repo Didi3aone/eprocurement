@@ -2,9 +2,9 @@
 @section('content')
 <div class="row page-titles">
     <div class="col-md-5 col-8 align-self-center">
-        <h3 class="text-themecolor">Purchase Request</h3>
+        <h3 class="text-themecolor">Purchase Orders</h3>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="javascript:void(0)">Purchase Request</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">{{ trans('cruds.purchase-order.title_singular') }}</a></li>
             <li class="breadcrumb-item active">List</li>
         </ol>
     </div>
@@ -63,9 +63,11 @@
                                     <td>{{ $po->bidding == 1 ? 'Yes' : 'No' }}</td>
                                     <td>{{ $po->po_date ?? '' }}</td>
                                     <td>
-                                        <a class="btn btn-xs btn-primary" href="{{ route('vendor.purchase-order.bidding', $po->id, Auth::user()->id) }}">
+                                        @if ($po->bidding == 1)
+                                        <a class="btn btn-xs btn-primary" href="{{ route('vendor.purchase-order-make-quotation', $po->id) }}">
                                             {{ trans('cruds.purchase-order.bidding') }}
                                         </a>
+                                        @endif
                                         @can('purchase_order_show')
                                             <a class="btn btn-xs btn-primary" href="{{ route('vendor.purchase-order.show', $po->id) }}">
                                                 {{ trans('global.view') }}

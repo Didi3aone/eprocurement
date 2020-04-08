@@ -250,4 +250,5 @@ return [
     'calendar'                             => 'Calendar',
     'messenger'                            => 'Messenger',
     'date'                                 => 'Date',
+    'vendor_not_found'                     => 'Vendor not registered',
 ];
