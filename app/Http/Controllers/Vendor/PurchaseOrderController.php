@@ -34,42 +34,6 @@ class PurchaseOrderController extends Controller
         return view('vendor.purchase-order.make-quotation', compact('purchaseOrder', 'purchaseOrderDetails'));
     }
 
-    public function saveQuotation (Request $request)
-    {
-        \DB::beginTransaction();
-
-        try {
-            $quotationOrder = new Quotation;
-            $quotationOrder->vendor_id = \Auth::user()->id;
-            $quotationOrder->po_no = $request->get('po_no');
-            $quotationOrder->po_date = $request->get('po_date');
-            $quotationOrder->notes = $request->get('notes');
-            $quotationOrder->request_id = $request->get('request_id');
-            $quotationOrder->status = 0;
-            $quotationOrder->save();
-
-            if( $request->has('description') ) {
-                foreach( $request->get('description') as $key => $row ) {
-                    $model = new QuotationDetail;
-                    $model->quotation_order_id = $quotationOrder->id;
-                    $model->description       = $row;
-                    $model->qty               = $request->get('qty')[$key];
-                    $model->unit              = $request->get('unit')[$key];
-                    $model->notes             = $request->get('notes_detail')[$key];
-                    $model->price             = $request->get('price')[$key];
-                    $model->save();
-                }
-            }
-
-            \DB::commit();
-        } catch (Exception $e) {
-            \DB::rollBack();
-            dd($e);
-        }
-
-        return redirect()->route('vendor.purchase-order')->with('status', trans('cruds.purchase-order.alert_success_quotation'));
-    }
-
     public Function createBidding ($id, $vendor_id)
     {
         $po = PurchaseOrder::find($id);

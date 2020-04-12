@@ -26,24 +26,24 @@ class VendorController extends Controller
         return view('admin.vendors.index',compact('vendors'));
     }
 
-    // public function import(Request $request)
-    // {
-    //     // abort_if(Gate::denies('vendor_import_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+    public function import(Request $request)
+    {
+        // abort_if(Gate::denies('vendor_import_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-    //     $this->validate($request, [
-    //         'xls_file' => 'required|file|mimes:csv,xls,xlsx',
-    //     ]);
+        $this->validate($request, [
+            'xls_file' => 'required|file|mimes:csv,xls,xlsx',
+        ]);
 
-    //     $path = 'xls/';
-    //     $file = $request->file('xls_file');
-    //     $filename = $file->getClientOriginalName();
+        $path = 'xls/';
+        $file = $request->file('xls_file');
+        $filename = $file->getClientOriginalName();
 
-    //     $file->move($path, $filename);
+        $file->move($path, $filename);
 
-    //     Excel::import(new VendorsImport, public_path($path . $filename));
+        Excel::import(new VendorsImport, public_path($path . $filename));
 
-    //     return redirect('admin/vendors')->with('success', 'Vendors has been successfully imported');
-    // }
+        return redirect('admin/vendors')->with('success', 'Vendors has been successfully imported');
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -68,6 +68,20 @@ class VendorController extends Controller
         $vendors = Vendor::create($request->all());
 
         return redirect()->route('admin.vendors.index')->with('status', trans('cruds.vendors.alert_success_insert'));
+    }
+
+    public function setPassword (Request $request)
+    {
+        if ($request->get('password') == $request->get('password_confirmation')) {
+            $id = $request->get('vendor_id');
+
+            $model = Vendor::find($id);
+            $model->password = \Hash::make($request->get('password'));
+            $model->save();
+    
+            return redirect()->route('admin.vendors.index')->with('success', 'Password has been set');
+        } else
+            return redirect()->route('admin.vendors.index')->with('error', 'Password confirmation doesnot match');
     }
 
     /**

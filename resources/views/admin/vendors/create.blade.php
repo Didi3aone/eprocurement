@@ -73,12 +73,12 @@
                         <label>{{ trans('cruds.vendors.fields.status') }}</label>
                         <div class="">
                             <div class="form-check form-check-inline mr-1">
-                                <input class="form-check-input" id="inline-radio-active" type="radio" value="0"
+                                <input class="form-check-input" id="inline-radio-active" type="radio" value="1"
                                     name="status">
                                 <label class="form-check-label" for="inline-radio-active">{{ trans('cruds.vendors.fields.status_active') }}</label>
                             </div>
                             <div class="form-check form-check-inline mr-1">
-                                <input class="form-check-input" id="inline-radio-non-active" type="radio" value="inactive"
+                                <input class="form-check-input" id="inline-radio-non-active" type="radio" value="0"
                                     name="status" checked>
                                 <label class="form-check-label" for="inline-radio-non-active">{{ trans('cruds.vendors.fields.status_inactive') }}</label>
                             </div>

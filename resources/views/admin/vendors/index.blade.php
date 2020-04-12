@@ -17,8 +17,16 @@
         </button>
     </div>
 @endif
+@if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" id="danger-alert">
+        {{ session('error') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+@endif
 @can('vendor_create')
-    {{-- <div style="margin-bottom: 10px;" class="row">
+    <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-6">
             <a class="btn btn-success" href="{{ route("admin.vendors.create") }}">
                 <i class='fa fa-plus'></i> {{ trans('global.add') }} {{ trans('cruds.vendors.title_singular') }}
@@ -29,7 +37,7 @@
                 <i class="fa fa-download"></i> {{ trans('cruds.vendors.import') }}
             </button>
         </div>
-    </div> --}}
+    </div>
 @endcan
 <div class="row">
     <div class="col-12">
@@ -39,9 +47,6 @@
                     <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                             <tr>
-                                <th width="10">
-
-                                </th>
                                 <th>
                                     {{ trans('cruds.vendors.fields.id') }}
                                 </th>
@@ -68,9 +73,6 @@
                         <tbody>
                             @foreach($vendors as $key => $vendor)
                                 <tr data-entry-id="{{ $vendor->id }}">
-                                    <td>
-
-                                    </td>
                                     <td>{{ $vendor->id ?? '' }}</td>
                                     <td>{{ $vendor->name ?? '' }}</td>
                                     <td>{{ $vendor->email ?? '' }}</td>
@@ -78,6 +80,9 @@
                                     <td>{{ $vendor->address ?? '' }}</td>
                                     <td>{{ $vendor->status == 1 ? 'Active' : 'Inactive' }}</td>
                                     <td>
+                                        <button class="show_modal btn btn-xs btn-success" data-id="{{ $vendor->id }}" data-toggle="modal" data-target="#modal_password">
+                                            <i class="fa fa-key"></i> {{ trans('global.set_password') }}
+                                        </button>
                                         @can('vendor_show')
                                             <a class="btn btn-xs btn-primary" href="{{ route('admin.vendors.show', $vendor->id) }}">
                                                 {{ trans('global.view') }}
@@ -130,6 +135,47 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="modal_password" tabindex="-1" role="dialog" aria-labelledby="exampleModalPasswordLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalPasswordLabel">{{ trans('cruds.vendors.password') }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('admin.vendors.set-password') }}" method="post" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body">
+                    <input type="hidden" name="vendor_id" id="vendor_id" value="">
+                    <div class="form-group">
+                        <label>{{ trans('cruds.vendors.fields.password') }}</label>
+                        <input type="text" class="form-control form-control-line {{ $errors->has('password') ? 'is-invalid' : '' }}" name="password" value="{{ old('password') }}" required> 
+                        @if($errors->has('password'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('password') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.vendors.fields.password_confirmation') }}</label>
+                        <input type="text" class="form-control form-control-line {{ $errors->has('password_confirmation') ? 'is-invalid' : '' }}" name="password_confirmation" value="{{ old('password_confirmation') }}" required> 
+                        @if($errors->has('password_confirmation'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('password_confirmation') }}
+                            </div>
+                        @endif
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 @section('scripts')
 @parent
@@ -140,5 +186,12 @@ $('#datatables-run').DataTable({
         'copy', 'csv', 'excel', 'pdf', 'print'
     ]
 });
+
+$('.show_modal').on('click', function (e) {
+    e.preventDefault()
+
+    const id = $(this).data('id')
+    $('#vendor_id').val(id)
+})
 </script>
 @endsection

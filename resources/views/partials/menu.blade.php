@@ -43,7 +43,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('admin.purchase-order-quotation') }}" class="">
+                            <a href="{{ route('admin.quotation.index') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
                                 Quotation
                             </a>

@@ -25,6 +25,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     // Vendors
     Route::delete('vendors/destroy', 'VendorController@massDestroy')->name('vendors.massDestroy');
     Route::post('vendors/import', 'VendorController@import')->name('vendors.import');
+    Route::post('vendors/set-password', 'VendorController@setPassword')->name('vendors.set-password');
     Route::resource('vendors', 'VendorController');
 
     // GLs
@@ -184,9 +185,13 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::get('purchase-order-approval-po/{id}', 'PurchaseOrderController@approvalPo')->name('purchase-order-approval-po');
     Route::resource('purchase-order', 'PurchaseOrderController');
 
+    // quotation
+    Route::delete('quotation/destroy', 'QuotationController@massDestroy')->name('quotation.massDestroy');
+    Route::post('quotation/import', 'QuotationController@import')->name('quotation.import');
+    Route::resource('quotation', 'QuotationController');
+
     // soap
     Route::get('soap', 'SoapController@show')->name('soap');
-
 });
 
 /*
@@ -204,6 +209,9 @@ Route::group([ 'prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor',
     Route::get('purchase-order-make-quotation/{id}', 'PurchaseOrderController@makeQuotation')->name('purchase-order-make-quotation');
     Route::post('purchase-order-save-quotation', 'PurchaseOrderController@saveQuotation')->name('purchase-order-save-quotation');
     Route::get('purchase-order/bidding', 'PurchaseOrderController@bidding')->name('purchase-order.bidding');
+    Route::get('quotation', 'QuotationController@index')->name('quotation');
+    Route::get('quotation-edit/{id}', 'QuotationController@edit')->name('quotation-edit');
+    Route::post('quotation-save', 'QuotationController@store')->name('quotation-save');
     Route::get('bidding', 'BiddingController@index')->name('bidding');
     Route::post('logout', '\App\Http\Controllers\AuthVendor\LoginController@logout')->name('logout');
 });

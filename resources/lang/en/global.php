@@ -251,4 +251,5 @@ return [
     'messenger'                            => 'Messenger',
     'date'                                 => 'Date',
     'vendor_not_found'                     => 'Vendor not registered',
+    'set_password'                         => 'Set Password',
 ];

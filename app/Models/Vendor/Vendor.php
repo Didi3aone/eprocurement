@@ -15,6 +15,16 @@ class Vendor extends Authenticatable
     use SoftDeletes, Notifiable, HasApiTokens;
     protected $guard = 'vendor';
 
+    protected $fillable = [
+        'name',
+        'address',
+        'company_type',
+        'company_from',
+        'email',
+        'npwp',
+        'status'
+    ];
+
     public function getEmailVerifiedAtAttribute($value)
     {
         return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('panel.date_format') . ' ' . config('panel.time_format')) : null;

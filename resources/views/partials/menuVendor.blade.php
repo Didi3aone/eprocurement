@@ -18,9 +18,9 @@
                         <li>
                             
                             <li>
-                                <a href="{{ route('vendor.purchase-order') }}" class="">
+                                <a href="{{ route('vendor.quotation') }}" class="">
                                     <i class="fa fas fa-caret-right"></i> 
-                                    List PO
+                                    Quotation
                                 </a>
                             </li>
                         </li>
