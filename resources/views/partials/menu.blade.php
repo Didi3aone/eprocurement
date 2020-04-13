@@ -42,12 +42,12 @@
                                 List PO
                             </a>
                         </li>
-                        <li>
+                        {{-- <li>
                             <a href="{{ route('admin.quotation.index') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
                                 Quotation
                             </a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </li>
                 @endcan

@@ -25,24 +25,11 @@
                     <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                             <tr>
-                                <th width="10">
-
-                                </th>
-                                <th>
-                                    {{ trans('cruds.purchase-order.fields.id') }}
-                                </th>
-                                <th>
-                                    PO No.
-                                </th>
-                                <th>
-                                    {{ trans('cruds.purchase-order.fields.bidding') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.purchase-order.fields.vendor_id') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.purchase-order.fields.request_date') }}
-                                </th>
+                                <th>{{ trans('cruds.purchase-order.fields.id') }}</th>
+                                <th>{{ trans('cruds.purchase-order.fields.request_no') }}</th>
+                                <th>{{ trans('cruds.purchase-order.fields.bidding') }}</th>
+                                {{-- <th>{{ trans('cruds.purchase-order.fields.vendor_id') }}</th> --}}
+                                <th>{{ trans('cruds.purchase-order.fields.request_date') }}</th>
                                 <th>
                                     &nbsp;
                                 </th>
@@ -51,13 +38,10 @@
                         <tbody>
                             @foreach($purchaseOrders as $key => $po)
                                 <tr data-entry-id="{{ $po->id }}">
-                                    <td>
-
-                                    </td>
                                     <td>{{ $po->id ?? '' }}</td>
                                     <td>{{ $po->po_no }}</td>
                                     <td>{{ $po->bidding == 1 ? 'Yes' : 'No' }}</td>
-                                    <td>{{ !empty($po->vendor_id) ? $po->vendor->name . ' - ' . $po->vendor->email : '' }}</td>
+                                    {{-- <td>{{ !empty($po->vendor_id) ? $po->vendor->name . ' - ' . $po->vendor->email : '' }}</td> --}}
                                     <td>{{ $po->po_date ?? '' }}</td>
                                     <td>
                                         @can('purchase_order_approval')                                            
@@ -65,11 +49,11 @@
                                                 {{ trans('cruds.purchase-order.approval') }}
                                             </a>
                                         @endcan
-                                        @can('purchase_request_show')
-                                            <a class="btn btn-xs btn-primary" href="{{ route('admin.purchase-order.show', $po->id) }}">
+                                        {{-- @can('purchase_request_show') --}}
+                                            <a class="btn btn-xs btn-primary" href="{{ route('admin.purchase-order-quotation', $po->request_id) }}">
                                                 {{ trans('global.view') }}
                                             </a>
-                                        @endcan
+                                        {{-- @endcan --}}
 
                                         @can('purchase_request_edit')
                                             <a class="btn btn-xs btn-info" href="{{ route('admin.purchase-order.edit', $po->id) }}">

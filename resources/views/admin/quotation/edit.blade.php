@@ -13,29 +13,29 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form class="form-material m-t-40" method="POST" action="{{ route("admin.quotation.update", [$gl->id]) }}" enctype="multipart/form-data">
+                <form class="form-material m-t-40" method="POST" action="{{ route("admin.quotation.update", [$quotation->id]) }}" enctype="multipart/form-data">
                     @method('PUT')
                     @csrf
                     <div class="form-group">
-                        <label>{{ trans('cruds.purchase-order.fields.request_no') }}</label>
-                        <input type="text" class="form-control form-control-line {{ $errors->has('request_no') ? 'is-invalid' : '' }}" name="request_no" value="{{ old('request_no', $pr->request_no) }}" readonly> 
-                        @if($errors->has('request_no'))
+                        <label>{{ trans('cruds.quotation.fields.po_no') }}</label>
+                        <input type="text" class="form-control form-control-line {{ $errors->has('po_no') ? 'is-invalid' : '' }}" name="po_no" value="{{ old('po_no', $quotation->po_no) }}" readonly> 
+                        @if($errors->has('po_no'))
                             <div class="invalid-feedback">
-                                {{ $errors->first('request_no') }}
+                                {{ $errors->first('po_no') }}
                             </div>
                         @endif
                     </div>
                     <div class="form-group">
-                        <label>{{ trans('cruds.purchase-order.fields.purchasing_leadtime') }}</label>
+                        <label>{{ trans('cruds.quotation.fields.purchasing_leadtime') }}</label>
                         <div class="row">
                             <div class="col-lg-3">
                                 <select name="leadtime_type" id="leadtime_type" class="form-control">
-                                    <option value="0">Tanggal</option>
-                                    <option value="1">Jumlah Hari</option>
+                                    <option value="0" {{ $quotation->leadtime_type == 0 ? 'selected' : '' }}>Tanggal</option>
+                                    <option value="1" {{ $quotation->leadtime_type == 1 ? 'selected' : '' }}>Jumlah Hari</option>
                                 </select>
                             </div>
                             <div class="col-lg-9">
-                                <input type="text" id="purchasing_leadtime" class="form-control form-control-line {{ $errors->has('purchasing_leadtime') ? 'is-invalid' : '' }}" name="purchasing_leadtime" value="{{ old('purchasing_leadtime', 0) }}"> 
+                                <input type="text" id="purchasing_leadtime" class="form-control form-control-line {{ $errors->has('purchasing_leadtime') ? 'is-invalid' : '' }}" name="purchasing_leadtime" value="{{ old('purchasing_leadtime', $quotation->purchasing_leadtime) }}"> 
                                 @if($errors->has('purchasing_leadtime'))
                                     <div class="invalid-feedback">
                                         {{ $errors->first('purchasing_leadtime') }}
@@ -45,8 +45,8 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>{{ trans('cruds.purchase-order.fields.target_price') }}</label>
-                        <input type="number" class="form-control form-control-line {{ $errors->has('target_price') ? 'is-invalid' : '' }}" name="target_price" value="{{ old('target_price', 0) }}"> 
+                        <label>{{ trans('cruds.quotation.fields.target_price') }}</label>
+                        <input type="number" class="form-control form-control-line {{ $errors->has('target_price') ? 'is-invalid' : '' }}" name="target_price" value="{{ old('target_price', $quotation->target_price) }}"> 
                         @if($errors->has('target_price'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('target_price') }}
@@ -54,8 +54,8 @@
                         @endif
                     </div>
                     <div class="form-group">
-                        <label>{{ trans('cruds.purchase-order.fields.expired_date') }}</label>
-                        <input type="date" class="form-control form-control-line {{ $errors->has('expired_date') ? 'is-invalid' : '' }}" name="expired_date" value="{{ old('expired_date', date('Y-m-d', strtotime('+3 months', time()))) }}"> 
+                        <label>{{ trans('cruds.quotation.fields.expired_date') }}</label>
+                        <input type="date" class="form-control form-control-line {{ $errors->has('expired_date') ? 'is-invalid' : '' }}" name="expired_date" value="{{ old('expired_date', $quotation->expired_date) }}"> 
                         @if($errors->has('expired_date'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('expired_date') }}

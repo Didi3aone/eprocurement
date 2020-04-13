@@ -17,23 +17,32 @@
                     <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                             <tr>
-                                <th width="10">
-
+                                <th>
+                                    {{ trans('cruds.quotation.fields.id') }}
                                 </th>
                                 <th>
-                                    {{ trans('cruds.purchase-order-quotation.fields.id') }}
+                                    {{ trans('cruds.quotation.fields.po_no') }}
                                 </th>
                                 <th>
-                                    PO No.
+                                    {{ trans('cruds.quotation.fields.vendor_id') }}
                                 </th>
                                 <th>
-                                    {{ trans('cruds.purchase-order-quotation.fields.po_date') }}
+                                    {{ trans('cruds.quotation.fields.leadtime_type') }}
                                 </th>
                                 <th>
-                                    {{ trans('cruds.purchase-order-quotation.fields.vendor_id') }}
+                                    {{ trans('cruds.quotation.fields.purchasing_leadtime') }}
                                 </th>
                                 <th>
-                                    {{ trans('cruds.purchase-order-quotation.fields.request_date') }}
+                                    {{ trans('cruds.quotation.fields.target_price') }}
+                                </th>
+                                <th>
+                                    {{ trans('cruds.quotation.fields.expired_date') }}
+                                </th>
+                                <th>
+                                    {{ trans('cruds.quotation.fields.vendor_leadtime') }}
+                                </th>
+                                <th>
+                                    {{ trans('cruds.quotation.fields.vendor_price') }}
                                 </th>
                                 <th>
                                     &nbsp;
@@ -43,32 +52,38 @@
                         <tbody>
                             @foreach($quotations as $key => $val)
                                 <tr data-entry-id="{{ $val->id }}">
-                                    <td>
-
-                                    </td>
                                     <td>{{ $val->id ?? '' }}</td>
-                                    <td>{{ $val->po_no }}</td>
-                                    <td>{{ $val->po_date }}</td>
-                                    <td>{{ !empty($val->vendor_id) ? $val->vendor->name . ' - ' . $val->vendor->email : '' }}</td>
-                                    <td>{{ $val->po_date ?? '' }}</td>
+                                    <td>{{ $val->po_no ?? '' }}</td>
+                                    <td>{{ isset($val->vendor_id) ? $val->vendor->name . ' - ' . $val->vendor->email : '' }}</td>
+                                    <td>{{ $val->leadtime_type == 0 ? 'Date' : 'Day Count' }}</td>
+                                    <td>{{ $val->purchasing_leadtime ?? '' }}</td>
+                                    <td>{{ $val->target_price ?? '' }}</td>
                                     <td>
-                                        {{-- @can('purchase_order_approval')                                             --}}
-                                            <a class="btn btn-xs btn-success" href="{{ route('admin.purchase-order-quotation-approval', $val->id) }}">
-                                                {{ trans('cruds.purchase-order-quotation.approval') }}
-                                            </a>
-                                        {{-- @endcan
-                                        @can('purchase_request_show') --}}
-                                            <a class="btn btn-xs btn-primary" href="{{ route('admin.purchase-order-quotation-show', $val->id) }}">
+                                        @if (time() > strtotime($val->expired_date))
+                                            @php $is_expired = 'red'; @endphp
+                                        @elseif (time() > strtotime('-2 days', strtotime($val->expired_date)) && time() <= strtotime($val->expired_date))
+                                            {{-- @dd(time(), strtotime('-2 days', strtotime($val->expired_date))) --}}
+                                            @php $is_expired = 'orange'; @endphp
+                                        @endif
+                                        <span style="color: {{ $is_expired }}">{{ $val->expired_date ?? '' }}</span>
+                                    </td>
+                                    <td>{{ $val->vendor_leadtime ?? '' }}</td>
+                                    <td>{{ $val->vendor_price ?? '' }}</td>
+                                    <td>
+                                        @can('quotation_show')
+                                            <a class="btn btn-xs btn-primary" href="{{ route('admin.quotation.show', $val->id) }}">
                                                 {{ trans('global.view') }}
                                             </a>
-                                        {{-- @endcan --}}
-                                        {{-- @can('purchase_request_edit') --}}
-                                            {{-- <a class="btn btn-xs btn-info" href="{{ route('admin.purchase-order-quotation.edit', $val->id) }}">
+                                        @endcan
+
+                                        @can('quotation_edit')
+                                            <a class="btn btn-xs btn-info" href="{{ route('admin.quotation.edit', $val->id) }}">
                                                 {{ trans('global.edit') }}
-                                            </a> --}}
-                                        {{-- @endcan --}}
-                                        @can('purchase_request_delete')
-                                            <form action="{{ route('admin.purchase-order-quotation.destroy', $val->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
+                                            </a>
+                                        @endcan
+
+                                        @can('quotation_delete')
+                                            <form action="{{ route('admin.quotation.destroy', $val->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                                 <input type="hidden" name="_method" value="DELETE">
                                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                 <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
@@ -84,4 +99,16 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+@parent
+<script>
+    $('.table').DataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    });
+</script>
 @endsection

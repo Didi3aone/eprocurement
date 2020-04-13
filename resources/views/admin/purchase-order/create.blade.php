@@ -66,7 +66,7 @@
                         </div>
                         <div class="form-group">
                             <label>{{ trans('cruds.purchase-order.fields.target_price') }}</label>
-                            <input type="number" class="form-control form-control-line {{ $errors->has('target_price') ? 'is-invalid' : '' }}" name="target_price" value="{{ old('target_price', 0) }}"> 
+                            <input type="number" class="form-control form-control-line {{ $errors->has('target_price') ? 'is-invalid' : '' }}" name="target_price" value="{{ old('target_price', '') }}" required>
                             @if($errors->has('target_price'))
                                 <div class="invalid-feedback">
                                     {{ $errors->first('target_price') }}

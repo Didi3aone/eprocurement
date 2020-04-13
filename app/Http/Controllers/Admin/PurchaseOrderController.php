@@ -38,11 +38,12 @@ class PurchaseOrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function quotation ()
+    public function quotation ($id)
     {
-        $quotations = Quotation::all();
+        $quotations = Quotation::where('request_id', $id)->get();
+        $is_expired = '#67757c';
 
-        return view('admin.purchase-order.quotation', compact('quotations'));
+        return view('admin.purchase-order.quotation', compact('quotations', 'is_expired'));
     }
 
     public function viewQuotation ($id)
@@ -150,22 +151,22 @@ class PurchaseOrderController extends Controller
                     $quotation->save();
                 }
 
-                // $purchaseOrder = new PurchaseOrder;
+                $purchaseOrder = new PurchaseOrder;
 
-                // if ($request->get('bidding') == 0) {
-                //     $purchaseOrder->bidding = 0;
-                //     $purchaseOrder->vendor_id = $request->get('vendor_id');
-                // } else {
-                //     $purchaseOrder->bidding = 1;
-                //     $purchaseOrder->vendor_id = null;
-                // }
+                if ($request->get('bidding') == 0) {
+                    $purchaseOrder->bidding = 0;
+                    // $purchaseOrder->vendor_id = $request->get('vendor_id');
+                } else {
+                    $purchaseOrder->bidding = 1;
+                    // $purchaseOrder->vendor_id = null;
+                }
 
-                // $purchaseOrder->po_no = str_replace('PR', 'PO', $request->get('po_no'));
-                // $purchaseOrder->po_date = $request->get('po_date');
+                $purchaseOrder->po_no = str_replace('PR', 'PO', $request->get('request_no'));
+                $purchaseOrder->po_date = date('Y-m-d');
                 // $purchaseOrder->notes = str_replace('PR', 'PO', $request->get('notes'));
-                // $purchaseOrder->request_id = $request->get('request_id');
-                // $purchaseOrder->status = $request->get('status');
-                // $purchaseOrder->save();
+                $purchaseOrder->request_id = $request->get('request_id');
+                $purchaseOrder->status = 0;
+                $purchaseOrder->save();
 
                 // if( $request->has('description') ) {
                 //     foreach( $request->get('description') as $key => $row ) {

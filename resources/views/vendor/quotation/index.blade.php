@@ -39,27 +39,13 @@
                     <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                             <tr>
-                                <th>
-                                    {{ trans('cruds.quotation.fields.id') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.quotation.fields.po_no') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.quotation.fields.leadtime_type') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.quotation.fields.purchasing_leadtime') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.quotation.fields.expired_date') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.quotation.fields.vendor_leadtime') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.quotation.fields.vendor_price') }}
-                                </th>
+                                <th>{{ trans('cruds.quotation.fields.id') }}</th>
+                                <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
+                                <th>{{ trans('cruds.quotation.fields.leadtime_type') }}</th>
+                                <th>{{ trans('cruds.quotation.fields.purchasing_leadtime') }}</th>
+                                <th>{{ trans('cruds.quotation.fields.expired_date') }}</th>
+                                <th>{{ trans('cruds.quotation.fields.vendor_leadtime') }}</th>
+                                <th>{{ trans('cruds.quotation.fields.vendor_price') }}</th>
                                 <th>
                                     &nbsp;
                                 </th>
@@ -73,15 +59,18 @@
                                     <td>{{ $val->leadtime_type == 0 ? 'Date' : 'Day Count' }}</td>
                                     <td>{{ $val->purchasing_leadtime ?? '' }}</td>
                                     <td>
-                                        @if (date('Y-m-d') > $val->expired_date)
-                                        <span style="color: red"></span>
+                                        @php $is_expired = '#67757c' @endphp
+                                        @if (time() > strtotime($val->expired_date))
+                                            @php $is_expired = 'red'; @endphp
+                                        @elseif (time() > strtotime('-2 days', strtotime($val->expired_date)) && time() <= strtotime($val->expired_date))
+                                            @php $is_expired = 'orange'; @endphp
                                         @endif
-                                        {{ $val->expired_date ?? '' }}
+                                        <span style="color: {{ $is_expired }}">{{ $val->expired_date ?? '' }}</span>
                                     </td>
                                     <td>{{ $val->vendor_leadtime ?? '' }}</td>
                                     <td>{{ $val->vendor_price ?? '' }}</td>
                                     <td>
-                                        @if (\Auth::user()->id == $val->vendor_id)
+                                        @if ((int) \Auth::user()->id == (int) $val->vendor_id)
                                         <a class="btn btn-xs btn-info" href="{{ route('vendor.quotation-edit', $val->id) }}">
                                             {{ trans('global.edit') }}
                                         </a>

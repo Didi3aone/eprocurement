@@ -176,7 +176,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::get('rn-get-unit', 'RequestNoteController@getUnit')->name('rn-get-unit');
 
     // purchase order
-    Route::get('purchase-order-quotation', 'PurchaseOrderController@quotation')->name('purchase-order-quotation');
+    Route::get('purchase-order-quotation/{po_no}', 'PurchaseOrderController@quotation')->name('purchase-order-quotation');
     Route::post('purchase-order-make-quotation', 'PurchaseOrderController@makeQuotation')->name('purchase-order-make-quotation');
     Route::post('purchase-order-quotation-approval/{id}', 'PurchaseOrderController@approveQuotation')->name('purchase-order-quotation-approval');
     Route::get('purchase-order-quotation-show', 'PurchaseOrderController@viewQuotation')->name('purchase-order-quotation-show');
@@ -191,7 +191,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::resource('quotation', 'QuotationController');
 
     // soap
-    Route::get('soap', 'SoapController@show')->name('soap');
+    // Route::get('soap', 'SoapController@show')->name('soap');
 });
 
 /*
