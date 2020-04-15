@@ -210,6 +210,7 @@ Route::group([ 'prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor',
     Route::post('purchase-order-save-quotation', 'PurchaseOrderController@saveQuotation')->name('purchase-order-save-quotation');
     Route::get('purchase-order/bidding', 'PurchaseOrderController@bidding')->name('purchase-order.bidding');
     Route::get('quotation', 'QuotationController@index')->name('quotation');
+    Route::get('quotation-detail/{id}', 'QuotationController@detail')->name('quotation-detail');
     Route::get('quotation-edit/{id}', 'QuotationController@edit')->name('quotation-edit');
     Route::post('quotation-save', 'QuotationController@store')->name('quotation-save');
     Route::get('bidding', 'BiddingController@index')->name('bidding');

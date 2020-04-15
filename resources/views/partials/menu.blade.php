@@ -30,6 +30,22 @@
                     </ul>
                 </li>
                 @endcan
+                <li class=""> 
+                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-file"></i>
+                        <span class="hide-menu"> {{ trans('cruds.quotation.title') }} </span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse">
+                        @can('purchase_request_access')
+                        <li>
+                            <a href="{{ route('admin.quotation.index') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> 
+                                List Quotation
+                            </a>
+                        </li>
+                        @endcan
+                        
+                    </ul>
+                </li>
                 @can('purchase_order_access')
                 <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-truck"></i>
@@ -42,12 +58,6 @@
                                 List PO
                             </a>
                         </li>
-                        {{-- <li>
-                            <a href="{{ route('admin.quotation.index') }}" class="">
-                                <i class="fa fas fa-caret-right"></i> 
-                                Quotation
-                            </a>
-                        </li> --}}
                     </ul>
                 </li>
                 @endcan

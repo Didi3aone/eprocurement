@@ -5,6 +5,9 @@ yarn-error.log
 public/xls/*
 vendor/*.*
 vendor/*
+vendor/**
+/vendor
+/vendor/*.*
 storage/**
 config/database.php
 storage/framework/views/*.*

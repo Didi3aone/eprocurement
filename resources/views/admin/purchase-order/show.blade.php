@@ -16,44 +16,24 @@
                 <table class="table table-bordered table-striped">
                     <tbody>
                         <tr>
-                            <th>
-                                {{ trans('cruds.purchasing_group.fields.id') }}
-                            </th>
-                            <td>
-                                {{ $purchasingGroup->id }}
-                            </td>
+                            <th>{{ trans('cruds.purchasing_group.fields.id') }}</th>
+                            <td>{{ $purchasingGroup->id }}</td>
                         </tr>
                         <tr>
-                            <th>
-                                {{ trans('cruds.purchasing_group.fields.code') }}
-                            </th>
-                            <td>
-                                {{ $purchasingGroup->code }}
-                            </td>
+                            <th>{{ trans('cruds.purchasing_group.fields.code') }}</th>
+                            <td>{{ $purchasingGroup->code }}</td>
                         </tr>
                         <tr>
-                            <th>
-                                {{ trans('cruds.purchasing_group.fields.description') }}
-                            </th>
-                            <td>
-                                {{ $purchasingGroup->description }}
-                            </td>
+                            <th>{{ trans('cruds.purchasing_group.fields.description') }}</th>
+                            <td>{{ $purchasingGroup->description }}</td>
                         </tr>
                         <tr>
-                            <th>
-                                {{ trans('cruds.purchasing_group.fields.created_at') }}
-                            </th>
-                            <td>
-                                {{ $purchasingGroup->created_at }}
-                            </td>
+                            <th>{{ trans('cruds.purchasing_group.fields.created_at') }}</th>
+                            <td>{{ $purchasingGroup->created_at }}</td>
                         </tr>
                         <tr>
-                            <th>
-                                {{ trans('cruds.purchasing_group.fields.updated_at') }}
-                            </th>
-                            <td>
-                                {{ $purchasingGroup->updated_at }}
-                            </td>
+                            <th>{{ trans('cruds.purchasing_group.fields.updated_at') }}</th>
+                            <td>{{ $purchasingGroup->updated_at }}</td>
                         </tr>
                     </tbody>
                 </table>

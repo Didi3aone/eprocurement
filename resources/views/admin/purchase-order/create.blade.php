@@ -17,100 +17,127 @@
                     @csrf
                     <input type="hidden" value="{{ $pr->id }}" name="request_id">
                     <input type="hidden" value="0" name="status">
-                    <div class="form-group">
-                        <label>Bidding ?</label>
-                        <div class="">
-                            <div class="form-check form-check-inline mr-1">
-                                <input class="form-check-input" id="inline-radio-active" type="radio" value="1"
-                                    name="bidding">
-                                <label class="form-check-label" for="inline-radio-active">Online</label>
-                            </div>
-                            <div class="form-check form-check-inline mr-1">
-                                <input class="form-check-input" id="inline-radio-non-active" type="radio" value="0"
-                                    name="bidding" checked>
-                                <label class="form-check-label" for="inline-radio-non-active">Offline</label>
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="form-group">
+                                <label>Bidding ?</label>
+                                <div class="">
+                                    <div class="form-check form-check-inline mr-1">
+                                        <input class="form-check-input" id="inline-radio-active" type="radio" value="1"
+                                            name="bidding">
+                                        <label class="form-check-label" for="inline-radio-active">Yes</label>
+                                    </div>
+                                    <div class="form-check form-check-inline mr-1">
+                                        <input class="form-check-input" id="inline-radio-non-active" type="radio" value="0"
+                                            name="bidding" checked>
+                                        <label class="form-check-label" for="inline-radio-non-active">No</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label>{{ trans('cruds.purchase-order.fields.request_no') }}</label>
-                        <input type="text" class="form-control form-control-line {{ $errors->has('request_no') ? 'is-invalid' : '' }}" name="request_no" value="{{ old('request_no', $pr->request_no) }}" readonly> 
-                        @if($errors->has('request_no'))
-                            <div class="invalid-feedback">
-                                {{ $errors->first('request_no') }}
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label>{{ trans('cruds.purchase-order.fields.request_no') }}</label>
+                                <input type="text" class="form-control form-control-line {{ $errors->has('request_no') ? 'is-invalid' : '' }}" name="request_no" value="{{ old('request_no', $pr->request_no) }}" readonly> 
+                                @if($errors->has('request_no'))
+                                    <div class="invalid-feedback">
+                                        {{ $errors->first('request_no') }}
+                                    </div>
+                                @endif
                             </div>
-                        @endif
+                        </div>
                     </div>
                     <div class="form-group">
                         <a href="javascript:;" data-toggle="modal" data-target="#modal_material" class="btn btn-primary">{{ trans('cruds.purchase-order.show_modal') }}</a>
                     </div>
-                    <div id="online">
+                    <div id="bidding_yes">
                         <div class="form-group">
-                            <label>{{ trans('cruds.purchase-order.fields.purchasing_leadtime') }}</label>
+                            <label>Online ?</label>
+                            <select name="online" class="form-control">
+                                <option value="0" selected>Offline</option>
+                                <option value="1">Online</option>
+                            </select>
+                        </div>
+                        <div id="online">
+                            <div class="form-group">
+                                <label>{{ trans('cruds.purchase-order.fields.purchasing_leadtime') }}</label>
+                                <div class="row">
+                                    <div class="col-lg-3">
+                                        <select name="leadtime_type" id="leadtime_type" class="form-control">
+                                            <option value="0">Tanggal</option>
+                                            <option value="1">Jumlah Hari</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-9">
+                                        <input type="text" id="purchasing_leadtime" class="form-control form-control-line {{ $errors->has('purchasing_leadtime') ? 'is-invalid' : '' }}" name="purchasing_leadtime" value="{{ old('purchasing_leadtime', 0) }}"> 
+                                        @if($errors->has('purchasing_leadtime'))
+                                            <div class="invalid-feedback">
+                                                {{ $errors->first('purchasing_leadtime') }}
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>{{ trans('cruds.purchase-order.fields.target_price') }}</label>
+                                <input type="number" class="form-control form-control-line {{ $errors->has('target_price') ? 'is-invalid' : '' }}" name="target_price" value="{{ old('target_price', 0) }}" required>
+                                @if($errors->has('target_price'))
+                                    <div class="invalid-feedback">
+                                        {{ $errors->first('target_price') }}
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="form-group">
+                                <label>{{ trans('cruds.purchase-order.fields.expired_date') }}</label>
+                                <input type="text" id="datetimepicker" class="form-control form-control-line {{ $errors->has('expired_date') ? 'is-invalid' : '' }}" name="expired_date" value="{{ old('expired_date', date('Y-m-d H:i:s', strtotime('+3 months', time()))) }}">
+                                @if($errors->has('expired_date'))
+                                    <div class="invalid-feedback">
+                                        {{ $errors->first('expired_date') }}
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="">{{ trans('cruds.purchase-order.invite_vendor') }}</label>
                             <div class="row">
-                                <div class="col-lg-3">
-                                    <select name="leadtime_type" id="leadtime_type" class="form-control">
-                                        <option value="0">Tanggal</option>
-                                        <option value="1">Jumlah Hari</option>
+                                <div class="col-lg-9">
+                                    <select name="search-vendor" id="search-vendor" class="form-control select2">
+                                        @foreach ($vendor as $val)
+                                        <option 
+                                            value="{{ $val->id }}"
+                                            data-id="{{ $val->id }}"
+                                            data-name="{{ $val->name }}"
+                                            data-email="{{ $val->email }}"
+                                            data-address="{{ $val->address }}"
+                                            data-npwp="{{ $val->npwp }}"
+                                        >
+                                            {{ $val->name }} - {{ $val->email }}
+                                        </option>
+                                        @endforeach
                                     </select>
                                 </div>
-                                <div class="col-lg-9">
-                                    <input type="text" id="purchasing_leadtime" class="form-control form-control-line {{ $errors->has('purchasing_leadtime') ? 'is-invalid' : '' }}" name="purchasing_leadtime" value="{{ old('purchasing_leadtime', 0) }}"> 
-                                    @if($errors->has('purchasing_leadtime'))
-                                        <div class="invalid-feedback">
-                                            {{ $errors->first('purchasing_leadtime') }}
-                                        </div>
-                                    @endif
+                                <div class="col-lg-3">
+                                    <button id="btn-search-vendor" class="btn btn-info"><i class="fa fa-check"></i> Add Vendor</button>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>{{ trans('cruds.purchase-order.fields.target_price') }}</label>
-                            <input type="number" class="form-control form-control-line {{ $errors->has('target_price') ? 'is-invalid' : '' }}" name="target_price" value="{{ old('target_price', '') }}" required>
-                            @if($errors->has('target_price'))
-                                <div class="invalid-feedback">
-                                    {{ $errors->first('target_price') }}
-                                </div>
-                            @endif
-                        </div>
-                        <div class="form-group">
-                            <label>{{ trans('cruds.purchase-order.fields.expired_date') }}</label>
-                            <input type="date" class="form-control form-control-line {{ $errors->has('expired_date') ? 'is-invalid' : '' }}" name="expired_date" value="{{ old('expired_date', date('Y-m-d', strtotime('+3 months', time()))) }}"> 
-                            @if($errors->has('expired_date'))
-                                <div class="invalid-feedback">
-                                    {{ $errors->first('expired_date') }}
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="table-responsive">
-                            <input type="hidden" name="vendor_id" id="idval" required>
-                            <table id="vendors" class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>&nbsp;</th>
-                                        <th>Vendor Name</th>
-                                        <th>Email</th>
-                                        <th>Address</th>
-                                        <th>NPWP</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($vendor as $id => $val)
-                                    <tr>
-                                        <td>
-                                            <input type="checkbox" name="vendor_id[]" id="check_{{ $id }}" value="{{ $val->id }}">
-                                            <label for="check_{{ $id }}"></label>
-                                        </td>
-                                        <td>{{ $val->name }}</td>
-                                        <td>{{ $val->email }}</td>
-                                        <td>{{ $val->address }}</td>
-                                        <td>{{ $val->npwp }}</td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                            <div class="table-responsive">
+                                {{-- <input type="hidden" name="vendor_id" id="idval" required> --}}
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>&nbsp;</th>
+                                            <th>Vendor Name</th>
+                                            <th>Email</th>
+                                            <th>Address</th>
+                                            <th>NPWP</th>
+                                            <th>&nbsp;</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="vendors"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
 
@@ -135,7 +162,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="row">
+            <div class="row" style="padding: 0 15px 15px 15px;">
                 <div class="col-lg-12">
                     <div class="table-responsive">
                         <table class="table table-striped">
@@ -169,67 +196,113 @@
 @endsection
 
 @section('scripts')
+@parent
 <script>
-    $(document).ready(function () {
-        let index = 1
+    let index = 1
 
-        $('.datepicker').datepicker({
-            format: 'yyyy-mm-dd'
-        });
+    // $(".table").DataTable({
+    //     "pageLength": 150,
+    //     "bLengthChange": false
+    // });
 
-        $(".table").DataTable({
-            "pageLength": 150,
-            "bLengthChange": false
-        });
+    $("input[name='bidding']").change(function() {
+        const bidding_yes = $(this).val();
 
-        $("input[name='bidding']").change(function() {
-            const bidding = $(this).val();
-
-            if( bidding == 0 ) {
-                $("#online").hide()
-            } else {
-                $("#online").show()
-            }
-        }).trigger('change');
-
-        function formatDate(date) {
-            var d = new Date(date),
-                month = '' + (d.getMonth() + 1),
-                day = '' + d.getDate(),
-                year = d.getFullYear();
-
-            if (month.length < 2) 
-                month = '0' + month;
-            if (day.length < 2) 
-                day = '0' + day;
-
-            return [year, month, day].join('-');
+        if( bidding_yes == 0 ) {
+            $("#bidding_yes").hide()
+        } else {
+            $("#bidding_yes").show()
         }
+    }).trigger('change');
 
-        $("#leadtime_type").change(function() {
-            const leadtime_type = $(this).val();
+    $("select[name='online']").change(function() {
+        const online = $(this).val();
 
-            if( leadtime_type == 0 ) {
-                $("#purchasing_leadtime")
-                    .attr('type', 'date')
-                    .val(formatDate(new Date()))
-                    .focus()
-            } else {
-                $("#purchasing_leadtime")
-                    .attr('type', 'number')
-                    .val(0)
-                    .focus()
-            }
-        }).trigger('change');
+        if( online == 0 ) {
+            $("#online").hide()
+        } else {
+            $("#online").show()
+        }
+    }).trigger('change');
 
-        $('.click').click(function(e) {
-            //e.preventDefault();
-            var id = $('input[type=checkbox]:checked').map(function() {
-                return $(this).val();
-            }).get();
+    function formatDate(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
 
-            $("#idval").val(id);
-        });
+        if (month.length < 2) 
+            month = '0' + month;
+        if (day.length < 2) 
+            day = '0' + day;
+
+        return [year, month, day].join('-');
+    }
+
+    $("#leadtime_type").change(function() {
+        const leadtime_type = $(this).val();
+
+        if( leadtime_type == 0 ) {
+            $("#purchasing_leadtime")
+                .attr('type', 'date')
+                .val(formatDate(new Date()))
+                .focus()
+        } else {
+            $("#purchasing_leadtime")
+                .attr('type', 'number')
+                .val(0)
+                .focus()
+        }
+    }).trigger('change');
+
+    $('#btn-search-vendor').on('click', function (e) {
+        e.preventDefault()
+
+        const $search = $('#search-vendor').children('option:selected')
+        const input_vendor = $search.val()
+        const id_vendor = $search.data('id')
+        const name_vendor = $search.data('name')
+        const email_vendor = $search.data('email')
+        const address_vendor = $search.data('address')
+        const npwp_vendor = $search.data('npwp')
+
+        const template = `
+            <tr>
+                <td>
+                    <input type="checkbox" name="vendor_id[]" id="check_${id_vendor}" value="${id_vendor}">
+                    <label for="check_${id_vendor}"></label>
+                </td>
+                <td>${name_vendor}</td>
+                <td>${email_vendor}</td>
+                <td>${address_vendor}</td>
+                <td>${npwp_vendor}</td>
+                <td>
+                    <button 
+                        className="btn btn-xs btn-danger" 
+                        onclick="this.parentNode.parentNode.remove()"
+                    >
+                        <i className="fa fa-trash"></i> Remove
+                    </button>
+                </td>
+            </tr>
+        `
+
+        $('#vendors').append(template)
     })
+
+    $('.click').click(function(e) {
+        //e.preventDefault();
+        var id = $('input[type=checkbox]:checked').map(function() {
+            return $(this).val();
+        }).get();
+
+        $("#idval").val(id);
+    });
+
+    $(function() {
+        $('#datetimepicker').datetimepicker({
+            format: 'YYYY-MM-DD hh:mm'
+        }).trigger('change');
+    });
 </script>
 @endsection

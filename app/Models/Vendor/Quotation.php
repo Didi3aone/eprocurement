@@ -3,6 +3,7 @@
 namespace App\Models\Vendor;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\BiddingHistory;
 
 class Quotation extends Model
 {
@@ -25,5 +26,12 @@ class Quotation extends Model
     public function vendor ()
     {
         return $this->hasOne(\App\Models\Vendor::class, 'id', 'vendor_id');
+    }
+
+    public function historyCount ()
+    {
+        return $this->hasOne(BiddingHistory::class, 'quotation_id', 'id')
+            ->selectRaw('quotation_id, count(*) as count')
+            ->groupBy('quotation_id');
     }
 }

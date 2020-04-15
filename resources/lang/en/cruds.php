@@ -512,6 +512,7 @@ return [
         'approval' => 'PO Approval',
         'bidding' => 'Bidding',
         'show_modal' => 'Show Materials',
+        'invite_vendor' => 'Invite Vendors',
         'alert_success_insert' => 'Purchase Order successfully saved',
         'alert_error_insert' => 'Purchase Order insert failed',
         'alert_success_bidding' => 'Purchase Order successfully bidding',
@@ -597,6 +598,7 @@ return [
         'alert_success_update' => 'Quotation successfully updated',
         'alert_success_delete' => 'Quotation successfully deleted',
         'alert_success'        => 'Quotation successfully saved',
+        'alert_error_price'    => 'Vendor price must be lower than target price',
         'fields'        => [
             'id' => 'ID',
             'vendor_id' => 'Vendor',
@@ -609,10 +611,12 @@ return [
             'vendor_leadtime' => 'Vendor Leadtime',
             'vendor_price' => 'Vendor Price',
             'expired_date' => 'Expired Date',
+            'bidding_count' => 'Bidding Count',
             'status' => 'Status',
             'status_active'    => 'Active',
             'status_inactive'    => 'Inactive',
-            'created_at' => 'Created at'
+            'created_at' => 'Created at',
+            'updated_at' => 'Updated at',
         ]
     ],
 

@@ -17,36 +17,16 @@
                     <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                             <tr>
-                                <th>
-                                    {{ trans('cruds.quotation.fields.id') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.quotation.fields.po_no') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.quotation.fields.vendor_id') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.quotation.fields.leadtime_type') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.quotation.fields.purchasing_leadtime') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.quotation.fields.target_price') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.quotation.fields.expired_date') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.quotation.fields.vendor_leadtime') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.quotation.fields.vendor_price') }}
-                                </th>
-                                <th>
-                                    &nbsp;
-                                </th>
+                                <th>{{ trans('cruds.quotation.fields.id') }}</th>
+                                <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
+                                <th>{{ trans('cruds.quotation.fields.vendor_id') }}</th>
+                                <th>{{ trans('cruds.quotation.fields.leadtime_type') }}</th>
+                                <th>{{ trans('cruds.quotation.fields.purchasing_leadtime') }}</th>
+                                <th>{{ trans('cruds.quotation.fields.target_price') }}</th>
+                                <th>{{ trans('cruds.quotation.fields.expired_date') }}</th>
+                                <th>{{ trans('cruds.quotation.fields.vendor_leadtime') }}</th>
+                                <th>{{ trans('cruds.quotation.fields.vendor_price') }}</th>
+                                <th>&nbsp;</th>
                             </tr>
                         </thead>
                         <tbody>

@@ -121,73 +121,76 @@ class PurchaseOrderController extends Controller
     public function store(Request $request)
     {
         if ($request->get('bidding') == 0) {
-            // send email to each vendor
-            $vendors = $request->get('vendor_id');
-            
-            foreach ($vendors as $row) {
-                $row = Vendor::findOrFail($vendor);
-                
-                // send email
-                dd($row);
-            }
         } else {
             \DB::beginTransaction();
-            
-            try {
+
+            if ($request->get('online') == 0) {
+                // send email to each vendor
                 $vendors = $request->get('vendor_id');
 
-                if (empty($vendors))
-                    return redirect()->route('admin.purchase-order.index')->with('error', 'Vendor has been required');
-                
                 foreach ($vendors as $row) {
-                    $quotation = new Quotation;
-                    $quotation->request_id = $request->get('request_id');
-                    $quotation->vendor_id = $row;
-                    $quotation->po_no = $request->get('request_no');
-                    $quotation->leadtime_type = $request->get('leadtime_type');
-                    $quotation->purchasing_leadtime = $request->get('purchasing_leadtime');
-                    $quotation->target_price = $request->get('target_price');
-                    $quotation->expired_date = $request->get('expired_date');
-                    $quotation->save();
+                    $row = Vendor::findOrFail($vendor);
+                    
+                    // send email
+                    dd($row);
+                }    
+            } else {
+                try {
+                    $vendors = $request->get('vendor_id');
+
+                    if (empty($vendors))
+                        return redirect()->route('admin.purchase-order.index')->with('error', 'Vendor has been required');
+                    
+                    foreach ($vendors as $row) {
+                        $quotation = new Quotation;
+                        $quotation->request_id = $request->get('request_id');
+                        $quotation->vendor_id = $row;
+                        $quotation->po_no = $request->get('request_no');
+                        $quotation->leadtime_type = $request->get('leadtime_type');
+                        $quotation->purchasing_leadtime = $request->get('purchasing_leadtime');
+                        $quotation->target_price = $request->get('target_price');
+                        $quotation->expired_date = $request->get('expired_date');
+                        $quotation->save();
+                    }
+
+                    $purchaseOrder = new PurchaseOrder;
+
+                    if ($request->get('bidding') == 0) {
+                        $purchaseOrder->bidding = 0;
+                        // $purchaseOrder->vendor_id = $request->get('vendor_id');
+                    } else {
+                        $purchaseOrder->bidding = 1;
+                        // $purchaseOrder->vendor_id = null;
+                    }
+
+                    $purchaseOrder->po_no = str_replace($request->get('request_no'));
+                    $purchaseOrder->po_date = date('Y-m-d');
+                    // $purchaseOrder->notes = str_replace($request->get('notes'));
+                    $purchaseOrder->request_id = $request->get('request_id');
+                    $purchaseOrder->status = 0;
+                    $purchaseOrder->save();
+
+                    // if( $request->has('description') ) {
+                    //     foreach( $request->get('description') as $key => $row ) {
+                    //         $model = new PurchaseOrdersDetail;
+                    //         $model->purchase_order_id = $purchaseOrder->id;
+                    //         $model->description       = $row;
+                    //         $model->qty               = $request->get('qty')[$key];
+                    //         $model->unit              = $request->get('unit')[$key];
+                    //         $model->notes             = $request->get('notes_detail')[$key];
+                    //         $model->price             = $request->get('price')[$key];
+                    //         $model->save();
+                    //     }
+                    // }
+
+                    \DB::commit();
+
+                    return redirect()->route('admin.purchase-order.index')->with('status', trans('cruds.purchase-order.alert_success_insert'));
+                } catch (Exception $e) {
+                    \DB::rollBack();
+            
+                    return redirect()->route('admin.quotation.index')->with('error', trans('cruds.purchase-order.alert_error_insert'));
                 }
-
-                $purchaseOrder = new PurchaseOrder;
-
-                if ($request->get('bidding') == 0) {
-                    $purchaseOrder->bidding = 0;
-                    // $purchaseOrder->vendor_id = $request->get('vendor_id');
-                } else {
-                    $purchaseOrder->bidding = 1;
-                    // $purchaseOrder->vendor_id = null;
-                }
-
-                $purchaseOrder->po_no = str_replace('PR', 'PO', $request->get('request_no'));
-                $purchaseOrder->po_date = date('Y-m-d');
-                // $purchaseOrder->notes = str_replace('PR', 'PO', $request->get('notes'));
-                $purchaseOrder->request_id = $request->get('request_id');
-                $purchaseOrder->status = 0;
-                $purchaseOrder->save();
-
-                // if( $request->has('description') ) {
-                //     foreach( $request->get('description') as $key => $row ) {
-                //         $model = new PurchaseOrdersDetail;
-                //         $model->purchase_order_id = $purchaseOrder->id;
-                //         $model->description       = $row;
-                //         $model->qty               = $request->get('qty')[$key];
-                //         $model->unit              = $request->get('unit')[$key];
-                //         $model->notes             = $request->get('notes_detail')[$key];
-                //         $model->price             = $request->get('price')[$key];
-                //         $model->save();
-                //     }
-                // }
-
-                \DB::commit();
-
-                return redirect()->route('admin.purchase-order.index')->with('status', trans('cruds.purchase-order.alert_success_insert'));
-            } catch (Exception $e) {
-                \DB::rollBack();
-         
-                return redirect()->route('admin.quotation.index')->with('error', trans('cruds.purchase-order.alert_error_insert'));
             }
         }
     }

@@ -44,8 +44,10 @@
                                 <th>{{ trans('cruds.quotation.fields.leadtime_type') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.purchasing_leadtime') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.expired_date') }}</th>
+                                <th>{{ trans('cruds.quotation.fields.target_price') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.vendor_leadtime') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.vendor_price') }}</th>
+                                <th>{{ trans('cruds.quotation.fields.bidding_count') }}</th>
                                 <th>
                                     &nbsp;
                                 </th>
@@ -67,12 +69,14 @@
                                         @endif
                                         <span style="color: {{ $is_expired }}">{{ $val->expired_date ?? '' }}</span>
                                     </td>
+                                    <td>{{ $val->target_price ?? '' }}</td>
                                     <td>{{ $val->vendor_leadtime ?? '' }}</td>
                                     <td>{{ $val->vendor_price ?? '' }}</td>
+                                    <td>{{ $val->historyCount ? $val->historyCount->count : 0 }}</td>
                                     <td>
-                                        @if ((int) \Auth::user()->id == (int) $val->vendor_id)
-                                        <a class="btn btn-xs btn-info" href="{{ route('vendor.quotation-edit', $val->id) }}">
-                                            {{ trans('global.edit') }}
+                                        @if (time() <= strtotime($val->expired_date))
+                                        <a class="btn btn-xs btn-info" href="{{ route('vendor.quotation-detail', $val->id) }}">
+                                            {{ trans('global.bid') }}
                                         </a>
                                         @endif
                                     </td>
