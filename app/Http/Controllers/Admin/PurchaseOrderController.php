@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use Gate;
+use Symfony\Component\HttpFoundation\Response;
+
 use App\Models\PurchaseRequest;
 use App\Models\PurchaseRequestsDetail;
 use App\Models\Vendor;
@@ -14,8 +17,7 @@ use App\Models\PurchaseOrdersDetail;
 use App\Models\Vendor\Quotation;
 use App\Models\Vendor\QuotationDetail;
 use App\Imports\PurchaseOrderImport;
-use Gate;
-use Symfony\Component\HttpFoundation\Response;
+use App\Mail\PurchaseOrderMail;
 
 class PurchaseOrderController extends Controller
 {
@@ -129,11 +131,18 @@ class PurchaseOrderController extends Controller
                 $vendors = $request->get('vendor_id');
 
                 foreach ($vendors as $row) {
-                    $row = Vendor::findOrFail($vendor);
+                    $row = Vendor::findOrFail($row);
+                    $data = [
+                        'vendor' => $row,
+                        'request_no' => $request->get('request_no'),
+                        'subject' => 'Bidding PR no ' . $request->get('request_no')
+                    ];
                     
                     // send email
-                    dd($row);
-                }    
+                    \Mail::to($row->email)->send(new PurchaseOrderMail($data));
+                }
+
+                return redirect()->route('admin.purchase-order.index')->with('success', 'All vendors has been sent');
             } else {
                 try {
                     $vendors = $request->get('vendor_id');
@@ -155,33 +164,16 @@ class PurchaseOrderController extends Controller
 
                     $purchaseOrder = new PurchaseOrder;
 
-                    if ($request->get('bidding') == 0) {
+                    if ($request->get('bidding') == 0)
                         $purchaseOrder->bidding = 0;
-                        // $purchaseOrder->vendor_id = $request->get('vendor_id');
-                    } else {
+                    else
                         $purchaseOrder->bidding = 1;
-                        // $purchaseOrder->vendor_id = null;
-                    }
 
                     $purchaseOrder->po_no = str_replace($request->get('request_no'));
                     $purchaseOrder->po_date = date('Y-m-d');
-                    // $purchaseOrder->notes = str_replace($request->get('notes'));
                     $purchaseOrder->request_id = $request->get('request_id');
                     $purchaseOrder->status = 0;
                     $purchaseOrder->save();
-
-                    // if( $request->has('description') ) {
-                    //     foreach( $request->get('description') as $key => $row ) {
-                    //         $model = new PurchaseOrdersDetail;
-                    //         $model->purchase_order_id = $purchaseOrder->id;
-                    //         $model->description       = $row;
-                    //         $model->qty               = $request->get('qty')[$key];
-                    //         $model->unit              = $request->get('unit')[$key];
-                    //         $model->notes             = $request->get('notes_detail')[$key];
-                    //         $model->price             = $request->get('price')[$key];
-                    //         $model->save();
-                    //     }
-                    // }
 
                     \DB::commit();
 

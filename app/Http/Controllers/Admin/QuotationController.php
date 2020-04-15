@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Vendor\Quotation;
 use Gate, Artisan;
 use Symfony\Component\HttpFoundation\Response;
+
+use App\Models\Vendor\Quotation;
+use App\Models\Vendor;
 
 class QuotationController extends Controller
 {
@@ -19,7 +21,7 @@ class QuotationController extends Controller
     {
         // abort_if(Gate::denies('quotation_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $quotation = Quotation::all();
+        $quotation = Quotation::orderBy('id', 'desc')->get();
 
         return view('admin.quotation.index', compact('quotation'));
     }
@@ -50,6 +52,16 @@ class QuotationController extends Controller
         Artisan::call('import:quotation', ['filename' => $real_filename]);
 
         return redirect('admin/quotation')->with('success', 'Quotation has been successfully imported');
+    }
+
+    public function winner (Request $request)
+    {
+        $quotation = [];
+        
+        foreach ($request->get('id') as $id)
+            $quotation[$id] = Quotation::find($id);
+
+        return view('admin.quotation.winner', compact('quotation'));
     }
 
     /**

@@ -301,7 +301,8 @@
 
     $(function() {
         $('#datetimepicker').datetimepicker({
-            format: 'YYYY-MM-DD hh:mm'
+            format: 'Y-m-d H:i',
+            mask: true
         }).trigger('change');
     });
 </script>

@@ -612,6 +612,7 @@ return [
             'vendor_price' => 'Vendor Price',
             'expired_date' => 'Expired Date',
             'bidding_count' => 'Bidding Count',
+            'qty' => 'Quantity',
             'status' => 'Status',
             'status_active'    => 'Active',
             'status_inactive'    => 'Inactive',

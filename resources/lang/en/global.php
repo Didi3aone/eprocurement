@@ -253,4 +253,6 @@ return [
     'vendor_not_found'                     => 'Vendor not registered',
     'set_password'                         => 'Set Password',
     'bid'                                  => 'Bid',
+    'winner'                               => 'Click to Win',
+    'to-winner'                            => 'Winner',
 ];

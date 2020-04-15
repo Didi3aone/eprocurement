@@ -35,7 +35,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('admin.quotation.winner') }}" method="post">
+                <form action="{{ route('admin.quotation.to-winner') }}" method="post">
                     @csrf
                     <div class="row">
                         <div class="col-lg-12">
@@ -43,7 +43,6 @@
                                 <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                         <tr>
-                                            <th>&nbsp;</th>
                                             <th>{{ trans('cruds.quotation.fields.id') }}</th>
                                             <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
                                             <th>{{ trans('cruds.quotation.fields.vendor_id') }}</th>
@@ -53,20 +52,15 @@
                                             <th>{{ trans('cruds.quotation.fields.expired_date') }}</th>
                                             <th>{{ trans('cruds.quotation.fields.vendor_leadtime') }}</th>
                                             <th>{{ trans('cruds.quotation.fields.vendor_price') }}</th>
-                                            <th>
-                                                &nbsp;
-                                            </th>
+                                            <th>{{ trans('cruds.quotation.fields.qty') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach($quotation as $key => $val)
                                             <tr data-entry-id="{{ $val->id }}">
-                                                <td>
-                                                    @if (time() <= strtotime($val->expired_date))
-                                                    <input type="checkbox" name="id[]" id="check_{{ $key }}" value="{{ $val->id }}">
-                                                    <label for="check_{{ $key }}"></label>
-                                                    @endif
-                                                </td>
+                                                <input type="hidden" name="vendor_id[]" value="{{ $val->vendor_id }}">
+                                                <input type="hidden" name="id[]" value="{{ $val->id }}">
+                                                <input type="hidden" name="po_no[]" value="{{ $val->po_no }}">
                                                 <td>{{ $val->id ?? '' }}</td>
                                                 <td>{{ $val->po_no ?? '' }}</td>
                                                 <td>{{ isset($val->vendor_id) ? $val->vendor->name . ' - ' . $val->vendor->email : '' }}</td>
@@ -85,25 +79,7 @@
                                                 <td>{{ $val->vendor_leadtime ?? '' }}</td>
                                                 <td>{{ $val->vendor_price ?? '' }}</td>
                                                 <td>
-                                                    @can('quotation_show')
-                                                        <a class="btn btn-xs btn-primary" href="{{ route('admin.quotation.show', $val->id) }}">
-                                                            {{ trans('global.view') }}
-                                                        </a>
-                                                    @endcan
-
-                                                    @can('quotation_edit')
-                                                        <a class="btn btn-xs btn-info" href="{{ route('admin.quotation.edit', $val->id) }}">
-                                                            {{ trans('global.edit') }}
-                                                        </a>
-                                                    @endcan
-
-                                                    @can('quotation_delete')
-                                                        {{-- <form action="{{ route('admin.quotation.destroy', $val->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
-                                                            <input type="hidden" name="_method" value="DELETE">
-                                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                            <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
-                                                        </form> --}}
-                                                    @endcan
+                                                    <input type="text" name="qty[]" class="form-control" required>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -117,7 +93,7 @@
                         <div class="col-lg-12">
                             <div class="form-actions">
                                 {{-- <input type="hidden" name="total" value="{{ $total }}"> --}}
-                                <button type="submit" class="btn btn-success click"> <i class="fa fa-check"></i> {{ trans('global.winner') }}</button>
+                                <button type="submit" class="btn btn-success click"> <i class="fa fa-check"></i> {{ trans('global.to-winner') }}</button>
                                 <button type="button" class="btn btn-inverse">Cancel</button>
                                 <img id="image_loading" src="{{ asset('img/ajax-loader.gif') }}" alt="" style="display: none">
                             </div>
@@ -128,34 +104,11 @@
         </div>
     </div>
 </div>
-
-<div class="modal fade" id="modal_import" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">{{ trans('cruds.quotation.import') }}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form action="{{ route('admin.quotation.import') }}" method="post" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-body">
-                    <input type="file" name="xls_file" id="xls_file">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 @endsection
 @section('scripts')
 @parent
 <script>
-$('#datatables-run').DataTable({
+$('.table').DataTable({
     dom: 'Bfrtip',
     buttons: [
         'copy', 'csv', 'excel', 'pdf', 'print'

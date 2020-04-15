@@ -188,6 +188,8 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     // quotation
     Route::delete('quotation/destroy', 'QuotationController@massDestroy')->name('quotation.massDestroy');
     Route::post('quotation/import', 'QuotationController@import')->name('quotation.import');
+    Route::post('quotation/winner', 'QuotationController@winner')->name('quotation.winner');
+    Route::post('quotation/to-winner', 'QuotationController@toWinner')->name('quotation.to-winner');
     Route::resource('quotation', 'QuotationController');
 
     // soap
