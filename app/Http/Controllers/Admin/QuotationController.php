@@ -64,6 +64,28 @@ class QuotationController extends Controller
         return view('admin.quotation.winner', compact('quotation'));
     }
 
+    public function toWinner (Request $request)
+    {
+        \DB::beginTransaction();
+
+        try {
+            foreach ($request->get('id') as $id => $value) {
+                dd($id, $value);
+                $model = Quotation::find($id);
+                $model->is_winner = $request->get('is_winner');
+                $model->save();
+            }
+
+            \DB::commit();
+
+            return redirect()->route('admin.quotation')->with('success', 'Winner has been set!');
+        } catch (Exception $e) {
+            \DB::rollBack();
+         
+            return redirect()->route('admin.quotation')->with('error', 'Winner has not been set!');
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      *

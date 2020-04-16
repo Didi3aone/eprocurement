@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\UnitImport;
 
-class ImportAsset extends Command
+class ImportUnit extends Command
 {
     /**
      * The name and signature of the console command.
