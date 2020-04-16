@@ -8,7 +8,7 @@ vendor/*
 vendor/**
 /vendor
 /vendor/*.*
-storage/**
+# storage/**
 config/database.php
 storage/framework/views/*.*
 storage/logs/laravel.log
