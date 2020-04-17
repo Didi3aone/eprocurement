@@ -255,4 +255,5 @@ return [
     'bid'                                  => 'Bid',
     'winner'                               => 'Click to Win',
     'to-winner'                            => 'Winner',
+    'approve'                              => 'Approve',
 ];

@@ -69,21 +69,32 @@ class QuotationController extends Controller
         \DB::beginTransaction();
 
         try {
-            foreach ($request->get('id') as $id => $value) {
-                dd($id, $value);
-                $model = Quotation::find($id);
-                $model->is_winner = $request->get('is_winner');
+            foreach ($request->get('id') as $id) {
+                $model = Quotation::find((int) $id);
+                $model->is_winner = 1;
                 $model->save();
             }
 
             \DB::commit();
 
-            return redirect()->route('admin.quotation')->with('success', 'Winner has been set!');
+            return redirect()->route('admin.quotation.list-winner')->with('success', 'Winner has been set!');
         } catch (Exception $e) {
             \DB::rollBack();
          
-            return redirect()->route('admin.quotation')->with('error', 'Winner has not been set!');
+            return redirect()->route('admin.quotation.index')->with('error', 'Winner has not been set!');
         }
+    }
+
+    public function listWinner ()
+    {
+        $quotation = Quotation::where('is_winner', 1)->orderBy('id', 'desc')->get();
+
+        return view('admin.quotation.list-winner', compact('quotation'));
+    }
+
+    public function approveWinner ($id)
+    {
+
     }
 
     /**

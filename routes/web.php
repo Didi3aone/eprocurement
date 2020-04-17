@@ -190,6 +190,8 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::post('quotation/import', 'QuotationController@import')->name('quotation.import');
     Route::post('quotation/winner', 'QuotationController@winner')->name('quotation.winner');
     Route::post('quotation/to-winner', 'QuotationController@toWinner')->name('quotation.to-winner');
+    Route::get('quotation/list-winner', 'QuotationController@listWinner')->name('quotation.list-winner');
+    Route::post('quotation/approve', 'QuotationController@approveWinner')->name('quotation.approve');
     Route::resource('quotation', 'QuotationController');
 
     // soap

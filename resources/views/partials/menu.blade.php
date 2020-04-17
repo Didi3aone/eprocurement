@@ -39,7 +39,13 @@
                         <li>
                             <a href="{{ route('admin.quotation.index') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
-                                List Quotation
+                                List Quotations
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.quotation.list-winner') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> 
+                                List Winners
                             </a>
                         </li>
                         @endcan
