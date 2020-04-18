@@ -94,7 +94,9 @@ class QuotationController extends Controller
 
     public function approveWinner ($id)
     {
-
+        // wait for yunan
+        $quotation = Quotation::find($id);
+        $po_no = str_replace('PR', 'PO', $quotation->po_no);
     }
 
     /**
