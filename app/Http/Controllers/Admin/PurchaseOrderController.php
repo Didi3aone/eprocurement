@@ -169,7 +169,7 @@ class PurchaseOrderController extends Controller
                     else
                         $purchaseOrder->bidding = 1;
 
-                    $purchaseOrder->po_no = str_replace($request->get('request_no'));
+                    $purchaseOrder->po_no = $request->get('request_no');
                     $purchaseOrder->po_date = date('Y-m-d');
                     $purchaseOrder->request_id = $request->get('request_id');
                     $purchaseOrder->status = 0;
@@ -177,7 +177,7 @@ class PurchaseOrderController extends Controller
 
                     \DB::commit();
 
-                    return redirect()->route('admin.purchase-order.index')->with('status', trans('cruds.purchase-order.alert_success_insert'));
+                    return redirect()->route('admin.quotation.index')->with('status', trans('cruds.purchase-order.alert_success_insert'));
                 } catch (Exception $e) {
                     \DB::rollBack();
             
