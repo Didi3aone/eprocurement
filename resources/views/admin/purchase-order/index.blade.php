@@ -27,8 +27,8 @@
                             <tr>
                                 <th>{{ trans('cruds.purchase-order.fields.id') }}</th>
                                 <th>{{ trans('cruds.purchase-order.fields.request_no') }}</th>
-                                <th>{{ trans('cruds.purchase-order.fields.bidding') }}</th>
-                                {{-- <th>{{ trans('cruds.purchase-order.fields.vendor_id') }}</th> --}}
+                                <th>{{ trans('cruds.purchase-order.fields.is_winner') }}</th>
+                                <th>{{ trans('cruds.purchase-order.fields.vendor_id') }}</th>
                                 <th>{{ trans('cruds.purchase-order.fields.request_date') }}</th>
                                 <th>
                                     &nbsp;
@@ -36,38 +36,38 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($purchaseOrders as $key => $po)
-                                <tr data-entry-id="{{ $po->id }}">
-                                    <td>{{ $po->id ?? '' }}</td>
-                                    <td>{{ $po->po_no }}</td>
-                                    <td>{{ $po->bidding == 1 ? 'Yes' : 'No' }}</td>
-                                    {{-- <td>{{ !empty($po->vendor_id) ? $po->vendor->name . ' - ' . $po->vendor->email : '' }}</td> --}}
-                                    <td>{{ $po->po_date ?? '' }}</td>
+                            @foreach($quotation as $key => $q)
+                                <tr data-entry-id="{{ $q->id }}">
+                                    <td>{{ $q->id ?? '' }}</td>
+                                    <td>{{ $q->po_no }}</td>
+                                    <td>{{ $q->is_winner == 1 ? 'Yes' : 'No' }}</td>
+                                    <td>{{ !empty($q->vendor_id) ? $q->vendor->name . ' - ' . $q->vendor->email : '' }}</td>
+                                    <td>{{ $q->created_at ?? '' }}</td>
                                     <td>
-                                        @can('purchase_order_approval')                                            
-                                            <a class="btn btn-xs btn-success" href="{{ route('admin.purchase-order-approval-po', $po->id) }}">
+                                        {{-- @can('purchase_order_approval')
+                                            <a class="btn btn-xs btn-success" href="{{ route('admin.purchase-order-approval-po', $q->id) }}">
                                                 {{ trans('cruds.purchase-order.approval') }}
                                             </a>
-                                        @endcan
+                                        @endcan --}}
                                         {{-- @can('purchase_request_show') --}}
-                                            <a class="btn btn-xs btn-primary" href="{{ route('admin.purchase-order-quotation', $po->request_id) }}">
+                                            <a class="btn btn-xs btn-primary" href="{{ route('admin.purchase-order.show', $q->id) }}">
                                                 {{ trans('global.view') }}
                                             </a>
                                         {{-- @endcan --}}
 
-                                        @can('purchase_request_edit')
-                                            <a class="btn btn-xs btn-info" href="{{ route('admin.purchase-order.edit', $po->id) }}">
+                                        {{-- @can('purchase_request_edit')
+                                            <a class="btn btn-xs btn-info" href="{{ route('admin.purchase-order.form', $q->id) }}">
                                                 {{ trans('global.edit') }}
                                             </a>
-                                        @endcan
+                                        @endcan --}}
 
-                                        @can('purchase_request_delete')
-                                            <form action="{{ route('admin.purchase-order.destroy', $po->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
+                                        {{-- @can('purchase_request_delete')
+                                            <form action="{{ route('admin.purchase-order.destroy', $q->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                                 <input type="hidden" name="_method" value="DELETE">
                                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                 <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
                                             </form>
-                                        @endcan
+                                        @endcan --}}
                                     </td>
                                 </tr>
                             @endforeach

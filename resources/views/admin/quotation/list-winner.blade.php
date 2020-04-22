@@ -48,9 +48,8 @@
                                         <th>{{ trans('cruds.quotation.fields.expired_date') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.vendor_leadtime') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.vendor_price') }}</th>
-                                        <th>
-                                            &nbsp;
-                                        </th>
+                                        <th>{{ trans('cruds.quotation.fields.qty') }}</th>
+                                        <th>&nbsp;</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -58,7 +57,7 @@
                                         <tr data-entry-id="{{ $val->id }}">
                                             <td>{{ $val->id ?? '' }}</td>
                                             <td>{{ $val->po_no ?? '' }}</td>
-                                            <td>{{ isset($val->vendor_id) ? $val->vendor->name . ' - ' . $val->vendor->email : '' }}</td>
+                                            <td>{{ $val->name . ' - ' . $val->email ?? '' }}</td>
                                             <td>{{ $val->target_price ?? '' }}</td>
                                             <td>
                                                 @php $is_expired = '#67757c' @endphp
@@ -71,10 +70,11 @@
                                             </td>
                                             <td>{{ $val->vendor_leadtime ?? '' }}</td>
                                             <td>{{ $val->vendor_price ?? '' }}</td>
+                                            <td>{{ $val->qty ?? '' }}</td>
                                             <td>
                                                 @can('quotation_approve')
-                                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.quotation.approve', $val->id) }}">
-                                                        {{ trans('global.approve') }}
+                                                    <a class="btn btn-xs btn-success approve" id="save_{{ $key }}" data-row="{{ $key }}" data-req="{{ $val->id }}" data-id="{{ $val->approval_id }}" href="javascript:;">
+                                                        <i class="fa fa-check"></i> Approve
                                                     </a>
                                                 @endcan
 
@@ -104,7 +104,7 @@
                     <div class="col-lg-12">
                         <div class="form-actions">
                             {{-- <input type="hidden" name="total" value="{{ $total }}"> --}}
-                            <button type="submit" class="btn btn-success click"> <i class="fa fa-check"></i> {{ trans('global.winner') }}</button>
+                            {{-- <button type="submit" class="btn btn-success click"> <i class="fa fa-check"></i> {{ trans('global.winner') }}</button> --}}
                             <button type="button" class="btn btn-inverse">Cancel</button>
                             <img id="image_loading" src="{{ asset('img/ajax-loader.gif') }}" alt="" style="display: none">
                         </div>
@@ -141,11 +141,64 @@
 @section('scripts')
 @parent
 <script>
-$('#datatables-run').DataTable({
-    dom: 'Bfrtip',
-    buttons: [
-        'copy', 'csv', 'excel', 'pdf', 'print'
-    ]
-});
+    $('#datatables-run').DataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    });
+
+    $('.approve').click(function(e){
+        e.preventDefault();
+        var id = $(this).data('id');
+        var no = $(this).data('req');
+        var row = $(this).data("row");
+        var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+
+        // console.log(id, no, row, CSRF_TOKEN)
+
+        swal({   
+            title: "Are you sure?",   
+            text: "Approve this PR",   
+            type: "warning",   
+            showCancelButton: true,   
+            confirmButtonColor: "#DD6B55",   
+            confirmButtonText: "Yes",   
+            cancelButtonText: "No!",   
+            closeOnConfirm: true,   
+            closeOnCancel: true 
+        }).then(() => {
+            $("#save_"+row).attr('disabled', 'disabled');
+            $('#save_'+row).text('Please wait ...')
+            
+            $.ajax({
+                type: "PUT",
+                url: "{{ route('admin.quotation.approve') }}",
+                headers: {
+                    'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    _token: CSRF_TOKEN,
+                    id : id,
+                    req_id : no
+                },
+                dataType:'json',
+                success: function (data) {
+                    if( data.success == true ) {
+                        swal("Success!", "Winner has been approved.", "success");   
+                        location.reload();
+                    } else {
+                        swal('Error!',"Something went wrong","error");
+                    }
+                },
+                error: function (data) {
+                    console.log('Error:', data);
+                }
+            });
+            // } else {     
+                // swal("Cancelled", "Your imaginary file is safe :)", "error");   
+            // } 
+        });
+    });
 </script>
 @endsection

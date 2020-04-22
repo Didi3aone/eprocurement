@@ -210,7 +210,7 @@ class PurchaseRequestController extends Controller
         return view('admin.purchase-request.pr.validate', compact('pr'));
     }
 
-    public function approvalPr(Request $request)
+    public function approvalPr(Request $request, $id)
     {
         try {
             DB::beginTransaction();

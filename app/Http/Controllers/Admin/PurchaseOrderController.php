@@ -12,6 +12,7 @@ use App\Models\PurchaseRequest;
 use App\Models\PurchaseRequestsDetail;
 use App\Models\Vendor;
 use App\Models\Plant;
+use App\Models\DocumentType;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrdersDetail;
 use App\Models\Vendor\Quotation;
@@ -30,9 +31,9 @@ class PurchaseOrderController extends Controller
     {
         abort_if(Gate::denies('purchase_order_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $purchaseOrders = PurchaseOrder::all();
+        $quotation = Quotation::where('approval_status', 12)->get();
 
-        return view('admin.purchase-order.index', compact('purchaseOrders'));
+        return view('admin.purchase-order.index', compact('quotation'));
     }
 
     /**
@@ -195,9 +196,13 @@ class PurchaseOrderController extends Controller
      */
     public function show($id)
     {
-        $purchaseOrder = PurchaseOrder::findOrFail($id);
+        $quotation = Quotation::find($id);
+        $pr = PurchaseRequest::find($quotation->request_id);
+        $types = DocumentType::get();
 
-        return view('admin.purchase-order.show', compact('purchaseOrder'));
+        // get po_no from SAP
+
+        return view('admin.purchase-order.form', compact('quotation', 'pr', 'types'));
     }
 
     /**

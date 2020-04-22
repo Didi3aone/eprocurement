@@ -70,6 +70,9 @@ class LoginController extends Controller
 
     public function register (Request $request)
     {
+        // get vendor code from SAP
+        
+
         $model = new Vendor;
         $model->name = $request->input('name');
         $model->email = $request->input('email');

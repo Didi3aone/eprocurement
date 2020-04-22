@@ -61,6 +61,7 @@
                                                 <input type="hidden" name="vendor_id[]" value="{{ $val->vendor_id }}">
                                                 <input type="hidden" name="id[]" value="{{ $val->id }}">
                                                 <input type="hidden" name="po_no[]" value="{{ $val->po_no }}">
+                                                <input type="hidden" name="vendor_price[]" value="{{ $val->vendor_price }}">
                                                 <td>{{ $val->id ?? '' }}</td>
                                                 <td>{{ $val->po_no ?? '' }}</td>
                                                 <td>{{ isset($val->vendor_id) ? $val->vendor->name . ' - ' . $val->vendor->email : '' }}</td>

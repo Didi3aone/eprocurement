@@ -8,6 +8,8 @@ use Gate, Artisan;
 use Symfony\Component\HttpFoundation\Response;
 
 use App\Models\Vendor\Quotation;
+use App\Models\Vendor\QuotationApproval;
+use App\Models\WorkFlowApproval;
 use App\Models\Vendor;
 
 class QuotationController extends Controller
@@ -64,14 +66,50 @@ class QuotationController extends Controller
         return view('admin.quotation.winner', compact('quotation'));
     }
 
+    private function workflowApproval ($no, $quotation_id)
+    {
+        $workFlowAppr = WorkFlowApproval::where([
+            'workflow_id' => $no
+        ])->get();
+
+        foreach( $workFlowAppr as $rows ) {
+            $flag = 0;
+            if( $rows->approval_position == 1 ) {
+                $flag = 1;
+            }
+
+            $model = new QuotationApproval;
+            $model->nik = $rows->nik;
+            $model->approval_position = $rows->approval_position;
+            $model->status = 0;
+            $model->quotation_id = $quotation_id;
+            $model->flag = $flag;
+            $model->save();
+        }
+    }
+
     public function toWinner (Request $request)
     {
         \DB::beginTransaction();
 
         try {
-            foreach ($request->get('id') as $id) {
-                $model = Quotation::find((int) $id);
+            foreach ($request->get('id') as $id => $val) {
+                $vendor_price = $request->get('vendor_price')[$id];
+                $qty = $request->get('qty')[$id];
+                
+                $total = $vendor_price * $qty;
+
+                if( ($total >= 0) && ($total <= 100000000) ) {
+                    $this->workflowApproval(2, $val);
+                } else if( $total >= 100000000 && $total <= 250000000) {
+                    $this->workflowApproval(3, $val);
+                } else {
+                    $this->workflowApproval(4, $val);
+                }
+
+                $model = Quotation::find((int) $val);
                 $model->is_winner = 1;
+                $model->qty = $qty;
                 $model->save();
             }
 
@@ -87,16 +125,96 @@ class QuotationController extends Controller
 
     public function listWinner ()
     {
-        $quotation = Quotation::where('is_winner', 1)->orderBy('id', 'desc')->get();
+        $quotation = QuotationApproval::select(
+            'quotation.id as id',
+            'quotation.po_no as po_no',
+            'vendors.name as name',
+            'vendors.email as email',
+            'quotation.target_price as target_price',
+            'quotation.expired_date as expired_date',
+            'quotation.vendor_leadtime as vendor_leadtime',
+            'quotation.vendor_price as vendor_price',
+            'quotation.qty as qty',
+            'quotation_approvals.id as approval_id',
+            'quotation_approvals.quotation_id as quotation_id',
+        )
+            ->join('quotation', 'quotation.id', '=', 'quotation_approvals.quotation_id')
+            ->join('vendors', 'vendors.id', '=', 'quotation.vendor_id')
+            ->where('quotation_approvals.nik', \Auth::user()->nik)
+            ->where('quotation_approvals.flag', 1)
+            ->where('quotation.is_winner', 1)
+            ->distinct()
+            ->get();
 
         return view('admin.quotation.list-winner', compact('quotation'));
     }
 
-    public function approveWinner ($id)
+    public function approveWinner (Request $request)
     {
-        // wait for yunan
-        $quotation = Quotation::find($id);
-        $po_no = str_replace('PR', 'PO', $quotation->po_no);
+        \DB::beginTransaction();
+
+        $qa_id = $request->get('id');
+        $id = $request->get('req_id');
+
+        try {
+            $posisi = QuotationApproval::where('id', $qa_id)->first();
+
+            $total = QuotationApproval::where('quotation_id', $id)
+                ->get();
+
+            $dt = [];
+            if( $posisi->approval_position == count($total) ) {
+                $qa = QuotationApproval::find($qa_id);
+                $qa->status = 1;
+                $qa->approve_date = date('Y-m-d H:i:s');
+                $qa->flag = 2;
+                $qa->save();
+
+                $model = Quotation::find($id);
+                $model->approval_status = 12;
+                $model->save();
+            } else if( $posisi->approval_position < count($total) ) {
+                $posisi = $posisi->approval_position + 1;
+
+                QuotationApproval::where('quotation_id', $id)
+                    ->where('approval_position', $posisi)
+                    ->update([
+                        'status' => 0,
+                        'flag' => 1,
+                    ]);
+
+                $model = Quotation::find($id);
+                $model->approval_status = 11;
+                $model->save();
+            }
+
+            $updates = QuotationApproval::find($qa_id);
+            $updates->status = 1;
+            $updates->flag = 2;
+            $updates->approve_date = date('Y-m-d H:i:s');
+
+            if ($updates->save()) {
+                $success = true;
+                $message = "Quotation has been approved";
+            } else {
+                $success = false;
+                $message = "Quotation not found";
+            }
+
+            \DB::commit();
+        } catch (\Exception $th) {
+            //throw $th;
+            $success = false;
+            $message = "error db" . $th;
+
+            \DB::rollback();
+        }
+
+        //  Return response
+        return response()->json([
+            'success' => $success,
+            'message' => $message,
+        ]);
     }
 
     /**
