@@ -80,6 +80,8 @@ class MaterialController extends Controller
         $plants = Plant::all();
         $purchasingGroups = PurchasingGroup::all();
         $profitCenters = ProfitCenter::all();
+        $unit = \App\Models\MasterUnit::all();
+        $storage = \App\Models\StorageLocation::all();
 
         return view('admin.material.create', compact(
             'materialGroups',
@@ -87,6 +89,8 @@ class MaterialController extends Controller
             'plants',
             'purchasingGroups',
             'profitCenters',
+            'unit',
+            'storage'
         ));
     }
 

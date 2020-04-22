@@ -19,7 +19,9 @@ class Material extends Model
         'm_purchasing_id',
         'm_profit_id',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'm_unit_id',
+        'storage_location'
     ];
 
     public static function boot()
