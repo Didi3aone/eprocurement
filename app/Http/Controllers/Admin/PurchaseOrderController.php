@@ -112,7 +112,7 @@ class PurchaseOrderController extends Controller
         $plant      = Plant::get();
         $vendor     = Vendor::where('status', 1)->orderBy('name')->get();
 
-        return view('admin.purchase-order.create',compact('pr', 'prDetail', 'plant', 'vendor'));
+        return view('admin.purchase-order.create', compact('id', 'pr', 'prDetail', 'plant', 'vendor'));
     }
 
     /**
@@ -123,7 +123,21 @@ class PurchaseOrderController extends Controller
      */
     public function store(Request $request)
     {
+        if (empty($request->vendor_id))
+            return redirect()->route('admin.purchase-order-create-po', $request->get('id'))->with('status', 'No vendor chosen!');
+
         if ($request->get('bidding') == 0) {
+            // create PO
+            $po = new PurchaseOrder;
+            $po->request_id = $request->get('id');
+            $po->bidding = 0;
+            $po->po_date = date('Y-m-d');
+            $po->po_no = str_replace('PR', 'PO', $request->get('request_no'));
+            $po->vendor_id = implode(',', $request->get('vendor_id'));
+            $po->status = 0;
+            $po->save();
+
+            return redirect()->route('admin.purchase-order.index')->with('status', 'Bidding no!');
         } else {
             \DB::beginTransaction();
 
@@ -151,16 +165,21 @@ class PurchaseOrderController extends Controller
                     if (empty($vendors))
                         return redirect()->route('admin.purchase-order.index')->with('error', 'Vendor has been required');
                     
+                    $quotation = new Quotation;
+                    $quotation->request_id = $request->get('request_id');
+                    $quotation->po_no = $request->get('request_no');
+                    $quotation->leadtime_type = $request->get('leadtime_type');
+                    $quotation->purchasing_leadtime = $request->get('purchasing_leadtime');
+                    $quotation->target_price = str_replace('.', '', $request->get('target_price'));
+                    $quotation->expired_date = $request->get('expired_date');
+                    $quotation->save();
+
                     foreach ($vendors as $row) {
-                        $quotation = new Quotation;
-                        $quotation->request_id = $request->get('request_id');
-                        $quotation->vendor_id = $row;
-                        $quotation->po_no = $request->get('request_no');
-                        $quotation->leadtime_type = $request->get('leadtime_type');
-                        $quotation->purchasing_leadtime = $request->get('purchasing_leadtime');
-                        $quotation->target_price = $request->get('target_price');
-                        $quotation->expired_date = $request->get('expired_date');
-                        $quotation->save();
+                        $quotationDetail = new QuotationDetail;
+                        $quotationDetail->quotation_order_id = $quotation->id;
+                        $quotationDetail->vendor_id = $row;
+                        $quotationDetail->flag = 0;
+                        $quotationDetail->save();
                     }
 
                     $purchaseOrder = new PurchaseOrder;
@@ -197,7 +216,38 @@ class PurchaseOrderController extends Controller
     public function show($id)
     {
         $quotation = Quotation::find($id);
-        $pr = PurchaseRequest::find($quotation->request_id);
+        $pr = PurchaseRequestsDetail::select(
+            'purchase_requests_details.purchase_id',
+            'purchase_requests_details.description',
+            'purchase_requests_details.qty',
+            'purchase_requests_details.unit',
+            'purchase_requests_details.price',
+            'purchase_requests_details.material_id',
+            'purchase_requests_details.assets_no',
+            'purchase_requests_details.short_text',
+            'purchase_requests_details.delivery_date',
+            'purchase_requests_details.account_assignment',
+            'purchase_requests_details.gr_ind',
+            'purchase_requests_details.ir_ind',
+            'purchase_requests_details.purchasing_group_code',
+            'purchase_requests_details.preq_name',
+            'purchase_requests_details.plant_code',
+            'purchase_requests_details.gl_acct_code',
+            'purchase_requests_details.cost_center_code',
+            'purchase_requests_details.co_area',
+            'purchase_requests_details.profit_center_code',
+            'purchase_requests_details.storage_location',
+            \DB::raw('materials.description as m_description'),
+            \DB::raw('material_groups.code as mg_code'),
+            \DB::raw('material_groups.description as mg_description'),
+            \DB::raw('plants.code as p_code'),
+            \DB::raw('plants.description as p_description'),
+        )
+            ->join('materials', 'materials.code', '=', 'purchase_requests_details.material_id')
+            ->join('material_groups', 'material_groups.id', '=', 'materials.m_group_id')
+            ->join('plants', 'plants.id', '=', 'materials.m_plant_id')
+            ->where('purchase_id', $quotation->request_id)
+            ->get();
         $types = DocumentType::get();
 
         // get po_no from SAP

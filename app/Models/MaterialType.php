@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class MaterialType extends Model
 {
+    protected $connection = 'pgsql';
+
     public $table = 'material_types';
 
     protected $fillable = [

@@ -22,10 +22,6 @@
                             <td>{{ trans('cruds.quotation.fields.po_no') }}</td>
                             <td>{{ $quotation->po_no }}</td>
                         </tr>
-                        </tr>
-                            <td>{{ trans('cruds.quotation.fields.vendor_id') }}</td>
-                            <td>{{ isset($quotation->vendor) ? $quotation->vendor->name . ' - ' . $quotation->vendor->email : '' }}</td>
-                        </tr>
                         <tr>
                             <td>{{ trans('cruds.quotation.fields.leadtime_type') }}</td>
                             <td>{{ $quotation->leadtime_type }}</td>
@@ -36,33 +32,17 @@
                         </tr>
                         <tr>
                             <td>{{ trans('cruds.quotation.fields.target_price') }}</td>
-                            <td>{{ $quotation->target_price }}</td>
+                            <td>{{ number_format($quotation->target_price, 0, '', '.') }}</td>
                         </tr>
                         <tr>
                             <td>{{ trans('cruds.quotation.fields.expired_date') }}</td>
                             <td>{{ $quotation->expired_date }}</td>
                         </tr>
-                        <tr>
-                            <td>{{ trans('cruds.quotation.fields.vendor_leadtime') }}</td>
-                            <td>{{ $quotation->vendor_leadtime }}</td>
-                        </tr>
-                        <tr>
-                            <td>{{ trans('cruds.quotation.fields.vendor_price') }}</td>
-                            <td>{{ $quotation->vendor_price }}</td>
-                        </tr>
-                        <tr>
-                            <td>{{ trans('cruds.quotation.fields.created_at') }}</td>
-                            <td>{{ $quotation->created_at }}</td>
-                        </tr>
-                        <tr>
-                            <td>{{ trans('cruds.quotation.fields.updated_at') }}</td>
-                            <td>{{ $quotation->updated_at }}</td>
-                        </tr>
                     </tbody>
                 </table>
 
                 <div class="form-actions">
-                    <a href="{{ route('vendor.quotation-edit', $quotation->id) }}" class="btn btn-inverse">Next</a>
+                    <a href="{{ route('vendor.quotation-edit', $quotation->id) }}" class="btn btn-inverse">Bid</a>
                 </div>
             </div>
         </div>

@@ -13,98 +13,78 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <table class="table table-bordered table-striped">
-                    <tbody>
-                        <tr>
-                            <th>
-                                {{ trans('cruds.quotation.fields.id') }}
-                            </th>
-                            <td>
-                                {{ $quotation->id }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                {{ trans('cruds.quotation.fields.po_no') }}
-                            </th>
-                            <td>
-                                {{ $quotation->po_no }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                {{ trans('cruds.quotation.fields.vendor_id') }}
-                            </th>
-                            <td>
-                                {{ isset($quotation->vendor_id) ? $quotation->vendor->name . ' - ' . $quotation->vendor->email : '' }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                {{ trans('cruds.quotation.fields.upload_file') }}
-                            </th>
-                            <td>
-                                {{ $quotation->upload_file }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                {{ trans('cruds.quotation.fields.purchasing_leadtime') }}
-                            </th>
-                            <td>
-                                {{ $quotation->purchasing_leadtime }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                {{ trans('cruds.quotation.fields.target_price') }}
-                            </th>
-                            <td>
-                                {{ $quotation->target_price }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                {{ trans('cruds.quotation.fields.vendor_leadtime') }}
-                            </th>
-                            <td>
-                                {{ $quotation->vendor_leadtime }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                {{ trans('cruds.quotation.fields.vendor_price') }}
-                            </th>
-                            <td>
-                                {{ $quotation->vendor_price }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                {{ trans('cruds.quotation.fields.expired_date') }}
-                            </th>
-                            <td>
-                                {{ $quotation->expired_date }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                {{ trans('cruds.quotation.fields.created_at') }}
-                            </th>
-                            <td>
-                                {{ $quotation->created_at }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                {{ trans('cruds.quotation.fields.updated_at') }}
-                            </th>
-                            <td>
-                                {{ $quotation->updated_at }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <form action="{{ route('admin.quotation.winner') }}" method="post">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <table class="table table-bordered table-striped">
+                                <tbody>
+                                    <tr>
+                                        <th>{{ trans('cruds.quotation.fields.id') }}</th>
+                                        <td>{{ $quotation->id }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
+                                        <td>{{ $quotation->po_no }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>{{ trans('cruds.quotation.fields.purchasing_leadtime') }}</th>
+                                        <td>{{ $quotation->purchasing_leadtime }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>{{ trans('cruds.quotation.fields.target_price') }}</th>
+                                        <td>{{ number_format($quotation->target_price, 0, '', '.') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>{{ trans('cruds.quotation.fields.expired_date') }}</th>
+                                        <td>{{ $quotation->expired_date }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            @csrf
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>&nbsp;</th>
+                                        <th>Vendor Name</th>
+                                        <th>Email</th>
+                                        <th>Leadtime</th>
+                                        <th>Price</th>
+                                        <th>&nbsp;</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($quotation->detail as $det)
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="id[]" id="check_{{ $det->id }}" value="{{ $det->id }}">
+                                            <label for="check_{{ $det->id }}"></label>
+                                        </td>
+                                        <td>{{ $det->vendor->name }}</td>
+                                        <td>{{ $det->vendor->email }}</td>
+                                        <td>{{ $det->vendor_leadtime }}</td>
+                                        <td>{{ number_format($det->vendor_price, 0, '', '.') }}</td>
+                                        <td>
+                                            <a href="{{ route('admin.quotation.remove-vendor', [$quotation->id, $det->vendor_id]) }}" class="btn btn-danger"><i class="fa fa-trash"></i> Remove</a>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 20px">
+                        <div class="col-lg-12">
+                            <div class="form-actions">
+                                {{-- <input type="hidden" name="total" value="{{ $total }}"> --}}
+                                <button type="submit" class="btn btn-success click"> <i class="fa fa-check"></i> {{ 'Choose to winner' }}</button>
+                                <button type="button" class="btn btn-inverse">Cancel</button>
+                                <img id="image_loading" src="{{ asset('img/ajax-loader.gif') }}" alt="" style="display: none">
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

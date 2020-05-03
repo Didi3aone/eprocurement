@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cost extends Model
 {
+    protected $connection = 'pgsql';
+
     // use SoftDeletes;
 
     public $table = 'costs';

@@ -85,6 +85,14 @@ class LoginController extends Controller
         $model->regencies_id = 1;
         $model->district_id = 1;
         $model->address = $request->input('address');
+        $model->specialize = $request->input('specialize');
+        $model->company_name = $request->input('company_name');
+        $model->zip_code = $request->input('zip_code');
+        $model->code_area = $request->input('code_area');
+        $model->pkp = $request->input('pkp');
+        $model->office_phone = $request->input('office_phone');
+        $model->office_fax = $request->input('office_fax');
+        $model->phone = $request->input('phone');
         $model->status = 0;
         $model->save();
 

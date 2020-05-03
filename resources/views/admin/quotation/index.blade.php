@@ -35,95 +35,90 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('admin.quotation.winner') }}" method="post">
-                    @csrf
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="table-responsive m-t-40">
-                                <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
-                                    <thead>
-                                        <tr>
-                                            <th>&nbsp;</th>
-                                            <th>{{ trans('cruds.quotation.fields.id') }}</th>
-                                            <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
-                                            <th>{{ trans('cruds.quotation.fields.vendor_id') }}</th>
-                                            <th>{{ trans('cruds.quotation.fields.leadtime_type') }}</th>
-                                            <th>{{ trans('cruds.quotation.fields.purchasing_leadtime') }}</th>
-                                            <th>{{ trans('cruds.quotation.fields.target_price') }}</th>
-                                            <th>{{ trans('cruds.quotation.fields.expired_date') }}</th>
-                                            <th>{{ trans('cruds.quotation.fields.vendor_leadtime') }}</th>
-                                            <th>{{ trans('cruds.quotation.fields.vendor_price') }}</th>
-                                            <th>
-                                                &nbsp;
-                                            </th>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="table-responsive m-t-40">
+                            <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>{{ trans('cruds.quotation.fields.id') }}</th>
+                                        <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
+                                        <th>{{ trans('cruds.quotation.fields.vendor_id') }}</th>
+                                        <th>{{ trans('cruds.quotation.fields.leadtime_type') }}</th>
+                                        <th>{{ trans('cruds.quotation.fields.purchasing_leadtime') }}</th>
+                                        <th>{{ trans('cruds.quotation.fields.target_price') }}</th>
+                                        <th>{{ trans('cruds.quotation.fields.expired_date') }}</th>
+                                        <th>{{ trans('cruds.quotation.fields.vendor_leadtime') }}</th>
+                                        <th>{{ trans('cruds.quotation.fields.vendor_price') }}</th>
+                                        <th>
+                                            &nbsp;
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($quotation as $key => $val)
+                                        <tr data-entry-id="{{ $val->id }}">
+                                            <td>{{ $val->id ?? '' }}</td>
+                                            <td>{{ $val->po_no ?? '' }}</td>
+                                            <td>
+                                                @foreach ($val->detail as $det)
+                                                    <span class="label label-primary">{{ isset($det->vendor) ? $det->vendor->name . ' - ' . $det->vendor->email : '' }}</span>
+                                                @endforeach
+                                            </td>
+                                            <td>{{ $val->leadtime_type == 0 ? 'Date' : 'Day Count' }}</td>
+                                            <td>{{ $val->purchasing_leadtime ?? '' }}</td>
+                                            <td>{{ number_format($val->target_price, 0, '', '.') ?? '' }}</td>
+                                            <td>
+                                                @php
+                                                $is_expired = '#67757c';
+                                                @endphp
+                                                @if (time() > strtotime($val->expired_date))
+                                                    @php $is_expired = 'red'; @endphp
+                                                @elseif (time() > strtotime('-2 days', strtotime($val->expired_date)) && time() <= strtotime($val->expired_date))
+                                                    @php $is_expired = 'orange'; @endphp
+                                                @endif
+                                                <span style="color: {{ $is_expired }}">{{ $val->expired_date ?? '' }}</span>
+                                            </td>
+                                            <td>
+                                                @foreach ($val->detail as $det)
+                                                    <span class="label label-primary">{{ $det->vendor_leadtime }}</span>
+                                                @endforeach
+                                            </td>
+                                            <td>
+                                                @foreach ($val->detail as $det)
+                                                    <span class="label label-primary">{{ number_format($det->vendor_price, 0, '', '.') }}</span>
+                                                @endforeach
+                                            </td>
+                                            <td>
+                                                @can('quotation_show')
+                                                @if (time() <= strtotime($val->expired_date))
+                                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.quotation.show', $val->id) }}">
+                                                        {{ trans('global.view') }}
+                                                    </a>
+                                                @endif
+                                                @endcan
+
+                                                @can('quotation_edit')
+                                                    <a class="btn btn-xs btn-info" href="{{ route('admin.quotation.edit', $val->id) }}">
+                                                        {{ trans('global.edit') }}
+                                                    </a>
+                                                @endcan
+
+                                                @can('quotation_delete')
+                                                    {{-- <form action="{{ route('admin.quotation.destroy', $val->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
+                                                        <input type="hidden" name="_method" value="DELETE">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                                        <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
+                                                    </form> --}}
+                                                @endcan
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($quotation as $key => $val)
-                                            <tr data-entry-id="{{ $val->id }}">
-                                                <td>
-                                                    @if (time() <= strtotime($val->expired_date))
-                                                    <input type="checkbox" name="id[]" id="check_{{ $key }}" value="{{ $val->id }}">
-                                                    <label for="check_{{ $key }}"></label>
-                                                    @endif
-                                                </td>
-                                                <td>{{ $val->id ?? '' }}</td>
-                                                <td>{{ $val->po_no ?? '' }}</td>
-                                                <td>{{ isset($val->vendor_id) ? $val->vendor->name . ' - ' . $val->vendor->email : '' }}</td>
-                                                <td>{{ $val->leadtime_type == 0 ? 'Date' : 'Day Count' }}</td>
-                                                <td>{{ $val->purchasing_leadtime ?? '' }}</td>
-                                                <td>{{ $val->target_price ?? '' }}</td>
-                                                <td>
-                                                    @php $is_expired = '#67757c' @endphp
-                                                    @if (time() > strtotime($val->expired_date))
-                                                        @php $is_expired = 'red'; @endphp
-                                                    @elseif (time() > strtotime('-2 days', strtotime($val->expired_date)) && time() <= strtotime($val->expired_date))
-                                                        @php $is_expired = 'orange'; @endphp
-                                                    @endif
-                                                    <span style="color: {{ $is_expired }}">{{ $val->expired_date ?? '' }}</span>
-                                                </td>
-                                                <td>{{ $val->vendor_leadtime ?? '' }}</td>
-                                                <td>{{ $val->vendor_price ?? '' }}</td>
-                                                <td>
-                                                    @can('quotation_show')
-                                                        <a class="btn btn-xs btn-primary" href="{{ route('admin.quotation.show', $val->id) }}">
-                                                            {{ trans('global.view') }}
-                                                        </a>
-                                                    @endcan
-
-                                                    @can('quotation_edit')
-                                                        <a class="btn btn-xs btn-info" href="{{ route('admin.quotation.edit', $val->id) }}">
-                                                            {{ trans('global.edit') }}
-                                                        </a>
-                                                    @endcan
-
-                                                    @can('quotation_delete')
-                                                        {{-- <form action="{{ route('admin.quotation.destroy', $val->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
-                                                            <input type="hidden" name="_method" value="DELETE">
-                                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                            <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
-                                                        </form> --}}
-                                                    @endcan
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-
-                    <div class="row" style="margin-top: 20px">
-                        <div class="col-lg-12">
-                            <div class="form-actions">
-                                {{-- <input type="hidden" name="total" value="{{ $total }}"> --}}
-                                <button type="submit" class="btn btn-success click"> <i class="fa fa-check"></i> {{ trans('global.winner') }}</button>
-                                <button type="button" class="btn btn-inverse">Cancel</button>
-                                <img id="image_loading" src="{{ asset('img/ajax-loader.gif') }}" alt="" style="display: none">
-                            </div>
-                        </div>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>

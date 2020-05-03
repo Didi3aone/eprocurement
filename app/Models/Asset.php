@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Asset extends Model
 {
+    protected $connection = 'pgsql';
+
     protected $fillable = [
         'company_id',
         'code',

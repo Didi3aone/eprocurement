@@ -17,20 +17,6 @@
         </button>
     </div>
 @endif
-{{-- @can('quotation_create')
-    <div style="margin-bottom: 10px;" class="row">
-        <div class="col-lg-6">
-            <a class="btn btn-success" href="{{ route("admin.quotation.create") }}">
-                <i class='fa fa-plus'></i> {{ trans('global.add') }} {{ trans('cruds.quotation.title_singular') }}
-            </a>
-        </div>
-        <div class="col-lg-6 text-right">
-            <button class="btn btn-info" data-toggle="modal" data-target="#modal_import">
-                <i class="fa fa-download"></i> {{ trans('cruds.quotation.import') }}
-            </button>
-        </div>
-    </div>
-@endcan --}}
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -56,21 +42,21 @@
                                     @foreach($quotation as $key => $val)
                                         <tr data-entry-id="{{ $val->id }}">
                                             <td>{{ $val->id ?? '' }}</td>
-                                            <td>{{ $val->po_no ?? '' }}</td>
-                                            <td>{{ $val->name . ' - ' . $val->email ?? '' }}</td>
-                                            <td>{{ $val->target_price ?? '' }}</td>
+                                            <td>{{ $val->quotation->po_no ?? '' }}</td>
+                                            <td>{{ $val->vendor->name . ' - ' . $val->vendor->email ?? '' }}</td>
+                                            <td>{{ number_format($val->quotation->target_price, 0, '', '.') ?? '' }}</td>
                                             <td>
                                                 @php $is_expired = '#67757c' @endphp
-                                                @if (time() > strtotime($val->expired_date))
+                                                @if (time() > strtotime($val->quotation->expired_date))
                                                     @php $is_expired = 'red'; @endphp
-                                                @elseif (time() > strtotime('-2 days', strtotime($val->expired_date)) && time() <= strtotime($val->expired_date))
+                                                @elseif (time() > strtotime('-2 days', strtotime($val->quotation->expired_date)) && time() <= strtotime($val->quotation->expired_date))
                                                     @php $is_expired = 'orange'; @endphp
                                                 @endif
-                                                <span style="color: {{ $is_expired }}">{{ $val->expired_date ?? '' }}</span>
+                                                <span style="color: {{ $is_expired }}">{{ $val->quotation->expired_date ?? '' }}</span>
                                             </td>
                                             <td>{{ $val->vendor_leadtime ?? '' }}</td>
-                                            <td>{{ $val->vendor_price ?? '' }}</td>
-                                            <td>{{ $val->qty ?? '' }}</td>
+                                            <td>{{ number_format($val->vendor_price, 0, '', '.') ?? '' }}</td>
+                                            <td>{{ number_format($val->qty, 0, '', '.') ?? '' }}</td>
                                             <td>
                                                 @can('quotation_approve')
                                                     <a class="btn btn-xs btn-success approve" id="save_{{ $key }}" data-row="{{ $key }}" data-req="{{ $val->id }}" data-id="{{ $val->approval_id }}" href="javascript:;">
@@ -99,41 +85,7 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="row" style="margin-top: 20px">
-                    <div class="col-lg-12">
-                        <div class="form-actions">
-                            {{-- <input type="hidden" name="total" value="{{ $total }}"> --}}
-                            {{-- <button type="submit" class="btn btn-success click"> <i class="fa fa-check"></i> {{ trans('global.winner') }}</button> --}}
-                            <button type="button" class="btn btn-inverse">Cancel</button>
-                            <img id="image_loading" src="{{ asset('img/ajax-loader.gif') }}" alt="" style="display: none">
-                        </div>
-                    </div>
-                </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modal_import" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">{{ trans('cruds.quotation.import') }}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form action="{{ route('admin.quotation.import') }}" method="post" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-body">
-                    <input type="file" name="xls_file" id="xls_file">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                </div>
-            </form>
         </div>
     </div>
 </div>
@@ -152,14 +104,14 @@
         e.preventDefault();
         var id = $(this).data('id');
         var no = $(this).data('req');
-        var row = $(this).data("row");
+        var row = $(this).data('row');
         var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
 
         // console.log(id, no, row, CSRF_TOKEN)
 
         swal({   
             title: "Are you sure?",   
-            text: "Approve this PR",   
+            text: "Approve the Winner?",   
             type: "warning",   
             showCancelButton: true,   
             confirmButtonColor: "#DD6B55",   

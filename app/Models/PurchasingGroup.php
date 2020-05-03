@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class PurchasingGroup extends Model
 {
+    protected $connection = 'pgsql';
+
     public $table = 'purchasing_groups';
 
     protected $fillable = [

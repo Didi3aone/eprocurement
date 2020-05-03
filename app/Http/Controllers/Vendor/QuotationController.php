@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Vendor\Quotation;
+use App\Models\Vendor\QuotationDetail;
 use App\Models\BiddingHistory;
 // use Gate;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,9 +16,20 @@ class QuotationController extends Controller
 {
     public function index ()
     {
-        $quotation = Quotation::where('vendor_id', Auth::user()->id)
-            ->with('historyCount')
-            ->orderBy('id', 'desc')
+        $quotation = Quotation::select(
+            '*',
+            \DB::raw('(
+                select count(*) as count 
+                from bidding_history 
+                where quotation_id = quotation.id 
+                    and vendor_id = ' . Auth::user()->id . '
+                group by quotation_id
+            )'),
+            'quotation_details.id as detail_id', 'quotation_details.*'
+        )
+            ->join('quotation_details', 'quotation_details.quotation_order_id', 'quotation.id')
+            ->where('quotation_details.vendor_id', Auth::user()->id)
+            ->orderBy('quotation.id', 'desc')
             ->get();
 
         return view('vendor.quotation.index', compact('quotation'));
@@ -33,7 +45,7 @@ class QuotationController extends Controller
     public function edit ($id)
     {
         $quotation = Quotation::find($id);
-        $maxPrice = Quotation::where('po_no', $quotation->po_no)
+        $maxPrice = QuotationDetail::where('quotation_order_id', $id)
             ->where('vendor_id', '<>', Auth::user()->id)
             ->whereNotNull('vendor_price')
             ->max('vendor_price');
@@ -41,11 +53,9 @@ class QuotationController extends Controller
         $vendors = null;
         
         if (!empty($maxPrice)) {
-            $vendors = Quotation::where('po_no', $quotation->po_no)
-                ->where([
-                    'vendor_id', '<>', Auth::user()->id,
-                    'vendor_price', $maxPrice
-                ])
+            $vendors = QuotationDetail::where('quotation_order_id', $id)
+                ->where('vendor_id', '<>', Auth::user()->id)
+                ->where('vendor_price', $maxPrice)
                 ->orderBy('id', 'desc')
                 ->get();
         }
@@ -55,7 +65,9 @@ class QuotationController extends Controller
 
     public function store (Request $request)
     {
-        if ($request->get('vendor_price') > $request->get('target_price'))
+        $vendor_price = str_replace('.', '', $request->get('vendor_price'));
+
+        if ($vendor_price > $request->get('target_price'))
             return redirect()->route('vendor.quotation-edit', $request->get('id'))
                 ->with('error', trans('cruds.quotation.alert_error_price') . ', target price = ' . $request->get('target_price'));
 
@@ -75,10 +87,10 @@ class QuotationController extends Controller
                 $real_filename = public_path($path . $filename);
             }
     
-            $quotation = Quotation::find($request->get('id'));
+            $quotation = QuotationDetail::where('quotation_order_id', $request->get('id'))->first();
             $quotation->upload_file = $filename;
             $quotation->vendor_leadtime = $request->get('vendor_leadtime');
-            $quotation->vendor_price = $request->get('vendor_price');
+            $quotation->vendor_price = $vendor_price;
             $quotation->notes = $request->get('notes');
             $quotation->save();
 

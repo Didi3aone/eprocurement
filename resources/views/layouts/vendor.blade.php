@@ -304,6 +304,7 @@
     <script src="{{ asset('plugins/sweetalert/sweetalert.min.js') }}"></script>
     <script src="{{ asset('plugins/sweetalert/jquery.sweet-alert.custom.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="{{ asset('js/jquery.mask.min.js') }}"></script>
     <script src="{{ asset('js/global.js') }}"></script>
     @yield('scripts')
 </body>

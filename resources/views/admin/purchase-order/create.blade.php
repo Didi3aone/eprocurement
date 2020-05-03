@@ -9,12 +9,21 @@
         </ol>
     </div>
 </div>
+@if(session('status'))
+    <div class="alert alert-info alert-dismissible fade show" role="alert" id="info-alert">
+        {{ session('status') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+@endif
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
                 <form class="form-rn m-t-40" action="{{ route("admin.purchase-order.store") }}" enctype="multipart/form-data" method="post">
                     @csrf
+                    <input type="hidden" name="id" value="{{ $id }}">
                     <input type="hidden" value="{{ $pr->id }}" name="request_id">
                     <input type="hidden" value="0" name="status">
                     <div class="row">
@@ -80,7 +89,7 @@
                             </div>
                             <div class="form-group">
                                 <label>{{ trans('cruds.purchase-order.fields.target_price') }}</label>
-                                <input type="number" class="form-control form-control-line {{ $errors->has('target_price') ? 'is-invalid' : '' }}" name="target_price" value="{{ old('target_price', 0) }}" required>
+                                <input type="text" class="money form-control form-control-line {{ $errors->has('target_price') ? 'is-invalid' : '' }}" name="target_price" value="{{ old('target_price', 0) }}" required>
                                 @if($errors->has('target_price'))
                                     <div class="invalid-feedback">
                                         {{ $errors->first('target_price') }}
@@ -89,7 +98,7 @@
                             </div>
                             <div class="form-group">
                                 <label>{{ trans('cruds.purchase-order.fields.expired_date') }}</label>
-                                <input type="text" id="datetimepicker" class="form-control form-control-line {{ $errors->has('expired_date') ? 'is-invalid' : '' }}" name="expired_date" value="{{ old('expired_date', date('Y-m-d H:i:s', strtotime('+3 months', time()))) }}">
+                                <input type="text" id="datetimepicker" class="form-control form-control-line {{ $errors->has('expired_date') ? 'is-invalid' : '' }}" name="expired_date" value="{{ old('expired_date', date('Y-m-d H:i', strtotime('+3 months', time()))) }}">
                                 @if($errors->has('expired_date'))
                                     <div class="invalid-feedback">
                                         {{ $errors->first('expired_date') }}
@@ -97,47 +106,46 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="">{{ trans('cruds.purchase-order.invite_vendor') }}</label>
-                            <div class="row">
-                                <div class="col-lg-9">
-                                    <select name="search-vendor" id="search-vendor" class="form-control select2">
-                                        @foreach ($vendor as $val)
-                                        <option 
-                                            value="{{ $val->id }}"
-                                            data-id="{{ $val->id }}"
-                                            data-name="{{ $val->name }}"
-                                            data-email="{{ $val->email }}"
-                                            data-address="{{ $val->address }}"
-                                            data-npwp="{{ $val->npwp }}"
-                                        >
-                                            {{ $val->name }} - {{ $val->email }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-lg-3">
-                                    <button id="btn-search-vendor" class="btn btn-info"><i class="fa fa-check"></i> Add Vendor</button>
-                                </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="">{{ trans('cruds.purchase-order.invite_vendor') }}</label>
+                        <div class="row">
+                            <div class="col-lg-9">
+                                <select name="search-vendor" id="search-vendor" class="form-control select2">
+                                    @foreach ($vendor as $val)
+                                    <option 
+                                        value="{{ $val->id }}"
+                                        data-id="{{ $val->id }}"
+                                        data-name="{{ $val->name }}"
+                                        data-email="{{ $val->email }}"
+                                        data-address="{{ $val->address }}"
+                                        data-npwp="{{ $val->npwp }}"
+                                    >
+                                        {{ $val->name }} - {{ $val->email }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <button id="btn-search-vendor" class="btn btn-info"><i class="fa fa-check"></i> Add Vendor</button>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="table-responsive">
-                                {{-- <input type="hidden" name="vendor_id" id="idval" required> --}}
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>&nbsp;</th>
-                                            <th>Vendor Name</th>
-                                            <th>Email</th>
-                                            <th>Address</th>
-                                            <th>NPWP</th>
-                                            <th>&nbsp;</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="vendors"></tbody>
-                                </table>
-                            </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="table-responsive">
+                            {{-- <input type="hidden" name="vendor_id" id="idval" required> --}}
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Vendor Name</th>
+                                        <th>Email</th>
+                                        <th>Address</th>
+                                        <th>NPWP</th>
+                                        <th>&nbsp;</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="vendors"></tbody>
+                            </table>
                         </div>
                     </div>
 
@@ -200,10 +208,7 @@
 <script>
     let index = 1
 
-    // $(".table").DataTable({
-    //     "pageLength": 150,
-    //     "bLengthChange": false
-    // });
+    $('.money').mask('#.##0', { reverse: true });
 
     $("input[name='bidding']").change(function() {
         const bidding_yes = $(this).val();
@@ -268,15 +273,12 @@
 
         const template = `
             <tr>
-                <td>
-                    <input type="checkbox" name="vendor_id[]" id="check_${id_vendor}" value="${id_vendor}">
-                    <label for="check_${id_vendor}"></label>
-                </td>
                 <td>${name_vendor}</td>
                 <td>${email_vendor}</td>
                 <td>${address_vendor}</td>
                 <td>${npwp_vendor}</td>
                 <td>
+                    <input type="hidden" name="vendor_id[]" value="${id_vendor}">
                     <button 
                         className="btn btn-xs btn-danger" 
                         onclick="this.parentNode.parentNode.remove()"

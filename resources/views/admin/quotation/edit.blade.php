@@ -46,7 +46,7 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.quotation.fields.target_price') }}</label>
-                        <input type="number" class="form-control form-control-line {{ $errors->has('target_price') ? 'is-invalid' : '' }}" name="target_price" value="{{ old('target_price', $quotation->target_price) }}"> 
+                        <input type="text" class="money form-control form-control-line {{ $errors->has('target_price') ? 'is-invalid' : '' }}" name="target_price" value="{{ old('target_price', $quotation->target_price) }}"> 
                         @if($errors->has('target_price'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('target_price') }}
@@ -71,4 +71,11 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+@parent
+<script>
+    $('.money').mask('#.##0', { reverse: true });
+</script>    
 @endsection

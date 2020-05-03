@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class PurchaseRequestsDetail extends Model
 {
+    protected $connection = 'pgsql';
+
     protected $fillable = [
         'id',
         'purchase_id',

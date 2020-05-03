@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class RequestNotes extends Model
 {
+    protected $connection = 'pgsql';
+
     protected $fillable = [
         'id',
         'request_no',

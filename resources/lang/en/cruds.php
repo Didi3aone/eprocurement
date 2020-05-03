@@ -523,6 +523,10 @@ return [
         'fields'        => [
             'id' => 'ID',
             'bidding' => 'Bidding',
+            'type' => 'Document Type',
+            'po_no' => 'Request No',
+            'vendor_id' => 'Vendor',
+            'po_date' => 'Create Date',
             'request_date' => 'Request Date',
             'request_no' => 'Purchase Request No',
             'purchasing_leadtime' => 'Purchasing Leadtime',

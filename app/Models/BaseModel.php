@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Auth;
 
 class BaseModel extends \Illuminate\Database\Eloquent\Model
 {
-
     public static function boot()
     {
         parent::boot();

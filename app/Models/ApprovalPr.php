@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ApprovalPr extends Model
 {
+    protected $connection = 'pgsql';
+
     public $table = 'approval_prs';
 
     protected $fillable = [

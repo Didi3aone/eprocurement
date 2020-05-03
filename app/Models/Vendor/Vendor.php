@@ -12,6 +12,8 @@ use Laravel\Passport\HasApiTokens;
 
 class Vendor extends Authenticatable
 {
+    protected $connection = 'pgsql';
+
     use SoftDeletes, Notifiable, HasApiTokens;
     protected $guard = 'vendor';
 

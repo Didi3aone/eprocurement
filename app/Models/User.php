@@ -12,6 +12,8 @@ use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
+    protected $connection = 'pgsql';
+
     use SoftDeletes, Notifiable, HasApiTokens;
 
     public $table = 'users';

@@ -7,6 +7,8 @@ use App\Models\BiddingHistory;
 
 class Quotation extends Model
 {
+    protected $connection = 'pgsql';
+
     public $table = 'quotation';
 
     protected $fillable = [
@@ -20,18 +22,11 @@ class Quotation extends Model
 
     public function detail ()
     {
-        return $this->hasMany(QuotationDetail::class, 'id', 'quotation_order_id');
+        return $this->hasMany(QuotationDetail::class, 'quotation_order_id', 'id');
     }
 
     public function vendor ()
     {
         return $this->hasOne(\App\Models\Vendor::class, 'id', 'vendor_id');
-    }
-
-    public function historyCount ()
-    {
-        return $this->hasOne(BiddingHistory::class, 'quotation_id', 'id')
-            ->selectRaw('quotation_id, count(*) as count')
-            ->groupBy('quotation_id');
     }
 }

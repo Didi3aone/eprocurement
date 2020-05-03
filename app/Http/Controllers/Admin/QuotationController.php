@@ -8,6 +8,7 @@ use Gate, Artisan;
 use Symfony\Component\HttpFoundation\Response;
 
 use App\Models\Vendor\Quotation;
+use App\Models\Vendor\QuotationDetail;
 use App\Models\Vendor\QuotationApproval;
 use App\Models\WorkFlowApproval;
 use App\Models\Vendor;
@@ -23,7 +24,9 @@ class QuotationController extends Controller
     {
         // abort_if(Gate::denies('quotation_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $quotation = Quotation::orderBy('id', 'desc')->get();
+        $quotation = Quotation::orderBy('id', 'desc')
+            ->groupBy('id', 'request_id')
+            ->get();
 
         return view('admin.quotation.index', compact('quotation'));
     }
@@ -61,7 +64,7 @@ class QuotationController extends Controller
         $quotation = [];
         
         foreach ($request->get('id') as $id)
-            $quotation[$id] = Quotation::find($id);
+            $quotation[$id] = QuotationDetail::find($id);
 
         return view('admin.quotation.winner', compact('quotation'));
     }
@@ -88,6 +91,113 @@ class QuotationController extends Controller
         }
     }
 
+    private function saveApproval($quotation_id, $tingkat)
+    {
+        $spv = \App\Models\OrangeHrm\SuperiorUser::where('employee_id', \Auth::user()->nik)
+                ->where('valid_to','>=',date('Y-m-d'))
+                ->first();
+
+        $employee = getZigZagDepartment(\Auth::user()->nik);
+
+        if( $tingkat == 'C_LEVEL' ) {
+            QuotationApproval::create([
+                'nik'                   => $spv->supervisor_id,
+                'approval_position'     => 1,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 1,
+            ]);
+
+            QuotationApproval::create([
+                'nik'                   => getCLevelByDept($employee->department)->nik,
+                'approval_position'     => 2,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 0,
+            ]);
+        } else if ($tingkat == 'CFO') {
+            QuotationApproval::create([
+                'nik'                   => getCLevelByDept($employee->department)->nik,
+                'approval_position'     => 2,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 0,
+            ]);
+        } else if ($tingkat == 'COO') {
+            QuotationApproval::create([
+                'nik'                   => getCLevelByDept($employee->department)->nik,
+                'approval_position'     => 2,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 0,
+            ]);
+        // } else if($tingkat == 'COO' ) {
+        //     PurchaseRequestsApproval::create([
+        //         'nik'                   => $spv->supervisor_id,
+        //         'approval_position'     => PurchaseRequestsApproval::postionAtasanLangsung,
+        //         'status'                => PurchaseRequestsApproval::waitingApproval,
+        //         'quotation_id'          => $quotation_id,
+        //         'flag'                  => 1,
+        //     ]);
+    
+        //     PurchaseRequestsApproval::create([
+        //         'nik'                   => getCLevelByDept($employee->department)->nik,
+        //         'approval_position'     => postionAtasanLangsung::postionClevel,
+        //         'status'                => PurchaseRequestsApproval::waitingApproval,
+        //         'purchase_request_id'   => $pr_id,
+        //         'flag'                  => 0,
+        //     ]);
+
+        //     PurchaseRequestsApproval::create([
+        //         'nik'                   => \App\Models\Configuration::where('name','COO')->first()->value,
+        //         'approval_position'     => postionAtasanLangsung::postionClevel,
+        //         'status'                => PurchaseRequestsApproval::waitingApproval,
+        //         'purchase_request_id'   => $pr_id,
+        //         'flag'                  => 0,
+        //     ]);
+        // }else if( $tingkat == 'OWNER') {
+        //     PurchaseRequestsApproval::create([
+        //         'nik'                   => $spv->supervisor_id,
+        //         'approval_position'     => PurchaseRequestsApproval::postionAtasanLangsung,
+        //         'status'                => PurchaseRequestsApproval::waitingApproval,
+        //         'purchase_request_id'   => $pr_id,
+        //         'flag'                  => 1,
+        //     ]);
+    
+        //     PurchaseRequestsApproval::create([
+        //         'nik'                   => getCLevelByDept($employee->department)->nik,
+        //         'approval_position'     => postionAtasanLangsung::postionClevel,
+        //         'status'                => PurchaseRequestsApproval::waitingApproval,
+        //         'purchase_request_id'   => $pr_id,
+        //         'flag'                  => 0,
+        //     ]);
+
+        //     PurchaseRequestsApproval::create([
+        //         'nik'                   => \App\Models\Configuration::where('name','COO')->first()->value,
+        //         'approval_position'     => PurchaseRequestsApproval::postionAtasanLangsung,
+        //         'status'                => PurchaseRequestsApproval::waitingApproval,
+        //         'purchase_request_id'   => $pr_id,
+        //         'flag'                  => 0,
+        //     ]);
+    
+        //     PurchaseRequestsApproval::create([
+        //         'nik'                   => \App\Models\Configuration::where('name','OWNER')->first()->value,
+        //         'approval_position'     => postionAtasanLangsung::postionClevel,
+        //         'status'                => PurchaseRequestsApproval::waitingApproval,
+        //         'purchase_request_id'   => $pr_id,
+        //         'flag'                  => 0,
+        //     ]);
+        } else {
+            QuotationApproval::create([
+                'nik'                   => $spv->supervisor_id,
+                'approval_position'     => QuotationApproval::atasanLangsung,
+                'status'                => QuotationApproval::waitingApproval,
+                'purchase_request_id'   => $quotation_id,
+                'flag'                  => 1,
+            ]);
+        }
+    }
+
     public function toWinner (Request $request)
     {
         \DB::beginTransaction();
@@ -96,18 +206,11 @@ class QuotationController extends Controller
             foreach ($request->get('id') as $id => $val) {
                 $vendor_price = $request->get('vendor_price')[$id];
                 $qty = $request->get('qty')[$id];
+                $qty = str_replace('.', '', $qty);
                 
                 $total = $vendor_price * $qty;
 
-                if( ($total >= 0) && ($total <= 100000000) ) {
-                    $this->workflowApproval(2, $val);
-                } else if( $total >= 100000000 && $total <= 250000000) {
-                    $this->workflowApproval(3, $val);
-                } else {
-                    $this->workflowApproval(4, $val);
-                }
-
-                $model = Quotation::find((int) $val);
+                $model = QuotationDetail::find((int) $val);
                 $model->is_winner = 1;
                 $model->qty = $qty;
                 $model->save();
@@ -124,6 +227,13 @@ class QuotationController extends Controller
     }
 
     public function listWinner ()
+    {
+        $quotation = QuotationDetail::all();
+
+        return view('admin.quotation.list-winner', compact('quotation'));
+    }
+
+    public function listAcp ()
     {
         $quotation = QuotationApproval::select(
             'quotation.id as id',
@@ -157,6 +267,14 @@ class QuotationController extends Controller
         $id = $request->get('req_id');
 
         try {
+            if( ($total >= 250000000) ) {
+                $this->saveApproval($val, 'COO');
+            } else if( ($total <= 250000000) && ($total >= 100000000) ) {
+                $this->saveApproval($val, 'CFO');
+            } else {
+                $this->saveApproval($val, 'No');
+            }
+
             $posisi = QuotationApproval::where('id', $qa_id)->first();
 
             $total = QuotationApproval::where('quotation_id', $id)

@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProfitCenter extends Model
 {
+    protected $connection = 'pgsql';
+
     public $table = 'profit_centers';
 
     protected $fillable = [

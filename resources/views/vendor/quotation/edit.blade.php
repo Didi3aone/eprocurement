@@ -51,8 +51,8 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>{{ trans('cruds.quotation.fields.vendor_price') }}</label>
-                        <input type="number" class="form-control form-control-line {{ $errors->has('vendor_price') ? 'is-invalid' : '' }}" name="vendor_price" value="{{ old('vendor_price', $quotation->vendor_price) }}" required> 
+                        <label>{{ trans('cruds.quotation.fields.vendor_price') }} <span class="text-right label label-success">Target Price: {{ number_format($quotation->target_price, 0, '', '.') }}</span></label>
+                        <input type="text" class="money form-control form-control-line {{ $errors->has('vendor_price') ? 'is-invalid' : '' }}" name="vendor_price" value="{{ old('vendor_price', $quotation->vendor_price) }}" required> 
                         @if($errors->has('vendor_price'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('vendor_price') }}
@@ -81,23 +81,30 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col-lg-12">
-                                <div class="table-responsive">
-                                    <table class="table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Leadtime</th>
-                                                <th>Vendor Price</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($vendors as $row)
-                                            <tr>
-                                                <td>{{ $row->purchasing_leadtime }}</td>
-                                                <td>{{ $row->vendor_price }}</td>
-                                            </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3>Kompetitor</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-hovered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Leadtime</th>
+                                                        <th>Price</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($vendors as $row)
+                                                    <tr>
+                                                        <td>{{ $row->vendor_leadtime }}</td>
+                                                        <td>{{ number_format($row->vendor_price, 0, '', '.') }}</td>
+                                                    </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -117,6 +124,8 @@
 @section('scripts')
 @parent
 <script>
+    $('.money').mask('#.##0', { reverse: true });
+
     @if ($quotation->leadtime_type == 1)
         $("#vendor_leadtime")
             .attr('type', 'number')

@@ -69,14 +69,14 @@
                                         @endif
                                         <span style="color: {{ $is_expired }}">{{ $val->expired_date ?? '' }}</span>
                                     </td>
-                                    <td>{{ $val->target_price ?? '' }}</td>
+                                    <td>{{ number_format($val->target_price, 0, '', '.') ?? '' }}</td>
                                     <td>{{ $val->vendor_leadtime ?? '' }}</td>
-                                    <td>{{ $val->vendor_price ?? '' }}</td>
-                                    <td>{{ $val->historyCount ? $val->historyCount->count : 0 }}</td>
+                                    <td>{{ number_format($val->vendor_price, 0, '', '.') ?? '' }}</td>
+                                    <td>{{ $val->count }}</td>
                                     <td>
                                         @if (time() <= strtotime($val->expired_date))
-                                        <a class="btn btn-xs btn-info" href="{{ route('vendor.quotation-detail', $val->id) }}">
-                                            {{ trans('global.bid') }}
+                                        <a class="btn btn-xs btn-info" href="{{ route('vendor.quotation-detail', $val->quotation_order_id) }}">
+                                            {{ 'View' }}
                                         </a>
                                         @endif
                                     </td>

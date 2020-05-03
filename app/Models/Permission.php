@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Permission extends Model
 {
+    protected $connection = 'pgsql';
+
     use SoftDeletes;
 
     public $table = 'permissions';

@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class BiddingHistory extends Model
 {
+    protected $connection = 'pgsql';
+
     public $table = 'bidding_history';
 
     protected $fillable = [

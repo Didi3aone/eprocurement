@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Role extends Model
 {
+    protected $connection = 'pgsql';
+
     use SoftDeletes;
 
     public $table = 'roles';

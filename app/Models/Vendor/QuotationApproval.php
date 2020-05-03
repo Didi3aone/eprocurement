@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class QuotationApproval extends Model
 {
+    protected $connection = 'pgsql';
+
     public $table = 'quotation_approvals';
 
     protected $fillable = [
@@ -16,6 +18,10 @@ class QuotationApproval extends Model
         'quotation_id',
         'approve_date',
     ];
+
+    public const waitingApproval = 0;
+    public const atasanLangsung = 1;
+    public const cLevel = 2;
 
     public function quotation ()
     {

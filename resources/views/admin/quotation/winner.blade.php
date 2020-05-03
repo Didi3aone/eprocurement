@@ -60,28 +60,28 @@
                                             <tr data-entry-id="{{ $val->id }}">
                                                 <input type="hidden" name="vendor_id[]" value="{{ $val->vendor_id }}">
                                                 <input type="hidden" name="id[]" value="{{ $val->id }}">
-                                                <input type="hidden" name="po_no[]" value="{{ $val->po_no }}">
-                                                <input type="hidden" name="vendor_price[]" value="{{ $val->vendor_price }}">
+                                                <input type="hidden" name="po_no[]" value="{{ $val->quotation->po_no }}">
+                                                <input type="hidden" name="vendor_price[]" value="{{ $val->quotation->vendor_price }}">
                                                 <td>{{ $val->id ?? '' }}</td>
-                                                <td>{{ $val->po_no ?? '' }}</td>
+                                                <td>{{ $val->quotation->po_no ?? '' }}</td>
                                                 <td>{{ isset($val->vendor_id) ? $val->vendor->name . ' - ' . $val->vendor->email : '' }}</td>
-                                                <td>{{ $val->leadtime_type == 0 ? 'Date' : 'Day Count' }}</td>
-                                                <td>{{ $val->purchasing_leadtime ?? '' }}</td>
-                                                <td>{{ $val->target_price ?? '' }}</td>
+                                                <td>{{ $val->quotation->leadtime_type == 0 ? 'Date' : 'Day Count' }}</td>
+                                                <td>{{ $val->quotation->purchasing_leadtime ?? '' }}</td>
+                                                <td>{{ number_format($val->quotation->target_price, 0, '', '.') ?? '' }}</td>
                                                 <td>
                                                     @php $is_expired = '#67757c' @endphp
-                                                    @if (time() > strtotime($val->expired_date))
+                                                    @if (time() > strtotime($val->quotation->expired_date))
                                                         @php $is_expired = 'red'; @endphp
-                                                    @elseif (time() > strtotime('-2 days', strtotime($val->expired_date)) && time() <= strtotime($val->expired_date))
+                                                    @elseif (time() > strtotime('-2 days', strtotime($val->quotation->expired_date)) && time() <= strtotime($val->quotation->expired_date))
                                                         @php $is_expired = 'orange'; @endphp
                                                     @endif
-                                                    <span style="color: {{ $is_expired }}">{{ $val->expired_date ?? '' }}</span>
+                                                    <span style="color: {{ $is_expired }}">{{ $val->quotation->expired_date ?? '' }}</span>
                                                 </td>
                                                 <td>{{ $val->vendor_leadtime ?? '' }}</td>
-                                                <td>{{ $val->vendor_price ?? '' }}</td>
+                                                <td>{{ number_format($val->vendor_price, 0, '', '.') ?? '' }}</td    >
                                                 <td>
-                                                    <input type="text" name="qty[]" class="form-control" required>
-                                                </td>
+                                                    <input type="text" class="money form-control" name="qty[]" required>
+                                                </td>        
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -115,5 +115,7 @@ $('.table').DataTable({
         'copy', 'csv', 'excel', 'pdf', 'print'
     ]
 });
+
+$('.money').mask('#.##0', { reverse: true });
 </script>
 @endsection

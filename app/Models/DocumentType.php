@@ -6,5 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DocumentType extends Model
 {
+    protected $connection = 'pgsql';
+
     public $table = 'document_types';
 }

@@ -17,7 +17,7 @@
         </button>
     </div>
 @endif
-@can('rn_create')
+{{-- @can('rn_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
             <a class="btn btn-success float-rigth" href="{{ route("admin.request-note.create") }}">
@@ -25,7 +25,7 @@
             </a>
         </div>
     </div>
-@endcan
+@endcan --}}
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -33,23 +33,13 @@
                 <div class="table-responsive m-t-40">
                     <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
-                        <tr>
-                            <th>
-                                Request No.
-                            </th>
-                            <th>
-                                Notes
-                            </th>
-                            <th>
-                                Date
-                            </th>
-                            <th>
-                                Total
-                            </th>
-                            <th>
-                                &nbsp; 
-                            </th>
-                        </tr>
+                            <tr>
+                                <th>Request No.</th>
+                                <th>Notes</th>
+                                <th>Date</th>
+                                <th>Total</th>
+                                <th>&nbsp;</th>
+                            </tr>
                         </thead>
                         <tbody>
                             @foreach($pr as $key => $value)
@@ -85,8 +75,10 @@
     $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
         $("#success-alert").slideUp(500);
     });
+
     $('#datatables-run').DataTable({
         dom: 'Bfrtip',
+        order: [[0, 'desc']],
         buttons: [
             'copy', 'csv', 'excel', 'pdf', 'print'
         ]
