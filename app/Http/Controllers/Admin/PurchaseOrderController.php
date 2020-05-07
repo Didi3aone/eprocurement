@@ -129,46 +129,53 @@ class PurchaseOrderController extends Controller
 
         if ($request->get('bidding') == 0) { // po repeat
             // create Quotation
-            // dd($request->get('qty')[0]);
             if (empty($request->get('qty')[0]))
                 return redirect()->route('admin.purchase-order-create-po', $request->get('id'))->with('status', 'Quantity cannot be zero!');
 
-            // $filename = '';
-            
-            // if ($request->file('upload_file')) {
-            //     $path = 'quotation/';
-            //     $file = $request->file('upload_file');
-                
-            //     $filename = $file->getClientOriginalName();
-        
-            //     $file->move($path, $filename);
-        
-            //     $real_filename = public_path($path . $filename);
-            // }
-
             $quotation = new Quotation;
             $quotation->po_no = $request->get('request_no');
-            // $quotation->notes = $request->get('notes');
             $quotation->request_id = $request->get('id');
-            // $quotation->upload_file = $filename;
             $qty = str_replace('.', '', $request->get('qty')[0]);
             $quotation->qty = $qty;
             $quotation->status = 0;
             $quotation->vendor_id = $request->get('vendor_id')[0];
             $quotation->save();
-            // $po = new PurchaseOrder;
-            // $po->request_id = $request->get('id');
-            // $po->bidding = 0;
-            // $po->po_date = date('Y-m-d');
-            // $po->po_no = str_replace('PR', 'PO', $request->get('request_no'));
-            // $po->vendor_id = implode(',', $request->get('vendor_id'));
-            // $po->status = 0;
-            // $po->save();
+
+            // send email
+            $data = [
+                'vendor' => $request->get('vendor_id')[0],
+                'request_no' => $request->get('request_no'),
+                'subject' => 'PO Repeat ' . $request->get('request_no')
+            ];
+
+            \Mail::to($row->email)->send(new PurchaseOrderMail($data));
 
             return redirect()->route('admin.quotation.index')->with('status', 'PO Repeat!');
         } elseif ($request->get('bidding') == 2) {
             // penunjukan langsung
+            $filename = '';
+            
+            if ($request->file('upload_file')) {
+                $path = 'quotation/';
+                $file = $request->file('upload_file');
+                
+                $filename = $file->getClientOriginalName();
+        
+                $file->move($path, $filename);
+        
+                $real_filename = public_path($path . $filename);
+            }
 
+            $quotation = new Quotation;
+            $quotation->po_no = $request->get('request_no');
+            $quotation->notes = $request->get('notes');
+            $quotation->request_id = $request->get('id');
+            $quotation->upload_file = $filename;
+            $quotation->status = 0;
+            $quotation->vendor_id = $request->get('vendor_id')[0];
+            $quotation->save();
+
+            return redirect()->route('admin.quotation.index')->with('status', 'Penunjukkan Langsung!');
         } else {
             \DB::beginTransaction();
 
@@ -272,7 +279,7 @@ class PurchaseOrderController extends Controller
             \DB::raw('material_groups.code as mg_code'),
             \DB::raw('material_groups.description as mg_description'),
             \DB::raw('plants.code as p_code'),
-            \DB::raw('plants.description as p_description'),
+            \DB::raw('plants.description as p_description')
         )
             ->join('materials', 'materials.code', '=', 'purchase_requests_details.material_id')
             ->join('material_groups', 'material_groups.id', '=', 'materials.m_group_id')
