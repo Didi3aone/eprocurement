@@ -43,13 +43,12 @@
                                     <tr>
                                         <th>{{ trans('cruds.quotation.fields.id') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
-                                        <th>{{ trans('cruds.quotation.fields.vendor_id') }}</th>
+                                        <th>{{ trans('cruds.quotation.fields.status') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.leadtime_type') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.purchasing_leadtime') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.target_price') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.expired_date') }}</th>
-                                        <th>{{ trans('cruds.quotation.fields.vendor_leadtime') }}</th>
-                                        <th>{{ trans('cruds.quotation.fields.vendor_price') }}</th>
+                                        <th>{{ trans('cruds.quotation.fields.qty') }}</th>
                                         <th>
                                             &nbsp;
                                         </th>
@@ -60,11 +59,7 @@
                                         <tr data-entry-id="{{ $val->id }}">
                                             <td>{{ $val->id ?? '' }}</td>
                                             <td>{{ $val->po_no ?? '' }}</td>
-                                            <td>
-                                                @foreach ($val->detail as $det)
-                                                    <span class="label label-primary">{{ isset($det->vendor) ? $det->vendor->name . ' - ' . $det->vendor->email : '' }}</span>
-                                                @endforeach
-                                            </td>
+                                            <td>{{ $val->status == 0 ? 'PO repeat' : ($val->status == 1 ? 'Online' : 'Penunjukkan Langsung') }}</td>
                                             <td>{{ $val->leadtime_type == 0 ? 'Date' : 'Day Count' }}</td>
                                             <td>{{ $val->purchasing_leadtime ?? '' }}</td>
                                             <td>{{ number_format($val->target_price, 0, '', '.') ?? '' }}</td>
@@ -79,16 +74,7 @@
                                                 @endif
                                                 <span style="color: {{ $is_expired }}">{{ $val->expired_date ?? '' }}</span>
                                             </td>
-                                            <td>
-                                                @foreach ($val->detail as $det)
-                                                    <span class="label label-primary">{{ $det->vendor_leadtime }}</span>
-                                                @endforeach
-                                            </td>
-                                            <td>
-                                                @foreach ($val->detail as $det)
-                                                    <span class="label label-primary">{{ number_format($det->vendor_price, 0, '', '.') }}</span>
-                                                @endforeach
-                                            </td>
+                                            <td>{{ number_format($val->qty, 0, '', '.') }}</td>
                                             <td>
                                                 @can('quotation_show')
                                                 @if (time() <= strtotime($val->expired_date))
@@ -152,6 +138,7 @@
 <script>
 $('#datatables-run').DataTable({
     dom: 'Bfrtip',
+    order: [[0, 'desc']],
     buttons: [
         'copy', 'csv', 'excel', 'pdf', 'print'
     ]

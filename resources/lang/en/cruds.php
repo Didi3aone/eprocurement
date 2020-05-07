@@ -526,6 +526,7 @@ return [
             'type' => 'Document Type',
             'po_no' => 'Request No',
             'vendor_id' => 'Vendor',
+            'upload_file' => 'Attachment',
             'po_date' => 'Create Date',
             'request_date' => 'Request Date',
             'request_no' => 'Purchase Request No',

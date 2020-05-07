@@ -55,7 +55,7 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.quotation.fields.expired_date') }}</label>
-                        <input type="date" class="form-control form-control-line {{ $errors->has('expired_date') ? 'is-invalid' : '' }}" name="expired_date" value="{{ old('expired_date', $quotation->expired_date) }}"> 
+                        <input type="text" id="datetimepicker" class="form-control form-control-line {{ $errors->has('expired_date') ? 'is-invalid' : '' }}" name="expired_date" value="{{ old('expired_date', $quotation->expired_date) }}"> 
                         @if($errors->has('expired_date'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('expired_date') }}
@@ -77,5 +77,12 @@
 @parent
 <script>
     $('.money').mask('#.##0', { reverse: true });
+
+    $(function() {
+        $('#datetimepicker').datetimepicker({
+            format: 'Y-m-d H:i',
+            mask: true
+        }).trigger('change');
+    });
 </script>    
 @endsection

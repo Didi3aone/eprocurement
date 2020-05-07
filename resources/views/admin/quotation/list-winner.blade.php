@@ -4,8 +4,8 @@
     <div class="col-md-5 col-8 align-self-center">
         <h3 class="text-themecolor">Master</h3>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="javascript:void(0)">List Winner</a></li>
-            <li class="breadcrumb-item active">Index</li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Quotation</a></li>
+            <li class="breadcrumb-item active">List Winner</li>
         </ol>
     </div>
 </div>
@@ -29,46 +29,48 @@
                                     <tr>
                                         <th>{{ trans('cruds.quotation.fields.id') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
-                                        <th>{{ trans('cruds.quotation.fields.vendor_id') }}</th>
+                                        <th>{{ trans('cruds.quotation.fields.leadtime_type') }}</th>
+                                        <th>{{ trans('cruds.quotation.fields.purchasing_leadtime') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.target_price') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.expired_date') }}</th>
-                                        <th>{{ trans('cruds.quotation.fields.vendor_leadtime') }}</th>
-                                        <th>{{ trans('cruds.quotation.fields.vendor_price') }}</th>
-                                        <th>{{ trans('cruds.quotation.fields.qty') }}</th>
-                                        <th>&nbsp;</th>
+                                        <th>
+                                            &nbsp;
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($quotation as $key => $val)
                                         <tr data-entry-id="{{ $val->id }}">
                                             <td>{{ $val->id ?? '' }}</td>
-                                            <td>{{ $val->quotation->po_no ?? '' }}</td>
-                                            <td>{{ $val->vendor->name . ' - ' . $val->vendor->email ?? '' }}</td>
-                                            <td>{{ number_format($val->quotation->target_price, 0, '', '.') ?? '' }}</td>
+                                            <td>{{ $val->po_no ?? '' }}</td>
+                                            <td>{{ $val->leadtime_type == 0 ? 'Date' : 'Day Count' }}</td>
+                                            <td>{{ $val->purchasing_leadtime ?? '' }}</td>
+                                            <td>{{ number_format($val->target_price, 0, '', '.') ?? '' }}</td>
                                             <td>
-                                                @php $is_expired = '#67757c' @endphp
-                                                @if (time() > strtotime($val->quotation->expired_date))
+                                                @php
+                                                $is_expired = '#67757c';
+                                                @endphp
+                                                @if (time() > strtotime($val->expired_date))
                                                     @php $is_expired = 'red'; @endphp
-                                                @elseif (time() > strtotime('-2 days', strtotime($val->quotation->expired_date)) && time() <= strtotime($val->quotation->expired_date))
+                                                @elseif (time() > strtotime('-2 days', strtotime($val->expired_date)) && time() <= strtotime($val->expired_date))
                                                     @php $is_expired = 'orange'; @endphp
                                                 @endif
-                                                <span style="color: {{ $is_expired }}">{{ $val->quotation->expired_date ?? '' }}</span>
+                                                <span style="color: {{ $is_expired }}">{{ $val->expired_date ?? '' }}</span>
                                             </td>
-                                            <td>{{ $val->vendor_leadtime ?? '' }}</td>
-                                            <td>{{ number_format($val->vendor_price, 0, '', '.') ?? '' }}</td>
-                                            <td>{{ number_format($val->qty, 0, '', '.') ?? '' }}</td>
                                             <td>
-                                                @can('quotation_approve')
-                                                    <a class="btn btn-xs btn-success approve" id="save_{{ $key }}" data-row="{{ $key }}" data-req="{{ $val->id }}" data-id="{{ $val->approval_id }}" href="javascript:;">
-                                                        <i class="fa fa-check"></i> Approve
+                                                @can('quotation_show')
+                                                @if (time() <= strtotime($val->expired_date))
+                                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.quotation.show-winner', $val->id) }}">
+                                                        {{ trans('global.view') }}
                                                     </a>
+                                                @endif
                                                 @endcan
 
-                                                {{-- @can('quotation_edit')
-                                                    <a class="btn btn-xs btn-info" href="{{ route('admin.quotation.edit', $val->id) }}">
+                                                @can('quotation_edit')
+                                                    {{-- <a class="btn btn-xs btn-info" href="{{ route('admin.quotation.edit', $val->id) }}">
                                                         {{ trans('global.edit') }}
-                                                    </a>
-                                                @endcan --}}
+                                                    </a> --}}
+                                                @endcan
 
                                                 @can('quotation_delete')
                                                     {{-- <form action="{{ route('admin.quotation.destroy', $val->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
@@ -89,68 +91,38 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="modal_import" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">{{ trans('cruds.quotation.import') }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('admin.quotation.import') }}" method="post" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body">
+                    <input type="file" name="xls_file" id="xls_file">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 @section('scripts')
 @parent
 <script>
-    $('#datatables-run').DataTable({
-        dom: 'Bfrtip',
-        buttons: [
-            'copy', 'csv', 'excel', 'pdf', 'print'
-        ]
-    });
-
-    $('.approve').click(function(e){
-        e.preventDefault();
-        var id = $(this).data('id');
-        var no = $(this).data('req');
-        var row = $(this).data('row');
-        var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-
-        // console.log(id, no, row, CSRF_TOKEN)
-
-        swal({   
-            title: "Are you sure?",   
-            text: "Approve the Winner?",   
-            type: "warning",   
-            showCancelButton: true,   
-            confirmButtonColor: "#DD6B55",   
-            confirmButtonText: "Yes",   
-            cancelButtonText: "No!",   
-            closeOnConfirm: true,   
-            closeOnCancel: true 
-        }).then(() => {
-            $("#save_"+row).attr('disabled', 'disabled');
-            $('#save_'+row).text('Please wait ...')
-            
-            $.ajax({
-                type: "PUT",
-                url: "{{ route('admin.quotation.approve') }}",
-                headers: {
-                    'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    _token: CSRF_TOKEN,
-                    id : id,
-                    req_id : no
-                },
-                dataType:'json',
-                success: function (data) {
-                    if( data.success == true ) {
-                        swal("Success!", "Winner has been approved.", "success");   
-                        location.reload();
-                    } else {
-                        swal('Error!',"Something went wrong","error");
-                    }
-                },
-                error: function (data) {
-                    console.log('Error:', data);
-                }
-            });
-            // } else {     
-                // swal("Cancelled", "Your imaginary file is safe :)", "error");   
-            // } 
-        });
-    });
+$('#datatables-run').DataTable({
+    dom: 'Bfrtip',
+    buttons: [
+        'copy', 'csv', 'excel', 'pdf', 'print'
+    ]
+});
 </script>
 @endsection

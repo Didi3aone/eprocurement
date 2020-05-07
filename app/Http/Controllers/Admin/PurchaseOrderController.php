@@ -31,9 +31,10 @@ class PurchaseOrderController extends Controller
     {
         abort_if(Gate::denies('purchase_order_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $quotation = Quotation::where('approval_status', 12)->get();
+        // $quotation = Quotation::where('approval_status', 12)->get();
+        $po = PurchaseOrder::orderBy('created_at', 'desc')->get();
 
-        return view('admin.purchase-order.index', compact('quotation'));
+        return view('admin.purchase-order.index', compact('po'));
     }
 
     /**
@@ -126,18 +127,48 @@ class PurchaseOrderController extends Controller
         if (empty($request->vendor_id))
             return redirect()->route('admin.purchase-order-create-po', $request->get('id'))->with('status', 'No vendor chosen!');
 
-        if ($request->get('bidding') == 0) {
-            // create PO
-            $po = new PurchaseOrder;
-            $po->request_id = $request->get('id');
-            $po->bidding = 0;
-            $po->po_date = date('Y-m-d');
-            $po->po_no = str_replace('PR', 'PO', $request->get('request_no'));
-            $po->vendor_id = implode(',', $request->get('vendor_id'));
-            $po->status = 0;
-            $po->save();
+        if ($request->get('bidding') == 0) { // po repeat
+            // create Quotation
+            // dd($request->get('qty')[0]);
+            if (empty($request->get('qty')[0]))
+                return redirect()->route('admin.purchase-order-create-po', $request->get('id'))->with('status', 'Quantity cannot be zero!');
 
-            return redirect()->route('admin.purchase-order.index')->with('status', 'Bidding no!');
+            // $filename = '';
+            
+            // if ($request->file('upload_file')) {
+            //     $path = 'quotation/';
+            //     $file = $request->file('upload_file');
+                
+            //     $filename = $file->getClientOriginalName();
+        
+            //     $file->move($path, $filename);
+        
+            //     $real_filename = public_path($path . $filename);
+            // }
+
+            $quotation = new Quotation;
+            $quotation->po_no = $request->get('request_no');
+            // $quotation->notes = $request->get('notes');
+            $quotation->request_id = $request->get('id');
+            // $quotation->upload_file = $filename;
+            $qty = str_replace('.', '', $request->get('qty')[0]);
+            $quotation->qty = $qty;
+            $quotation->status = 0;
+            $quotation->vendor_id = $request->get('vendor_id')[0];
+            $quotation->save();
+            // $po = new PurchaseOrder;
+            // $po->request_id = $request->get('id');
+            // $po->bidding = 0;
+            // $po->po_date = date('Y-m-d');
+            // $po->po_no = str_replace('PR', 'PO', $request->get('request_no'));
+            // $po->vendor_id = implode(',', $request->get('vendor_id'));
+            // $po->status = 0;
+            // $po->save();
+
+            return redirect()->route('admin.quotation.index')->with('status', 'PO Repeat!');
+        } elseif ($request->get('bidding') == 2) {
+            // penunjukan langsung
+
         } else {
             \DB::beginTransaction();
 
@@ -246,8 +277,9 @@ class PurchaseOrderController extends Controller
             ->join('materials', 'materials.code', '=', 'purchase_requests_details.material_id')
             ->join('material_groups', 'material_groups.id', '=', 'materials.m_group_id')
             ->join('plants', 'plants.id', '=', 'materials.m_plant_id')
-            ->where('purchase_id', $quotation->request_id)
+            ->where('purchase_requests_details.purchase_id', $id)
             ->get();
+
         $types = DocumentType::get();
 
         // get po_no from SAP

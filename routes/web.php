@@ -191,8 +191,8 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::post('quotation/winner', 'QuotationController@winner')->name('quotation.winner');
     Route::post('quotation/to-winner', 'QuotationController@toWinner')->name('quotation.to-winner');
     Route::get('quotation/list-winner', 'QuotationController@listWinner')->name('quotation.list-winner');
-    Route::get('quotation/list-acp', 'QuotationController@listAcp')->name('quotation.list-acp');
-    Route::put('quotation/approve', 'QuotationController@approveWinner')->name('quotation.approve');
+    Route::get('quotation/show-winner/{id}', 'QuotationController@showWinner')->name('quotation.show-winner');
+    Route::post('quotation/approve', 'QuotationController@approveWinner')->name('quotation.approve');
     Route::put('quotation/remove-vendor/{quotation_id}/{vendor_id}', 'QuotationController@removeVendor')->name('quotation.remove-vendor');
     Route::resource('quotation', 'QuotationController');
 

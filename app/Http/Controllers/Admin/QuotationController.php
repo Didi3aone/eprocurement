@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Gate, Artisan;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Database\Eloquent\Builder;
 
 use App\Models\Vendor\Quotation;
 use App\Models\Vendor\QuotationDetail;
 use App\Models\Vendor\QuotationApproval;
+use App\Models\PurchaseOrder;
 use App\Models\WorkFlowApproval;
 use App\Models\Vendor;
 
@@ -117,16 +119,16 @@ class QuotationController extends Controller
             ]);
         } else if ($tingkat == 'CFO') {
             QuotationApproval::create([
-                'nik'                   => getCLevelByDept($employee->department)->nik,
-                'approval_position'     => 2,
+                'nik'                   => 180095,
+                'approval_position'     => 3,
                 'status'                => QuotationApproval::waitingApproval,
                 'quotation_id'          => $quotation_id,
                 'flag'                  => 0,
             ]);
         } else if ($tingkat == 'COO') {
             QuotationApproval::create([
-                'nik'                   => getCLevelByDept($employee->department)->nik,
-                'approval_position'     => 2,
+                'nik'                   => 180178,
+                'approval_position'     => 4,
                 'status'                => QuotationApproval::waitingApproval,
                 'quotation_id'          => $quotation_id,
                 'flag'                  => 0,
@@ -228,111 +230,124 @@ class QuotationController extends Controller
 
     public function listWinner ()
     {
-        $quotation = QuotationDetail::all();
-
-        return view('admin.quotation.list-winner', compact('quotation'));
-    }
-
-    public function listAcp ()
-    {
-        $quotation = QuotationApproval::select(
-            'quotation.id as id',
-            'quotation.po_no as po_no',
-            'vendors.name as name',
-            'vendors.email as email',
-            'quotation.target_price as target_price',
-            'quotation.expired_date as expired_date',
-            'quotation.vendor_leadtime as vendor_leadtime',
-            'quotation.vendor_price as vendor_price',
-            'quotation.qty as qty',
-            'quotation_approvals.id as approval_id',
-            'quotation_approvals.quotation_id as quotation_id',
-        )
-            ->join('quotation', 'quotation.id', '=', 'quotation_approvals.quotation_id')
-            ->join('vendors', 'vendors.id', '=', 'quotation.vendor_id')
-            ->where('quotation_approvals.nik', \Auth::user()->nik)
-            ->where('quotation_approvals.flag', 1)
-            ->where('quotation.is_winner', 1)
-            ->distinct()
+        $quotation = Quotation::whereHas('detail', function (Builder $query) {
+            $query->where('is_winner', 1);
+        })
+            ->orderBy('quotation.created_at', 'desc')
             ->get();
 
         return view('admin.quotation.list-winner', compact('quotation'));
     }
 
+    public function showWinner ($id)
+    {
+        $quotation = QuotationDetail::where('quotation_order_id', $id)->get();
+
+        return view('admin.quotation.show-winner', compact('quotation', 'id'));
+    }
+
+    // public function listAcp ()
+    // {
+    //     $quotation = QuotationApproval::select(
+    //         'quotation.id as id',
+    //         'quotation.po_no as po_no',
+    //         'vendors.name as name',
+    //         'vendors.email as email',
+    //         'quotation.target_price as target_price',
+    //         'quotation.expired_date as expired_date',
+    //         'quotation.vendor_leadtime as vendor_leadtime',
+    //         'quotation.vendor_price as vendor_price',
+    //         'quotation.qty as qty',
+    //         'quotation_approvals.id as approval_id',
+    //         'quotation_approvals.quotation_id as quotation_id',
+    //     )
+    //         ->join('quotation', 'quotation.id', '=', 'quotation_approvals.quotation_id')
+    //         ->join('vendors', 'vendors.id', '=', 'quotation.vendor_id')
+    //         ->where('quotation_approvals.nik', \Auth::user()->nik)
+    //         ->where('quotation_approvals.flag', 1)
+    //         ->where('quotation.is_winner', 1)
+    //         ->distinct()
+    //         ->get();
+
+    //     return view('admin.quotation.list-winner', compact('quotation'));
+    // }
+
     public function approveWinner (Request $request)
     {
-        \DB::beginTransaction();
+        $id = $request->get('id');
+        $vendor_id = $request->get('vendor_id');
+        
+        for ($i = 0; $i < count($vendor_id); $i++) {
+            $price = (int) $request->get('vendor_price')[$i];
+        
+            \DB::beginTransaction();
 
-        $qa_id = $request->get('id');
-        $id = $request->get('req_id');
+            $id = $id[$i];
+            $vendor_id = $request->get('vendor_id')[$i];
 
-        try {
-            if( ($total >= 250000000) ) {
-                $this->saveApproval($val, 'COO');
-            } else if( ($total <= 250000000) && ($total >= 100000000) ) {
-                $this->saveApproval($val, 'CFO');
-            } else {
-                $this->saveApproval($val, 'No');
+            try {
+                if( ($price >= 250000000) ) {
+                    $this->saveApproval($id, 'COO');
+                } else if( ($price <= 250000000) && ($price >= 100000000) ) {
+                    $this->saveApproval($id, 'CFO');
+                } else {
+                    $this->saveApproval($id, 'No');
+                }
+
+                // $posisi = QuotationApproval::where('id', $id)->first();
+
+                // $total = QuotationApproval::where('quotation_id', $id)
+                //     ->get();
+
+                // if( $posisi->approval_position == count($total) ) {
+                //     $qa = QuotationApproval::where('quotation_id', $id)->first();
+                //     $qa->status = 1;
+                //     $qa->approve_date = date('Y-m-d H:i:s');
+                //     $qa->flag = 2;
+                //     $qa->save();
+
+                //     $model = Quotation::find($id);
+                //     $model->approval_status = 12;
+                //     $model->save();
+                // } else if( $posisi->approval_position < count($total) ) {
+                //     $posisi = $posisi->approval_position + 1;
+
+                //     QuotationApproval::where('quotation_id', $id)
+                //         ->where('approval_position', $posisi)
+                //         ->update([
+                //             'status' => 0,
+                //             'flag' => 1,
+                //         ]);
+
+                //     $model = Quotation::find($id);
+                //     $model->approval_status = 11;
+                //     $model->save();
+                // }
+                
+                // create po
+                $quotation = QuotationDetail::find($id);
+                $quotation->approval_position = 12;
+                $quotation->save();
+                
+                $po = new PurchaseOrder;
+                $po->request_id = $quotation->request_id;
+                $po->bidding = 1;
+                $po->po_no = str_replace('PR', 'PO', $quotation->po_no);
+                $po->notes = $quotation->notes;
+                $po->vendor_id = $vendor_id;
+                $po->status = 1;
+                $po->po_date = date('Y-m-d');
+                $po->save();
+
+                // send to SAP
+
+                \DB::commit();                
+            } catch (\Exception $th) {
+                \DB::rollback();
             }
 
-            $posisi = QuotationApproval::where('id', $qa_id)->first();
-
-            $total = QuotationApproval::where('quotation_id', $id)
-                ->get();
-
-            $dt = [];
-            if( $posisi->approval_position == count($total) ) {
-                $qa = QuotationApproval::find($qa_id);
-                $qa->status = 1;
-                $qa->approve_date = date('Y-m-d H:i:s');
-                $qa->flag = 2;
-                $qa->save();
-
-                $model = Quotation::find($id);
-                $model->approval_status = 12;
-                $model->save();
-            } else if( $posisi->approval_position < count($total) ) {
-                $posisi = $posisi->approval_position + 1;
-
-                QuotationApproval::where('quotation_id', $id)
-                    ->where('approval_position', $posisi)
-                    ->update([
-                        'status' => 0,
-                        'flag' => 1,
-                    ]);
-
-                $model = Quotation::find($id);
-                $model->approval_status = 11;
-                $model->save();
-            }
-
-            $updates = QuotationApproval::find($qa_id);
-            $updates->status = 1;
-            $updates->flag = 2;
-            $updates->approve_date = date('Y-m-d H:i:s');
-
-            if ($updates->save()) {
-                $success = true;
-                $message = "Quotation has been approved";
-            } else {
-                $success = false;
-                $message = "Quotation not found";
-            }
-
-            \DB::commit();
-        } catch (\Exception $th) {
-            //throw $th;
-            $success = false;
-            $message = "error db" . $th;
-
-            \DB::rollback();
+            return redirect()->route('admin.purchase-order.index')->with('success', 'Bidding has been approved successfully');
         }
-
-        //  Return response
-        return response()->json([
-            'success' => $success,
-            'message' => $message,
-        ]);
     }
 
     /**

@@ -29,17 +29,22 @@
                     <div class="row">
                         <div class="col-lg-8">
                             <div class="form-group">
-                                <label>Bidding ?</label>
+                                <label>Model ?</label>
                                 <div class="">
                                     <div class="form-check form-check-inline mr-1">
                                         <input class="form-check-input" id="inline-radio-active" type="radio" value="1"
                                             name="bidding">
-                                        <label class="form-check-label" for="inline-radio-active">Yes</label>
+                                        <label class="form-check-label" for="inline-radio-active">Online</label>
                                     </div>
                                     <div class="form-check form-check-inline mr-1">
                                         <input class="form-check-input" id="inline-radio-non-active" type="radio" value="0"
                                             name="bidding" checked>
-                                        <label class="form-check-label" for="inline-radio-non-active">No</label>
+                                        <label class="form-check-label" for="inline-radio-non-active">PO Repeat</label>
+                                    </div>
+                                    <div class="form-check form-check-inline mr-1">
+                                        <input class="form-check-input" id="inline-radio-non-point" type="radio" value="2"
+                                            name="bidding">
+                                        <label class="form-check-label" for="inline-radio-non-point">Penunjukkan Langsung</label>
                                     </div>
                                 </div>
                             </div>
@@ -60,13 +65,6 @@
                         <a href="javascript:;" data-toggle="modal" data-target="#modal_material" class="btn btn-primary">{{ trans('cruds.purchase-order.show_modal') }}</a>
                     </div>
                     <div id="bidding_yes">
-                        <div class="form-group">
-                            <label>Online ?</label>
-                            <select name="online" class="form-control">
-                                <option value="0" selected>Offline</option>
-                                <option value="1">Online</option>
-                            </select>
-                        </div>
                         <div id="online">
                             <div class="form-group">
                                 <label>{{ trans('cruds.purchase-order.fields.purchasing_leadtime') }}</label>
@@ -105,6 +103,27 @@
                                     </div>
                                 @endif
                             </div>
+                        </div>
+                    </div>
+                    <div id="pointer_yes">
+                        <div class="form-group">
+                            <label>{{ trans('cruds.purchase-order.fields.notes') }}</label>
+                            <input type="text" id="notes" class="form-control form-control-line {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" value="{{ old('notes', '') }}" required>
+                            @if($errors->has('notes'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('notes') }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="form-group">
+                            <label class="required" for="upload_file">{{ trans('cruds.purchase-order.fields.upload_file') }}</label>
+                            <input class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" type="file" name="upload_file" id="upload_file">
+                            @if($errors->has('upload_file'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('upload_file') }}
+                                </div>
+                            @endif
+                            <span class="help-block"></span>
                         </div>
                     </div>
                     <div class="form-group">
@@ -187,10 +206,10 @@
                                 @foreach($prDetail as $key => $value)
                                     <tr>
                                         <td><input type="text" class="form-control" name="description[]" readonly value="{{ $value->description }}"></td>
-                                        <td><input type="number" class="form-control" name="qty[]" readonly value="{{ $value->qty }}" required></td>
+                                        <td><input type="text" class="form-control" name="qty[]" readonly value="{{ number_format($value->qty, 0, '', '.') }}" required></td>
                                         <td><input type="text" class="form-control" name="unit[]" readonly value="{{ $value->unit }}" required></td>
                                         <td><input type="text" class="form-control" name="notes_detail[]" readonly value="{{ $value->notes }}"></td>
-                                        <td><input type="number" class="form-control" name="price[]" readonly value="{{ $value->price }}" required></td>
+                                        <td><input type="text" class="form-control" name="price[]" readonly value="{{ number_format($value->price, 0, '', '.') }}" required></td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -208,26 +227,25 @@
 <script>
     let index = 1
 
-    $('.money').mask('#.##0', { reverse: true });
-
     $("input[name='bidding']").change(function() {
         const bidding_yes = $(this).val();
 
         if( bidding_yes == 0 ) {
             $("#bidding_yes").hide()
+            $('#notes').removeAttr('required')
+            $('#pointer_yes').hide()
+        } else if (bidding_yes == 2) {
+            $('#bidding_yes').hide()
+            $('#notes').attr('required', true)
+            $('#pointer_yes').show()
         } else {
             $("#bidding_yes").show()
+            $('#notes').removeAttr('required')
+            $('#pointer_yes').hide()
         }
-    }).trigger('change');
 
-    $("select[name='online']").change(function() {
-        const online = $(this).val();
-
-        if( online == 0 ) {
-            $("#online").hide()
-        } else {
-            $("#online").show()
-        }
+        $('#vendors').html('')
+        $('#btn-search-vendor').removeAttr('disabled')
     }).trigger('change');
 
     function formatDate(date) {
@@ -271,17 +289,26 @@
         const address_vendor = $search.data('address')
         const npwp_vendor = $search.data('npwp')
 
-        const template = `
+        let template = `
             <tr>
                 <td>${name_vendor}</td>
                 <td>${email_vendor}</td>
                 <td>${address_vendor}</td>
                 <td>${npwp_vendor}</td>
                 <td>
+        `
+
+        if ($('input[name="bidding"]:checked').val() == 0) {
+            template += `
+                <input type="text" name="qty[]" class="money form-control" value="0" style="width: 30%">
+            `
+        }
+
+        template += `
                     <input type="hidden" name="vendor_id[]" value="${id_vendor}">
                     <button 
-                        className="btn btn-xs btn-danger" 
-                        onclick="this.parentNode.parentNode.remove()"
+                        className="remove-vendor btn btn-xs btn-danger" 
+                        onclick="document.getElementById('btn-search-vendor').removeAttribute('disabled'); this.parentNode.parentNode.remove()"
                     >
                         <i className="fa fa-trash"></i> Remove
                     </button>
@@ -290,6 +317,10 @@
         `
 
         $('#vendors').append(template)
+        $('.money').mask('#.##0', { reverse: true });
+
+        if ($('input[name="bidding"]:checked').val() != 1)
+            $(this).attr('disabled', true)
     })
 
     $('.click').click(function(e) {
@@ -307,5 +338,7 @@
             mask: true
         }).trigger('change');
     });
+
+    $('.money').mask('#.##0', { reverse: true });
 </script>
 @endsection

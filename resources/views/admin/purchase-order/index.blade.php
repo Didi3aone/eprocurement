@@ -27,8 +27,8 @@
                             <tr>
                                 <th>{{ trans('cruds.purchase-order.fields.id') }}</th>
                                 <th>{{ trans('cruds.purchase-order.fields.request_no') }}</th>
-                                <th>{{ trans('cruds.purchase-order.fields.is_winner') }}</th>
-                                <th>{{ trans('cruds.purchase-order.fields.vendor_id') }}</th>
+                                <th>{{ trans('cruds.purchase-order.fields.po_date') }}</th>
+                                {{-- <th>{{ trans('cruds.purchase-order.fields.vendor_id') }}</th> --}}
                                 <th>{{ trans('cruds.purchase-order.fields.request_date') }}</th>
                                 <th>
                                     &nbsp;
@@ -36,12 +36,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($quotation as $key => $q)
+                            @foreach($po as $key => $q)
                                 <tr data-entry-id="{{ $q->id }}">
                                     <td>{{ $q->id ?? '' }}</td>
                                     <td>{{ $q->po_no }}</td>
-                                    <td>{{ $q->is_winner == 1 ? 'Yes' : 'No' }}</td>
-                                    <td>{{ !empty($q->vendor_id) ? $q->vendor->name . ' - ' . $q->vendor->email : '' }}</td>
+                                    <td>{{ $q->po_date }}</td>
+                                    {{-- <td>{{ !empty($q->vendor_id) ? $q->vendor->name . ' - ' . $q->vendor->email : '' }}</td> --}}
                                     <td>{{ $q->created_at ?? '' }}</td>
                                     <td>
                                         {{-- @can('purchase_order_approval')
@@ -107,6 +107,7 @@
 <script>
 $('#datatables-run').DataTable({
     dom: 'Bfrtip',
+    order: [[0, 'desc']],
     buttons: [
         'copy', 'csv', 'excel', 'pdf', 'print'
     ]
