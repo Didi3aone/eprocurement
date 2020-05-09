@@ -142,13 +142,14 @@ class PurchaseOrderController extends Controller
             $quotation->save();
 
             // send email
+            $vendor = Vendor::find($request->get('vendor_id')[0]);
             $data = [
                 'vendor' => $request->get('vendor_id')[0],
                 'request_no' => $request->get('request_no'),
                 'subject' => 'PO Repeat ' . $request->get('request_no')
             ];
 
-            \Mail::to($row->email)->send(new PurchaseOrderMail($data));
+            \Mail::to($vendor->email)->send(new PurchaseOrderMail($data));
 
             return redirect()->route('admin.quotation.index')->with('status', 'PO Repeat!');
         } elseif ($request->get('bidding') == 2) {
@@ -171,9 +172,18 @@ class PurchaseOrderController extends Controller
             $quotation->notes = $request->get('notes');
             $quotation->request_id = $request->get('id');
             $quotation->upload_file = $filename;
-            $quotation->status = 0;
+            $quotation->status = 2;
             $quotation->vendor_id = $request->get('vendor_id')[0];
             $quotation->save();
+
+            $vendor = Vendor::find($request->get('vendor_id')[0]);
+            $data = [
+                'vendor' => $request->get('vendor_id')[0],
+                'request_no' => $request->get('request_no'),
+                'subject' => 'Penunjukkan langsung ' . $request->get('request_no')
+            ];
+
+            \Mail::to($vendor->email)->send(new PurchaseOrderMail($data));
 
             return redirect()->route('admin.quotation.index')->with('status', 'Penunjukkan Langsung!');
         } else {
@@ -253,6 +263,7 @@ class PurchaseOrderController extends Controller
      */
     public function show($id)
     {
+        $po = PurchaseOrder::find($id);
         $quotation = Quotation::find($id);
         $pr = PurchaseRequestsDetail::select(
             'purchase_requests_details.purchase_id',
@@ -291,7 +302,7 @@ class PurchaseOrderController extends Controller
 
         // get po_no from SAP
 
-        return view('admin.purchase-order.form', compact('quotation', 'pr', 'types'));
+        return view('admin.purchase-order.form', compact('quotation', 'po', 'pr', 'types'));
     }
 
     /**

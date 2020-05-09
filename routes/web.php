@@ -167,6 +167,9 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::post('purchase-request-save-validate-pr','PurchaseRequestController@saveValidate')->name('purchase-request-save-validate-pr');
     Route::put('purchase-request-approval/{id}','PurchaseRequestController@approvalPr')->name('purchase-request-approval');
     Route::get('purchase-request-show/{id}','PurchaseRequestController@showDetail')->name('purchase-request-show');
+    Route::get('purchase-request-online/{id}','PurchaseRequestController@online')->name('purchase-request-online');
+    Route::get('purchase-request-repeat/{id}','PurchaseRequestController@repeat')->name('purchase-request-repeat');
+    Route::get('purchase-request-direct/{id}','PurchaseRequestController@direct')->name('purchase-request-direct');
     Route::resource('purchase-request', 'PurchaseRequestController');
 
     // request note
@@ -188,11 +191,18 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     // quotation
     Route::delete('quotation/destroy', 'QuotationController@massDestroy')->name('quotation.massDestroy');
     Route::post('quotation/import', 'QuotationController@import')->name('quotation.import');
+    Route::get('quotation/online', 'QuotationController@online')->name('quotation.online');
+    Route::get('quotation/repeat', 'QuotationController@repeat')->name('quotation.repeat');
+    Route::get('quotation/direct', 'QuotationController@direct')->name('quotation.direct');
+    Route::post('quotation-save-online', 'QuotationController@saveOnline')->name('quotation-save-online');
+    Route::post('quotation-save-repeat', 'QuotationController@saveRepeat')->name('quotation-save-repeat');
+    Route::post('quotation-save-direct', 'QuotationController@saveDirect')->name('quotation-save-direct');
     Route::post('quotation/winner', 'QuotationController@winner')->name('quotation.winner');
     Route::post('quotation/to-winner', 'QuotationController@toWinner')->name('quotation.to-winner');
     Route::get('quotation/list-winner', 'QuotationController@listWinner')->name('quotation.list-winner');
     Route::get('quotation/show-winner/{id}', 'QuotationController@showWinner')->name('quotation.show-winner');
-    Route::post('quotation/approve', 'QuotationController@approveWinner')->name('quotation.approve');
+    Route::get('quotation/approve/{id}', 'QuotationController@approve')->name('quotation.approve');
+    Route::post('quotation/approve-winner', 'QuotationController@approveWinner')->name('quotation.approve-winner');
     Route::put('quotation/remove-vendor/{quotation_id}/{vendor_id}', 'QuotationController@removeVendor')->name('quotation.remove-vendor');
     Route::resource('quotation', 'QuotationController');
 
@@ -216,7 +226,12 @@ Route::group([ 'prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor',
     Route::post('purchase-order-save-quotation', 'PurchaseOrderController@saveQuotation')->name('purchase-order-save-quotation');
     Route::get('purchase-order/bidding', 'PurchaseOrderController@bidding')->name('purchase-order.bidding');
     Route::get('quotation', 'QuotationController@index')->name('quotation');
-    Route::get('quotation-detail/{id}', 'QuotationController@detail')->name('quotation-detail');
+    Route::get('quotation-online', 'QuotationController@online')->name('quotation-online');
+    Route::get('quotation-repeat', 'QuotationController@repeat')->name('quotation-repeat');
+    Route::get('quotation-direct', 'QuotationController@direct')->name('quotation-direct');
+    Route::get('quotation-online-detail/{id}', 'QuotationController@onlineDetail')->name('quotation-online-detail');
+    Route::get('quotation-repeat-detail/{id}', 'QuotationController@repeatDetail')->name('quotation-repeat-detail');
+    Route::get('quotation-direct-detail/{id}', 'QuotationController@directDetail')->name('quotation-direct-detail');
     Route::get('quotation-edit/{id}', 'QuotationController@edit')->name('quotation-edit');
     Route::post('quotation-save', 'QuotationController@store')->name('quotation-save');
     Route::get('bidding', 'BiddingController@index')->name('bidding');

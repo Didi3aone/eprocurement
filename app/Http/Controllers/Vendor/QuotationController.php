@@ -35,11 +35,87 @@ class QuotationController extends Controller
         return view('vendor.quotation.index', compact('quotation'));
     }
 
-    public function detail ($id)
+    public function online ()
+    {
+        $quotation = Quotation::select(
+            \DB::raw('quotation.id as id'),
+            'quotation.status',
+            'quotation.po_no',
+            'quotation.leadtime_type',
+            'quotation.purchasing_leadtime',
+            'quotation.target_price',
+            'quotation.expired_date',
+            'quotation.qty',
+            'quotation_details.quotation_order_id',
+            \DB::raw('(
+                select count(*) as count 
+                from bidding_history 
+                where quotation_id = quotation.id 
+                    and vendor_id = ' . Auth::user()->id . '
+                group by quotation_id
+            )'),
+            'quotation_details.id as detail_id', 'quotation_details.*'
+        )
+            ->join('quotation_details', 'quotation_details.quotation_order_id', 'quotation.id')
+            ->where('quotation_details.vendor_id', Auth::user()->id)
+            ->where('quotation.status', 1)
+            ->orderBy('quotation.id', 'desc')
+            ->get();
+
+        return view('vendor.quotation.online', compact('quotation'));
+    }
+
+    public function repeat ()
+    {
+        $quotation = Quotation::where('vendor_id', Auth::user()->id)
+            ->where('status', 0)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return view('vendor.quotation.repeat', compact('quotation'));
+    }
+
+    public function direct ()
+    {
+        $quotation = Quotation::where('vendor_id', Auth::user()->id)
+            ->where('status', 2)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return view('vendor.quotation.direct', compact('quotation'));
+    }
+
+    public function onlineDetail ($id)
+    {
+        $quotation = Quotation::select(
+            'quotation.id as id',
+            'quotation.status',
+            'quotation.po_no',
+            'quotation.leadtime_type',
+            'quotation.purchasing_leadtime',
+            'quotation.target_price',
+            'quotation.expired_date',
+            'quotation.qty'
+        )
+            ->join('quotation_details', 'quotation_details.quotation_order_id', '=', 'quotation.id')
+            ->where('quotation_details.id', $id)
+            ->first();
+
+        return view('vendor.quotation.online-detail', compact('quotation'));
+    }
+
+    public function repeatDetail ($id)
     {
         $quotation = Quotation::find($id);
 
-        return view('vendor.quotation.show', compact('quotation'));
+        return view('vendor.quotation.repeat-detail', compact('quotation'));
+    }
+
+    public function directDetail ($id)
+    {
+        $quotation = Quotation::find($id);
+
+        return view('vendor.quotation.direct-detail', compact('quotation'));
     }
 
     public function edit ($id)
@@ -106,6 +182,6 @@ class QuotationController extends Controller
             dd($e);
         }
 
-        return redirect()->route('vendor.quotation')->with('status', trans('cruds.quotation.alert_success_quotation'));
+        return redirect()->route('vendor.quotation-online')->with('status', trans('cruds.quotation.alert_success_quotation'));
     }
 }

@@ -11,6 +11,8 @@ use App\Models\RequestNotes;
 use App\Models\RequestNotesDetail;
 use App\Models\WorkFlowApproval;
 use App\Models\WorkFlow;
+use App\Models\Plant;
+use App\Models\Vendor;
 use DB,Gate;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
@@ -29,7 +31,35 @@ class PurchaseRequestController extends Controller
         $pr = PurchaseRequest::orderBy('created_at', 'desc')
             ->get();
 
-        return view('admin.purchase-request.pr.index', compact('pr'));
+        return view('admin.purchase-request.index', compact('pr'));
+    }
+
+    public function online (Request $request, $id)
+    {
+        $pr         = PurchaseRequest::find($id);
+        $prDetail   = PurchaseRequestsDetail::where('purchase_id', $id)->get();
+        $plant      = Plant::get();
+        $vendor     = Vendor::where('status', 1)->orderBy('name')->get();
+
+        return view('admin.purchase-request.online', compact('id', 'pr', 'prDetail', 'plant', 'vendor'));
+    }
+
+    public function repeat (Request $request, $id)
+    {
+        $pr         = PurchaseRequest::find($id);
+        $prDetail   = PurchaseRequestsDetail::where('purchase_id', $id)->get();
+        $vendor     = Vendor::where('status', 1)->orderBy('name')->get();
+
+        return view('admin.purchase-request.repeat', compact('id', 'pr', 'prDetail', 'vendor'));
+    }
+
+    public function direct (Request $request, $id)
+    {
+        $pr         = PurchaseRequest::find($id);
+        $prDetail   = PurchaseRequestsDetail::where('purchase_id', $id)->get();
+        $vendor     = Vendor::where('status', 1)->orderBy('name')->get();
+
+        return view('admin.purchase-request.direct', compact('id', 'pr', 'prDetail', 'vendor'));
     }
 
     /**
