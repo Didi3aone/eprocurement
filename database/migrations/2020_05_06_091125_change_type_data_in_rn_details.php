@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterRequestNotesAddColumnSpvId extends Migration
+class ChangeTypeDataInRnDetails extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AlterRequestNotesAddColumnSpvId extends Migration
      */
     public function up()
     {
-        Schema::table('request_notes', function (Blueprint $table) {
-            $table->string('spv_id',10)->nullable();
+        Schema::table('request_notes_details', function (Blueprint $table) {
+            $table->string('storage_location',10)->nullable()->change();
         });
     }
 
@@ -25,8 +25,8 @@ class AlterRequestNotesAddColumnSpvId extends Migration
      */
     public function down()
     {
-        Schema::table('request_notes', function (Blueprint $table) {
-            $table->dropColumn('spv_id',10)->nullable();
+        Schema::table('request_notes_details', function (Blueprint $table) {
+            $table->string('storage_location',10)->nullable()->change();
         });
     }
 }

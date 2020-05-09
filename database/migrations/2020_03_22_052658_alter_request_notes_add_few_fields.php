@@ -14,7 +14,7 @@ class AlterRequestNotesAddFewFields extends Migration
     public function up()
     {
         Schema::table('request_notes', function (Blueprint $table) {
-            $table->string('total',10)->unsigned()->nullable();
+            $table->string('total',10)->nullable();
         });
     }
 
@@ -26,7 +26,7 @@ class AlterRequestNotesAddFewFields extends Migration
     public function down()
     {
         Schema::table('request_notes', function (Blueprint $table) {
-            $table->dropColumn('total',10)->unsigned()->nullable();
+            $table->dropColumn('total',10)->nullable();
         });
     }
 }
