@@ -2,9 +2,9 @@
 @section('content')
 <div class="row page-titles">
     <div class="col-md-5 col-8 align-self-center">
-        <h3 class="text-themecolor">Master</h3>
+        <h3 class="text-themecolor">Vendor</h3>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="javascript:void(0)">{{ trans('cruds.quotation.title') }}</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Bidding Online</a></li>
             <li class="breadcrumb-item active">Edit</li>
         </ol>
     </div>
@@ -19,9 +19,9 @@
 @endif
 <div class="row">
     <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <form class="form-material m-t-40" method="POST" action="{{ route("vendor.quotation-save") }}" enctype="multipart/form-data">
+        <form class="form-material m-t-40" method="POST" action="{{ route("vendor.quotation-save") }}" enctype="multipart/form-data">
+            <div class="card">
+                <div class="card-body">
                     @csrf
                     <input type="hidden" name="id" value="{{ $quotation->id }}">
                     <input type="hidden" name="target_price" value="{{ $quotation->target_price }}">
@@ -35,7 +35,10 @@
                         @endif
                     </div>
                     <div class="form-group">
-                        <label>{{ trans('cruds.quotation.fields.vendor_leadtime') }}</label>
+                        <label>
+                            {{ trans('cruds.quotation.fields.vendor_leadtime') }}
+                            <span class="text-right label label-success">Purchasing Leadtime: {{ $quotation->purchasing_leadtime }}</span>
+                        </label>
                         <div class="row">
                             <div class="col-lg-3">
                                 <input type="text" class="form-control" name="leadtime_type" value="{{ $quotation->leadtime_type == 0 ? 'Tanggal' : 'Jumlah Hari' }}" readonly>
@@ -77,46 +80,41 @@
                             </div>
                         @endif
                     </div>
-                    @if (!empty($vendors))
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h3>Kompetitor</h3>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-striped table-hovered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Leadtime</th>
-                                                        <th>Price</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($vendors as $row)
-                                                    <tr>
-                                                        <td>{{ $row->vendor_leadtime }}</td>
-                                                        <td>{{ number_format($row->vendor_price, 0, '', '.') }}</td>
-                                                    </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    @endif
                     <div class="form-actions">
                         <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.save') }}</button>
                         <a href="{{ route('admin.quotation.index') }}" type="button" class="btn btn-inverse">Cancel</a>
                     </div>
-                </form>
+                </div>
             </div>
-        </div>
+
+            @if (!empty($vendors))
+            <div class="card">
+                <div class="card-header">
+                    <h3>Kompetitor</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hovered">
+                            <thead>
+                                <tr>
+                                    <th>Leadtime</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($vendors as $row)
+                                <tr>
+                                    <td>{{ $row->vendor_leadtime }}</td>
+                                    <td>{{ number_format($row->vendor_price, 0, '', '.') }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            @endif
+        </form>
     </div>
 </div>
 @endsection

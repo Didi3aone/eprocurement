@@ -30,7 +30,7 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.purchase-order.fields.po_no') }}</label>
-                        <input type="text" class="form-control form-control-line {{ $errors->has('po_no') ? 'is-invalid' : '' }}" name="po_no" value="{{ old('po_no', $quotation->po_no) }}" readonly> 
+                        <input type="text" class="form-control form-control-line {{ $errors->has('po_no') ? 'is-invalid' : '' }}" name="po_no" value="{{ old('po_no', $po->po_no) }}" readonly> 
                         @if($errors->has('po_no'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('po_no') }}
@@ -39,7 +39,7 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.purchase-order.fields.vendor_id') }}</label>
-                        <input type="text" class="form-control form-control-line {{ $errors->has('vendor_id') ? 'is-invalid' : '' }}" name="vendor_id" value="{{ old('vendor_id', isset($quotation->vendor) ? $quotation->vendor->name . ' - ' . $quotation->vendor->email : '') }}" readonly> 
+                        <input type="text" class="form-control form-control-line {{ $errors->has('vendor_id') ? 'is-invalid' : '' }}" name="vendor_id" value="{{ old('vendor_id', isset($po->vendor) ? $po->vendor->name : '') }}" readonly> 
                         @if($errors->has('vendor_id'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('vendor_id') }}
@@ -481,7 +481,7 @@
                                         <table class="table">
                                             <tr>
                                                 <td>Material Group</td>
-                                                <td><input type="text" class="form-control" name="d_material_group" value="{{ '' }}"></td>
+                                                <td><input type="text" class="form-control" name="d_material_group" value="{{ 0 }}"></td>
                                                 <td>Revision Level</td>
                                                 <td><input type="text" class="form-control" name="d_revision_level"></td>
                                             </tr>
@@ -538,7 +538,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-actions">
+                    <div class="form-actions" style="margin-top: 20px">
                         <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.save') }}</button>
                         <button type="button" class="btn btn-inverse">Cancel</button>
                     </div>

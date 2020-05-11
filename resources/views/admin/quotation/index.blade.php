@@ -59,7 +59,7 @@
                                         <tr data-entry-id="{{ $val->id }}">
                                             <td>{{ $val->id ?? '' }}</td>
                                             <td>{{ $val->po_no ?? '' }}</td>
-                                            <td>{{ $val->status == 0 ? 'PO repeat' : ($val->status == 1 ? 'Online' : 'Penunjukkan Langsung') }}</td>
+                                            <td>{{ $val->status == 0 ? 'PO repeat' : ($val->status == 1 ? 'Online' : 'Direct Order') }}</td>
                                             <td>{{ $val->leadtime_type == 0 ? 'Date' : 'Day Count' }}</td>
                                             <td>{{ $val->purchasing_leadtime ?? '' }}</td>
                                             <td>{{ number_format($val->target_price, 0, '', '.') ?? '' }}</td>

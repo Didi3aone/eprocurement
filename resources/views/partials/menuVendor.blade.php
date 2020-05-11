@@ -12,30 +12,39 @@
                 <li><a href="{{ route('vendor.home') }}">Dashboard</a></li>
                 <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-truck"></i>
-                        <span class="hide-menu"> {{ 'Purchase Order' }} </span>
+                        <span class="hide-menu"> {{ 'Bidding' }} </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">
                         <li>
-                            
-                            <li>
-                                <a href="{{ route('vendor.quotation') }}" class="">
-                                    <i class="fa fas fa-caret-right"></i> 
-                                    Quotation
-                                </a>
-                            </li>
+                            <a href="{{ route('vendor.quotation-online') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> 
+                                Online
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('vendor.quotation-repeat') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> 
+                                PO Repeat
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('vendor.quotation-direct') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> 
+                                Direct Order
+                            </a>
                         </li>
                     </ul>
                 </li>
                 <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-clipboard"></i>
-                        <span class="hide-menu"> {{ 'Bidding' }} </span>
+                        <span class="hide-menu"> {{ 'Billing' }} </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">
                         <li>
-                            <a href="{{ route('vendor.bidding') }}" class="">
+                            {{-- <a href="{{ route('vendor.bidding') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
                                 Bidding
-                            </a>
+                            </a> --}}
                         </li>
                     </ul>
                 </li>

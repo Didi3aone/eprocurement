@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterRequestNotesAddColumnSpvId extends Migration
+class DeleteFieldRnHeader extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,10 @@ class AlterRequestNotesAddColumnSpvId extends Migration
     public function up()
     {
         Schema::table('request_notes', function (Blueprint $table) {
-            $table->string('spv_id',10)->nullable();
+            $table->dropColumn('purchasing_group_id');
+            $table->dropColumn('is_validate'); 
+            $table->dropColumn('upload_file'); 
+            $table->dropColumn('is_pr'); 
         });
     }
 
@@ -26,7 +29,7 @@ class AlterRequestNotesAddColumnSpvId extends Migration
     public function down()
     {
         Schema::table('request_notes', function (Blueprint $table) {
-            $table->dropColumn('spv_id',10)->nullable();
+            //
         });
     }
 }

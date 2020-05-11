@@ -19,7 +19,7 @@
                     {{-- </h3> --}}
                     <div class="form-group ">
                         <div class="col-xs-12">
-                            <input class="form-control {{ $errors->has('email') ? ' is-invalid' : '' }}" value="{{ old('email', null) }}" name="email" type="email" required="" placeholder="email"> 
+                            <input class="form-control {{ $errors->has('email') ? ' is-invalid' : '' }}" value="{{ old('email', null) }}" name="email" type="email" required="" placeholder="Email"> 
                         </div>
                         @if($errors->has('email'))
                             <div class="invalid-feedback">

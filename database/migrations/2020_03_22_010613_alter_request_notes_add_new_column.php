@@ -14,7 +14,7 @@ class AlterRequestNotesAddNewColumn extends Migration
     public function up()
     {
         Schema::table('request_notes', function (Blueprint $table) {
-            $table->string('plant_id',5)->unsigned()->nullable();
+            $table->string('plant_id',5)->nullable();
         });
     }
 
@@ -26,7 +26,7 @@ class AlterRequestNotesAddNewColumn extends Migration
     public function down()
     {
         Schema::table('request_notes', function (Blueprint $table) {
-            $table->dropColumn('plant_id')->unsigned()->nullable();
+            $table->dropColumn('plant_id')->nullable();
         });
     }
 }

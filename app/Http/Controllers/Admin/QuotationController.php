@@ -14,6 +14,7 @@ use App\Models\Vendor\QuotationApproval;
 use App\Models\PurchaseOrder;
 use App\Models\WorkFlowApproval;
 use App\Models\Vendor;
+use App\Mail\PurchaseOrderMail;
 
 class QuotationController extends Controller
 {
@@ -59,6 +60,140 @@ class QuotationController extends Controller
         Artisan::call('import:quotation', ['filename' => $real_filename]);
 
         return redirect('admin/quotation')->with('success', 'Quotation has been successfully imported');
+    }
+
+    public function online ()
+    {
+        $quotation = Quotation::where('status', 1)->orderBy('id', 'desc')->get();
+
+        return view('admin.quotation.online', compact('quotation'));
+    }
+
+    public function repeat ()
+    {
+        $quotation = Quotation::where('status', 0)->orderBy('id', 'desc')->get();
+
+        return view('admin.quotation.repeat', compact('quotation'));
+    }
+
+    public function direct ()
+    {
+        $quotation = Quotation::where('status', 2)->orderBy('id', 'desc')->get();
+
+        return view('admin.quotation.direct', compact('quotation'));
+    }
+
+    public function saveOnline (Request $request)
+    {
+        if (empty($request->get('vendor_id')))
+            return redirect()->route('admin.purchase-request-online', $request->get('id'))->with('status', 'No vendor chosen!');
+
+        if (empty($request->get('target_price')))
+            return redirect()->route('admin.purchase-request-online', $request->get('id'))->with('status', 'Target Price cannot be zero!');
+
+        \DB::beginTransaction();
+
+        try {
+            $vendors = $request->get('vendor_id');
+
+            $quotation = new Quotation;
+            $quotation->request_id = $request->get('request_id');
+            $quotation->po_no = $request->get('request_no');
+            $quotation->leadtime_type = $request->get('leadtime_type');
+            $quotation->purchasing_leadtime = $request->get('purchasing_leadtime');
+            $quotation->target_price = str_replace('.', '', $request->get('target_price'));
+            $quotation->expired_date = $request->get('expired_date');
+            $quotation->status = 1;
+            $quotation->save();
+
+            foreach ($vendors as $row) {
+                $quotationDetail = new QuotationDetail;
+                $quotationDetail->quotation_order_id = $quotation->id;
+                $quotationDetail->vendor_id = $row;
+                $quotationDetail->flag = 0;
+                $quotationDetail->save();
+            }
+
+            $purchaseOrder = new PurchaseOrder;
+            $purchaseOrder->bidding = 1;
+            $purchaseOrder->po_no = $request->get('request_no');
+            $purchaseOrder->po_date = date('Y-m-d');
+            $purchaseOrder->request_id = $request->get('request_id');
+            $purchaseOrder->status = 1;
+            $purchaseOrder->save();
+
+            \DB::commit();
+
+            return redirect()->route('admin.quotation.index')->with('status', trans('cruds.purchase-order.alert_success_insert'));
+        } catch (Exception $e) {
+            \DB::rollBack();
+    
+            return redirect()->route('admin.quotation.index')->with('error', trans('cruds.purchase-order.alert_error_insert'));
+        }
+    }
+
+    public function saveRepeat (Request $request)
+    {
+        if (empty($request->get('qty')))
+            return redirect()->route('admin.purchase-request-repeat', $request->get('id'))->with('status', 'Quantity cannot be zero!');
+
+        $qty = str_replace('.', '', $request->get('qty'));
+
+        $quotation = new Quotation;
+        $quotation->po_no = $request->get('request_no');
+        $quotation->request_id = $request->get('id');
+        $quotation->qty = $qty;
+        $quotation->status = 0;
+        $quotation->vendor_id = $request->get('vendor_id');
+        $quotation->save();
+
+        // send email
+        $vendor = Vendor::find($request->get('vendor_id'));
+        $data = [
+            'vendor' => $vendor,
+            'request_no' => $request->get('request_no'),
+            'subject' => 'PO Repeat ' . $request->get('request_no')
+        ];
+
+        \Mail::to($vendor->email)->send(new PurchaseOrderMail($data));
+
+        return redirect()->route('admin.quotation.index')->with('status', 'PO Repeat has been successfully ordered!');
+    }
+
+    public function saveDirect (Request $request)
+    {
+        $filename = '';
+            
+        if ($request->file('upload_file')) {
+            $path = 'quotation/';
+            $file = $request->file('upload_file');
+            
+            $filename = $file->getClientOriginalName();
+    
+            $file->move($path, $filename);
+    
+            $real_filename = public_path($path . $filename);
+        }
+
+        $quotation = new Quotation;
+        $quotation->po_no = $request->get('request_no');
+        $quotation->notes = $request->get('notes');
+        $quotation->request_id = $request->get('id');
+        $quotation->upload_file = $filename;
+        $quotation->status = 2;
+        $quotation->vendor_id = $request->get('vendor_id');
+        $quotation->save();
+
+        $vendor = Vendor::find($request->get('vendor_id'));
+        $data = [
+            'vendor' => $vendor,
+            'request_no' => $request->get('request_no'),
+            'subject' => 'Penunjukkan langsung ' . $request->get('request_no')
+        ];
+
+        \Mail::to($vendor->email)->send(new PurchaseOrderMail($data));
+
+        return redirect()->route('admin.quotation.index')->with('status', 'Direct Order has been set!');
     }
 
     public function winner (Request $request)
@@ -230,10 +365,7 @@ class QuotationController extends Controller
 
     public function listWinner ()
     {
-        $quotation = Quotation::whereHas('detail', function (Builder $query) {
-            $query->where('is_winner', 1);
-        })
-            ->orderBy('quotation.created_at', 'desc')
+        $quotation = Quotation::orderBy('quotation.created_at', 'desc')
             ->get();
 
         return view('admin.quotation.list-winner', compact('quotation'));
@@ -272,81 +404,80 @@ class QuotationController extends Controller
     //     return view('admin.quotation.list-winner', compact('quotation'));
     // }
 
+    public function approve (Request $request, $id)
+    {
+        $model = Quotation::find($id);
+        $vendor = Vendor::find($model->vendor_id);
+
+        $po = new PurchaseOrder;
+        $po->request_id = $id;
+        $po->bidding = 0;
+        $po->po_date = date('Y-m-d');
+        $po->vendor_id = $model->vendor_id;
+        $po->status = 0;
+        $po->po_no = $model->po_no;
+        $po->save();
+
+        if ($model->status == 0) {
+            $subject = 'PO Repeat Order ' . $model->po_no;
+        } else if ($model->status == 2) {
+            $subject = 'Penunjukkan Langsung ' . $model->po_no;
+        }
+
+        $data = [
+            'vendor' => $model->vendor,
+            'request_no' => $model->po_no,
+            'subject' => 'Penunjukkan langsung ' . $request->get('request_no')
+        ];
+
+        \Mail::to($vendor->email)->send(new PurchaseOrderMail($data));
+
+        return redirect()->route('admin.purchase-order.index')->with('success', 'Winner has been set!');
+    }
+
     public function approveWinner (Request $request)
     {
         $id = $request->get('id');
-        $vendor_id = $request->get('vendor_id');
-        
-        for ($i = 0; $i < count($vendor_id); $i++) {
-            $price = (int) $request->get('vendor_price')[$i];
+        $quotation_id = $request->get('quotation_id');
+
+        for ($i = 0; $i < count($id); $i++) {
+            $id = $id[$i];
+
+            $detail = QuotationDetail::find($id);
+            $price = $detail->vendor_price;
+            $vendor_id = $detail->vendor_id;
         
             \DB::beginTransaction();
 
-            $id = $id[$i];
-            $vendor_id = $request->get('vendor_id')[$i];
-
             try {
                 if( ($price >= 250000000) ) {
-                    $this->saveApproval($id, 'COO');
+                    $this->saveApproval($quotation_id, 'COO');
                 } else if( ($price <= 250000000) && ($price >= 100000000) ) {
-                    $this->saveApproval($id, 'CFO');
+                    $this->saveApproval($quotation_id, 'CFO');
                 } else {
-                    $this->saveApproval($id, 'No');
+                    $this->saveApproval($quotation_id, 'No');
                 }
 
-                // $posisi = QuotationApproval::where('id', $id)->first();
+                $quotation = Quotation::find($quotation_id);
 
-                // $total = QuotationApproval::where('quotation_id', $id)
-                //     ->get();
-
-                // if( $posisi->approval_position == count($total) ) {
-                //     $qa = QuotationApproval::where('quotation_id', $id)->first();
-                //     $qa->status = 1;
-                //     $qa->approve_date = date('Y-m-d H:i:s');
-                //     $qa->flag = 2;
-                //     $qa->save();
-
-                //     $model = Quotation::find($id);
-                //     $model->approval_status = 12;
-                //     $model->save();
-                // } else if( $posisi->approval_position < count($total) ) {
-                //     $posisi = $posisi->approval_position + 1;
-
-                //     QuotationApproval::where('quotation_id', $id)
-                //         ->where('approval_position', $posisi)
-                //         ->update([
-                //             'status' => 0,
-                //             'flag' => 1,
-                //         ]);
-
-                //     $model = Quotation::find($id);
-                //     $model->approval_status = 11;
-                //     $model->save();
-                // }
-                
-                // create po
-                $quotation = QuotationDetail::find($id);
-                $quotation->approval_position = 12;
-                $quotation->save();
-                
                 $po = new PurchaseOrder;
                 $po->request_id = $quotation->request_id;
                 $po->bidding = 1;
                 $po->po_no = str_replace('PR', 'PO', $quotation->po_no);
-                $po->notes = $quotation->notes;
+                $po->notes = $detail->notes;
                 $po->vendor_id = $vendor_id;
                 $po->status = 1;
                 $po->po_date = date('Y-m-d');
                 $po->save();
 
-                // send to SAP
+                \DB::commit();
 
-                \DB::commit();                
+                return redirect()->route('admin.purchase-order.index')->with('success', 'Bidding has been approved successfully');
             } catch (\Exception $th) {
                 \DB::rollback();
-            }
 
-            return redirect()->route('admin.purchase-order.index')->with('success', 'Bidding has been approved successfully');
+                return redirect()->route('admin.quotation.show-winner', $request->get('quotation_id'))->with('success', 'Bidding has been approved failed');
+            }
         }
     }
 

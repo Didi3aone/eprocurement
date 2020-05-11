@@ -4,7 +4,7 @@
     <div class="col-md-5 col-8 align-self-center">
         <h3 class="text-themecolor">Master</h3>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="javascript:void(0)">List Winner</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Show Winner</a></li>
             <li class="breadcrumb-item active">Index</li>
         </ol>
     </div>
@@ -21,7 +21,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('admin.quotation.approve') }}" method="post">
+                <form action="{{ route('admin.quotation.approve-winner') }}" method="post">
                     @csrf
                     <input type="hidden" name="quotation_id" value="{{ $id }}">
                     <div class="row">
@@ -39,21 +39,18 @@
                                             <th>{{ trans('cruds.quotation.fields.vendor_leadtime') }}</th>
                                             <th>{{ trans('cruds.quotation.fields.vendor_price') }}</th>
                                             <th>{{ trans('cruds.quotation.fields.qty') }}</th>
-                                            <th>&nbsp;</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach($quotation as $key => $val)
                                             <tr data-entry-id="{{ $val->id }}">
-                                                <input type="hidden" name="vendor_price[]" value="{{ $val->vendor_price }}">
-                                                <input type="hidden" name="id[]" value="{{ $val->id }}">
                                                 <td>
-                                                    <input type="checkbox" name="vendor_id[]" id="check_{{ $val->vendor_id }}" value="{{ $val->vendor_id }}">
-                                                    <label for="check_{{ $val->vendor_id }}">&nbsp;</label>
+                                                    <input type="checkbox" name="id[]" id="check_{{ $val->id }}" value="{{ $val->id }}">
+                                                    <label for="check_{{ $val->id }}">&nbsp;</label>
                                                 </td>
                                                 <td>{{ $val->id ?? '' }}</td>
                                                 <td>{{ $val->quotation->po_no ?? '' }}</td>
-                                                <td>{{ $val->vendor->name . ' - ' . $val->vendor->email ?? '' }}</td>
+                                                <td>{{ $val->vendor->name ?? '' }}</td>
                                                 <td>{{ number_format($val->quotation->target_price, 0, '', '.') ?? '' }}</td>
                                                 <td>
                                                     @php $is_expired = '#67757c' @endphp
@@ -67,27 +64,6 @@
                                                 <td>{{ $val->vendor_leadtime ?? '' }}</td>
                                                 <td>{{ number_format($val->vendor_price, 0, '', '.') ?? '' }}</td>
                                                 <td>{{ number_format($val->qty, 0, '', '.') ?? '' }}</td>
-                                                <td>
-                                                    @can('quotation_approve')
-                                                        {{-- <a class="btn btn-xs btn-success approve" id="save_{{ $key }}" data-row="{{ $key }}" data-req="{{ $val->id }}" data-id="{{ $val->approval_id }}" href="javascript:;">
-                                                            <i class="fa fa-check"></i> Approve
-                                                        </a> --}}
-                                                    @endcan
-
-                                                    {{-- @can('quotation_edit')
-                                                        <a class="btn btn-xs btn-info" href="{{ route('admin.quotation.edit', $val->id) }}">
-                                                            {{ trans('global.edit') }}
-                                                        </a>
-                                                    @endcan --}}
-
-                                                    @can('quotation_delete')
-                                                        {{-- <form action="{{ route('admin.quotation.destroy', $val->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
-                                                            <input type="hidden" name="_method" value="DELETE">
-                                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                            <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
-                                                        </form> --}}
-                                                    @endcan
-                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -106,6 +82,7 @@
     </div>
 </div>
 @endsection
+
 @section('scripts')
 @parent
 <script>
@@ -141,7 +118,7 @@
             
             $.ajax({
                 type: "PUT",
-                url: "{{ route('admin.quotation.approve') }}",
+                url: "{{ route('admin.quotation.approve-winner') }}",
                 headers: {
                     'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
                 },

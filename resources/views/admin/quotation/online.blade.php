@@ -2,10 +2,10 @@
 @section('content')
 <div class="row page-titles">
     <div class="col-md-5 col-8 align-self-center">
-        <h3 class="text-themecolor">Master</h3>
+        <h3 class="text-themecolor">Quotation</h3>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="javascript:void(0)">Quotation</a></li>
-            <li class="breadcrumb-item active">List Winner</li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Online</a></li>
+            <li class="breadcrumb-item active">Index</li>
         </ol>
     </div>
 </div>
@@ -29,13 +29,10 @@
                                     <tr>
                                         <th>{{ trans('cruds.quotation.fields.id') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
-                                        <th>{{ trans('cruds.quotation.fields.vendor_id') }}</th>
-                                        <th>{{ trans('cruds.quotation.fields.status') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.leadtime_type') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.purchasing_leadtime') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.target_price') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.expired_date') }}</th>
-                                        <th>{{ trans('cruds.quotation.fields.qty') }}</th>
                                         <th>
                                             &nbsp;
                                         </th>
@@ -46,14 +43,6 @@
                                         <tr data-entry-id="{{ $val->id }}">
                                             <td>{{ $val->id ?? '' }}</td>
                                             <td>{{ $val->po_no ?? '' }}</td>
-                                            <td>
-                                                @if ($val->status != 1)
-                                                {{ isset($val->vendor) ? $val->vendor->name : '' }}
-                                                @else
-                                                More than one vendor, please click View Button
-                                                @endif
-                                            </td>
-                                            <td>{{ $val->status == 0 ? 'PO repeat' : ($val->status == 1 ? 'Online' : 'Penunjukkan Langsung') }}</td>
                                             <td>{{ $val->leadtime_type == 0 ? 'Date' : 'Day Count' }}</td>
                                             <td>{{ $val->purchasing_leadtime ?? '' }}</td>
                                             <td>{{ number_format($val->target_price, 0, '', '.') ?? '' }}</td>
@@ -68,25 +57,19 @@
                                                 @endif
                                                 <span style="color: {{ $is_expired }}">{{ $val->expired_date ?? '' }}</span>
                                             </td>
-                                            <td>{{ number_format($val->qty, 0, '', '.') }}</td>
                                             <td>
                                                 @can('quotation_show')
-                                                {{-- @if (time() <= strtotime($val->expired_date)) --}}
-                                                @if ($val->status == 0)
-                                                    <a href="{{ route('admin.quotation.approve', $val->id) }}" class="btn btn-xs btn-warning">{{ trans('global.approve') }}</a>
-                                                @elseif ($val->status == 2)
-                                                    <a href="{{ route('admin.quotation.approve', $val->id) }}" class="btn btn-xs btn-warning">{{ trans('global.approve') }}</a>
-                                                @else
-                                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.quotation.show-winner', $val->id) }}">
+                                                @if (time() <= strtotime($val->expired_date))
+                                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.quotation.show', $val->id) }}">
                                                         {{ trans('global.view') }}
                                                     </a>
                                                 @endif
                                                 @endcan
 
                                                 @can('quotation_edit')
-                                                    {{-- <a class="btn btn-xs btn-info" href="{{ route('admin.quotation.edit', $val->id) }}">
+                                                    <a class="btn btn-xs btn-info" href="{{ route('admin.quotation.edit', $val->id) }}">
                                                         {{ trans('global.edit') }}
-                                                    </a> --}}
+                                                    </a>
                                                 @endcan
 
                                                 @can('quotation_delete')
@@ -108,30 +91,8 @@
         </div>
     </div>
 </div>
-
-<div class="modal fade" id="modal_import" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">{{ trans('cruds.quotation.import') }}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form action="{{ route('admin.quotation.import') }}" method="post" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-body">
-                    <input type="file" name="xls_file" id="xls_file">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 @endsection
+
 @section('scripts')
 @parent
 <script>

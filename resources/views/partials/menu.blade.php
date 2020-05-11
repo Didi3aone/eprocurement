@@ -37,19 +37,38 @@
                     <ul aria-expanded="false" class="collapse">
                         @can('purchase_request_access')
                         <li>
-                            <a href="{{ route('admin.quotation.index') }}" class="">
-                                <i class="fa fas fa-caret-right"></i> 
-                                List Quotations
+                            <a href="#" class="has-arrow">
+                                <i class="fa fa-cubes"></i> 
+                                List Bidding
                             </a>
+                            <ul aria-expanded="false" class="collapse">
+                                <li>
+                                    <a href="{{ route('admin.quotation.online') }}" class="">
+                                        <i class="fa fas fa-caret-right"></i> 
+                                        Online
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('admin.quotation.repeat') }}" class="">
+                                        <i class="fa fas fa-caret-right"></i> 
+                                        PO Repeat
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('admin.quotation.direct') }}" class="">
+                                        <i class="fa fas fa-caret-right"></i> 
+                                        Direct Order
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                         <li>
                             <a href="{{ route('admin.quotation.list-winner') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
-                                List Winners
+                                List ACP
                             </a>
                         </li>
-                        @endcan
-                        
+                        @endcan                        
                     </ul>
                 </li>
                 @can('purchase_order_access')
