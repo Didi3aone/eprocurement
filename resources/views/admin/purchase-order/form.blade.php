@@ -481,7 +481,7 @@
                                         <table class="table">
                                             <tr>
                                                 <td>Material Group</td>
-                                                <td><input type="text" class="form-control" name="d_material_group" value="{{  }}"></td>
+                                                <td><input type="text" class="form-control" name="d_material_group" value="{{ '' }}"></td>
                                                 <td>Revision Level</td>
                                                 <td><input type="text" class="form-control" name="d_revision_level"></td>
                                             </tr>
