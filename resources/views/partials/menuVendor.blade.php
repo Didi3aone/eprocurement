@@ -5,10 +5,6 @@
         <nav class="sidebar-nav">
             <ul id="sidebarnav">
                 <li class="nav-small-cap">PERSONAL</li>
-                {{-- <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-gauge"></i><span class="hide-menu">Dashboard </span></a>
-                    <ul aria-expanded="false" class="collapse">
-                    </ul>
-                </li> --}}
                 <li><a href="{{ route('vendor.home') }}">Dashboard</a></li>
                 <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-truck"></i>
@@ -41,10 +37,10 @@
                     </a>
                     <ul aria-expanded="false" class="collapse">
                         <li>
-                            {{-- <a href="{{ route('vendor.bidding') }}" class="">
+                            <a href="{{ route('vendor.billing.index') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
-                                Bidding
-                            </a> --}}
+                                List billing
+                            </a>
                         </li>
                     </ul>
                 </li>

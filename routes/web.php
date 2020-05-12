@@ -236,4 +236,7 @@ Route::group([ 'prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor',
     Route::post('quotation-save', 'QuotationController@store')->name('quotation-save');
     Route::get('bidding', 'BiddingController@index')->name('bidding');
     Route::post('logout', '\App\Http\Controllers\AuthVendor\LoginController@logout')->name('logout');
+
+    //billing
+    Route::resource('billing','BillingController');
 });
