@@ -15,6 +15,7 @@ use App\Models\Plant;
 use App\Models\DocumentType;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrdersDetail;
+use App\Models\PurchaseOrderInvoice;
 use App\Models\Vendor\Quotation;
 use App\Models\Vendor\QuotationDetail;
 use App\Imports\PurchaseOrderImport;
@@ -243,6 +244,33 @@ class PurchaseOrderController extends Controller
                     $purchaseOrder->status = 0;
                     $purchaseOrder->save();
 
+                    // Alvin:: PO Invoice
+                    $purchase_order_invoice = [
+                        'purchase_order_id' => $request->get('purchase_order_id'),
+                        'request_id' => $request->get('request_id'),
+                        'payment_terms' => $request->get('payment_terms'),
+                        'payment_in_days_1' => $request->get('payment_in_days_1'),
+                        'payment_in_percent_1' => $request->get('payment_in_percent_1'),
+                        'payment_in_days_2' => $request->get('payment_in_days_2'),
+                        'payment_in_percent_2' => $request->get('payment_in_percent_2'),
+                        'payment_in_days_3' => $request->get('payment_in_days_3'),
+                        'payment_in_percent_3' => $request->get('payment_in_percent_3'),
+                        'currency' => $request->get('currency'),
+                        'exchange_rate' => $request->get('exchange_rate'),
+                        'sales_person' => $request->get('sales_person'),
+                        'phone' => $request->get('phone'),
+                        'language' => $request->get('language'),
+                        'your_reference' => $request->get('your_reference'),
+                        'our_reference' => $request->get('our_reference')
+                    ];
+                    $purchase_order_invoice_id = $request->get('purchase_order_invoice_id');
+                    if ($purchase_order_invoice) {
+                        PurchaseOrderInvoice::where('id', $purchase_order_invoice_id)->update($purchase_order_invoice);
+                    } else {
+                        PurchaseOrderInvoice::save($purchase_order_invoice);
+                    }
+                    // END
+
                     \DB::commit();
 
                     return redirect()->route('admin.quotation.index')->with('status', trans('cruds.purchase-order.alert_success_insert'));
@@ -264,7 +292,8 @@ class PurchaseOrderController extends Controller
     public function show($id)
     {
         $po = PurchaseOrder::find($id);
-        $quotation = Quotation::find($id);
+        $quotation = Quotation::where('po_no', $po->po_no)->get();
+        $poinvoice = PurchaseOrderInvoice::where('purchase_order_id', $po->id)->get()->first();
         $pr = PurchaseRequestsDetail::select(
             'purchase_requests_details.purchase_id',
             'purchase_requests_details.description',
@@ -302,7 +331,7 @@ class PurchaseOrderController extends Controller
 
         // get po_no from SAP
 
-        return view('admin.purchase-order.form', compact('quotation', 'po', 'pr', 'types'));
+        return view('admin.purchase-order.form', compact('quotation', 'po', 'pr', 'types', 'poinvoice'));
     }
 
     /**

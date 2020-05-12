@@ -17,7 +17,7 @@
                     @csrf
                     <div class="form-group">
                         <label>{{ trans('cruds.purchase-order.fields.type') }}</label>
-                        <select class="form-control select2 {{ $errors->has('type') ? 'is-invalid' : '' }}" name="type" id="type" required>
+                        <select class="form-control select2 {{ $errors->has('type') ? 'is-invalid' : '' }}" name="type" id="type">
                             @foreach($types as $id => $type)
                                 <option value="{{ $type->code }}" {{ in_array($type->code, old('type', [])) ? 'selected' : '' }}>{{ $type->code }} - {{ $type->description }}</option>
                             @endforeach
@@ -48,7 +48,7 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.purchase-order.fields.po_date') }}</label>
-                        <input type="date" class="form-control form-control-line {{ $errors->has('po_date') ? 'is-invalid' : '' }}" name="po_date" value="{{ old('po_date', date('Y-m-d')) }}" required> 
+                        <input type="date" class="form-control form-control-line {{ $errors->has('po_date') ? 'is-invalid' : '' }}" name="po_date" value="{{ old('po_date', date('Y-m-d')) }}"> 
                         @if($errors->has('po_date'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('po_date') }}
@@ -110,7 +110,7 @@
                                                         <tr>
                                                             <td>Payment Terms</td>
                                                             <td colspan="2">
-                                                                <select name="terms" class="form-control">
+                                                                <select name="payment_terms" class="form-control">
                                                                     <option value="Z030">Z030</option>
                                                                 </select>
                                                             </td>
@@ -118,25 +118,25 @@
                                                         <tr>
                                                             <td>Payment in</td>
                                                             <td>
-                                                                <input type="number" name="first_in" value="0" class="form-control"> days
+                                                                <input type="number" name="payment_in_days_1" value="{{ $poinvoice->payment_in_days_1 ?? 0 }}" class="form-control"> days
                                                             </td>
                                                             <td>
-                                                                <input type="text" name="first_in_percentage" value="0.000" class="form-control"> %
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Payment in</td>
-                                                            <td>
-                                                                <input type="number" name="second_in" value="0" class="form-control"> days
-                                                            </td>
-                                                            <td>
-                                                                <input type="text" name="second_in_percentage" value="0.000" class="form-control"> %
+                                                                <input type="text" name="payment_in_percent_1" value="{{ $poinvoice->payment_in_percent_1 ?? 0.000 }}" class="form-control"> %
                                                             </td>
                                                         </tr>
                                                         <tr>
                                                             <td>Payment in</td>
                                                             <td>
-                                                                <input type="number" name="third_in" value="0" class="form-control"> days
+                                                                <input type="number" name="payment_in_days_2" value="{{ $poinvoice->payment_in_days_2 ?? 0 }}" class="form-control"> days
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="payment_in_percent_2" value="{{ $poinvoice->payment_in_percent_2 ?? 0.000 }}" class="form-control"> %
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Payment in</td>
+                                                            <td>
+                                                                <input type="number" name="payment_in_days_3" value="{{ $poinvoice->payment_in_days_3 ?? 0 }}" class="form-control"> days
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -148,13 +148,13 @@
                                                         <tr>
                                                             <td>Currency</td>
                                                             <td>
-                                                                <input type="text" name="currency" class="form-control" value="IDR">
+                                                                <input type="text" name="currency" class="form-control" value="{{ $poinvoice->currency ?? 'IDR' }}">
                                                             </td>
                                                         </tr>
                                                         <tr>
                                                             <td>Exchange Rate</td>
                                                             <td>
-                                                                <input type="number" name="exchange_rate" value="0.000" class="form-control">
+                                                                <input type="number" name="exchange_rate" value="{{ $poinvoice->exchange_rate ?? 0.000 }}" class="form-control">
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -250,31 +250,31 @@
                                                 <tr>
                                                     <td>Sales Person</td>
                                                     <td>
-                                                        <input type="text" name="sales_person" id="sales_person" class="form-control">
+                                                        <input type="text" name="sales_person" id="sales_person" class="form-control" value="{{ $poinvoice->sales_person ?? null }}">
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Phone</td>
                                                     <td>
-                                                        <input type="text" name="sales_phone" id="sales_phone" class="form-control" style="width: 30%">
+                                                        <input type="text" name="phone" id="sales_phone" class="form-control" style="width: 30%" value="{{ $poinvoice->phone ?? null }}">
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Language</td>
                                                     <td>
-                                                        <input type="text" name="sales_language" id="sales_language" class="form-control">
+                                                        <input type="text" name="language" id="sales_language" class="form-control" value="{{ $poinvoice->language ?? null }}">
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Your Reference</td>
                                                     <td>
-                                                        <input type="text" name="sales_your_reference" id="sales_your_reference" class="form-control" style="width: 50%">
+                                                        <input type="text" name="your_reference" id="sales_your_reference" class="form-control" style="width: 50%" value="{{ $poinvoice->your_reference ?? null }}">
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Our Reference</td>
                                                     <td>
-                                                        <input type="text" name="sales_our_reference" id="sales_our_reference" class="form-control" style="width: 50%">
+                                                        <input type="text" name="our_reference" id="sales_our_reference" class="form-control" style="width: 50%" value="{{ $poinvoice->our_reference ?? null }}">
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -292,13 +292,13 @@
                                                 <tr>
                                                     <td>Code</td>
                                                     <td>
-                                                        <input type="text" name="pg_code" id="pg_code" class="form-control" style="width: 50%" required>
+                                                        <input type="text" name="pg_code" id="pg_code" class="form-control" style="width: 50%">
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Company Code</td>
                                                     <td>
-                                                        <input type="text" name="pg_company_code" id="pg_company_code" class="form-control" style="width: 50%" required>
+                                                        <input type="text" name="pg_company_code" id="pg_company_code" class="form-control" style="width: 50%">
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -539,6 +539,9 @@
                         </div>
                     </div>
                     <div class="form-actions" style="margin-top: 20px">
+                        <input type="hidden" name="purchase_order_invoice_id" value="{{ $poinvoice->id ?? null }}">
+                        <input type="hidden" name="purchase_order_id" value="{{ $po->id }}">
+                        <input type="hidden" name="request_id" value="{{ $po->request_id }}">
                         <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.save') }}</button>
                         <button type="button" class="btn btn-inverse">Cancel</button>
                     </div>
