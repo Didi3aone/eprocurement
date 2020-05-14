@@ -197,6 +197,9 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::post('quotation-save-online', 'QuotationController@saveOnline')->name('quotation-save-online');
     Route::post('quotation-save-repeat', 'QuotationController@saveRepeat')->name('quotation-save-repeat');
     Route::post('quotation-save-direct', 'QuotationController@saveDirect')->name('quotation-save-direct');
+    Route::get('quotation-edit-online/{id}', 'QuotationController@editOnline')->name('quotation-edit-online');
+    Route::get('quotation-edit-repeat/{id}', 'QuotationController@editRepeat')->name('quotation-edit-repeat');
+    Route::get('quotation-edit-direct/{id}', 'QuotationController@editDirect')->name('quotation-edit-direct');
     Route::post('quotation/winner', 'QuotationController@winner')->name('quotation.winner');
     Route::post('quotation/to-winner', 'QuotationController@toWinner')->name('quotation.to-winner');
     Route::get('quotation/list-winner', 'QuotationController@listWinner')->name('quotation.list-winner');

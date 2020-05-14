@@ -98,7 +98,7 @@ class QuotationController extends Controller
 
             $quotation = new Quotation;
             $quotation->request_id = $request->get('request_id');
-            $quotation->po_no = $request->get('request_no');
+            $quotation->po_no = $request->get('PR_NO');
             $quotation->leadtime_type = $request->get('leadtime_type');
             $quotation->purchasing_leadtime = $request->get('purchasing_leadtime');
             $quotation->target_price = str_replace('.', '', $request->get('target_price'));
@@ -116,7 +116,7 @@ class QuotationController extends Controller
 
             $purchaseOrder = new PurchaseOrder;
             $purchaseOrder->bidding = 1;
-            $purchaseOrder->po_no = $request->get('request_no');
+            $purchaseOrder->po_no = $request->get('PR_NO');
             $purchaseOrder->po_date = date('Y-m-d');
             $purchaseOrder->request_id = $request->get('request_id');
             $purchaseOrder->status = 1;
@@ -124,11 +124,11 @@ class QuotationController extends Controller
 
             \DB::commit();
 
-            return redirect()->route('admin.quotation.index')->with('status', trans('cruds.purchase-order.alert_success_insert'));
+            return redirect()->route('admin.quotation.online')->with('status', trans('cruds.purchase-order.alert_success_insert'));
         } catch (Exception $e) {
             \DB::rollBack();
     
-            return redirect()->route('admin.quotation.index')->with('error', trans('cruds.purchase-order.alert_error_insert'));
+            return redirect()->route('admin.quotation.online')->with('error', trans('cruds.purchase-order.alert_error_insert'));
         }
     }
 
@@ -140,7 +140,7 @@ class QuotationController extends Controller
         $qty = str_replace('.', '', $request->get('qty'));
 
         $quotation = new Quotation;
-        $quotation->po_no = $request->get('request_no');
+        $quotation->po_no = $request->get('PR_NO');
         $quotation->request_id = $request->get('id');
         $quotation->qty = $qty;
         $quotation->status = 0;
@@ -151,13 +151,13 @@ class QuotationController extends Controller
         $vendor = Vendor::find($request->get('vendor_id'));
         $data = [
             'vendor' => $vendor,
-            'request_no' => $request->get('request_no'),
-            'subject' => 'PO Repeat ' . $request->get('request_no')
+            'request_no' => $request->get('PR_NO'),
+            'subject' => 'PO Repeat ' . $request->get('PR_NO')
         ];
 
         \Mail::to($vendor->email)->send(new PurchaseOrderMail($data));
 
-        return redirect()->route('admin.quotation.index')->with('status', 'PO Repeat has been successfully ordered!');
+        return redirect()->route('admin.quotation.repeat')->with('status', 'PO Repeat has been successfully ordered!');
     }
 
     public function saveDirect (Request $request)
@@ -176,7 +176,7 @@ class QuotationController extends Controller
         }
 
         $quotation = new Quotation;
-        $quotation->po_no = $request->get('request_no');
+        $quotation->po_no = $request->get('PR_NO');
         $quotation->notes = $request->get('notes');
         $quotation->request_id = $request->get('id');
         $quotation->upload_file = $filename;
@@ -187,13 +187,13 @@ class QuotationController extends Controller
         $vendor = Vendor::find($request->get('vendor_id'));
         $data = [
             'vendor' => $vendor,
-            'request_no' => $request->get('request_no'),
-            'subject' => 'Penunjukkan langsung ' . $request->get('request_no')
+            'request_no' => $request->get('PR_NO'),
+            'subject' => 'Penunjukkan langsung ' . $request->get('PR_NO')
         ];
 
         \Mail::to($vendor->email)->send(new PurchaseOrderMail($data));
 
-        return redirect()->route('admin.quotation.index')->with('status', 'Direct Order has been set!');
+        return redirect()->route('admin.quotation.direct')->with('status', 'Direct Order has been set!');
     }
 
     public function winner (Request $request)
@@ -345,8 +345,6 @@ class QuotationController extends Controller
                 $qty = $request->get('qty')[$id];
                 $qty = str_replace('.', '', $qty);
                 
-                $total = $vendor_price * $qty;
-
                 $model = QuotationDetail::find((int) $val);
                 $model->is_winner = 1;
                 $model->qty = $qty;
@@ -481,6 +479,27 @@ class QuotationController extends Controller
         }
     }
 
+    public function editOnline (Request $request, $id)
+    {
+        $quotation = Quotation::find($id);
+
+        return view('admin.quotation.edit-online', compact('quotation'));
+    }
+
+    public function editRepeat (Request $request, $id)
+    {
+        $quotation = Quotation::find($id);
+
+        return view('admin.quotation.edit-repeat', compact('quotation'));
+    }
+
+    public function editDirect (Request $request, $id)
+    {
+        $quotation = Quotation::find($id);
+
+        return view('admin.quotation.edit-direct', compact('quotation'));
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -530,13 +549,40 @@ class QuotationController extends Controller
     public function update(Request $request, $id)
     {
         $quotation = Quotation::find($id);
-        $quotation->notes = $request->input('notes');
-        $quotation->upload_file = $request->input('upload_file');
-        $quotation->vendor_leadtime = $request->input('vendor_leadtime');
-        $quotation->vendor_price = $request->input('vendor_price');
+        
+        if ($request->get('status') == 0) {
+            $quotation->qty = $request->get('qty');
+
+            $route = 'repeat';
+        } else if ($request->get('status') == 2) {
+            $quotation->notes = $request->get('notes');
+
+            $filename = '';
+            
+            if ($request->file('upload_file')) {
+                $path = 'quotation/';
+                $file = $request->file('upload_file');
+                
+                $filename = $file->getClientOriginalName();
+        
+                $file->move($path, $filename);
+        
+                $real_filename = public_path($path . $filename);
+            }
+            
+            $quotation->upload_file = $filename;
+
+            $route = 'direct';
+        } else {
+            $quotation->vendor_leadtime = $request->input('vendor_leadtime');
+            $quotation->vendor_price = $request->input('vendor_price');
+
+            $route = 'online';
+        }
+    
         $quotation->save();
         
-        return redirect()->route('admin.quotation.index')->with('status', trans('cruds.quotation.alert_success_update'));
+        return redirect()->route('admin.quotation.' . $route)->with('status', trans('cruds.quotation.alert_success_update'));
     }
 
     /**

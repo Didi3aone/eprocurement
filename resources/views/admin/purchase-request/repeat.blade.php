@@ -29,11 +29,11 @@
                     <div class="row">
                         <div class="col-lg-4">
                             <div class="form-group">
-                                <label>{{ trans('cruds.purchase-order.fields.request_no') }}</label>
-                                <input type="text" class="form-control form-control-line {{ $errors->has('request_no') ? 'is-invalid' : '' }}" name="request_no" value="{{ old('request_no', $pr->request_no) }}" readonly> 
-                                @if($errors->has('request_no'))
+                                <label>{{ trans('cruds.purchase-order.fields.PR_NO') }}</label>
+                                <input type="text" class="form-control form-control-line {{ $errors->has('PR_NO') ? 'is-invalid' : '' }}" name="PR_NO" value="{{ old('PR_NO', $pr->PR_NO) }}" readonly> 
+                                @if($errors->has('PR_NO'))
                                     <div class="invalid-feedback">
-                                        {{ $errors->first('request_no') }}
+                                        {{ $errors->first('PR_NO') }}
                                     </div>
                                 @endif
                             </div>
@@ -45,7 +45,7 @@
                     <div class="form-group">
                         <label for="">{{ trans('cruds.purchase-order.invite_vendor') }}</label>
                         <div class="row">
-                            <div class="col-lg-9">
+                            <div class="col-lg-6">
                                 <select name="vendor_id" class="form-control select2">
                                     @foreach ($vendor as $val)
                                     <option 
@@ -65,7 +65,11 @@
                     </div>
                     <div class="form-group">
                         <label for="qty">Quantity Order</label>
-                        <input type="text" class="money form-control" name="qty">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <input type="text" class="money form-control" name="qty">
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-actions">

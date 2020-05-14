@@ -35,10 +35,10 @@
                         <tbody>
                             @foreach($pr as $key => $value)
                                 <tr>
-                                    <td>{{ $value->request_no }}</td>
+                                    <td>{{ $value->PR_NO }}</td>
                                     <td>{{ $value->notes }}</td>
                                     <td>{{ $value->request_date }}</td>
-                                    <td>{{ $value->total }}</td>
+                                    <td>{{ number_format($value->total, 0, '', '.') }}</td>
                                     <td>
                                         @if( $value->is_validate == 1 && $value->approval_status == 12)
                                         <a class="open_modal_bidding btn btn-xs btn-success" id="open_modal" data-id="{{ $value->id }}" data-toggle="modal" data-target="#modal_create_po" href="javascript:;" >

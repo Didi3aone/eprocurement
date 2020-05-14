@@ -21,27 +21,11 @@
                         </tr>
                         <tr>
                             <td>{{ trans('cruds.quotation.fields.po_no') }}</td>
-                            <td>{{ $quotation->status == 0 ? 'PO repeat' : ($quotation->status == 1 ? 'Online' : 'Penunjukkan Langsung') }}</td>
+                            <td>{{ $quotation->po_no }}</td>
                         </tr>
                         <tr>
                             <td>{{ trans('cruds.quotation.fields.status') }}</td>
-                            <td>{{ $quotation->status }}</td>
-                        </tr>
-                        <tr>
-                            <td>{{ trans('cruds.quotation.fields.leadtime_type') }}</td>
-                            <td>{{ $quotation->leadtime_type }}</td>
-                        </tr>
-                        <tr>
-                            <td>{{ trans('cruds.quotation.fields.purchasing_leadtime') }}</td>
-                            <td>{{ $quotation->purchasing_leadtime }}</td>
-                        </tr>
-                        <tr>
-                            <td>{{ trans('cruds.quotation.fields.target_price') }}</td>
-                            <td>{{ number_format($quotation->target_price, 0, '', '.') }}</td>
-                        </tr>
-                        <tr>
-                            <td>{{ trans('cruds.quotation.fields.expired_date') }}</td>
-                            <td>{{ $quotation->expired_date }}</td>
+                            <td>{{ $quotation->status == 0 ? 'PO repeat' : ($quotation->status == 1 ? 'Online' : 'Penunjukkan Langsung') }}</td>
                         </tr>
                         <tr>
                             <td>{{ trans('cruds.quotation.fields.qty') }}</td>
