@@ -28,7 +28,6 @@
                                 <th>{{ trans('cruds.quotation.fields.id') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.qty') }}</th>
-                                <th>{{ trans('cruds.quotation.fields.bidding_count') }}</th>
                                 <th>
                                     &nbsp;
                                 </th>
@@ -40,7 +39,6 @@
                                     <td>{{ $val->id ?? '' }}</td>
                                     <td>{{ $val->po_no ?? '' }}</td>
                                     <td>{{ number_format($val->qty, 0, '', '.') }}</td>
-                                    <td>{{ $val->count }}</td>
                                     <td>
                                         {{-- @if (time() <= strtotime($val->expired_date)) --}}
                                         <a class="btn btn-xs btn-info" href="{{ route('vendor.quotation-repeat-detail', $val->id) }}">
@@ -64,6 +62,7 @@
 <script>
 $('#datatables-run').DataTable({
     dom: 'Bfrtip',
+    order: [[0, 'desc']],
     buttons: [
         'copy', 'csv', 'excel', 'pdf', 'print'
     ]

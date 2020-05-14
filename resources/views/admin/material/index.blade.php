@@ -55,36 +55,16 @@
                     <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                         <tr>
-                            <th width="10">
-
-                            </th>
-                            <th>
-                                {{ trans('cruds.masterMaterial.fields.id') }}
-                            </th>
-                            <th>
-                                {{ trans('cruds.masterMaterial.fields.code') }}
-                            </th>
-                            <th>
-                                {{ trans('cruds.masterMaterial.fields.small_description') }}
-                            </th>
-                            <th>
-                                {{ trans('cruds.masterMaterial.fields.description') }}
-                            </th>
-                            <th>
-                                {{ trans('cruds.masterMaterial.fields.m_group_id') }}
-                            </th>
-                            <th>
-                                {{ trans('cruds.masterMaterial.fields.m_type_id') }}
-                            </th>
-                            <th>
-                                {{ trans('cruds.masterMaterial.fields.m_plant_id') }}
-                            </th>
-                            <th>
-                                {{ trans('cruds.masterMaterial.fields.m_purchasing_id') }}
-                            </th>
-                            <th>
-                                {{ trans('cruds.masterMaterial.fields.m_profit_id') }}
-                            </th>
+                            <th>{{ trans('cruds.masterMaterial.fields.id') }}</th>
+                            <th>{{ trans('cruds.masterMaterial.fields.code') }}</th>
+                            <th>{{ trans('cruds.masterMaterial.fields.description') }}</th>
+                            <th>{{ trans('cruds.masterMaterial.fields.plant_code') }}</th>
+                            <th>{{ trans('cruds.masterMaterial.fields.material_type_code') }}</th>
+                            <th>{{ trans('cruds.masterMaterial.fields.uom_code') }}</th>
+                            <th>{{ trans('cruds.masterMaterial.fields.purchasing_group_code') }}</th>
+                            <th>{{ trans('cruds.masterMaterial.fields.storage_location_code') }}</th>
+                            <th>{{ trans('cruds.masterMaterial.fields.material_group_code') }}</th>
+                            <th>{{ trans('cruds.masterMaterial.fields.profit_center_code') }}</th>
                             <th>
                                 &nbsp;
                             </th>
@@ -93,36 +73,16 @@
                         <tbody>
                             @foreach($material as $key => $val)
                                 <tr data-entry-id="{{ $val->id }}">
-                                    <td>
-
-                                    </td>
-                                    <td>
-                                        {{ $val->id ?? '' }}
-                                    </td>
-                                    <td>
-                                        {{ $val->code ?? '' }}
-                                    </td>
-                                    <td>
-                                        {{ $val->small_description ?? '' }}
-                                    </td>
-                                    <td>
-                                        {{ $val->description ?? '' }}
-                                    </td>
-                                    <td>
-                                        {{ isset($val->material_group) ? $val->material_group->code . ' - ' . $val->material_group->description : '' }}
-                                    </td>
-                                    <td>
-                                        {{ isset($val->material_type) ? $val->material_type->code . ' - ' . $val->material_type->description : '' }}
-                                    </td>
-                                    <td>
-                                        {{ isset($val->plant) ? $val->plant->code . ' - ' . $val->plant->description : '' }}
-                                    </td>
-                                    <td>
-                                        {{ isset($val->purchasing_group) ? $val->purchasing_group->code . ' - ' . $val->purchasing_group->description : '' }}
-                                    </td>
-                                    <td>
-                                        {{ isset($val->profit_center) ? $val->profit_center->code . ' - ' . $val->profit_center->description : '' }}
-                                    </td>
+                                    <td>{{ $val->id ?? '' }}</td>
+                                    <td>{{ $val->code ?? '' }}</td>
+                                    <td>{{ $val->description ?? '' }}</td>
+                                    <td>{{ $val->plant_code ?? '' }}</td>
+                                    <td>{{ $val->material_type_code ?? '' }}</td>
+                                    <td>{{ $val->uom_code ?? '' }}</td>
+                                    <td>{{ $val->purchasing_group_code ?? '' }}</td>
+                                    <td>{{ $val->storage_location_code ?? '' }}</td>
+                                    <td>{{ $val->material_group_code ?? '' }}</td>
+                                    <td>{{ $val->profit_center_code ?? '' }}</td>
                                     <td>
                                         @can('material_show')
                                             <a class="btn btn-xs btn-primary" href="{{ route('admin.material.show', $val->id) }}">
@@ -144,9 +104,7 @@
                                             </form> --}}
                                             <button class="btn btn-xs btn-danger" onclick="deleteConfirmation({{$val->id}})">Delete</button>
                                         @endcan
-
                                     </td>
-
                                 </tr>
                             @endforeach
                         </tbody>

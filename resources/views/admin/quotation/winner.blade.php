@@ -64,7 +64,7 @@
                                                 <input type="hidden" name="vendor_price[]" value="{{ $val->quotation->vendor_price }}">
                                                 <td>{{ $val->id ?? '' }}</td>
                                                 <td>{{ $val->quotation->po_no ?? '' }}</td>
-                                                <td>{{ isset($val->vendor_id) ? $val->vendor->name . ' - ' . $val->vendor->email : '' }}</td>
+                                                <td>{{ isset($val->vendor_id) ? $val->vendor->name : '' }}</td>
                                                 <td>{{ $val->quotation->leadtime_type == 0 ? 'Date' : 'Day Count' }}</td>
                                                 <td>{{ $val->quotation->purchasing_leadtime ?? '' }}</td>
                                                 <td>{{ number_format($val->quotation->target_price, 0, '', '.') ?? '' }}</td>

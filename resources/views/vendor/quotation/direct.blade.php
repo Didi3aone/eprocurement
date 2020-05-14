@@ -29,7 +29,6 @@
                                 <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.notes') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.upload_file') }}</th>
-                                <th>{{ trans('cruds.quotation.fields.bidding_count') }}</th>
                                 <th>
                                     &nbsp;
                                 </th>
@@ -44,7 +43,6 @@
                                     <td>
                                         <a href="{{ asset('uploads/' . $val->upload_file) }}">{{ $val->upload_file }}</a>
                                     </td>
-                                    <td>{{ $val->count }}</td>
                                     <td>
                                         {{-- @if (time() <= strtotime($val->expired_date)) --}}
                                         <a class="btn btn-xs btn-info" href="{{ route('vendor.quotation-repeat-detail', $val->id) }}">
@@ -68,6 +66,7 @@
 <script>
 $('#datatables-run').DataTable({
     dom: 'Bfrtip',
+    order: [[0, 'desc']],
     buttons: [
         'copy', 'csv', 'excel', 'pdf', 'print'
     ]

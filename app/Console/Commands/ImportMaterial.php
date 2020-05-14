@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Imports\MaterialImport;
+use App\Imports\MaterialsImport;
 
 class ImportMaterial extends Command
 {
@@ -43,6 +43,6 @@ class ImportMaterial extends Command
         // (new MaterialImport)->withOutput($this->output)->import($this->argument('filename'));
         // $this->output->success('Import successful');
 
-        Excel::import(new MaterialImport, $this->argument('filename'));
+        Excel::import(new MaterialsImport, $this->argument('filename'));
     }
 }

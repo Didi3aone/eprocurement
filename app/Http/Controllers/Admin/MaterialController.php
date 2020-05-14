@@ -11,6 +11,7 @@ use App\Imports\MaterialImport;
 use App\Imports\NewMaterialImport;
 use App\Jobs\ImportMaterial;
 use App\Models\Material;
+use App\Models\MasterMaterial;
 use App\Models\MaterialGroup;
 use App\Models\MaterialType;
 use App\Models\Plant;
@@ -30,7 +31,7 @@ class MaterialController extends Controller
     {
         abort_if(Gate::denies('material_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $material = Material::all();
+        $material = MasterMaterial::all();
 
         return view('admin.material.index', compact('material'));
     }
@@ -38,7 +39,7 @@ class MaterialController extends Controller
     public function select (Request $request)
     {
         $pg = PurchasingGroup::where('code', $request->input('code'))->first();
-        $material = Material::where('m_purchasing_id', $pg->id)->get();
+        $material = MasterMaterial::where('m_purchasing_id', $pg->id)->get();
         
         $data = [];
         foreach ($material as $row) {
@@ -102,7 +103,7 @@ class MaterialController extends Controller
      */
     public function store(Request $request)
     {
-        $material = Material::create($request->all());
+        $material = MasterMaterial::create($request->all());
 
         return redirect()->route('admin.material.index')->with('status', trans('cruds.masterMaterial.alert_success_insert'));
     }
@@ -117,7 +118,7 @@ class MaterialController extends Controller
     {
         abort_if(Gate::denies('material_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $material = Material::findOrFail($id);
+        $material = MasterMaterial::findOrFail($id);
 
         return view('admin.material.show', compact('material'));
     }
@@ -132,7 +133,7 @@ class MaterialController extends Controller
     {
         abort_if(Gate::denies('material_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $material = Material::findOrFail($id);
+        $material = MasterMaterial::findOrFail($id);
 
         $materialGroups = MaterialGroup::all();
         $materialTypes = MaterialType::all();
@@ -159,7 +160,7 @@ class MaterialController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $material = Material::findOrFail($id);
+        $material = MasterMaterial::findOrFail($id);
         
         $material->code = $request->get('code');
         $material->small_description = $request->get('small_description');
@@ -185,7 +186,7 @@ class MaterialController extends Controller
     {
         abort_if(Gate::denies('material_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $delete = Material::where('id', $id)->delete();
+        $delete = MasterMaterial::where('id', $id)->delete();
 
         // check data deleted or not
         if ($delete == 1) {

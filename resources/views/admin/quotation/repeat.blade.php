@@ -42,14 +42,13 @@
                                             <td>{{ $val->po_no ?? '' }}</td>
                                             <td>{{ number_format($val->qty, 0, '', '.') }}</td>
                                             <td>
-                                                @can('quotation_show')
-                                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.quotation.show', $val->id) }}">
+                                                {{-- @can('quotation_show')
+                                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.quotation.show-repeat', $val->id) }}">
                                                         {{ trans('global.view') }}
                                                     </a>
-                                                @endcan
-
+                                                @endcan --}}
                                                 @can('quotation_edit')
-                                                    <a class="btn btn-xs btn-info" href="{{ route('admin.quotation.edit', $val->id) }}">
+                                                    <a class="btn btn-xs btn-info" href="{{ route('admin.quotation-edit-repeat', $val->id) }}">
                                                         {{ trans('global.edit') }}
                                                     </a>
                                                 @endcan
@@ -73,30 +72,8 @@
         </div>
     </div>
 </div>
-
-<div class="modal fade" id="modal_import" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">{{ trans('cruds.quotation.import') }}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form action="{{ route('admin.quotation.import') }}" method="post" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-body">
-                    <input type="file" name="xls_file" id="xls_file">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 @endsection
+
 @section('scripts')
 @parent
 <script>
