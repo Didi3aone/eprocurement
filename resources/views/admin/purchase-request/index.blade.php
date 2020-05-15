@@ -40,11 +40,11 @@
                                     <td>{{ $value->request_date }}</td>
                                     <td>{{ number_format($value->total, 0, '', '.') }}</td>
                                     <td>
-                                        @if( $value->is_validate == 1 && $value->approval_status == 12)
+                                        {{-- @if( $value->is_validate == 1 && $value->approval_status == 12) --}}
                                         <a class="open_modal_bidding btn btn-xs btn-success" id="open_modal" data-id="{{ $value->id }}" data-toggle="modal" data-target="#modal_create_po" href="javascript:;" >
                                             <i class="fa fa-truck"></i> Create PO
                                         </a>
-                                        @endif
+                                        {{-- @endif --}}
                                         <a class="open_modal_bidding btn btn-xs btn-info" href="{{ route('admin.purchase-request-show',$value->id) }}" >
                                             <i class="fa fa-eye"></i> Show
                                         </a> 
