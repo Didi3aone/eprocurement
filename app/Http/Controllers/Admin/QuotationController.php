@@ -97,7 +97,6 @@ class QuotationController extends Controller
             $vendors = $request->get('vendor_id');
 
             $quotation = new Quotation;
-            $quotation->request_id = $request->get('request_id');
             $quotation->po_no = $request->get('PR_NO');
             $quotation->leadtime_type = $request->get('leadtime_type');
             $quotation->purchasing_leadtime = $request->get('purchasing_leadtime');
@@ -141,7 +140,6 @@ class QuotationController extends Controller
 
         $quotation = new Quotation;
         $quotation->po_no = $request->get('PR_NO');
-        $quotation->request_id = $request->get('id');
         $quotation->qty = $qty;
         $quotation->status = 0;
         $quotation->vendor_id = $request->get('vendor_id');
@@ -178,7 +176,6 @@ class QuotationController extends Controller
         $quotation = new Quotation;
         $quotation->po_no = $request->get('PR_NO');
         $quotation->notes = $request->get('notes');
-        $quotation->request_id = $request->get('id');
         $quotation->upload_file = $filename;
         $quotation->status = 2;
         $quotation->vendor_id = $request->get('vendor_id');

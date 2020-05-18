@@ -16,7 +16,7 @@
                 <form class="form-material m-t-40" method="POST" action="{{ route("admin.quotation.update", [$quotation->id]) }}" enctype="multipart/form-data">
                     @method('PUT')
                     @csrf
-                    <input type="hidden" name="status" value="0">
+                    <input type="hidden" name="status" value="0 ">
                     <div class="form-group">
                         <label>{{ trans('cruds.quotation.fields.po_no') }}</label>
                         <input type="text" class="form-control form-control-line {{ $errors->has('po_no') ? 'is-invalid' : '' }}" name="po_no" value="{{ old('po_no', $quotation->po_no) }}" readonly> 

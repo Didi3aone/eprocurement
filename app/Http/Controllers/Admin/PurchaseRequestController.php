@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PurchaseRequest;
+use App\Models\PrPo;
 use App\Models\PurchaseRequestsDetail;
 use App\Models\PurchaseRequestsApproval;
 use App\Models\RequestNotes;
@@ -34,32 +35,78 @@ class PurchaseRequestController extends Controller
         return view('admin.purchase-request.index', compact('pr'));
     }
 
-    public function online (Request $request, $id)
+    protected function createPrPo ($id)
     {
-        $pr         = PurchaseRequest::find($id);
-        $prDetail   = PurchaseRequestsDetail::where('purchase_id', $id)->get();
-        $plant      = Plant::get();
+        $poNo = PrPo::orderBy('po_no', 'desc')->limit(1)->first();
+        $po_id = (empty($poNo)) ? 1 : intval($poNo->id);
+        $po_no = sprintf('1%08d', $po_id);
+        $pr_ids = explode(',', $id);
+        $materials = [];
+        $data = [];
+
+        \DB::beginTransaction();
+
+        try {
+            foreach ($pr_ids as $id) {
+                array_push($materials, PurchaseRequestsDetail::where('purchase_id', $id)->get());
+                $pr = PurchaseRequest::find($id);
+
+                $po = new PrPo;
+                $po->po_no = $po_no;
+                $po->pr_no = $pr->PR_NO;
+                $po->save();
+            }
+            
+            foreach ($materials as $key => $val) {
+                foreach ($materials[$key] as $k => $value)
+                    array_push($data, $value);
+            }
+
+            \DB::commit();
+        } catch (Exception $e) {
+            \DB::rollBack();
+        }
+
         $vendor     = Vendor::where('status', 1)->orderBy('name')->get();
 
-        return view('admin.purchase-request.online', compact('id', 'pr', 'prDetail', 'plant', 'vendor'));
+        return [
+            'po_no' => $po_no,
+            'data' => $data,
+            'vendor' => $vendor
+        ];
+    }
+
+    public function online (Request $request, $id)
+    {
+        $return = $this->createPrPo($id);
+
+        $data = $return['data'];
+        $po_no = $return['po_no'];
+        $vendor = $return['vendor'];
+        
+        return view('admin.purchase-request.online', compact('data', 'po_no', 'vendor'));
     }
 
     public function repeat (Request $request, $id)
     {
-        $pr         = PurchaseRequest::find($id);
-        $prDetail   = PurchaseRequestsDetail::where('purchase_id', $id)->get();
-        $vendor     = Vendor::where('status', 1)->orderBy('name')->get();
-
-        return view('admin.purchase-request.repeat', compact('id', 'pr', 'prDetail', 'vendor'));
+        $return = $this->createPrPo($id);
+        
+        $data = $return['data'];
+        $po_no = $return['po_no'];
+        $vendor = $return['vendor'];
+        
+        return view('admin.purchase-request.repeat', compact('data', 'po_no', 'vendor'));
     }
 
     public function direct (Request $request, $id)
     {
-        $pr         = PurchaseRequest::find($id);
-        $prDetail   = PurchaseRequestsDetail::where('purchase_id', $id)->get();
-        $vendor     = Vendor::where('status', 1)->orderBy('name')->get();
-
-        return view('admin.purchase-request.direct', compact('id', 'pr', 'prDetail', 'vendor'));
+        $return = $this->createPrPo($id);
+        
+        $data = $return['data'];
+        $po_no = $return['po_no'];
+        $vendor = $return['vendor'];
+        
+        return view('admin.purchase-request.direct', compact('data', 'po_no', 'vendor'));
     }
 
     /**
