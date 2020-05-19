@@ -1,0 +1,51 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreatePurchaseRequestReleaseItems extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('purchase_request_release_items', function (Blueprint $table) {
+            $table->string('id');
+            $table->primary('id');
+            $table->string('request_id')->nullable();
+            $table->string('request_detail_id')->nullable();
+            $table->string('description')->nullable();
+            $table->bigInteger('qty')->nullable();
+            $table->string('unit',20)->nullable();
+            $table->string('notes')->nullable();
+            $table->bigInteger('price')->nullable();
+            $table->string('material_id',20)->nullable();
+            $table->string('request_no',20)->nullable();
+            $table->integer('is_assets',10)->default(0);
+            $table->string('assets_no',10)->nullable();
+            $table->string('short_text',100)->nullable();
+            $table->string('text_id',100)->nullable();
+            $table->string('text_from',100)->nullable();
+            $table->string('text_line',100)->nullable();
+            $table->string('delivery_date_category',100)->nullable();
+            $table->date('delivery_date')->nullable();
+            $table->date('release_date')->nullable();
+            $table->string('account_assigment',10)->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('purchase_request_release_items');
+    }
+}

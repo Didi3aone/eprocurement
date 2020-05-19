@@ -209,6 +209,11 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::put('quotation/remove-vendor/{quotation_id}/{vendor_id}', 'QuotationController@removeVendor')->name('quotation.remove-vendor');
     Route::resource('quotation', 'QuotationController');
 
+    //billings 
+    Route::get('billing','BillingController@index')->name('billing');
+    Route::get('billing-show/{id}','BillingController@show')->name('billing-show');
+    Route::post('billing-post-approved','BillingController@storeApproved')->name('billing-post-approved');
+    Route::post('billing-post-rejected','BillingController@storeRejected')->name('billing-post-rejected');
     // soap
     // Route::get('soap', 'SoapController@show')->name('soap');
 });
@@ -241,5 +246,8 @@ Route::group([ 'prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor',
     Route::post('logout', '\App\Http\Controllers\AuthVendor\LoginController@logout')->name('logout');
 
     //billing
-    Route::resource('billing','BillingController');
+    Route::get('billing-create','BillingController@create')->name('billing-create');
+    Route::get('billing','BillingController@index')->name('billing');
+    Route::get('billing-show/{id}','BillingController@show')->name('billing-show');
+    Route::post('billing-post','BillingController@store')->name('billing-post');
 });

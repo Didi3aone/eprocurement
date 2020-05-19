@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.vendor')
 @section('content')
 <div class="row page-titles">
     <div class="col-md-5 col-8 align-self-center">
@@ -13,50 +13,137 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form class="form-material m-t-40" action="{{ route("vendor.billing.store") }}" enctype="multipart/form-data" method="post">
+                <form class="form-material m-t-40" action="{{ route("vendor.billing-post") }}" enctype="multipart/form-data" method="post">
                     @csrf
                     <div class="form-group">
-                        <label>Billing No.</label>
-                        <input type="text" class="form-control form-control-line {{ $errors->has('code') ? 'is-invalid' : '' }}" name="billing_no" value="{{ old('billing_no', '') }}"> 
-                        @if($errors->has('code'))
+                        <label>No Faktur Pajak</label>
+                        <input type="text" class="form-control form-control-line {{ $errors->has('no_faktur') ? 'is-invalid' : '' }}" name="no_faktur" value="{{ old('no_faktur', '') }}"> 
+                        @if($errors->has('no_faktur'))
                             <div class="invalid-feedback">
-                                {{ $errors->first('code') }}
+                                {{ $errors->first('no_faktur') }}
                             </div>
                         @endif
                     </div>
                     <div class="form-group">
-                        <label>Faktor No.</label>
-                        <input type="text" class="form-control form-control-line {{ $errors->has('code') ? 'is-invalid' : '' }}" name="faktur_no" value="{{ old('faktur_no', '') }}"> 
-                        @if($errors->has('code'))
+                        <label>TGL. Faktur Pajak <span class="text-danger">*</span></label>
+                        <input type="text" id="mdate" class="form-control form-control-line {{ $errors->has('tgl_faktur') ? 'is-invalid' : '' }}" name="tgl_faktur" value="{{ old('tgl_faktur', '') }}"> 
+                        @if($errors->has('tgl_faktur'))
                             <div class="invalid-feedback">
-                                {{ $errors->first('code') }}
+                                {{ $errors->first('tgl_faktur') }}
                             </div>
                         @endif
                     </div>
                     <div class="form-group">
-                        <label>Invoice No.</label>
-                        <input type="text" class="form-control form-control-line {{ $errors->has('code') ? 'is-invalid' : '' }}" name="invoice_no" value="{{ old('invoice_no', '') }}"> 
-                        @if($errors->has('code'))
+                        <label>Upload file Faktur <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control form-control-line" name="file_faktur" value="{{ old('file_faktur', '') }}"> 
+                    </div>
+                    <div class="form-group">
+                        <label>No. Invoice</label>
+                        <input type="text" class="form-control form-control-line {{ $errors->has('no_invoice') ? 'is-invalid' : '' }}" name="no_invoice" value="{{ old('no_invoice', '') }}"> 
+                        @if($errors->has('no_invoice'))
                             <div class="invalid-feedback">
-                                {{ $errors->first('code') }}
+                                {{ $errors->first('no_invoice') }}
                             </div>
                         @endif
                     </div>
                     <div class="form-group">
-                        <label>Upload file billing</label>
-                        <input type="file" class="form-control form-control-line" name="file_billing" value="{{ old('invoice_no', '') }}"> 
+                        <label>Tgl. Invoice <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control mdate2 form-control-line {{ $errors->has('tgl_invoice') ? 'is-invalid' : '' }}" name="tgl_invoice" value="{{ old('tgl_invoice', '') }}"> 
+                        @if($errors->has('tgl_invoice'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('tgl_invoice') }}
+                            </div>
+                        @endif
                     </div>
                     <div class="form-group">
-                        <label>Upload file Faktur</label>
-                        <input type="file" class="form-control form-control-line" name="file_faktur" value="{{ old('invoice_no', '') }}"> 
+                        <label>Nominal Invoice Sesudah PPN <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-line {{ $errors->has('nominal_inv_after_ppn') ? 'is-invalid' : '' }}" name="nominal_inv_after_ppn" value="{{ old('nominal_inv_after_ppn', '') }}"> 
+                        @if($errors->has('nominal_inv_after_ppn'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('nominal_inv_after_ppn') }}
+                            </div>
+                        @endif
                     </div>
                     <div class="form-group">
-                        <label>Upload file Invoice</label>
-                        <input type="file" class="form-control form-control-line" name="file_invoice" value="{{ old('invoice_no', '') }}"> 
+                        <label>Upload file Invoice <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control form-control-line" name="file_invoice" value="{{ old('file_invoice', '') }}"> 
                     </div>
+                    <div class="form-group">
+                        <label>PPN <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-line {{ $errors->has('ppn') ? 'is-invalid' : '' }}" name="ppn" value="{{ old('ppn', '') }}"> 
+                        @if($errors->has('ppn'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('ppn') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>DPP <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-line {{ $errors->has('dpp') ? 'is-invalid' : '' }}" name="dpp" value="{{ old('dpp', '') }}"> 
+                        @if($errors->has('dpp'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('dpp') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>No. Rekening <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-line {{ $errors->has('no_rekening') ? 'is-invalid' : '' }}" name="no_rekening" value="{{ old('no_rekening', '') }}"> 
+                        @if($errors->has('no_rekening'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('no_rekening') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>No. Surat Jalan <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-line {{ $errors->has('no_surat_jalan') ? 'is-invalid' : '' }}" name="no_surat_jalan" value="{{ old('no_surat_jalan', '') }}"> 
+                        @if($errors->has('no_surat_jalan'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('no_surat_jalan') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>TGL. Surat Jalan <span class="text-danger">*</span></label>
+                        <input type="text" id="" class="form-control mdate form-control-line {{ $errors->has('tgl_surat_jalan') ? 'is-invalid' : '' }}" name="tgl_surat_jalan" value="{{ old('tgl_surat_jalan', '') }}"> 
+                        @if($errors->has('tgl_surat_jalan'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('tgl_surat_jalan') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>NPWP</label>
+                        <input type="text" id="" class="form-control form-control-line {{ $errors->has('npwp') ? 'is-invalid' : '' }}" name="npwp" value="{{ old('npwp', '') }}"> 
+                        @if($errors->has('npwp'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('npwp') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>Surat Ket. Bebas Pajak</label>
+                        <input type="file" id="" class="form-control form-control-line {{ $errors->has('surat_ket_bebas_pajak') ? 'is-invalid' : '' }}" name="surat_ket_bebas_pajak" value="{{ old('surat_ket_bebas_pajak', '') }}"> 
+                        @if($errors->has('surat_ket_bebas_pajak'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('surat_ket_bebas_pajak') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>PO <span class="text-danger">*</span> </label>
+                        <input type="file" class="form-control form-control-line" name="po" value="{{ old('po', '') }}"> 
+                    </div>
+
+                    <div class="form-group">
+                        <label>Keterangan PO</label>
+                        <textarea class="form-control form-control-line" name="keterangan_po"></textarea>
+                    </div>
+                    
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.save') }}</button>
-                        <a href="{{ route('admin.plant.index') }}" type="button" class="btn btn-inverse">Cancel</a>
+                        <button type="submit" class="btn btn-success" id="save"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
+                        <a href="{{ route('vendor.billing') }}" type="button" class="btn btn-inverse">Cancel</a>
                     </div>
                 </form>
             </div>

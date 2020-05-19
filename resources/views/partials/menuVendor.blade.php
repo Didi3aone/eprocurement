@@ -37,7 +37,7 @@
                     </a>
                     <ul aria-expanded="false" class="collapse">
                         <li>
-                            <a href="{{ route('vendor.billing.index') }}" class="">
+                            <a href="{{ route('vendor.billing') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
                                 List billing
                             </a>

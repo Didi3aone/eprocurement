@@ -26,8 +26,14 @@
     <!-- You can change the theme colors from here -->
     <link href="{{ asset('css/colors/green.css') }}" id="theme" rel="stylesheet">
     <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('plugins/toast-master/css/jquery.toast.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
     <link rel="stylesheet" href="{{ asset('plugins/jquery.datetimepicker/jquery.datetimepicker.min.css') }}">
+    <link href="{{ asset('plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css') }}" rel="stylesheet">
+    <link href="{{ asset('plugins/bootstrap-datepicker/bootstrap-datepicker.min.css') }}" rel="stylesheet" type="text/css" />
+    <!-- Daterange picker plugins css -->
+    <link href="{{ asset('plugins/timepicker/bootstrap-timepicker.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('plugins/bootstrap-daterangepicker/daterangepicker.css') }}" rel="stylesheet">
     {{-- <link href="{{ asset('plugins/sweetalert/sweetalert.css') }}" rel="stylesheet" type="text/css"> --}}
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -306,9 +312,56 @@
     <script src="{{ asset('plugins/sweetalert/jquery.sweet-alert.custom.js') }}"></script> --}}
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="{{ asset('plugins/moment/moment.js') }}"></script>
+    <script src="{{ asset('plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js') }}"></script>
+    <script src="{{ asset('plugins/bootstrap-datepicker/bootstrap-datepicker.min.js') }}"></script>
+    <!-- Date range Plugin JavaScript -->
+    <script src="{{ asset('plugins/timepicker/bootstrap-timepicker.min.js') }}"></script>
+    <script src="{{ asset('plugins/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
     <script src="{{ asset('plugins/jquery.datetimepicker/jquery.datetimepicker.full.min.js') }}"></script>
+    <script src="{{ asset('plugins/toast-master/js/jquery.toast.js') }}"></script>
     <script src="{{ asset('js/jquery.mask.min.js') }}"></script>
     <script src="{{ asset('js/global.js') }}"></script>
+    <script>
+        $('#save').on('click', function () {
+            $("form").submit(function (e) {
+                //var messageLength = CKEDITOR.instances['description'].getData().replace(/<[^>]*>/gi, '').length;
+                $(this).submit(function () {
+                    return false;
+                });
+                $("#save").attr('disabled', 'disabled');
+                $('#save').text('Please wait ...')
+                return true;
+            });
+        });
+        $('#mdate').bootstrapMaterialDatePicker({ weekStart : 0, time: false });
+        jQuery('#datepicker-autoclose').datepicker({
+            autoclose: true,
+            todayHighlight: true
+        });
+        @if(session('status')) 
+            $.toast({
+                heading: 'Success',
+                text: '{{ session('status') }}',
+                position: 'top-right',
+                loaderBg:'#ff6849',
+                icon: 'success',
+                hideAfter: 3500, 
+                stack: 6
+            });
+        @endif
+
+        @if(session('error'))
+            $.toast({
+                heading: 'Error !!!',
+                text: '{{ session('error') }}',
+                position: 'top-right',
+                loaderBg:'#ff6849',
+                icon: 'error',
+                hideAfter: 3500
+            });
+        @endif
+    </script>
     @yield('scripts')
 </body>
 </html>

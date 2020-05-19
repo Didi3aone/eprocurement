@@ -24,6 +24,7 @@
                     <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                             <tr>
+                                <th>Vendor</th>
                                 <th>Faktur No.</th>
                                 <th>Invoice No.</th>
                                 <th>Status</th>
@@ -35,13 +36,12 @@
                         <tbody>
                             @foreach($billing as $key => $rows)
                                 <tr>
+                                    <td>{{ $rows->getVendor['name'] }}</td>
                                     <td>{{ $rows->no_faktur }}</td>
                                     <td>{{ $rows->no_invoice }}</td>
                                     <td>{{ App\Models\Vendor\Billing::TypeStatus[$rows->status] }}</td>
                                     <td>
-                                        <a href="" class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i> Edit</a>
-                                        <a href="" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Hapus</a>
-                                        <a href="" class="btn btn-info btn-xs"><i class="fa fa-eye"></i> Show</a>
+                                        <a href="{{ route('admin.billing-show',$rows->id) }}" class="btn btn-info btn-xs"><i class="fa fa-eye"></i> Show</a>
                                     </td>
                                 </tr>
                             @endforeach

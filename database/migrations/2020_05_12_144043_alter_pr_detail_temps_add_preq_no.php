@@ -1,0 +1,32 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class AlterPrDetailTempsAddPreqNo extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('purchase_request_detail_temps', function (Blueprint $table) {
+            $table->string('preq_item',10)->default(0010);
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('purchase_request_detail_temps', function (Blueprint $table) {
+            $table->dropColumn('preq_item')->default(0010);
+        });
+    }
+}

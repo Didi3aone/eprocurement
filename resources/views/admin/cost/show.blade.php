@@ -17,34 +17,34 @@
                     <tbody>
                         <tr>
                             <th>
-                                {{ trans('cruds.cost.fields.id') }}
+                                Vendor
                             </th>
                             <td>
-                                {{ $cost->id }}
+                                {{ $billing->getVendor['name'] }}
                             </td>
                         </tr>
                         <tr>
                             <th>
-                                {{ trans('cruds.cost.fields.area') }}
+                                Billing No.
                             </th>
                             <td>
-                                {{ $cost->area }}
+                                {{ $billing->billing_no }}
                             </td>
                         </tr>
                         <tr>
                             <th>
-                                {{ trans('cruds.cost.fields.cost_center') }}
+                                Faktur No.
                             </th>
                             <td>
-                                {{ $cost->cost_center }}
+                                {{ $billing->faktur_no }}
                             </td>
                         </tr>
                         <tr>
                             <th>
-                                {{ trans('cruds.cost.fields.company_code') }}
+                                Invoice No
                             </th>
                             <td>
-                                {{ $cost->company_code }}
+                                {{ $billing->invoice_no }}
                             </td>
                         </tr>
                         <tr>

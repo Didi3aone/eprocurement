@@ -86,6 +86,19 @@
                     </ul>
                 </li>
                 @endcan
+                <li class=""> 
+                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-clipboard"></i>
+                        <span class="hide-menu"> {{ 'Billing' }} </span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse">
+                        <li>
+                            <a href="{{ route('admin.billing') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> 
+                                List billing
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 {{-- start master menu --}}
                 @can('master_access')
                 <li class=""> 
