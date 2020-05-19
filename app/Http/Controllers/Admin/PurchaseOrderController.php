@@ -334,6 +334,18 @@ class PurchaseOrderController extends Controller
         return view('admin.purchase-order.form', compact('quotation', 'po', 'pr', 'types', 'poinvoice'));
     }
 
+    public function release ()
+    {
+        return view('admin.release-strategy.index');
+    }
+
+    public function direct ()
+    {
+        $pr = PurchaseOrder::get();
+
+        return view('admin.purchase-order.direct', compact('pr'));
+    }
+
     /**
      * Show the form for editing the specified resource.
      *

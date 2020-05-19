@@ -23,14 +23,11 @@
             <div class="card-body">
                 <form class="form-rn m-t-40" action="{{ route("admin.quotation-save-repeat") }}" enctype="multipart/form-data" method="post">
                     @csrf
-                    <input type="hidden" name="id" value="{{ $id }}">
-                    <input type="hidden" value="{{ $pr->id }}" name="request_id">
-                    <input type="hidden" value="0" name="status">
                     <div class="row">
                         <div class="col-lg-4">
                             <div class="form-group">
                                 <label>{{ trans('cruds.purchase-order.fields.PR_NO') }}</label>
-                                <input type="text" class="form-control form-control-line {{ $errors->has('PR_NO') ? 'is-invalid' : '' }}" name="PR_NO" value="{{ old('PR_NO', $pr->PR_NO) }}" readonly> 
+                                <input type="text" class="form-control form-control-line {{ $errors->has('PR_NO') ? 'is-invalid' : '' }}" name="PR_NO" value="{{ old('PR_NO', $po_no) }}" readonly> 
                                 @if($errors->has('PR_NO'))
                                     <div class="invalid-feedback">
                                         {{ $errors->first('PR_NO') }}
@@ -107,7 +104,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($prDetail as $key => $value)
+                                @foreach($data as $key => $value)
                                     <tr>
                                         <td><input type="text" class="form-control" name="description[]" readonly value="{{ $value->description }}"></td>
                                         <td><input type="text" class="form-control" name="qty[]" readonly value="{{ number_format($value->qty, 0, '', '.') }}"></td>

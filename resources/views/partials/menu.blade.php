@@ -83,6 +83,18 @@
                                 List PO
                             </a>
                         </li>
+                        <li>
+                            <a href="{{ route('admin.purchase-order.direct') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> 
+                                Direct PO
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.purchase-order.release') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> 
+                                Release Strategy
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 @endcan

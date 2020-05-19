@@ -532,6 +532,7 @@ return [
             'bidding' => 'Bidding',
             'type' => 'Document Type',
             'po_no' => 'Request No',
+            'PR_NO' => 'Request No',
             'vendor_id' => 'Vendor',
             'upload_file' => 'Attachment',
             'po_date' => 'Create Date',

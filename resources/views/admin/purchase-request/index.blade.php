@@ -21,38 +21,60 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <div class="table-responsive m-t-40">
-                    <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
-                        <thead>
-                            <tr>
-                                <th>Request No.</th>
-                                <th>Notes</th>
-                                <th>Date</th>
-                                <th>Total</th>
-                                <th>&nbsp;</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($pr as $key => $value)
-                                <tr>
-                                    <td>{{ $value->PR_NO }}</td>
-                                    <td>{{ $value->notes }}</td>
-                                    <td>{{ $value->request_date }}</td>
-                                    <td>{{ number_format($value->total, 0, '', '.') }}</td>
-                                    <td>
-                                        @if( $value->is_validate == 1 && $value->approval_status == 12)
-                                        <a class="open_modal_bidding btn btn-xs btn-success" id="open_modal" data-id="{{ $value->id }}" data-toggle="modal" data-target="#modal_create_po" href="javascript:;" >
-                                            <i class="fa fa-truck"></i> Create PO
-                                        </a>
-                                        @endif
-                                        <a class="open_modal_bidding btn btn-xs btn-info" href="{{ route('admin.purchase-request-show',$value->id) }}" >
-                                            <i class="fa fa-eye"></i> Show
-                                        </a> 
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="table-responsive m-t-40">
+                            <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>&nbsp;</th>
+                                        <th>Request No.</th>
+                                        <th>Notes</th>
+                                        <th>Date</th>
+                                        <th>Total</th>
+                                        <th>&nbsp;</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($pr as $key => $value)
+                                        <tr>
+                                            <td>
+                                                <input type="checkbox" name="id[]" id="check_{{ $value->id }}" class="check_pr" value="{{ $value->id }}">
+                                                <label for="check_{{ $value->id }}">&nbsp;</label>
+                                            </td>
+                                            <td>{{ $value->PR_NO }}</td>
+                                            <td>{{ $value->notes }}</td>
+                                            <td>{{ $value->request_date }}</td>
+                                            <td>{{ number_format($value->total, 0, '', '.') }}</td>
+                                            <td>
+                                                {{-- @if( $value->is_validate == 1 && $value->approval_status == 12) --}}
+                                                {{-- <a class="open_modal_bidding btn btn-xs btn-success" id="open_modal" data-id="{{ $value->id }}" data-toggle="modal" data-target="#modal_create_po" href="javascript:;" >
+                                                    <i class="fa fa-truck"></i> Create PO
+                                                </a> --}}
+                                                {{-- @endif --}}
+                                                <a class="open_modal_bidding btn btn-xs btn-info" href="{{ route('admin.purchase-request-show',$value->id) }}" >
+                                                    <i class="fa fa-eye"></i> Show
+                                                </a> 
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <a 
+                            class="open_modal_bidding btn btn-success" 
+                            id="open_modal" 
+                            data-toggle="modal" 
+                            data-target="#modal_create_po" 
+                            href="javascript:;"
+                        >
+                            <i class="fa fa-check"></i> Create PO
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -100,10 +122,15 @@
         e.preventDefault()
 
         const id = $(this).data('id')
+        const check_pr = $('.check_pr:checked')
+        
+        let ids = []
+        for (let i = 0; i < check_pr.length; i++)
+            ids.push(check_pr[i].value)
 
-        $(document).find('.bidding-online').attr('href', '{{ url('admin/purchase-request-online') }}/' + id)
-        $(document).find('.bidding-repeat').attr('href', '{{ url('admin/purchase-request-repeat') }}/' + id)
-        $(document).find('.bidding-direct').attr('href', '{{ url('admin/purchase-request-direct') }}/' + id)
+        $(document).find('.bidding-online').attr('href', '{{ url('admin/purchase-request-online') }}/' + ids)
+        $(document).find('.bidding-repeat').attr('href', '{{ url('admin/purchase-request-repeat') }}/' + ids)
+        $(document).find('.bidding-direct').attr('href', '{{ url('admin/purchase-request-direct') }}/' + ids)
     })
 
     $('#datatables-run').DataTable({
