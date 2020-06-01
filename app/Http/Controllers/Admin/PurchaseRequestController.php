@@ -41,7 +41,7 @@ class PurchaseRequestController extends Controller
             'purchase_requests_details.release_date',
             \DB::raw('purchase_requests.request_no as pr_no'),
             'purchase_requests.request_date',
-            'purchase_requests.total',
+            'purchase_requests.total'
         )
             ->leftJoin('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
             ->where('purchase_requests_details.is_validate', 1)
@@ -333,7 +333,7 @@ class PurchaseRequestController extends Controller
                     ->where('approval_position', $posisi)
                         ->update([
                         'status' => 0,
-                        'flag' => 1,
+                        'flag' => 1
                     ]);
 
                 PurchaseRequest::where('id', $request->req_id)
@@ -345,7 +345,7 @@ class PurchaseRequestController extends Controller
             $updates = PurchaseRequestsApproval::where('id',$request->id)->update([
                 'status' => 1,
                 'flag' => 2,
-                'approve_date' => date('Y-m-d H:i:s'),
+                'approve_date' => date('Y-m-d H:i:s')
             ]);
 
             DB::commit();

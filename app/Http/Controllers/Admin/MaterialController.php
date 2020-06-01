@@ -147,7 +147,7 @@ class MaterialController extends Controller
             'materialTypes',
             'plants',
             'purchasingGroups',
-            'profitCenters',
+            'profitCenters'
         ));
     }
 
