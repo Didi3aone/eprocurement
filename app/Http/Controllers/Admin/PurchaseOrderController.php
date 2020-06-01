@@ -110,7 +110,7 @@ class PurchaseOrderController extends Controller
     {
         // abort_if(Gate::denies('purchase_order_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $pr         = PurchaseRequest::find($id);
-        $prDetail   = PurchaseRequestsDetail::where('purchase_id', $id)->get();
+        $prDetail   = PurchaseRequestsDetail::where('request_id', $id)->get();
         $plant      = Plant::get();
         $vendor     = Vendor::where('status', 1)->orderBy('name')->get();
 
@@ -125,17 +125,17 @@ class PurchaseOrderController extends Controller
      */
     public function store(Request $request)
     {
-        if (empty($request->vendor_id))
-            return redirect()->route('admin.purchase-order-create-po', $request->get('id'))->with('status', 'No vendor chosen!');
+        if (empty($request->get('vendor_id')))
+            return redirect()->route('admin.purchase-order-create-po', $request->get('request_id'))->with('status', 'No vendor chosen!');
 
         if ($request->get('bidding') == 0) { // po repeat
             // create Quotation
             if (empty($request->get('qty')[0]))
-                return redirect()->route('admin.purchase-order-create-po', $request->get('id'))->with('status', 'Quantity cannot be zero!');
+                return redirect()->route('admin.purchase-order-create-po', $request->get('request_id'))->with('status', 'Quantity cannot be zero!');
 
             $quotation = new Quotation;
             $quotation->po_no = $request->get('request_no');
-            $quotation->request_id = $request->get('id');
+            $quotation->request_id = $request->get('request_id');
             $qty = str_replace('.', '', $request->get('qty')[0]);
             $quotation->qty = $qty;
             $quotation->status = 0;
@@ -171,7 +171,7 @@ class PurchaseOrderController extends Controller
             $quotation = new Quotation;
             $quotation->po_no = $request->get('request_no');
             $quotation->notes = $request->get('notes');
-            $quotation->request_id = $request->get('id');
+            $quotation->request_id = $request->get('request_id');
             $quotation->upload_file = $filename;
             $quotation->status = 2;
             $quotation->vendor_id = $request->get('vendor_id')[0];
@@ -295,7 +295,7 @@ class PurchaseOrderController extends Controller
         $quotation = Quotation::where('po_no', $po->po_no)->get();
         $poinvoice = PurchaseOrderInvoice::where('purchase_order_id', $po->id)->get()->first();
         $pr = PurchaseRequestsDetail::select(
-            'purchase_requests_details.purchase_id',
+            'purchase_requests_details.request_id',
             'purchase_requests_details.description',
             'purchase_requests_details.qty',
             'purchase_requests_details.unit',
@@ -324,7 +324,7 @@ class PurchaseOrderController extends Controller
             ->join('materials', 'materials.code', '=', 'purchase_requests_details.material_id')
             ->join('material_groups', 'material_groups.id', '=', 'materials.m_group_id')
             ->join('plants', 'plants.id', '=', 'materials.m_plant_id')
-            ->where('purchase_requests_details.purchase_id', $id)
+            ->where('purchase_requests_details.request_id', $id)
             ->get();
 
         $types = DocumentType::get();

@@ -24,7 +24,7 @@
                 <form class="form-rn m-t-40" action="{{ route("admin.purchase-order.store") }}" enctype="multipart/form-data" method="post">
                     @csrf
                     <input type="hidden" name="id" value="{{ $id }}">
-                    <input type="hidden" value="{{ $pr->id }}" name="request_id">
+                    <input type="hidden" value="{{ $pr?$pr->request_id:null }}" name="request_id">
                     <input type="hidden" value="0" name="status">
                     <div class="row">
                         <div class="col-lg-8">
@@ -52,7 +52,7 @@
                         <div class="col-lg-4">
                             <div class="form-group">
                                 <label>{{ trans('cruds.purchase-order.fields.request_no') }}</label>
-                                <input type="text" class="form-control form-control-line {{ $errors->has('request_no') ? 'is-invalid' : '' }}" name="request_no" value="{{ old('request_no', $pr->request_no) }}" readonly> 
+                                <input type="text" class="form-control form-control-line {{ $errors->has('request_no') ? 'is-invalid' : '' }}" name="request_no" value="{{ old('request_no', $pr?$pr->request_no:null) }}" readonly> 
                                 @if($errors->has('request_no'))
                                     <div class="invalid-feedback">
                                         {{ $errors->first('request_no') }}
