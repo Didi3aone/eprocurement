@@ -48,6 +48,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     // Material
     Route::delete('material/destroy', 'MaterialController@massDestroy')->name('material.massDestroy');
     Route::get('material/select', 'MaterialController@select')->name('material.select');
+    Route::get('material/list', 'MaterialController@list')->name('material.list');
     Route::post('material/import', 'MaterialController@import')->name('material.import');
     Route::resource('material', 'MaterialController');
 
@@ -76,46 +77,6 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::post('profit_center/import', 'ProfitCenterController@import')->name('profit_center.import');
     Route::resource('profit_center', 'ProfitCenterController');
     // ======== END MATERIAL routes =========
-
-    // bidding
-    // Route::delete('bidding/destroy', 'BiddingController@massDestroy')->name('bidding.massDestroy');
-    // Route::post('bidding/import', 'BiddingController@import')->name('bidding.import');
-    // Route::resource('bidding', 'BiddingController');
-
-    // // faktur
-    // Route::delete('faktur/destroy', 'FakturController@massDestroy')->name('faktur.massDestroy');
-    // Route::post('faktur/import', 'FakturController@import')->name('faktur.import');
-    // Route::resource('faktur', 'FakturController');
-
-    // // procListRN2PR
-    // Route::delete('procListRN2PR/destroy', 'ProcListRN2PRController@massDestroy')->name('procListRN2PR.massDestroy');
-    // Route::post('procListRN2PR/import', 'ProcListRN2PRController@import')->name('procListRN2PR.import');
-    // Route::resource('procListRN2PR', 'ProcListRN2PRController');
-
-    // // procApprovalRN2PR
-    // Route::delete('procApprovalRN2PR/destroy', 'ProcApprovalRN2PRController@massDestroy')->name('procApprovalRN2PR.massDestroy');
-    // Route::post('procApprovalRN2PR/import', 'ProcApprovalRN2PRController@import')->name('procApprovalRN2PR.import');
-    // Route::resource('procApprovalRN2PR', 'ProcApprovalRN2PRController');
-
-    // // procValidasiAset
-    // Route::delete('procValidasiAset/destroy', 'ProcValidasiAsetController@massDestroy')->name('procValidasiAset.massDestroy');
-    // Route::post('procValidasiAset/import', 'ProcValidasiAsetController@import')->name('procValidasiAset.import');
-    // Route::resource('procValidasiAset', 'ProcValidasiAsetController');
-
-    // // procPR2PO
-    // Route::delete('procPR2PO/destroy', 'ProcPR2POController@massDestroy')->name('procPR2PO.massDestroy');
-    // Route::post('procPR2PO/import', 'ProcPR2POController@import')->name('procPR2PO.import');
-    // Route::resource('procPR2PO', 'ProcPR2POController');
-
-    // // procBidding
-    // Route::delete('procBidding/destroy', 'ProcBiddingController@massDestroy')->name('procBidding.massDestroy');
-    // Route::post('procBidding/import', 'ProcBiddingController@import')->name('procBidding.import');
-    // Route::resource('procBidding', 'ProcBiddingController');
-
-    // // procVerifikasiFaktur
-    // Route::delete('procVerifikasiFaktur/destroy', 'ProcVerifikasiFakturController@massDestroy')->name('procVerifikasiFaktur.massDestroy');
-    // Route::post('procVerifikasiFaktur/import', 'ProcVerifikasiFakturController@import')->name('procVerifikasiFaktur.import');
-    // Route::resource('procVerifikasiFaktur', 'ProcVerifikasiFakturController');
 
     // Cost
     Route::delete('cost/destroy', 'CostController@massDestroy')->name('cost.massDestroy');

@@ -14,6 +14,7 @@
     <title>{{ trans('panel.site_title') }}</title>
     <!-- Bootstrap Core CSS -->
     <link href="{{ asset('plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
     
     <!-- chartist CSS -->
     <link href="{{ asset('plugins/chartist-js/dist/chartist.min.css') }}" rel="stylesheet">

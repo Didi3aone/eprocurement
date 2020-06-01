@@ -52,12 +52,8 @@
                                             <td>{{ $value->material_id }}</td>
                                             <td>{{ $value->unit }}</td>
                                             <td>{{ $value->description }}</td>
-                                            <td>
-                                                <input type="text" class="money form-control qty" name="qty[]" value="{{ $value->qty }}">
-                                            </td>
-                                            <td>
-                                                <input type="text" class="money form-control price" name="price[]" value="{{ $value->price }}">
-                                            </td>
+                                            <td><input type="text" class="money form-control qty" name="qty[]" value="{{ $value->qty }}"></td>
+                                            <td><input type="text" class="money form-control price" name="price[]" value="{{ $value->price }}"></td>
                                             <td>
                                                 {{-- @if( $value->is_validate == 1 && $value->approval_status == 12) --}}
                                                 {{-- <a class="open_modal_bidding btn btn-xs btn-success" id="open_modal" data-id="{{ $value->id }}" data-toggle="modal" data-target="#modal_create_po" href="javascript:;" >
@@ -152,7 +148,7 @@
         order: [[0, 'desc']],
         buttons: [
             'copy', 'csv', 'excel', 'pdf', 'print'
-        ]
+        ],
     });
 
     $(".approve").click(function(e) {

@@ -71,7 +71,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                            @foreach($material as $key => $val)
+                            {{-- @foreach($material as $key => $val)
                                 <tr data-entry-id="{{ $val->id }}">
                                     <td>{{ $val->id ?? '' }}</td>
                                     <td>{{ $val->code ?? '' }}</td>
@@ -97,16 +97,11 @@
                                         @endcan
 
                                         @can('material_delete')
-                                            {{-- <form action="{{ route('admin.permissions.destroy', $val->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
-                                                <input type="hidden" name="_method" value="DELETE">
-                                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
-                                            </form> --}}
                                             <button class="btn btn-xs btn-danger" onclick="deleteConfirmation({{$val->id}})">Delete</button>
                                         @endcan
                                     </td>
                                 </tr>
-                            @endforeach
+                            @endforeach --}}
                         </tbody>
                     </table>
                 </div>
@@ -153,11 +148,65 @@
         $("#danger-alert").slideUp(500);
     });
 
+    // $('#datatables-run').DataTable({
+    //     dom: 'Bfrtip',
+    //     buttons: [
+    //         'copy', 'csv', 'excel', 'pdf', 'print'
+    //     ]
+    // });
+
     $('#datatables-run').DataTable({
         dom: 'Bfrtip',
+        // order: [[0, 'desc']],
+        processing: true,
+        serverSide: true,
         buttons: [
             'copy', 'csv', 'excel', 'pdf', 'print'
-        ]
+        ],
+        ajax: '{{ route('admin.material.list') }}',
+        columns: [
+            { data: 'id', name: 'id' },
+            { data: 'code', name: 'code' },
+            { data: 'description', name: 'description' },
+            { data: 'plant_code', name: 'plant_code' },
+            { data: 'material_type_code', name: 'material_type_code' },
+            { data: 'uom_code', name: 'uom_code' },
+            { data: 'purchasing_group_code', name: 'purchasing_group_code' },
+            { data: 'storage_location_code', name: 'storage_location_code' },
+            { data: 'material_group_code', name: 'material_group_code' },
+            { data: 'profit_center_code', name: 'profit_center_code' },
+            {
+                data: null, 
+                class: 'text-center',
+                width: '5%',
+                'bSortable': false, 
+                'bSearchable': false, 
+                render: function(data) {
+                    console.log(data)
+                    let html = ''
+                    const show_url = '{{ url('admin/material/') }}' + data.id
+                    const edit_url = '{{ url('admin/material/') }}' + data.id + '/edit'
+
+                    @can('material_show')
+                    html = `<a class="btn btn-xs btn-primary" href="${show_url}">
+                            {{ trans('global.view') }}
+                        </a>`
+                    @endcan
+
+                    @can('material_edit')
+                    html = `<a class="btn btn-xs btn-info" href="${edit_url}">
+                            {{ trans('global.edit') }}
+                        </a>`
+                    @endcan
+
+                    @can('material_delete')
+                    html = `<button class="btn btn-xs btn-danger" onclick="deleteConfirmation(${data.id})">Delete</button>`
+                    @endcan
+
+                    return html
+                }
+            }
+        ],
     });
 
     function deleteConfirmation(id) {

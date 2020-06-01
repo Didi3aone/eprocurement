@@ -17,6 +17,7 @@ use App\Models\MaterialType;
 use App\Models\Plant;
 use App\Models\PurchasingGroup;
 use App\Models\ProfitCenter;
+use DataTables;
 use Gate;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -31,9 +32,12 @@ class MaterialController extends Controller
     {
         abort_if(Gate::denies('material_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $material = MasterMaterial::all();
-
-        return view('admin.material.index', compact('material'));
+        return view('admin.material.index');
+    }
+    
+    public function list ()
+    {
+        return DataTables::of(MasterMaterial::limit(10000)->get())->make(true);
     }
 
     public function select (Request $request)

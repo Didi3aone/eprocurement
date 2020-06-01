@@ -181,6 +181,11 @@ return [
          */
         Maatwebsite\Excel\ExcelServiceProvider::class,
 
+        /*
+         * Datatables
+         */
+        Yajra\DataTables\DataTablesServiceProvider::class,
+
     ],
 
     /*
@@ -237,6 +242,11 @@ return [
          * Excel Import Export
          */
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+
+        /*
+         * Datatables
+         */
+        'DataTables' => Yajra\DataTables\Facades\DataTables::class,
 
     ],
 
