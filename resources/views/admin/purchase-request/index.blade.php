@@ -28,24 +28,36 @@
                                 <thead>
                                     <tr>
                                         <th>&nbsp;</th>
-                                        <th>Request No.</th>
-                                        <th>Notes</th>
-                                        <th>Date</th>
-                                        <th>Total</th>
+                                        <th>PR No</th>
+                                        <th>Request Date</th>
+                                        <th>RN No</th>
+                                        <th>Material ID</th>
+                                        <th>Unit</th>
+                                        <th>Description</th>
+                                        <th>Qty</th>
+                                        <th>Price</th>
                                         <th>&nbsp;</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($pr as $key => $value)
+                                    @foreach($materials as $key => $value)
                                         <tr>
                                             <td>
                                                 <input type="checkbox" name="id[]" id="check_{{ $value->id }}" class="check_pr" value="{{ $value->id }}">
                                                 <label for="check_{{ $value->id }}">&nbsp;</label>
                                             </td>
-                                            <td>{{ $value->PR_NO }}</td>
-                                            <td>{{ $value->notes }}</td>
+                                            <td>{{ $value->pr_no }}</td>
                                             <td>{{ $value->request_date }}</td>
-                                            <td>{{ number_format($value->total, 0, '', '.') }}</td>
+                                            <td>{{ $value->rn_no }}</td>
+                                            <td>{{ $value->material_id }}</td>
+                                            <td>{{ $value->unit }}</td>
+                                            <td>{{ $value->description }}</td>
+                                            <td>
+                                                <input type="text" class="money form-control qty" name="qty[]" value="{{ $value->qty }}">
+                                            </td>
+                                            <td>
+                                                <input type="text" class="money form-control price" name="price[]" value="{{ $value->price }}">
+                                            </td>
                                             <td>
                                                 {{-- @if( $value->is_validate == 1 && $value->approval_status == 12) --}}
                                                 {{-- <a class="open_modal_bidding btn btn-xs btn-success" id="open_modal" data-id="{{ $value->id }}" data-toggle="modal" data-target="#modal_create_po" href="javascript:;" >
@@ -117,6 +129,8 @@
     $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
         $("#success-alert").slideUp(500);
     });
+
+    $('.money').mask('#.##0', { reverse: true });
 
     $(document).on('click', '#open_modal', function (e) {
         e.preventDefault()

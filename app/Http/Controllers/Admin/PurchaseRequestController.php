@@ -29,10 +29,28 @@ class PurchaseRequestController extends Controller
     {
         abort_if(Gate::denies('purchase_request_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $pr = PurchaseRequest::orderBy('created_at', 'desc')
+        $materials = PurchaseRequestsDetail::select(
+            \DB::raw('purchase_requests_details.id as id'),
+            'purchase_requests_details.description',
+            'purchase_requests_details.qty',
+            'purchase_requests_details.unit',
+            'purchase_requests_details.notes',
+            'purchase_requests_details.price',
+            'purchase_requests_details.material_id',
+            \DB::raw('purchase_requests_details.request_no as rn_no'),
+            'purchase_requests_details.release_date',
+            \DB::raw('purchase_requests.request_no as pr_no'),
+            'purchase_requests.request_date',
+            'purchase_requests.total',
+        )
+            ->leftJoin('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
+            ->where('purchase_requests_details.is_validate', 1)
+            ->where('purchase_requests_details.status_approval', 704)
+            ->orWhere('purchase_requests_details.status_approval', 705)
+            ->orderBy('purchase_requests.created_at', 'desc')
             ->get();
 
-        return view('admin.purchase-request.index', compact('pr'));
+        return view('admin.purchase-request.index', compact('materials'));
     }
 
     protected function createPrPo ($id)
