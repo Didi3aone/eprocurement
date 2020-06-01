@@ -404,7 +404,7 @@ class PurchaseRequestController extends Controller
      */
     public function showDetail($id)
     {
-        $prDetail = PurchaseRequestsDetail::where('purchase_id', $id)->get();
+        $prDetail = PurchaseRequestsDetail::where('request_id', $id)->get();
         $pr       = PurchaseRequest::find($id);
         $papproval = PurchaseRequestsApproval::where('purchase_request_id',$id)->orderBy('approval_position','asc')->get();
 
