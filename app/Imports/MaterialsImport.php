@@ -14,6 +14,10 @@ class MaterialsImport implements ToModel
     */
     public function model(array $row)
     {
+        $model = MasterMaterial::where('code', $row[0])
+            ->where('plant_code', $row[2])
+            ->first();
+
         if (empty($model)) {
             return new MasterMaterial([
                 'code' => $row[0],
