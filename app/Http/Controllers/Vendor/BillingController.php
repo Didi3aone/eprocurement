@@ -12,7 +12,7 @@ class BillingController extends Controller
 {
     public function index ()
     {
-        $billing = Billing::where('vendor_id', Auth::user()->id)->get();
+        $billing = Billing::where('created_by', Auth::user()->id)->get();
 
         return view('vendor.billing.index', compact('billing'));
     }
@@ -21,7 +21,7 @@ class BillingController extends Controller
     {
         $billing = Billing::find($id);
 
-        return view('vendor.bidding.show',compact('billing'));
+        return view('vendor.billing.show',compact('billing'));
     }
 
     public function create() 
@@ -81,6 +81,7 @@ class BillingController extends Controller
             $billing->keterangan_po         = $request->keterangan_po;
             $billing->file_faktur           = $fileFakturName;
             $billing->file_invoice          = $fileInvoiceName;
+            $billing->vendor_id             = Auth::user()->id;
             $billing->save();
 
             \DB::commit();
@@ -91,5 +92,12 @@ class BillingController extends Controller
         }
 
         return redirect()->route('vendor.billing')->with('status', 'Billing has been successfully saved');
+    }
+
+    public function edit($id)
+    {
+        $billing = Billing::find($id);
+
+        return view('vendor.billing.edit',compact('billing'));
     }
 }

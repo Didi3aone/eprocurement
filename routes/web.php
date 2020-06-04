@@ -175,8 +175,8 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     //billings 
     Route::get('billing','BillingController@index')->name('billing');
     Route::get('billing-show/{id}','BillingController@show')->name('billing-show');
-    Route::post('billing-post-approved','BillingController@storeApproved')->name('billing-post-approved');
-    Route::post('billing-post-rejected','BillingController@storeRejected')->name('billing-post-rejected');
+    Route::put('billing-post-approved','BillingController@storeApproved')->name('billing-post-approved');
+    Route::put('billing-post-rejected','BillingController@storeRejected')->name('billing-post-rejected');
     // soap
     // Route::get('soap', 'SoapController@show')->name('soap');
 });
@@ -212,5 +212,7 @@ Route::group([ 'prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor',
     Route::get('billing-create','BillingController@create')->name('billing-create');
     Route::get('billing','BillingController@index')->name('billing');
     Route::get('billing-show/{id}','BillingController@show')->name('billing-show');
+    Route::get('billing-edit/{id}','BillingController@edit')->name('billing-edit');
     Route::post('billing-post','BillingController@store')->name('billing-post');
+    Route::post('billing-post-update/{id}','BillingController@store')->name('billing-post-update');
 });

@@ -47,13 +47,14 @@ class Billing extends Model
     ];
 
     public const TypeStatus = [
-        1 => 'Waiting For Approval Accounting',
+        1 => 'Waiting For Approval',
         2 => 'Approved',
         3 => 'Rejected'
     ];
 
     public const Approved = 2;
     public const Rejected = 3;
+    public const WaitingApprove = 1;
 
     protected static function boot()
     {
@@ -65,7 +66,6 @@ class Billing extends Model
                 $user              = \Auth::user();
                 $model->created_by = $user->id ?? '';
                 $model->updated_by = $user->id ?? '';
-                $model->vendor_id  = $user->id ?? '';
             } catch (UnsatisfiedDependencyException $e) {
                 abort(500, $e->getMessage());
             }
@@ -73,12 +73,10 @@ class Billing extends Model
         static::updating(function ($model) {
             $user              = \Auth::user();
             $model->updated_by = $user->id ?? '';
-            $model->vendor_id  = $user->id ?? '';
         });
         static::deleting(function ($model) {
             $user              = \Auth::user();
             $model->deleted_by = $user->id ?? '';
-            $model->vendor_id  = $user->id ?? '';
         });
     }
 

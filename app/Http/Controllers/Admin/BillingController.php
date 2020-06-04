@@ -17,8 +17,6 @@ class BillingController extends Controller
      */
     public function index()
     {
-        // abort_if(Gate::denies('billing_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
         $billing = Billing::all();
 
         return view('admin.billing.index', compact('billing'));
@@ -31,30 +29,28 @@ class BillingController extends Controller
      */
     public function show($id)
     {
-        // abort_if(Gate::denies('billing_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
         $billing = Billing::find($id);
 
         return view('admin.billing.show', compact('billing'));
     }
 
-    public function storeApproved(Request $request, $id)
+    public function storeApproved(Request $request)
     {
-        $billing = Billing::find($id);
+        $billing = Billing::find($request->id);
         $billing->status = Billing::Approved;
         $billing->update();
 
-        return redirect()->route('admin.billing')->with('status','Billing has been approved');
+        \Session::flash('status','Billing has been approved');
     }
     
-    public function storeRejected(Request $request, $id)
+    public function storeRejected(Request $request)
     {
-        $billing = Billing::find($id);
+        $billing = Billing::find($request->id);
         $billing->status = Billing::Rejected;
-        $billing->reason = $request->reason;
+        $billing->reason_rejected = $request->reason;
         $billing->update();
 
-        return redirect()->route('admin.billing')->with('status','Billing has been rejected');
+        \Session::flash('status','Billing has been rejected');
     }
 
 }

@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.vendor')
 @section('content')
 <div class="row page-titles">
     <div class="col-md-5 col-8 align-self-center">
@@ -13,11 +13,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-            <a class="btn btn-primary btn-xs" href="{{ route('admin.billing') }}"><i class="fa fa-arrow-left"></i> Back To list</a>
-            @if($billing->status == \App\Models\Vendor\Billing::WaitingApprove)
-                <a class="btn btn-success btn-xs approve" data-id="{{ $billing->id }}" href="#"><i class="fa fa-check"></i> Approve</a>
-                <a class="btn btn-danger btn-xs reject" data-id="{{ $billing->id }}" href="#"><i class="fa fa-times"></i> Reject</a>
-            @endif
+            <a class="btn btn-primary btn-xs" href="{{ route('vendor.billing') }}"><i class="fa fa-arrow-left"></i> Back To list</a>
             </div>
         </div>
     </div>
@@ -122,83 +118,20 @@
                                 {{ $billing->keterangan_po }}
                             </td>
                         </tr>
+                        @if($billing->status == \App\Models\Vendor\Billing::Rejected)
+                        <tr>
+                            <th>
+                                Keterangan dibatalkan
+                            </th>
+                            <td>
+                                {{ $billing->reason_rejected }}
+                            </td>
+                        </tr>
+                        @endif
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
-@endsection
-@section('scripts')
-@parent 
-    <script>
-    $('.approve').click(function(e){
-        e.preventDefault();
-        let id = $(this).data('id')
-
-        swal({
-            title: "Are you sure?",
-            text: "Approve this billings",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        })
-        .then((willDelete) => {
-            if (willDelete) {
-                $.ajax({
-                    type: "PUT",
-                    url: "{{ route('admin.billing-post-approved') }}",
-                    headers: {
-                        'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
-                    },
-                    data : {
-                        _token: "{{ csrf_token() }}",
-                        id : id
-                    },
-                    dataType:'json',
-                    success: function (response) {
-                        location.reload();
-                    },
-                    error: function (data) {
-                        console.log('Error:', data);
-                    }
-                });
-            } else {
-                swal("Your imaginary file is safe!");
-            }
-        });
-        
-    });
-        
-    $('.reject').click(function(e){
-        e.preventDefault();
-        let id = $(this).data('id');
-
-        swal("Input reason rejected !!!", {
-            content: "input",
-        })
-        .then((value) => {
-            $.ajax({
-                type: "PUT",
-                url: "{{ route('admin.billing-post-rejected') }}",
-                headers: {
-                    'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    id : id,
-                    reason : value
-                },
-                dataType:'json',
-                success: function (data) {
-                
-                }
-            });
-
-            setTimeout(function() {
-                location.reload();
-            },500)
-        });
-    });
-</script>
 @endsection

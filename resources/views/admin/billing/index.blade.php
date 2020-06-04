@@ -1,4 +1,4 @@
-@extends('layouts.vendor')
+@extends('layouts.admin')
 @section('content')
 <div class="row page-titles">
     <div class="col-md-5 col-8 align-self-center">
@@ -9,13 +9,7 @@
         </ol>
     </div>
 </div>
-<div style="margin-bottom: 10px;" class="row">
-    <div class="col-lg-6">
-        <a class="btn btn-success" href="{{ route("vendor.billing-create") }}">
-            <i class='fa fa-plus'></i> Create Billing
-        </a>
-    </div>
-</div>
+
 <div class="row">
     <div class="col-12">
         <div class="card">

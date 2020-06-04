@@ -39,9 +39,11 @@
                                     <td>{{ $rows->no_invoice }}</td>
                                     <td>{{ App\Models\Vendor\Billing::TypeStatus[$rows->status] }}</td>
                                     <td>
-                                        <a href="" class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i> Edit</a>
+                                        @if($rows->status != \App\Models\Vendor\Billing::Approved)
+                                        <a href="{{ route('vendor.billing-edit',$rows->id) }}" class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i> Edit</a>
                                         <a href="" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Hapus</a>
-                                        <a href="" class="btn btn-info btn-xs"><i class="fa fa-eye"></i> Show</a>
+                                        <a href="{{ route('vendor.billing-show',$rows->id) }}" class="btn btn-info btn-xs"><i class="fa fa-eye"></i> Show</a>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
