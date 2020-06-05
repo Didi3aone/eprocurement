@@ -71,6 +71,7 @@
 
                     <div class="form-actions">
                         {{-- <input type="hidden" name="total" value="{{ $total }}"> --}}
+                        <input type="hidden" name="id" value="{{ $ids }}">
                         <button type="submit" class="btn btn-success click"> <i class="fa fa-check"></i> {{ trans('global.save') }}</button>
                         <a href="{{ route('admin.purchase-request.index') }}" class="btn btn-inverse">Cancel</a>
                         <img id="image_loading" src="{{ asset('img/ajax-loader.gif') }}" alt="" style="display: none">

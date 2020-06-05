@@ -138,6 +138,7 @@
         for (let i = 0; i < check_pr.length; i++)
             ids.push(check_pr[i].value)
 
+        ids = btoa(ids)
         $(document).find('.bidding-online').attr('href', '{{ url('admin/purchase-request-online') }}/' + ids)
         $(document).find('.bidding-repeat').attr('href', '{{ url('admin/purchase-request-repeat') }}/' + ids)
         $(document).find('.bidding-direct').attr('href', '{{ url('admin/purchase-request-direct') }}/' + ids)

@@ -31,6 +31,7 @@ class PurchaseRequestController extends Controller
 
         $materials = PurchaseRequestsDetail::select(
             \DB::raw('purchase_requests_details.id as id'),
+            'purchase_requests_details.request_id',
             'purchase_requests_details.description',
             'purchase_requests_details.qty',
             'purchase_requests_details.unit',
@@ -66,8 +67,11 @@ class PurchaseRequestController extends Controller
 
         try {
             foreach ($pr_ids as $id) {
-                array_push($materials, PurchaseRequestsDetail::where('purchase_id', $id)->get());
-                $pr = PurchaseRequest::find($id);
+                $pr_details = PurchaseRequestsDetail::find($id);
+                if (!$pr_details)
+                    continue;
+                $materials[] = $pr_details;
+                $pr = PurchaseRequest::find($pr_details->request_id);
 
                 $po = new PrPo;
                 $po->po_no = $po_no;
@@ -94,37 +98,43 @@ class PurchaseRequestController extends Controller
         ];
     }
 
-    public function online (Request $request, $id)
+    public function online (Request $request, $ids)
     {
-        $return = $this->createPrPo($id);
+        $ids = base64_decode($ids);
+        $return = $this->createPrPo($ids);
 
         $data = $return['data'];
         $po_no = $return['po_no'];
         $vendor = $return['vendor'];
+        $ids = base64_encode($ids);
         
-        return view('admin.purchase-request.online', compact('data', 'po_no', 'vendor'));
+        return view('admin.purchase-request.online', compact('data', 'po_no', 'vendor', 'ids'));
     }
 
-    public function repeat (Request $request, $id)
+    public function repeat (Request $request, $ids)
     {
-        $return = $this->createPrPo($id);
+        $ids = base64_decode($ids);
+        $return = $this->createPrPo($ids);
         
         $data = $return['data'];
         $po_no = $return['po_no'];
         $vendor = $return['vendor'];
+        $ids = base64_encode($ids);
         
-        return view('admin.purchase-request.repeat', compact('data', 'po_no', 'vendor'));
+        return view('admin.purchase-request.repeat', compact('data', 'po_no', 'vendor', 'ids'));
     }
 
-    public function direct (Request $request, $id)
+    public function direct (Request $request, $ids)
     {
-        $return = $this->createPrPo($id);
+        $ids = base64_decode($ids);
+        $return = $this->createPrPo($ids);
         
         $data = $return['data'];
         $po_no = $return['po_no'];
         $vendor = $return['vendor'];
+        $ids = base64_encode($ids);
         
-        return view('admin.purchase-request.direct', compact('data', 'po_no', 'vendor'));
+        return view('admin.purchase-request.direct', compact('data', 'po_no', 'vendor', 'ids'));
     }
 
     /**

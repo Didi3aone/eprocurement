@@ -95,6 +95,8 @@ class QuotationController extends Controller
 
         try {
             $vendors = $request->get('vendor_id');
+            if (!$vendors)
+                return redirect()->route('admin.purchase-request-online', $request->get('id'))->with('status', 'Vendor is required');
 
             $quotation = new Quotation;
             $quotation->po_no = $request->get('PR_NO');
