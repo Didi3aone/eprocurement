@@ -34,7 +34,9 @@
                                         <th>Material ID</th>
                                         <th>Unit</th>
                                         <th>Description</th>
-                                        <th>Qty</th>
+                                        <th>Qty PR</th>
+                                        <th>Qty Open</th>
+                                        <th>Qty PO</th>
                                         <th>Price</th>
                                         <th>&nbsp;</th>
                                     </tr>
@@ -42,8 +44,9 @@
                                 <tbody>
                                     @foreach($materials as $key => $value)
                                         <tr>
+                                            <input type="hidden" name="qty_pr" class="qty_pr" value="{{ $value->qty }}">
                                             <td>
-                                                <input type="checkbox" name="id[]" id="check_{{ $value->id }}" class="check_pr" value="{{ $value->id }}">
+                                                <input type="checkbox" name="id[]" id="check_{{ $value->id }}" class="check_pr" value="{{ $value->id . ':' . $value->pr_no . ':' . $value->rn_no . ':' . $value->material_id }}">
                                                 <label for="check_{{ $value->id }}">&nbsp;</label>
                                             </td>
                                             <td>{{ $value->pr_no }}</td>
@@ -52,7 +55,9 @@
                                             <td>{{ $value->material_id }}</td>
                                             <td>{{ $value->unit }}</td>
                                             <td>{{ $value->description }}</td>
-                                            <td><input type="text" class="money form-control qty" name="qty[]" value="{{ $value->qty }}"></td>
+                                            <td>{{ $value->qty }}</td>
+                                            <td><input type="text" class="money form-control qty" name="qty[]" value="0"></td>
+                                            <td class="qty_open">{{ $value->qty }}</td>
                                             <td><input type="text" class="money form-control price" name="price[]" value="{{ $value->price }}"></td>
                                             <td>
                                                 {{-- @if( $value->is_validate == 1 && $value->approval_status == 12) --}}
@@ -128,11 +133,37 @@
 
     $('.money').mask('#.##0', { reverse: true });
 
+    $('.qty').on('change', function (e) {
+        e.preventDefault()
+
+        const $tr = $(this).closest('tr')
+        const $qty_pr = parseInt($tr.find('.qty_pr').val())
+        let $qty_open = $tr.find('.qty_open')
+
+        if ($(this).val < 0) {
+            alert('Your value cannot less than a zero')
+
+            $(this).val($qty_pr)
+        } else if ($(this).val() > $qty_pr) {
+            alert('Your value cannot be more than Quantity')
+
+            $(this).val($qty_pr)
+        } else {
+            let total = $qty_pr - $(this).val()
+            
+            $qty_open.html(total)
+        }
+    })
+
     $(document).on('click', '#open_modal', function (e) {
         e.preventDefault()
 
         const id = $(this).data('id')
         const check_pr = $('.check_pr:checked')
+        const $tr = check_pr.closest('tr')
+        const $qty = $tr.find('.qty').val()
+        const $price = $tr.find('.price').val()
+        const qty_price = $qty + ',' + $price
         
         let ids = []
         for (let i = 0; i < check_pr.length; i++)
@@ -140,8 +171,8 @@
 
         ids = btoa(ids)
         $(document).find('.bidding-online').attr('href', '{{ url('admin/purchase-request-online') }}/' + ids)
-        $(document).find('.bidding-repeat').attr('href', '{{ url('admin/purchase-request-repeat') }}/' + ids)
-        $(document).find('.bidding-direct').attr('href', '{{ url('admin/purchase-request-direct') }}/' + ids)
+        $(document).find('.bidding-repeat').attr('href', '{{ url('admin/purchase-request-repeat') }}/' + ids + '/' + qty_price)
+        $(document).find('.bidding-direct').attr('href', '{{ url('admin/purchase-request-direct') }}/' + ids + '/' + qty_price)
     })
 
     $('#datatables-run').DataTable({

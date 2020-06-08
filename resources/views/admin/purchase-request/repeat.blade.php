@@ -37,7 +37,34 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <a href="javascript:;" data-toggle="modal" data-target="#modal_material" class="btn btn-primary">{{ trans('cruds.purchase-order.show_modal') }}</a>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>PR No</th>
+                                        <th>Request Date</th>
+                                        <th>RN No</th>
+                                        <th>Material ID</th>
+                                        <th>Unit</th>
+                                        <th style="width: 10%">Qty</th>
+                                        <th style="width: 10%">Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($prs as $key => $value)
+                                        <tr>
+                                            <td><input type="text" class="form-control" name="pr_no[]" readonly value="{{ $value->pr_no }}"></td>
+                                            <td><input type="text" class="form-control" name="request_date[]" readonly value="{{ $value->request_date }}"></td>
+                                            <td><input type="text" class="form-control" name="rn_no[]" readonly value="{{ $value->rn_no }}"></td>
+                                            <td><input type="text" class="form-control" name="material_id[]" readonly value="{{ $value->material_id }}"></td>
+                                            <td><input type="text" class="form-control" name="unit[]" readonly value="{{ $value->unit }}"></td>
+                                            <td><input type="text" class="form-control" name="qty[]" readonly value="{{ number_format($value->qty, 0, '', '.') }}"></td>
+                                            <td><input type="text" class="form-control" name="price[]" readonly value="{{ number_format($value->price, 0, '', '.') }}"></td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>    
                     </div>
                     <div class="form-group">
                         <label for="">{{ trans('cruds.purchase-order.invite_vendor') }}</label>
@@ -60,14 +87,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="qty">Quantity Order</label>
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <input type="text" class="money form-control" name="qty">
-                            </div>
-                        </div>
-                    </div>
 
                     <div class="form-actions">
                         {{-- <input type="hidden" name="total" value="{{ $total }}"> --}}
@@ -77,47 +96,6 @@
                         <img id="image_loading" src="{{ asset('img/ajax-loader.gif') }}" alt="" style="display: none">
                     </div>
                 </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modal_material" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">{{ trans('cruds.masterMaterial.title_singular') }}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="row" style="padding: 0 15px 15px 15px;">
-                <div class="col-lg-12">
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Description</th>
-                                    <th style="width: 10%">Qty</th>
-                                    <th style="width: 10%">Unit</th>
-                                    <th>Notes</th>
-                                    <th>Price</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($data as $key => $value)
-                                    <tr>
-                                        <td><input type="text" class="form-control" name="description[]" readonly value="{{ $value->description }}"></td>
-                                        <td><input type="text" class="form-control" name="qty[]" readonly value="{{ number_format($value->qty, 0, '', '.') }}"></td>
-                                        <td><input type="text" class="form-control" name="unit[]" readonly value="{{ $value->unit }}"></td>
-                                        <td><input type="text" class="form-control" name="notes_detail[]" readonly value="{{ $value->notes }}"></td>
-                                        <td><input type="text" class="form-control" name="price[]" readonly value="{{ number_format($value->price, 0, '', '.') }}"></td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

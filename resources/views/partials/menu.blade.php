@@ -71,6 +71,45 @@
                         @endcan                        
                     </ul>
                 </li>
+                <li class=""> 
+                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-file"></i>
+                        <span class="hide-menu"> PO Repeat </span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse">
+                        <li>
+                            <a href="{{ route('admin.quotation.repeat') }}">
+                                <i class="fa fa-cubes"></i> 
+                                List PO Repeat
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class=""> 
+                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-file"></i>
+                        <span class="hide-menu"> Direct Order </span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse">
+                        <li>
+                            <a href="{{ route('admin.quotation.direct') }}">
+                                <i class="fa fa-cubes"></i> 
+                                List Direct Order
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class=""> 
+                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-file"></i>
+                        <span class="hide-menu"> RFQ </span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse">
+                        <li>
+                            <a href="{{ route('admin.rfq.index') }}">
+                                <i class="fa fa-cubes"></i> 
+                                List RFQ
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 @can('purchase_order_access')
                 <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-truck"></i>
@@ -81,18 +120,6 @@
                             <a href="{{ route('admin.purchase-order.index') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
                                 List PO
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('admin.purchase-order.direct') }}" class="">
-                                <i class="fa fas fa-caret-right"></i> 
-                                Direct PO
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('admin.purchase-order.release') }}" class="">
-                                <i class="fa fas fa-caret-right"></i> 
-                                Release Strategy
                             </a>
                         </li>
                     </ul>

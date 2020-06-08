@@ -142,7 +142,6 @@ class QuotationController extends Controller
 
         $quotation = new Quotation;
         $quotation->po_no = $request->get('PR_NO');
-        $quotation->qty = $qty;
         $quotation->status = 0;
         $quotation->vendor_id = $request->get('vendor_id');
         $quotation->save();
@@ -155,7 +154,7 @@ class QuotationController extends Controller
             'subject' => 'PO Repeat ' . $request->get('PR_NO')
         ];
 
-        \Mail::to($vendor->email)->send(new PurchaseOrderMail($data));
+        // \Mail::to($vendor->email)->send(new PurchaseOrderMail($data));
 
         return redirect()->route('admin.quotation.repeat')->with('status', 'PO Repeat has been successfully ordered!');
     }

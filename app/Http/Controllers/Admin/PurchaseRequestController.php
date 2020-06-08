@@ -13,6 +13,7 @@ use App\Models\RequestNotesDetail;
 use App\Models\WorkFlowApproval;
 use App\Models\WorkFlow;
 use App\Models\Plant;
+use App\Models\MasterMaterial;
 use App\Models\Vendor;
 use DB,Gate;
 use Symfony\Component\HttpFoundation\Response;
@@ -60,40 +61,29 @@ class PurchaseRequestController extends Controller
         $po_id = (empty($poNo)) ? 1 : intval($poNo->id);
         $po_no = sprintf('1%08d', $po_id);
         $pr_ids = explode(',', $id);
-        $materials = [];
         $data = [];
+        $prs = [];
 
-        \DB::beginTransaction();
+        foreach ($pr_ids as $id => $v) {
+            $prd = explode(':', $v);
+            $pr_id = $prd[0];
+            $pr_no = $prd[1];
+            $rn_no = $prd[2];
+            $material_id = $prd[3];
 
-        try {
-            foreach ($pr_ids as $id) {
-                $pr_details = PurchaseRequestsDetail::find($id);
-                if (!$pr_details)
-                    continue;
-                $materials[] = $pr_details;
-                $pr = PurchaseRequest::find($pr_details->request_id);
-
-                $po = new PrPo;
-                $po->po_no = $po_no;
-                $po->pr_no = $pr->PR_NO;
-                $po->save();
-            }
+            $material = MasterMaterial::where('code', $material_id)->first();
+            $pr = PurchaseRequestsDetail::where('material_id', $material_id)->first();
             
-            foreach ($materials as $key => $val) {
-                foreach ($materials[$key] as $k => $value)
-                    array_push($data, $value);
-            }
-
-            \DB::commit();
-        } catch (Exception $e) {
-            \DB::rollBack();
+            array_push($prs, $pr);
+            array_push($data, $material);
         }
 
-        $vendor     = Vendor::where('status', 1)->orderBy('name')->get();
+        $vendor = Vendor::where('status', 1)->orderBy('name')->get();
 
         return [
             'po_no' => $po_no,
             'data' => $data,
+            'prs' => $prs,
             'vendor' => $vendor
         ];
     }
@@ -119,9 +109,10 @@ class PurchaseRequestController extends Controller
         $data = $return['data'];
         $po_no = $return['po_no'];
         $vendor = $return['vendor'];
+        $prs = $return['prs'];
         $ids = base64_encode($ids);
         
-        return view('admin.purchase-request.repeat', compact('data', 'po_no', 'vendor', 'ids'));
+        return view('admin.purchase-request.repeat', compact('data', 'po_no', 'vendor', 'prs', 'ids'));
     }
 
     public function direct (Request $request, $ids)

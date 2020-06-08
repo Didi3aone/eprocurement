@@ -129,8 +129,8 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::put('purchase-request-approval/{id}','PurchaseRequestController@approvalPr')->name('purchase-request-approval');
     Route::get('purchase-request-show/{id}','PurchaseRequestController@showDetail')->name('purchase-request-show');
     Route::get('purchase-request-online/{ids}','PurchaseRequestController@online')->name('purchase-request-online');
-    Route::get('purchase-request-repeat/{ids}','PurchaseRequestController@repeat')->name('purchase-request-repeat');
-    Route::get('purchase-request-direct/{ids}','PurchaseRequestController@direct')->name('purchase-request-direct');
+    Route::get('purchase-request-repeat/{ids}/{qty_price}','PurchaseRequestController@repeat')->name('purchase-request-repeat');
+    Route::get('purchase-request-direct/{ids}/{qty_price}','PurchaseRequestController@direct')->name('purchase-request-direct');
     Route::resource('purchase-request', 'PurchaseRequestController');
 
     // request note
@@ -171,6 +171,12 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::post('quotation/approve-winner', 'QuotationController@approveWinner')->name('quotation.approve-winner');
     Route::put('quotation/remove-vendor/{quotation_id}/{vendor_id}', 'QuotationController@removeVendor')->name('quotation.remove-vendor');
     Route::resource('quotation', 'QuotationController');
+
+    // rfq
+    Route::post('rfq/import', 'RfqController@import')->name('rfq.import');
+    Route::get('rfq-add-detail/{code}', 'RfqController@addDetail')->name('rfq-add-detail');
+    Route::post('rfq-save-detail', 'RfqController@saveDetail')->name('rfq-save-detail');
+    Route::resource('rfq', 'RfqController');
 
     //billings 
     Route::get('billing','BillingController@index')->name('billing');
