@@ -79,7 +79,14 @@ class PurchaseRequestController extends Controller
             // $rn_no = $prd[2];
             // $material_id = $prd[3];
 
-            $pr = PurchaseRequestsDetail::where('id', $id)->first();
+            $pr = PurchaseRequestsDetail::select(
+                        'purchase_requests_details.*',
+                        'purchase_requests.request_no as pr_no',
+                        'purchase_requests.request_date as request_date'
+                    )
+                    ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
+                    ->where('purchase_requests_details.id', $id)
+                    ->first();
             if ($quantities)
                 $pr->qty = $quantities[$i];
             if ($prices)

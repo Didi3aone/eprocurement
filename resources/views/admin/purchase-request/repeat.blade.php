@@ -55,7 +55,7 @@
                                         <tr>
                                             <td><input type="text" class="form-control" name="pr_no[]" readonly value="{{ $value->pr_no }}"></td>
                                             <td><input type="text" class="form-control" name="request_date[]" readonly value="{{ $value->request_date }}"></td>
-                                            <td><input type="text" class="form-control" name="rn_no[]" readonly value="{{ $value->rn_no }}"></td>
+                                            <td><input type="text" class="form-control" name="rn_no[]" readonly value="{{ $value->request_no }}"></td>
                                             <td><input type="text" class="form-control" name="material_id[]" readonly value="{{ $value->material_id }}"></td>
                                             <td><input type="text" class="form-control" name="unit[]" readonly value="{{ $value->unit }}"></td>
                                             <td><input type="text" class="form-control" name="qty[]" readonly value="{{ number_format($value->qty, 0, '', '.') }}"></td>
