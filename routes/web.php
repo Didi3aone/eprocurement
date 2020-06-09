@@ -128,9 +128,9 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::post('purchase-request-save-validate-pr','PurchaseRequestController@saveValidate')->name('purchase-request-save-validate-pr');
     Route::put('purchase-request-approval/{id}','PurchaseRequestController@approvalPr')->name('purchase-request-approval');
     Route::get('purchase-request-show/{id}','PurchaseRequestController@showDetail')->name('purchase-request-show');
-    Route::get('purchase-request-online/{ids}','PurchaseRequestController@online')->name('purchase-request-online');
-    Route::get('purchase-request-repeat/{ids}','PurchaseRequestController@repeat')->name('purchase-request-repeat');
-    Route::get('purchase-request-direct/{ids}','PurchaseRequestController@direct')->name('purchase-request-direct');
+    Route::get('purchase-request-online/{ids}/{quantities}/{prices}','PurchaseRequestController@online')->name('purchase-request-online');
+    Route::get('purchase-request-repeat/{ids}/{quantities}/{prices}','PurchaseRequestController@repeat')->name('purchase-request-repeat');
+    Route::get('purchase-request-direct/{ids}/{quantities}/{prices}','PurchaseRequestController@direct')->name('purchase-request-direct');
     Route::resource('purchase-request', 'PurchaseRequestController');
 
     // request note

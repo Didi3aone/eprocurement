@@ -46,7 +46,7 @@
                                         <tr>
                                             <input type="hidden" name="qty_pr" class="qty_pr" value="{{ $value->qty }}">
                                             <td>
-                                                <input type="checkbox" name="id[]" id="check_{{ $value->id }}" class="check_pr" value="{{ $value->id . ':' . $value->pr_no . ':' . $value->rn_no . ':' . $value->material_id }}">
+                                                <input type="checkbox" name="id[]" id="check_{{ $value->id }}" class="check_pr" value="{{ $value->uuid }}" _valold="{{ $value->id . ':' . $value->pr_no . ':' . $value->rn_no . ':' . $value->material_id }}">
                                                 <label for="check_{{ $value->id }}">&nbsp;</label>
                                             </td>
                                             <td>{{ $value->pr_no }}</td>
@@ -55,10 +55,10 @@
                                             <td>{{ $value->material_id }}</td>
                                             <td>{{ $value->unit }}</td>
                                             <td>{{ $value->description }}</td>
-                                            <td>{{ $value->qty }}</td>
-                                            <td><input type="text" class="money form-control qty" name="qty[]" value="0"></td>
-                                            <td class="qty_open">{{ $value->qty }}</td>
-                                            <td><input type="text" class="money form-control price" name="price[]" value="{{ $value->price }}"></td>
+                                            <td style="text-align: right;">{{ $value->qty }}</td>
+                                            <td><input type="text" class="money form-control qty" name="qty[]" value="0" style="width: 70%;"></td>
+                                            <td class="qty_open" style="text-align: right;"><span class="qty_{{ $value->uuid }}">{{ $value->qty }}</span></td>
+                                            <td><input type="text" class="money form-control price price_{{ $value->uuid }}" name="price[]" value="{{ $value->price }}" style="width: 70%;"></td>
                                             <td>
                                                 {{-- @if( $value->is_validate == 1 && $value->approval_status == 12) --}}
                                                 {{-- <a class="open_modal_bidding btn btn-xs btn-success" id="open_modal" data-id="{{ $value->id }}" data-toggle="modal" data-target="#modal_create_po" href="javascript:;" >
@@ -186,18 +186,25 @@
         let quantities = []
         let prices = []
         for (let i = 0; i < check_pr.length; i++) {
-            ids.push(check_pr[i].value)
-            const $tr = check_pr[i].closest('tr')
-            console.log($tr)
+            let id = check_pr[i].value
+            ids.push(id)
+            let qty = $('.qty_'+id).text()
+            quantities.push(qty)
+            let price = $('.price_'+id).val()
+            prices.push(price)
+            // const $tr = check_pr[i].closest('tr')
+            // console.log($tr)
             // quantity.push(check_pr[i].closest('tr').find('.qty').val())
             // price.push(check_pr[i].closest('tr').find('.price').val())
         }
 
         ids = btoa(ids)
+        quantities = btoa(quantities)
+        prices = btoa(prices)
 
-        $(document).find('.bidding-online').attr('href', '{{ url('admin/purchase-request-online') }}/' + ids)
-        $(document).find('.bidding-repeat').attr('href', '{{ url('admin/purchase-request-repeat') }}/' + ids)
-        $(document).find('.bidding-direct').attr('href', '{{ url('admin/purchase-request-direct') }}/' + ids)
+        $('.bidding-online').attr('href', '{{ url("admin/purchase-request-online") }}/'+ids+'/'+quantities+'/'+prices)
+        $('.bidding-repeat').attr('href', '{{ url("admin/purchase-request-repeat") }}/'+ids+'/'+quantities+'/'+prices)
+        $('.bidding-direct').attr('href', '{{ url("admin/purchase-request-direct") }}/'+ids+'/'+quantities+'/'+prices)
     })
 
     $('#datatables-run').DataTable({
