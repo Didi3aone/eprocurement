@@ -65,9 +65,9 @@
                                                     <i class="fa fa-truck"></i> Create PO
                                                 </a> --}}
                                                 {{-- @endif --}}
-                                                <a class="open_modal_bidding btn btn-xs btn-info" href="{{ route('admin.purchase-request-show',$value->id) }}" >
+                                                {{-- <a class="open_modal_bidding btn btn-xs btn-info" href="{{ route('admin.purchase-request-show',$value->id) }}" >
                                                     <i class="fa fa-eye"></i> Show
-                                                </a> 
+                                                </a>  --}}
                                             </td>
                                         </tr>
                                     @endforeach
@@ -155,24 +155,49 @@
         }
     })
 
+    $('.price').on('change', function (e) {
+        e.preventDefault()
+
+        const $tr = $(this).closest('tr')
+        const $price = parseInt($tr.find('.price').val())
+
+        if ($(this).val < 0) {
+            alert('Your value cannot less than a zero')
+
+            $(this).val($price)
+        } else if ($(this).val() > $price) {
+            alert('Your value cannot be more than Quantity')
+
+            $(this).val($price)
+        } else {
+            let total = $price - $(this).val()
+            
+            $qty_open.html(total)
+        }
+    })
+
     $(document).on('click', '#open_modal', function (e) {
         e.preventDefault()
 
         const id = $(this).data('id')
         const check_pr = $('.check_pr:checked')
-        const $tr = check_pr.closest('tr')
-        const $qty = $tr.find('.qty').val()
-        const $price = $tr.find('.price').val()
-        const qty_price = $qty + ',' + $price
-        
+
         let ids = []
-        for (let i = 0; i < check_pr.length; i++)
+        let quantities = []
+        let prices = []
+        for (let i = 0; i < check_pr.length; i++) {
             ids.push(check_pr[i].value)
+            const $tr = check_pr[i].closest('tr')
+            console.log($tr)
+            // quantity.push(check_pr[i].closest('tr').find('.qty').val())
+            // price.push(check_pr[i].closest('tr').find('.price').val())
+        }
 
         ids = btoa(ids)
+
         $(document).find('.bidding-online').attr('href', '{{ url('admin/purchase-request-online') }}/' + ids)
-        $(document).find('.bidding-repeat').attr('href', '{{ url('admin/purchase-request-repeat') }}/' + ids + '/' + qty_price)
-        $(document).find('.bidding-direct').attr('href', '{{ url('admin/purchase-request-direct') }}/' + ids + '/' + qty_price)
+        $(document).find('.bidding-repeat').attr('href', '{{ url('admin/purchase-request-repeat') }}/' + ids)
+        $(document).find('.bidding-direct').attr('href', '{{ url('admin/purchase-request-direct') }}/' + ids)
     })
 
     $('#datatables-run').DataTable({

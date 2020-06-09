@@ -13,7 +13,6 @@ use App\Models\RequestNotesDetail;
 use App\Models\WorkFlowApproval;
 use App\Models\WorkFlow;
 use App\Models\Plant;
-use App\Models\MasterMaterial;
 use App\Models\Vendor;
 use DB,Gate;
 use Symfony\Component\HttpFoundation\Response;
@@ -63,6 +62,7 @@ class PurchaseRequestController extends Controller
         $pr_ids = explode(',', $id);
         $data = [];
         $prs = [];
+        dd($pr_ids);
 
         foreach ($pr_ids as $id => $v) {
             $prd = explode(':', $v);
@@ -71,11 +71,14 @@ class PurchaseRequestController extends Controller
             $rn_no = $prd[2];
             $material_id = $prd[3];
 
-            $material = MasterMaterial::where('code', $material_id)->first();
             $pr = PurchaseRequestsDetail::where('material_id', $material_id)->first();
             
-            array_push($prs, $pr);
-            array_push($data, $material);
+            // array_push($prs, [
+            //     'pr_no' => 
+            //     $pr
+            // ]);
+
+            array_push($data, $pr);
         }
 
         $vendor = Vendor::where('status', 1)->orderBy('name')->get();
@@ -83,7 +86,6 @@ class PurchaseRequestController extends Controller
         return [
             'po_no' => $po_no,
             'data' => $data,
-            'prs' => $prs,
             'vendor' => $vendor
         ];
     }
@@ -109,10 +111,9 @@ class PurchaseRequestController extends Controller
         $data = $return['data'];
         $po_no = $return['po_no'];
         $vendor = $return['vendor'];
-        $prs = $return['prs'];
         $ids = base64_encode($ids);
         
-        return view('admin.purchase-request.repeat', compact('data', 'po_no', 'vendor', 'prs', 'ids'));
+        return view('admin.purchase-request.repeat', compact('data', 'po_no', 'vendor', 'ids'));
     }
 
     public function direct (Request $request, $ids)
