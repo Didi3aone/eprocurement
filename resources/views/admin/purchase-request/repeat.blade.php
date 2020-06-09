@@ -87,6 +87,25 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.purchase-order.fields.notes') }}</label>
+                        <input type="text" id="notes" class="form-control form-control-line {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" value="{{ old('notes', '') }}" required>
+                        @if($errors->has('notes'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('notes') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label class="required" for="upload_file">{{ trans('cruds.purchase-order.fields.upload_file') }}</label>
+                        <input class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" type="file" name="upload_file" multiple id="upload_file">
+                        @if($errors->has('upload_file'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('upload_file') }}
+                            </div>
+                        @endif
+                        <span class="help-block"></span>
+                    </div>
 
                     <div class="form-actions">
                         {{-- <input type="hidden" name="total" value="{{ $total }}"> --}}
