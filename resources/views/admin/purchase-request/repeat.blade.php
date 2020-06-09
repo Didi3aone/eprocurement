@@ -51,7 +51,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($prs as $key => $value)
+                                    @foreach($data as $key => $value)
                                         <tr>
                                             <td><input type="text" class="form-control" name="pr_no[]" readonly value="{{ $value->pr_no }}"></td>
                                             <td><input type="text" class="form-control" name="request_date[]" readonly value="{{ $value->request_date }}"></td>
@@ -109,7 +109,7 @@
 
                     <div class="form-actions">
                         {{-- <input type="hidden" name="total" value="{{ $total }}"> --}}
-                        <input type="hidden" name="id" value="{{ $ids }}">
+                        <input type="hidden" name="id" value="{{ $uri['ids'] }}">
                         <button type="submit" class="btn btn-success click"> <i class="fa fa-check"></i> {{ trans('global.save') }}</button>
                         <a href="{{ route('admin.purchase-request.index') }}" class="btn btn-inverse">Cancel</a>
                         <img id="image_loading" src="{{ asset('img/ajax-loader.gif') }}" alt="" style="display: none">

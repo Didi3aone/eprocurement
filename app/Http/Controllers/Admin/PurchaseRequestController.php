@@ -17,6 +17,7 @@ use App\Models\Vendor;
 use DB,Gate;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class PurchaseRequestController extends Controller
 {
@@ -50,28 +51,40 @@ class PurchaseRequestController extends Controller
             ->orWhere('purchase_requests_details.status_approval', 705)
             ->orderBy('purchase_requests.created_at', 'desc')
             ->get();
+        foreach ($materials as $row) {
+            $row->uuid = $row->getAttributes()['id'];
+        }
 
         return view('admin.purchase-request.index', compact('materials'));
     }
 
-    protected function createPrPo ($id)
+    protected function createPrPo ($ids, $quantities=null, $prices=null)
     {
         $poNo = PrPo::orderBy('po_no', 'desc')->limit(1)->first();
         $po_id = (empty($poNo)) ? 1 : intval($poNo->id);
         $po_no = sprintf('1%08d', $po_id);
-        $pr_ids = explode(',', $id);
+        $ids = explode(',', $ids);
+        if ($quantities)
+            $quantities = explode(',', $quantities);
+        if ($prices)
+            $prices = explode(',', $prices);
         $data = [];
         $prs = [];
-        dd($pr_ids);
+        // dd($ids);
 
-        foreach ($pr_ids as $id => $v) {
-            $prd = explode(':', $v);
-            $pr_id = $prd[0];
-            $pr_no = $prd[1];
-            $rn_no = $prd[2];
-            $material_id = $prd[3];
+        foreach ($ids as $i => $id) {
+            // $prd = explode(':', $v);
+            // $pr_id = $prd[0];
+            // $pr_no = $prd[1];
+            // $rn_no = $prd[2];
+            // $material_id = $prd[3];
 
-            $pr = PurchaseRequestsDetail::where('material_id', $material_id)->first();
+            $pr = PurchaseRequestsDetail::where('id', $id)->first();
+            if ($quantities)
+                $pr->qty = $quantities[$i];
+            if ($prices)
+                $pr->prices = $prices[$i];
+            // echo json_encode($pr); die();
             
             // array_push($prs, [
             //     'pr_no' => 
@@ -90,7 +103,7 @@ class PurchaseRequestController extends Controller
         ];
     }
 
-    public function online (Request $request, $ids)
+    public function online (Request $request, $ids, $quantities, $prices)
     {
         $ids = base64_decode($ids);
         $return = $this->createPrPo($ids);
@@ -98,35 +111,52 @@ class PurchaseRequestController extends Controller
         $data = $return['data'];
         $po_no = $return['po_no'];
         $vendor = $return['vendor'];
-        $ids = base64_encode($ids);
+
+        $uri = [
+            'ids' => base64_encode($ids)
+        ];
         
-        return view('admin.purchase-request.online', compact('data', 'po_no', 'vendor', 'ids'));
+        return view('admin.purchase-request.online', compact('data', 'po_no', 'vendor', 'uri'));
     }
 
-    public function repeat (Request $request, $ids)
+    public function repeat (Request $request, $ids, $quantities, $prices)
     {
         $ids = base64_decode($ids);
-        $return = $this->createPrPo($ids);
+        $quantities = base64_decode($quantities);
+        $prices = base64_decode($prices);
+        $return = $this->createPrPo($ids, $quantities, $prices);
         
         $data = $return['data'];
         $po_no = $return['po_no'];
         $vendor = $return['vendor'];
-        $ids = base64_encode($ids);
+
+        $uri = [
+            'ids' => base64_encode($ids),
+            'quantities' => base64_encode($quantities),
+            'prices' => base64_encode($prices)
+        ];
         
-        return view('admin.purchase-request.repeat', compact('data', 'po_no', 'vendor', 'ids'));
+        return view('admin.purchase-request.repeat', compact('data', 'po_no', 'vendor', 'uri'));
     }
 
-    public function direct (Request $request, $ids)
+    public function direct (Request $request, $ids, $quantities, $prices)
     {
         $ids = base64_decode($ids);
-        $return = $this->createPrPo($ids);
+        $quantities = base64_decode($quantities);
+        $prices = base64_decode($prices);
+        $return = $this->createPrPo($ids, $quantities, $prices);
         
         $data = $return['data'];
         $po_no = $return['po_no'];
         $vendor = $return['vendor'];
-        $ids = base64_encode($ids);
+
+        $uri = [
+            'ids' => base64_encode($ids),
+            'quantities' => base64_encode($quantities),
+            'prices' => base64_encode($prices)
+        ];
         
-        return view('admin.purchase-request.direct', compact('data', 'po_no', 'vendor', 'ids'));
+        return view('admin.purchase-request.direct', compact('data', 'po_no', 'vendor', 'uri'));
     }
 
     /**
