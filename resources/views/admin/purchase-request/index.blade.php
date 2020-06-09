@@ -34,7 +34,9 @@
                                         <th>Material ID</th>
                                         <th>Unit</th>
                                         <th>Description</th>
-                                        <th>Qty</th>
+                                        <th>Qty PR</th>
+                                        <th>Qty Open</th>
+                                        <th>Qty PO</th>
                                         <th>Price</th>
                                         <th>&nbsp;</th>
                                     </tr>
@@ -42,8 +44,9 @@
                                 <tbody>
                                     @foreach($materials as $key => $value)
                                         <tr>
+                                            <input type="hidden" name="qty_pr" class="qty_pr" value="{{ $value->qty }}">
                                             <td>
-                                                <input type="checkbox" name="id[]" id="check_{{ $value->id }}" class="check_pr" value="{{ $value->id }}">
+                                                <input type="checkbox" name="id[]" id="check_{{ $value->id }}" class="check_pr" value="{{ $value->id . ':' . $value->pr_no . ':' . $value->rn_no . ':' . $value->material_id }}">
                                                 <label for="check_{{ $value->id }}">&nbsp;</label>
                                             </td>
                                             <td>{{ $value->pr_no }}</td>
@@ -52,7 +55,9 @@
                                             <td>{{ $value->material_id }}</td>
                                             <td>{{ $value->unit }}</td>
                                             <td>{{ $value->description }}</td>
-                                            <td><input type="text" class="money form-control qty" name="qty[]" value="{{ $value->qty }}"></td>
+                                            <td>{{ $value->qty }}</td>
+                                            <td><input type="text" class="money form-control qty" name="qty[]" value="0"></td>
+                                            <td class="qty_open">{{ $value->qty }}</td>
                                             <td><input type="text" class="money form-control price" name="price[]" value="{{ $value->price }}"></td>
                                             <td>
                                                 {{-- @if( $value->is_validate == 1 && $value->approval_status == 12) --}}
@@ -60,9 +65,9 @@
                                                     <i class="fa fa-truck"></i> Create PO
                                                 </a> --}}
                                                 {{-- @endif --}}
-                                                <a class="open_modal_bidding btn btn-xs btn-info" href="{{ route('admin.purchase-request-show',$value->id) }}" >
+                                                {{-- <a class="open_modal_bidding btn btn-xs btn-info" href="{{ route('admin.purchase-request-show',$value->id) }}" >
                                                     <i class="fa fa-eye"></i> Show
-                                                </a> 
+                                                </a>  --}}
                                             </td>
                                         </tr>
                                     @endforeach
@@ -128,15 +133,67 @@
 
     $('.money').mask('#.##0', { reverse: true });
 
+    $('.qty').on('change', function (e) {
+        e.preventDefault()
+
+        const $tr = $(this).closest('tr')
+        const $qty_pr = parseInt($tr.find('.qty_pr').val())
+        let $qty_open = $tr.find('.qty_open')
+
+        if ($(this).val < 0) {
+            alert('Your value cannot less than a zero')
+
+            $(this).val($qty_pr)
+        } else if ($(this).val() > $qty_pr) {
+            alert('Your value cannot be more than Quantity')
+
+            $(this).val($qty_pr)
+        } else {
+            let total = $qty_pr - $(this).val()
+            
+            $qty_open.html(total)
+        }
+    })
+
+    $('.price').on('change', function (e) {
+        e.preventDefault()
+
+        const $tr = $(this).closest('tr')
+        const $price = parseInt($tr.find('.price').val())
+
+        if ($(this).val < 0) {
+            alert('Your value cannot less than a zero')
+
+            $(this).val($price)
+        } else if ($(this).val() > $price) {
+            alert('Your value cannot be more than Quantity')
+
+            $(this).val($price)
+        } else {
+            let total = $price - $(this).val()
+            
+            $qty_open.html(total)
+        }
+    })
+
     $(document).on('click', '#open_modal', function (e) {
         e.preventDefault()
 
         const id = $(this).data('id')
         const check_pr = $('.check_pr:checked')
-        
+
         let ids = []
-        for (let i = 0; i < check_pr.length; i++)
+        let quantities = []
+        let prices = []
+        for (let i = 0; i < check_pr.length; i++) {
             ids.push(check_pr[i].value)
+            const $tr = check_pr[i].closest('tr')
+            console.log($tr)
+            // quantity.push(check_pr[i].closest('tr').find('.qty').val())
+            // price.push(check_pr[i].closest('tr').find('.price').val())
+        }
+
+        ids = btoa(ids)
 
         $(document).find('.bidding-online').attr('href', '{{ url('admin/purchase-request-online') }}/' + ids)
         $(document).find('.bidding-repeat').attr('href', '{{ url('admin/purchase-request-repeat') }}/' + ids)

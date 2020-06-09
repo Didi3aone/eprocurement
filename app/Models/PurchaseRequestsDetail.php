@@ -10,7 +10,7 @@ class PurchaseRequestsDetail extends Model
 
     protected $fillable = [
         'id',
-        'purchase_id',
+        'request_id',
         'description',
         'qty',
         'unit',

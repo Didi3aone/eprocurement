@@ -31,6 +31,7 @@ class PurchaseRequestController extends Controller
 
         $materials = PurchaseRequestsDetail::select(
             \DB::raw('purchase_requests_details.id as id'),
+            'purchase_requests_details.request_id',
             'purchase_requests_details.description',
             'purchase_requests_details.qty',
             'purchase_requests_details.unit',
@@ -59,33 +60,28 @@ class PurchaseRequestController extends Controller
         $po_id = (empty($poNo)) ? 1 : intval($poNo->id);
         $po_no = sprintf('1%08d', $po_id);
         $pr_ids = explode(',', $id);
-        $materials = [];
         $data = [];
+        $prs = [];
+        dd($pr_ids);
 
-        \DB::beginTransaction();
+        foreach ($pr_ids as $id => $v) {
+            $prd = explode(':', $v);
+            $pr_id = $prd[0];
+            $pr_no = $prd[1];
+            $rn_no = $prd[2];
+            $material_id = $prd[3];
 
-        try {
-            foreach ($pr_ids as $id) {
-                array_push($materials, PurchaseRequestsDetail::where('purchase_id', $id)->get());
-                $pr = PurchaseRequest::find($id);
-
-                $po = new PrPo;
-                $po->po_no = $po_no;
-                $po->pr_no = $pr->PR_NO;
-                $po->save();
-            }
+            $pr = PurchaseRequestsDetail::where('material_id', $material_id)->first();
             
-            foreach ($materials as $key => $val) {
-                foreach ($materials[$key] as $k => $value)
-                    array_push($data, $value);
-            }
+            // array_push($prs, [
+            //     'pr_no' => 
+            //     $pr
+            // ]);
 
-            \DB::commit();
-        } catch (Exception $e) {
-            \DB::rollBack();
+            array_push($data, $pr);
         }
 
-        $vendor     = Vendor::where('status', 1)->orderBy('name')->get();
+        $vendor = Vendor::where('status', 1)->orderBy('name')->get();
 
         return [
             'po_no' => $po_no,
@@ -94,37 +90,43 @@ class PurchaseRequestController extends Controller
         ];
     }
 
-    public function online (Request $request, $id)
+    public function online (Request $request, $ids)
     {
-        $return = $this->createPrPo($id);
+        $ids = base64_decode($ids);
+        $return = $this->createPrPo($ids);
 
         $data = $return['data'];
         $po_no = $return['po_no'];
         $vendor = $return['vendor'];
+        $ids = base64_encode($ids);
         
-        return view('admin.purchase-request.online', compact('data', 'po_no', 'vendor'));
+        return view('admin.purchase-request.online', compact('data', 'po_no', 'vendor', 'ids'));
     }
 
-    public function repeat (Request $request, $id)
+    public function repeat (Request $request, $ids)
     {
-        $return = $this->createPrPo($id);
+        $ids = base64_decode($ids);
+        $return = $this->createPrPo($ids);
         
         $data = $return['data'];
         $po_no = $return['po_no'];
         $vendor = $return['vendor'];
+        $ids = base64_encode($ids);
         
-        return view('admin.purchase-request.repeat', compact('data', 'po_no', 'vendor'));
+        return view('admin.purchase-request.repeat', compact('data', 'po_no', 'vendor', 'ids'));
     }
 
-    public function direct (Request $request, $id)
+    public function direct (Request $request, $ids)
     {
-        $return = $this->createPrPo($id);
+        $ids = base64_decode($ids);
+        $return = $this->createPrPo($ids);
         
         $data = $return['data'];
         $po_no = $return['po_no'];
         $vendor = $return['vendor'];
+        $ids = base64_encode($ids);
         
-        return view('admin.purchase-request.direct', compact('data', 'po_no', 'vendor'));
+        return view('admin.purchase-request.direct', compact('data', 'po_no', 'vendor', 'ids'));
     }
 
     /**
