@@ -56,8 +56,8 @@
                                             <td>{{ $value->unit }}</td>
                                             <td>{{ $value->description }}</td>
                                             <td style="text-align: right;">{{ $value->qty }}</td>
-                                            <td><input type="text" class="money form-control qty" name="qty[]" value="0" style="width: 70%;"></td>
-                                            <td class="qty_open" style="text-align: right;"><span class="qty_{{ $value->uuid }}">{{ $value->qty }}</span></td>
+                                            <td><input type="text" class="money form-control qty qty_{{ $value->uuid }}" name="qty[]" value="0" style="width: 70%;"></td>
+                                            <td class="qty_open" style="text-align: right;"><span>{{ $value->qty }}</span></td>
                                             <td><input type="text" class="money form-control price price_{{ $value->uuid }}" name="price[]" value="{{ $value->price }}" style="width: 70%;"></td>
                                             <td>
                                                 {{-- @if( $value->is_validate == 1 && $value->approval_status == 12) --}}
@@ -170,7 +170,7 @@
         for (let i = 0; i < check_pr.length; i++) {
             let id = check_pr[i].value
             ids.push(id)
-            let qty = $('.qty_'+id).text()
+            let qty = $('.qty_'+id).val()
             quantities.push(qty)
             let price = $('.price_'+id).val()
             prices.push(price)
