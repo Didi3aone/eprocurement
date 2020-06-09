@@ -14,7 +14,6 @@ class AlterVendorsAlotOfItems extends Migration
     public function up()
     {
         Schema::table('vendors', function (Blueprint $table) {
-            $table->string('code')->nullable();
             $table->string('country')->nullable();
             $table->string('name1')->nullable();
             $table->string('name2')->nullable();
@@ -27,7 +26,6 @@ class AlterVendorsAlotOfItems extends Migration
             $table->string('region')->nullable();
             $table->string('search_term')->nullable();
             $table->string('street')->nullable();
-            $table->string('address')->nullable();
             $table->string('first_name')->nullable();
             $table->string('title')->nullable();
             $table->string('house_number')->nullable();
@@ -192,7 +190,6 @@ class AlterVendorsAlotOfItems extends Migration
     public function down()
     {
         Schema::table('vendors', function (Blueprint $table) {
-            $table->dropColumn('code');
             $table->dropColumn('country');
             $table->dropColumn('name1');
             $table->dropColumn('name2');
@@ -205,7 +202,6 @@ class AlterVendorsAlotOfItems extends Migration
             $table->dropColumn('region');
             $table->dropColumn('search_term');
             $table->dropColumn('street');
-            $table->dropColumn('address');
             $table->dropColumn('first_name');
             $table->dropColumn('title');
             $table->dropColumn('house_number');

@@ -37,7 +37,36 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <a href="javascript:;" data-toggle="modal" data-target="#modal_material" class="btn btn-primary">{{ trans('cruds.purchase-order.show_modal') }}</a>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>PR No</th>
+                                        <th>Request Date</th>
+                                        <th>RN No</th>
+                                        <th>Material ID</th>
+                                        <th>Material Desc</th>
+                                        <th>Unit</th>
+                                        <th style="width: 10%">Qty</th>
+                                        <th style="width: 10%">Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($data as $key => $value)
+                                        <tr>
+                                            <td><input type="text" class="form-control" name="pr_no[]" readonly value="{{ $value->pr_no }}"></td>
+                                            <td><input type="text" class="form-control" name="request_date[]" readonly value="{{ $value->request_date }}"></td>
+                                            <td><input type="text" class="form-control" name="rn_no[]" readonly value="{{ $value->request_no }}"></td>
+                                            <td><input type="text" class="form-control" name="material_id[]" readonly value="{{ $value->material_id }}"></td>
+                                            <td><input type="text" class="form-control" name="description[]" readonly value="{{ $value->description }}"></td>
+                                            <td><input type="text" class="form-control" name="unit[]" readonly value="{{ $value->unit }}"></td>
+                                            <td><input type="text" class="form-control" name="qty[]" readonly value="{{ empty($value->qty) ? 0 : $value->qty }}"></td>
+                                            <td><input type="text" class="form-control" name="price[]" readonly value="{{ $value->price }}"></td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>    
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.purchase-order.fields.notes') }}</label>

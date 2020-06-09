@@ -45,6 +45,7 @@
                                         <th>Request Date</th>
                                         <th>RN No</th>
                                         <th>Material ID</th>
+                                        <th>Material Desc</th>
                                         <th>Unit</th>
                                         <th style="width: 10%">Qty</th>
                                         <th style="width: 10%">Price</th>
@@ -57,6 +58,7 @@
                                             <td><input type="text" class="form-control" name="request_date[]" readonly value="{{ $value->request_date }}"></td>
                                             <td><input type="text" class="form-control" name="rn_no[]" readonly value="{{ $value->request_no }}"></td>
                                             <td><input type="text" class="form-control" name="material_id[]" readonly value="{{ $value->material_id }}"></td>
+                                            <td><input type="text" class="form-control" name="description[]" readonly value="{{ $value->description }}"></td>
                                             <td><input type="text" class="form-control" name="unit[]" readonly value="{{ $value->unit }}"></td>
                                             <td><input type="text" class="form-control" name="qty[]" readonly value="{{ empty($value->qty) ? 0 : $value->qty }}"></td>
                                             <td><input type="text" class="form-control" name="price[]" readonly value="{{ $value->price }}"></td>
