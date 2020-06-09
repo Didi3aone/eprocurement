@@ -44,7 +44,7 @@
                         </li>
                         <li>
                             <a href="{{ route('admin.quotation.list-winner') }}" class="">
-                                <i class="fa fa-users"></i> 
+                                <i class="fa fa-cubes"></i> 
                                 List ACP
                             </a>
                         </li>
@@ -121,7 +121,7 @@
                 {{-- start master menu --}}
                 @can('master_access')
                 <li class=""> 
-                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-list"></i>
+                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-list-users"></i>
                         <span class="hide-menu"> {{ trans('cruds.masterManagement.title') }} </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">

@@ -58,8 +58,8 @@
                                             <td><input type="text" class="form-control" name="rn_no[]" readonly value="{{ $value->request_no }}"></td>
                                             <td><input type="text" class="form-control" name="material_id[]" readonly value="{{ $value->material_id }}"></td>
                                             <td><input type="text" class="form-control" name="unit[]" readonly value="{{ $value->unit }}"></td>
-                                            <td><input type="text" class="form-control" name="qty[]" readonly value="{{ number_format($value->qty, 0, '', '.') }}"></td>
-                                            <td><input type="text" class="form-control" name="price[]" readonly value="{{ number_format($value->price, 0, '', '.') }}"></td>
+                                            <td><input type="text" class="form-control" name="qty[]" readonly value="{{ empty($value->qty) ? 0 : $value->qty }}"></td>
+                                            <td><input type="text" class="form-control" name="price[]" readonly value="{{ $value->price }}"></td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -98,7 +98,7 @@
                     </div>
                     <div class="form-group">
                         <label class="required" for="upload_file">{{ trans('cruds.purchase-order.fields.upload_file') }}</label>
-                        <input class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" type="file" name="upload_file" multiple id="upload_file">
+                        <input class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" type="file" name="upload_file[]" multiple id="upload_file">
                         @if($errors->has('upload_file'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('upload_file') }}

@@ -140,8 +140,28 @@ class QuotationController extends Controller
 
         $qty = str_replace('.', '', $request->get('qty'));
 
+        $upload_files = '';
+
+        $files = $request->file('upload_file');
+        if ($request->hasFile('upload_file')) {
+            $inc = 0;
+            foreach ($files as $file) {
+                $path = 'quotation/';
+                $filename = strtolower($file->getClientOriginalName());
+                $file->move($path, $filename);
+
+                if ($inc < count($files))
+                    $upload_files .= $filename . ', ';
+                rtrim($upload_files, ', ');
+
+                $inc++;
+            }
+        }
+
         $quotation = new Quotation;
         $quotation->po_no = $request->get('PR_NO');
+        $quotation->notes = $request->get('notes');
+        $quotation->upload_file = $upload_files;
         $quotation->status = 0;
         $quotation->vendor_id = $request->get('vendor_id');
         $quotation->save();
@@ -161,23 +181,28 @@ class QuotationController extends Controller
 
     public function saveDirect (Request $request)
     {
-        $filename = '';
-            
-        if ($request->file('upload_file')) {
-            $path = 'quotation/';
-            $file = $request->file('upload_file');
-            
-            $filename = $file->getClientOriginalName();
-    
-            $file->move($path, $filename);
-    
-            $real_filename = public_path($path . $filename);
+        $upload_files = '';
+
+        $files = $request->file('upload_file');
+        if ($request->hasFile('upload_file')) {
+            $inc = 0;
+            foreach ($files as $file) {
+                $path = 'quotation/';
+                $filename = strtolower($file->getClientOriginalName());
+                $file->move($path, $filename);
+
+                if ($inc < count($files))
+                    $upload_files .= $filename . ', ';
+                rtrim($upload_files, ', ');
+
+                $inc++;
+            }
         }
 
         $quotation = new Quotation;
         $quotation->po_no = $request->get('PR_NO');
         $quotation->notes = $request->get('notes');
-        $quotation->upload_file = $filename;
+        $quotation->upload_file = $upload_files;
         $quotation->status = 2;
         $quotation->vendor_id = $request->get('vendor_id');
         $quotation->save();

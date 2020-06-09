@@ -50,7 +50,7 @@
                     </div>
                     <div class="form-group">
                         <label class="required" for="upload_file">{{ trans('cruds.purchase-order.fields.upload_file') }}</label>
-                        <input class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" type="file" name="upload_file" multiple id="upload_file">
+                        <input class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" type="file" name="upload_file[]" multiple id="upload_file">
                         @if($errors->has('upload_file'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('upload_file') }}

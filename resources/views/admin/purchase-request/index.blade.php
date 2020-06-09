@@ -133,47 +133,29 @@
 
     $('.money').mask('#.##0', { reverse: true });
 
-    $('.qty').on('change', function (e) {
-        e.preventDefault()
-
-        const $tr = $(this).closest('tr')
+    function countQty($this) {
+        const $tr = $this.closest('tr')
         const $qty_pr = parseInt($tr.find('.qty_pr').val())
         let $qty_open = $tr.find('.qty_open')
 
-        if ($(this).val < 0) {
+        if ($this.val() < 0) {
             alert('Your value cannot less than a zero')
 
-            $(this).val($qty_pr)
-        } else if ($(this).val() > $qty_pr) {
+            $this.val($qty_pr)
+        } else if ($this.val() > $qty_pr) {
             alert('Your value cannot be more than Quantity')
 
-            $(this).val($qty_pr)
+            $this.val($qty_pr)
         } else {
-            let total = $qty_pr - $(this).val()
+            let total = $qty_pr - $this.val()
             
             $qty_open.html(total)
         }
-    })
+    }
 
-    $('.price').on('change', function (e) {
+    $('.qty').on('change blur keyup', function (e) {
         e.preventDefault()
-
-        const $tr = $(this).closest('tr')
-        const $price = parseInt($tr.find('.price').val())
-
-        if ($(this).val < 0) {
-            alert('Your value cannot less than a zero')
-
-            $(this).val($price)
-        } else if ($(this).val() > $price) {
-            alert('Your value cannot be more than Quantity')
-
-            $(this).val($price)
-        } else {
-            let total = $price - $(this).val()
-            
-            $qty_open.html(total)
-        }
+        countQty($(this))
     })
 
     $(document).on('click', '#open_modal', function (e) {
@@ -192,19 +174,15 @@
             quantities.push(qty)
             let price = $('.price_'+id).val()
             prices.push(price)
-            // const $tr = check_pr[i].closest('tr')
-            // console.log($tr)
-            // quantity.push(check_pr[i].closest('tr').find('.qty').val())
-            // price.push(check_pr[i].closest('tr').find('.price').val())
         }
 
         ids = btoa(ids)
         quantities = btoa(quantities)
         prices = btoa(prices)
 
-        $('.bidding-online').attr('href', '{{ url("admin/purchase-request-online") }}/'+ids+'/'+quantities+'/'+prices)
-        $('.bidding-repeat').attr('href', '{{ url("admin/purchase-request-repeat") }}/'+ids+'/'+quantities+'/'+prices)
-        $('.bidding-direct').attr('href', '{{ url("admin/purchase-request-direct") }}/'+ids+'/'+quantities+'/'+prices)
+        $('.bidding-online').attr('href', '{{ url("admin/purchase-request-online") }}/' + ids + '/' + quantities + '/' + prices)
+        $('.bidding-repeat').attr('href', '{{ url("admin/purchase-request-repeat") }}/' + ids + '/' + quantities + '/' + prices)
+        $('.bidding-direct').attr('href', '{{ url("admin/purchase-request-direct") }}/' + ids + '/' + quantities + '/' + prices)
     })
 
     $('#datatables-run').DataTable({
