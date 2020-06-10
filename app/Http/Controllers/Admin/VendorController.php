@@ -30,7 +30,8 @@ class VendorController extends Controller
     public function import(Request $request)
     {
         // abort_if(Gate::denies('vendor_import_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
+        ini_set('max_execution_time', 0);
+        
         $path = 'xls/';
         $file = $request->file('xls_file');
 
