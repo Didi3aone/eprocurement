@@ -190,7 +190,7 @@ class Vendor extends Authenticatable
         'staging_time',
         'scheduling_procedure',
         'cd_relevant_for_collective_numbering'
-];
+    ];
 
     public function getEmailVerifiedAtAttribute($value)
     {

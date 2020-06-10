@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Artisan;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -30,19 +31,22 @@ class VendorController extends Controller
     {
         // abort_if(Gate::denies('vendor_import_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $this->validate($request, [
-            'xls_file' => 'required|file|mimes:csv,xls,xlsx',
-        ]);
-
         $path = 'xls/';
         $file = $request->file('xls_file');
-        $filename = $file->getClientOriginalName();
 
-        $file->move($path, $filename);
+        if (!empty($file)) {
+            $filename = $file->getClientOriginalName();
 
-        Excel::import(new VendorsImport, public_path($path . $filename));
+            $file->move($path, $filename);
 
-        return redirect('admin/vendors')->with('success', 'Vendors has been successfully imported');
+            $real_filename = public_path($path . $filename);
+
+            Artisan::call('import:vendor', ['filename' => $real_filename]);
+
+            return redirect('admin/vendors')->with('error', 'Vendors imported failed');
+        } else {
+            return redirect('admin/vendors')->with('success', 'Vendors has been successfully imported');
+        }
     }
 
     /**

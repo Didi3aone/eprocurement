@@ -35,8 +35,8 @@
                                         <th>Unit</th>
                                         <th>Description</th>
                                         <th>Qty PR</th>
-                                        <th>Qty Open</th>
                                         <th>Qty PO</th>
+                                        <th>Qty Open</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -54,8 +54,8 @@
                                             <td>{{ $value->unit }}</td>
                                             <td>{{ $value->description }}</td>
                                             <td style="text-align: right;">{{ $value->qty }}</td>
-                                            <td><input type="text" class="money form-control qty qty_{{ $value->uuid }}" name="qty[]" value="0" style="width: 70%;"></td>
-                                            <td class="qty_open" style="text-align: right;"><span>{{ $value->qty }}</span></td>
+                                            <td><input type="text" class="money form-control qty qty_{{ $value->uuid }}" name="qty[]" value="{{ $value->qty }}" style="width: 70%;"></td>
+                                            <td class="qty_open" style="text-align: right;"><span>0</span></td>
                                             <td>
                                                 {{-- @if( $value->is_validate == 1 && $value->approval_status == 12) --}}
                                                 {{-- <a class="open_modal_bidding btn btn-xs btn-success" id="open_modal" data-id="{{ $value->id }}" data-toggle="modal" data-target="#modal_create_po" href="javascript:;" >

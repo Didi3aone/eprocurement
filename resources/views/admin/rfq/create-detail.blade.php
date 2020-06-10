@@ -222,6 +222,132 @@
                             </div>
                         @endif
                     </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.rfq-detail.fields.material_id') }}</label>
+                        <input type="datetime-local" class="form-control form-control-line {{ $errors->has('material_id') ? 'is-invalid' : '' }}" name="material_id" value=""> 
+                        @if($errors->has('material_id'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('material_id') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.rfq-detail.fields.material_group') }}</label>
+                        <input type="datetime-local" class="form-control form-control-line {{ $errors->has('material_group') ? 'is-invalid' : '' }}" name="material_group" value=""> 
+                        @if($errors->has('material_group'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('material_group') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.rfq-detail.fields.purchasing_info_rec') }}</label>
+                        <input type="datetime-local" class="form-control form-control-line {{ $errors->has('purchasing_info_rec') ? 'is-invalid' : '' }}" name="purchasing_info_rec" value=""> 
+                        @if($errors->has('purchasing_info_rec'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('purchasing_info_rec') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.rfq-detail.fields.target_quantity') }}</label>
+                        <input type="datetime-local" class="form-control form-control-line {{ $errors->has('target_quantity') ? 'is-invalid' : '' }}" name="target_quantity" value=""> 
+                        @if($errors->has('target_quantity'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('target_quantity') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.rfq-detail.fields.order_quantity') }}</label>
+                        <input type="datetime-local" class="form-control form-control-line {{ $errors->has('order_quantity') ? 'is-invalid' : '' }}" name="order_quantity" value=""> 
+                        @if($errors->has('order_quantity'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('order_quantity') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.rfq-detail.fields.order_unit') }}</label>
+                        <input type="datetime-local" class="form-control form-control-line {{ $errors->has('order_unit') ? 'is-invalid' : '' }}" name="order_unit" value=""> 
+                        @if($errors->has('order_unit'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('order_unit') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.rfq-detail.fields.order_price_unit') }}</label>
+                        <input type="datetime-local" class="form-control form-control-line {{ $errors->has('order_price_unit') ? 'is-invalid' : '' }}" name="order_price_unit" value=""> 
+                        @if($errors->has('order_price_unit'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('order_price_unit') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.rfq-detail.fields.quantity_conversion') }}</label>
+                        <input type="datetime-local" class="form-control form-control-line {{ $errors->has('quantity_conversion') ? 'is-invalid' : '' }}" name="quantity_conversion" value=""> 
+                        @if($errors->has('quantity_conversion'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('quantity_conversion') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.rfq-detail.fields.equal_to') }}</label>
+                        <input type="datetime-local" class="form-control form-control-line {{ $errors->has('equal_to') ? 'is-invalid' : '' }}" name="equal_to" value=""> 
+                        @if($errors->has('equal_to'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('equal_to') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.rfq-detail.fields.denominal') }}</label>
+                        <input type="datetime-local" class="form-control form-control-line {{ $errors->has('denominal') ? 'is-invalid' : '' }}" name="denominal" value=""> 
+                        @if($errors->has('denominal'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('denominal') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.rfq-detail.fields.net_order_price') }}</label>
+                        <input type="datetime-local" class="form-control form-control-line {{ $errors->has('net_order_price') ? 'is-invalid' : '' }}" name="net_order_price" value=""> 
+                        @if($errors->has('net_order_price'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('net_order_price') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.rfq-detail.fields.price_unit') }}</label>
+                        <input type="datetime-local" class="form-control form-control-line {{ $errors->has('price_unit') ? 'is-invalid' : '' }}" name="price_unit" value=""> 
+                        @if($errors->has('price_unit'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('price_unit') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.rfq-detail.fields.net_order_value') }}</label>
+                        <input type="datetime-local" class="form-control form-control-line {{ $errors->has('net_order_value') ? 'is-invalid' : '' }}" name="net_order_value" value=""> 
+                        @if($errors->has('net_order_value'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('net_order_value') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.rfq-detail.fields.gross_order_value') }}</label>
+                        <input type="datetime-local" class="form-control form-control-line {{ $errors->has('gross_order_value') ? 'is-invalid' : '' }}" name="gross_order_value" value=""> 
+                        @if($errors->has('gross_order_value'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('gross_order_value') }}
+                            </div>
+                        @endif
+                    </div>
                     <div class="form-actions">
                         <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.save') }}</button>
                         <a href="{{ route('admin.rfq.index') }}" type="button" class="btn btn-inverse">Cancel</a>

@@ -33,7 +33,6 @@
                                         {{ $errors->first('PR_NO') }}
                                     </div>
                                 @endif
-                                <i>get from SAP</i>
                             </div>
                         </div>
                     </div>
@@ -52,6 +51,7 @@
                                         <th style="width: 10%">Price</th>
                                     </tr>
                                 </thead>
+                                {{-- get from rfq,  net_order_price untuk pricenya --}}
                                 <tbody>
                                     @foreach($data as $key => $value)
                                         <tr>

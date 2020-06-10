@@ -53,26 +53,19 @@
                 </li>
                 <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-file"></i>
-                        <span class="hide-menu"> PO Repeat </span>
+                        <span class="hide-menu"> Approval PO </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">
                         <li>
                             <a href="{{ route('admin.quotation.repeat') }}">
                                 <i class="fa fa-cubes"></i> 
-                                List PO Repeat
+                                PO Repeat
                             </a>
                         </li>
-                    </ul>
-                </li>
-                <li class=""> 
-                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-file"></i>
-                        <span class="hide-menu"> Direct Order </span>
-                    </a>
-                    <ul aria-expanded="false" class="collapse">
                         <li>
                             <a href="{{ route('admin.quotation.direct') }}">
                                 <i class="fa fa-cubes"></i> 
-                                List Direct Order
+                                Direct Order
                             </a>
                         </li>
                     </ul>
@@ -121,7 +114,8 @@
                 {{-- start master menu --}}
                 @can('master_access')
                 <li class=""> 
-                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-list-users"></i>
+                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false">
+                        <i class="fa fa-users"></i>
                         <span class="hide-menu"> {{ trans('cruds.masterManagement.title') }} </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">
@@ -209,6 +203,20 @@
                                     </a>
                                 </li>
                                 @endcan
+                                @can('gl_management_access')
+                                <li>
+                                    <a href="{{ route('admin.gl.index') }}" class="">
+                                        <i class="fa fas fa-caret-right"></i> {{ trans('cruds.gl.title') }}
+                                    </a>
+                                </li>
+                                @endcan
+                                @can('cost_management_access')
+                                <li>
+                                    <a href="{{ route('admin.cost.index') }}" class="">
+                                        <i class="fa fas fa-caret-right"></i> {{ trans('cruds.cost.title') }}
+                                    </a>
+                                </li>
+                                @endcan
                             </ul>
                         </li>
                         @endcan
@@ -222,41 +230,7 @@
                                 @can('vendor_access')
                                 <li>
                                     <a href="{{ route('admin.vendors.index') }}" class="">
-                                        <i class="fa fas fa-caret-right"></i> {{ trans('cruds.masterVendor.title') }}
-                                    </a>
-                                </li>
-                                @endcan
-                            </ul>
-                        </li>
-                        @endcan
-                        @can('gl_management_access')
-                        <li>
-                            <a href="#" class="has-arrow">
-                                <i class="fa fa-file">
-                                </i> {{ trans('cruds.gl.title') }}
-                            </a>
-                            <ul aria-expanded="false" class="collapse">
-                                @can('gl_access')
-                                <li>
-                                    <a href="{{ route('admin.gl.index') }}" class="">
-                                        <i class="fa fas fa-caret-right"></i> {{ trans('cruds.gl.title') }}
-                                    </a>
-                                </li>
-                                @endcan
-                            </ul>
-                        </li>
-                        @endcan
-                        @can('cost_management_access')
-                        <li>
-                            <a href="#" class="has-arrow">
-                                <i class="fa fa-file-o">
-                                </i> {{ trans('cruds.cost.title') }}
-                            </a>
-                            <ul aria-expanded="false" class="collapse">
-                                @can('cost_access')
-                                <li>
-                                    <a href="{{ route('admin.cost.index') }}" class="">
-                                        <i class="fa fas fa-caret-right"></i> {{ trans('cruds.cost.title') }}
+                                        <i class="fa fas fa-caret-right"></i> List {{ trans('cruds.masterVendor.title') }}
                                     </a>
                                 </li>
                                 @endcan

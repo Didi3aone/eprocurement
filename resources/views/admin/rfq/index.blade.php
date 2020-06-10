@@ -120,6 +120,7 @@
 <script>
 $('#datatables-run').DataTable({
     dom: 'Bfrtip',
+    order: [[0, 'desc']],
     buttons: [
         'copy', 'csv', 'excel', 'pdf', 'print'
     ]
