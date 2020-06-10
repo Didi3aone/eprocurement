@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Models\Vendor\Quotation;
 use App\Models\Vendor\QuotationDetail;
 use App\Models\Vendor\QuotationApproval;
+use App\Models\PurchaseRequestsDetail;
+use App\Models\PurchaseRequestHistory;
 use App\Models\PurchaseOrder;
 use App\Models\WorkFlowApproval;
 use App\Models\Vendor;
@@ -71,7 +73,9 @@ class QuotationController extends Controller
 
     public function repeat ()
     {
-        $quotation = Quotation::where('status', 0)->orderBy('id', 'desc')->get();
+        $quotation = Quotation::where('status', 0)
+            ->orderBy('id', 'desc')
+            ->get();
 
         return view('admin.quotation.repeat', compact('quotation'));
     }
@@ -133,12 +137,52 @@ class QuotationController extends Controller
         }
     }
 
+    protected function savePRHistory ($data)
+    {
+        // insert to purchase_request_history
+        $prHistory = new PurchaseRequestHistory;
+        $prHistory->pr_id = $data['pr_id'];
+        $prHistory->purchase_id = $data['purchase_id'];
+        $prHistory->request_no = $data['request_no'];
+        $prHistory->material_id = $data['material_id'];
+        $prHistory->vendor_id = $data['vendor_id'];
+        $prHistory->qty = $data['qty'];
+        $prHistory->price = $data['price'];
+        $prHistory->save();
+    }
+
     public function saveRepeat (Request $request)
     {
-        if (empty($request->get('qty')))
-            return redirect()->route('admin.purchase-request-repeat', $request->get('id'))->with('status', 'Quantity cannot be zero!');
+        $qty = 0;
+        $price = 0;
 
-        $qty = str_replace('.', '', $request->get('qty'));
+        for ($i = 0; $i < count($request->get('qty')); $i++) {
+            $qy = str_replace('.', '', $request->get('qty')[$i]);
+            $qty += $qy;
+
+            $pc = str_replace('.', '', $request->get('price')[$i]);
+            $price += $pc;
+
+            // update material qty
+            $material = PurchaseRequestsDetail::where('request_no', $request->get('rn_no')[$i])
+                ->where('material_id', $request->get('material_id')[$i])
+                ->first();
+            $material->qty -= $request->get('qty')[$i];
+            $material->save();
+
+            // insert to pr history
+            $data = [
+                'request_no' => $request->get('rn_no')[$i],
+                'pr_id' => $request->get('id')[$i],
+                'purchase_id' => $request->get('purchase_id')[$i],
+                'material_id' => $request->get('material_id')[$i],
+                'vendor_id' => $request->get('vendor_id'),
+                'qty' => $request->get('qty')[$i],
+                'price' => $request->get('price')[$i]
+            ];
+
+            $this->savePRHistory($data);
+        }
 
         $upload_files = '';
 
@@ -162,6 +206,8 @@ class QuotationController extends Controller
         $quotation->po_no = $request->get('PR_NO');
         $quotation->notes = $request->get('notes');
         $quotation->upload_file = $upload_files;
+        $quotation->qty = $qty;
+        $quotation->target_price = $price;
         $quotation->status = 0;
         $quotation->vendor_id = $request->get('vendor_id');
         $quotation->save();
@@ -181,6 +227,17 @@ class QuotationController extends Controller
 
     public function saveDirect (Request $request)
     {
+        $qty = 0;
+        $price = 0;
+
+        for ($i = 0; $i < count($request->get('qty')); $i++) {
+            $qy = str_replace('.', '', $request->get('qty')[$i]);
+            $qty += $qy;
+
+            $pc = str_replace('.', '', $request->get('price')[$i]);
+            $price += $pc;
+        }
+        
         $upload_files = '';
 
         $files = $request->file('upload_file');
@@ -217,6 +274,27 @@ class QuotationController extends Controller
         \Mail::to($vendor->email)->send(new PurchaseOrderMail($data));
 
         return redirect()->route('admin.quotation.direct')->with('status', 'Direct Order has been set!');
+    }
+
+    public function showOnline (Request $request, $id)
+    {
+        $model = Quotation::find($id);
+
+        return view('admin.quotation.show-online', compact('model'));
+    }
+
+    public function showRepeat (Request $request, $id)
+    {
+        $model = Quotation::find($id);
+
+        return view('admin.quotation.show-repeat', compact('model'));
+    }
+
+    public function showDirect (Request $request, $id)
+    {
+        $model = Quotation::find($id);
+
+        return view('admin.quotation.show-direct', compact('model'));
     }
 
     public function winner (Request $request)
@@ -386,7 +464,8 @@ class QuotationController extends Controller
 
     public function listWinner ()
     {
-        $quotation = Quotation::orderBy('quotation.created_at', 'desc')
+        $quotation = Quotation::where('status', 1)
+            ->orderBy('quotation.created_at', 'desc')
             ->get();
 
         return view('admin.quotation.list-winner', compact('quotation'));

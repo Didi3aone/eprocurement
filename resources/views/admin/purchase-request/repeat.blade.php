@@ -33,6 +33,7 @@
                                         {{ $errors->first('PR_NO') }}
                                     </div>
                                 @endif
+                                <i>get from SAP</i>
                             </div>
                         </div>
                     </div>
@@ -54,6 +55,8 @@
                                 <tbody>
                                     @foreach($data as $key => $value)
                                         <tr>
+                                            <input type="hidden" name="id[]" value="{{ $value->id }}">
+                                            <input type="hidden" name="purchase_id[]" value="{{ $value->purchase_id }}">
                                             <td><input type="text" class="form-control" name="pr_no[]" readonly value="{{ $value->pr_no }}"></td>
                                             <td><input type="text" class="form-control" name="request_date[]" readonly value="{{ $value->request_date }}"></td>
                                             <td><input type="text" class="form-control" name="rn_no[]" readonly value="{{ $value->request_no }}"></td>

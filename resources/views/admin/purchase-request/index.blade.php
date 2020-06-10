@@ -37,15 +37,13 @@
                                         <th>Qty PR</th>
                                         <th>Qty Open</th>
                                         <th>Qty PO</th>
-                                        <th>Price</th>
-                                        <th>&nbsp;</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($materials as $key => $value)
                                         <tr>
-                                            <input type="hidden" name="qty_pr" class="qty_pr" value="{{ $value->qty }}">
                                             <td>
+                                                <input type="hidden" name="qty_pr[]" class="qty_pr" value="{{ $value->qty }}">
                                                 <input type="checkbox" name="id[]" id="check_{{ $value->id }}" class="check_pr" value="{{ $value->uuid }}" _valold="{{ $value->id . ':' . $value->pr_no . ':' . $value->rn_no . ':' . $value->material_id }}">
                                                 <label for="check_{{ $value->id }}">&nbsp;</label>
                                             </td>
@@ -58,7 +56,6 @@
                                             <td style="text-align: right;">{{ $value->qty }}</td>
                                             <td><input type="text" class="money form-control qty qty_{{ $value->uuid }}" name="qty[]" value="0" style="width: 70%;"></td>
                                             <td class="qty_open" style="text-align: right;"><span>{{ $value->qty }}</span></td>
-                                            <td><input type="text" class="money form-control price price_{{ $value->uuid }}" name="price[]" value="{{ $value->price }}" style="width: 70%;"></td>
                                             <td>
                                                 {{-- @if( $value->is_validate == 1 && $value->approval_status == 12) --}}
                                                 {{-- <a class="open_modal_bidding btn btn-xs btn-success" id="open_modal" data-id="{{ $value->id }}" data-toggle="modal" data-target="#modal_create_po" href="javascript:;" >
@@ -172,17 +169,14 @@
             ids.push(id)
             let qty = $('.qty_'+id).val()
             quantities.push(qty)
-            let price = $('.price_'+id).val()
-            prices.push(price)
         }
 
         ids = btoa(ids)
         quantities = btoa(quantities)
-        prices = btoa(prices)
 
-        $('.bidding-online').attr('href', '{{ url("admin/purchase-request-online") }}/' + ids + '/' + quantities + '/' + prices)
-        $('.bidding-repeat').attr('href', '{{ url("admin/purchase-request-repeat") }}/' + ids + '/' + quantities + '/' + prices)
-        $('.bidding-direct').attr('href', '{{ url("admin/purchase-request-direct") }}/' + ids + '/' + quantities + '/' + prices)
+        $('.bidding-online').attr('href', '{{ url("admin/purchase-request-online") }}/' + ids)
+        $('.bidding-repeat').attr('href', '{{ url("admin/purchase-request-repeat") }}/' + ids + '/' + quantities)
+        $('.bidding-direct').attr('href', '{{ url("admin/purchase-request-direct") }}/' + ids + '/' + quantities)
     })
 
     $('#datatables-run').DataTable({

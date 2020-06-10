@@ -47,6 +47,7 @@ class PurchaseRequestController extends Controller
         )
             ->leftJoin('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
             ->where('purchase_requests_details.is_validate', 1)
+            ->where('qty', '>', 0)
             ->where('purchase_requests_details.status_approval', 704)
             ->orWhere('purchase_requests_details.status_approval', 705)
             ->orderBy('purchase_requests.created_at', 'desc')
@@ -59,16 +60,14 @@ class PurchaseRequestController extends Controller
         return view('admin.purchase-request.index', compact('materials'));
     }
 
-    protected function createPrPo ($ids, $quantities=null, $prices=null)
+    protected function createPrPo ($ids, $quantities = null)
     {
-        $poNo = PrPo::orderBy('po_no', 'desc')->limit(1)->first();
-        $po_id = (empty($poNo)) ? 1 : intval($poNo->id);
-        $po_no = sprintf('1%08d', $po_id);
+        $po_no = sprintf('1%08d', time());
         $ids = explode(',', $ids);
+
         if ($quantities)
             $quantities = explode(',', $quantities);
-        if ($prices)
-            $prices = explode(',', $prices);
+
         $data = [];
         $prs = [];
 
@@ -84,8 +83,6 @@ class PurchaseRequestController extends Controller
 
             if ($quantities)
                 $pr->qty = $quantities[$i];
-            if ($prices)
-                $pr->prices = $prices[$i];
 
             array_push($data, $pr);
         }
@@ -99,7 +96,7 @@ class PurchaseRequestController extends Controller
         ];
     }
 
-    public function online (Request $request, $ids, $quantities, $prices)
+    public function online (Request $request, $ids)
     {
         $ids = base64_decode($ids);
         $return = $this->createPrPo($ids);
@@ -115,12 +112,11 @@ class PurchaseRequestController extends Controller
         return view('admin.purchase-request.online', compact('data', 'po_no', 'vendor', 'uri'));
     }
 
-    public function repeat (Request $request, $ids, $quantities, $prices)
+    public function repeat (Request $request, $ids, $quantities)
     {
         $ids = base64_decode($ids);
         $quantities = base64_decode($quantities);
-        $prices = base64_decode($prices);
-        $return = $this->createPrPo($ids, $quantities, $prices);
+        $return = $this->createPrPo($ids, $quantities);
         
         $data = $return['data'];
         $po_no = $return['po_no'];
@@ -128,19 +124,17 @@ class PurchaseRequestController extends Controller
 
         $uri = [
             'ids' => base64_encode($ids),
-            'quantities' => base64_encode($quantities),
-            'prices' => base64_encode($prices)
+            'quantities' => base64_encode($quantities)
         ];
         
         return view('admin.purchase-request.repeat', compact('data', 'po_no', 'vendor', 'uri'));
     }
 
-    public function direct (Request $request, $ids, $quantities, $prices)
+    public function direct (Request $request, $ids, $quantities)
     {
         $ids = base64_decode($ids);
         $quantities = base64_decode($quantities);
-        $prices = base64_decode($prices);
-        $return = $this->createPrPo($ids, $quantities, $prices);
+        $return = $this->createPrPo($ids, $quantities);
         
         $data = $return['data'];
         $po_no = $return['po_no'];
@@ -148,8 +142,7 @@ class PurchaseRequestController extends Controller
 
         $uri = [
             'ids' => base64_encode($ids),
-            'quantities' => base64_encode($quantities),
-            'prices' => base64_encode($prices)
+            'quantities' => base64_encode($quantities)
         ];
         
         return view('admin.purchase-request.direct', compact('data', 'po_no', 'vendor', 'uri'));

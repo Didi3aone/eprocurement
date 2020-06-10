@@ -128,9 +128,9 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::post('purchase-request-save-validate-pr','PurchaseRequestController@saveValidate')->name('purchase-request-save-validate-pr');
     Route::put('purchase-request-approval/{id}','PurchaseRequestController@approvalPr')->name('purchase-request-approval');
     Route::get('purchase-request-show/{id}','PurchaseRequestController@showDetail')->name('purchase-request-show');
-    Route::get('purchase-request-online/{ids}/{quantities}/{prices}','PurchaseRequestController@online')->name('purchase-request-online');
-    Route::get('purchase-request-repeat/{ids}/{quantities}/{prices}','PurchaseRequestController@repeat')->name('purchase-request-repeat');
-    Route::get('purchase-request-direct/{ids}/{quantities}/{prices}','PurchaseRequestController@direct')->name('purchase-request-direct');
+    Route::get('purchase-request-online/{ids}/{quantities}','PurchaseRequestController@online')->name('purchase-request-online');
+    Route::get('purchase-request-repeat/{ids}/{quantities}','PurchaseRequestController@repeat')->name('purchase-request-repeat');
+    Route::get('purchase-request-direct/{ids}/{quantities}','PurchaseRequestController@direct')->name('purchase-request-direct');
     Route::resource('purchase-request', 'PurchaseRequestController');
 
     // request note
@@ -157,6 +157,9 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::get('quotation/online', 'QuotationController@online')->name('quotation.online');
     Route::get('quotation/repeat', 'QuotationController@repeat')->name('quotation.repeat');
     Route::get('quotation/direct', 'QuotationController@direct')->name('quotation.direct');
+    Route::get('quotation-show-online/{id}', 'QuotationController@showOnline')->name('quotation-show-online');
+    Route::get('quotation-show-repeat/{id}', 'QuotationController@showRepeat')->name('quotation-show-repeat');
+    Route::get('quotation-show-direct/{id}', 'QuotationController@showDirect')->name('quotation-show-direct');
     Route::post('quotation-save-online', 'QuotationController@saveOnline')->name('quotation-save-online');
     Route::post('quotation-save-repeat', 'QuotationController@saveRepeat')->name('quotation-save-repeat');
     Route::post('quotation-save-direct', 'QuotationController@saveDirect')->name('quotation-save-direct');

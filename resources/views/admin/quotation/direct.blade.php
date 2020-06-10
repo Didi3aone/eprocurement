@@ -31,9 +31,8 @@
                                         <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.notes') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.upload_file') }}</th>
-                                        <th>
-                                            &nbsp;
-                                        </th>
+                                        <th>{{ trans('cruds.quotation.fields.target_price') }}</th>
+                                        <th>&nbsp;</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -43,8 +42,12 @@
                                             <td>{{ $val->po_no ?? '' }}</td>
                                             <td>{{ $val->notes ?? '' }}</td>
                                             <td>
-                                                <a href="{{ asset('uploads/' . $val->upload_file) }}">{{ $val->upload_file }}</a>
+                                                @php $files = explode(', ', $val->upload_file); @endphp
+                                                @foreach ($files as $file)
+                                                <a href="{{ asset('uploads/' . $file) }}">{{ $file }}</a>
+                                                @endforeach
                                             </td>
+                                            <td>{{ number_format($val->target_price, 0, '', '.') }}</td>
                                             <td>
                                                 @can('quotation_show')
                                                     <a class="btn btn-xs btn-primary" href="{{ route('admin.quotation.show', $val->id) }}">

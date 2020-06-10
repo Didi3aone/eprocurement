@@ -29,7 +29,6 @@
                                     <tr>
                                         <th>{{ trans('cruds.quotation.fields.id') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
-                                        <th>{{ trans('cruds.quotation.fields.vendor_id') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.status') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.leadtime_type') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.purchasing_leadtime') }}</th>
@@ -46,13 +45,6 @@
                                         <tr data-entry-id="{{ $val->id }}">
                                             <td>{{ $val->id ?? '' }}</td>
                                             <td>{{ $val->po_no ?? '' }}</td>
-                                            <td>
-                                                @if ($val->status != 1)
-                                                {{ isset($val->vendor) ? $val->vendor->name : '' }}
-                                                @else
-                                                More than one vendor, please click View Button
-                                                @endif
-                                            </td>
                                             <td>{{ $val->status == 0 ? 'PO repeat' : ($val->status == 1 ? 'Online' : 'Penunjukkan Langsung') }}</td>
                                             <td>{{ $val->leadtime_type == 0 ? 'Date' : 'Day Count' }}</td>
                                             <td>{{ $val->purchasing_leadtime ?? '' }}</td>
@@ -71,23 +63,26 @@
                                             <td>{{ number_format($val->qty, 0, '', '.') }}</td>
                                             <td>
                                                 @can('quotation_show')
-                                                {{-- @if (time() <= strtotime($val->expired_date)) --}}
-                                                @if ($val->status == 0)
-                                                    <a href="{{ route('admin.quotation.approve', $val->id) }}" class="btn btn-xs btn-warning">{{ trans('global.approve') }}</a>
-                                                @elseif ($val->status == 2)
-                                                    <a href="{{ route('admin.quotation.approve', $val->id) }}" class="btn btn-xs btn-warning">{{ trans('global.approve') }}</a>
-                                                @else
-                                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.quotation.show-winner', $val->id) }}">
-                                                        {{ trans('global.view') }}
-                                                    </a>
-                                                @endif
+                                                    @if ($val->status == 0)
+                                                        <a href="{{ route('admin.quotation.approve', $val->id) }}" class="btn btn-xs btn-warning">{{ trans('global.approve') }}</a>
+                                                    @elseif ($val->status == 2)
+                                                        <a href="{{ route('admin.quotation.approve', $val->id) }}" class="btn btn-xs btn-warning">{{ trans('global.approve') }}</a>
+                                                    @else
+                                                        <a class="btn btn-xs btn-primary" href="{{ route('admin.quotation.show-winner', $val->id) }}">
+                                                            {{ trans('global.view') }}
+                                                        </a>
+                                                    @endif
                                                 @endcan
 
-                                                @can('quotation_edit')
-                                                    {{-- <a class="btn btn-xs btn-info" href="{{ route('admin.quotation.edit', $val->id) }}">
+                                                <a class="btn btn-xs btn-info" href="{{ route('admin.quotation.show', $val->id) }}">
+                                                    {{ trans('global.show') }}
+                                                </a>
+
+                                                {{-- @can('quotation_edit')
+                                                    <a class="btn btn-xs btn-info" href="{{ route('admin.quotation.edit', $val->id) }}">
                                                         {{ trans('global.edit') }}
-                                                    </a> --}}
-                                                @endcan
+                                                    </a>
+                                                @endcan --}}
 
                                                 @can('quotation_delete')
                                                     {{-- <form action="{{ route('admin.quotation.destroy', $val->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
