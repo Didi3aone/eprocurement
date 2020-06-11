@@ -250,6 +250,9 @@
                                     <a href="{{ route("admin.users.index") }}" class="{{ request()->is('admin/users') || request()->is('admin/users/*') ? 'active' : '' }}">
                                         <i class="fa fa-user"></i> {{ trans('cruds.user.title') }}
                                     </a>
+                                    <a href="{{ route("admin.users.mapping") }}" class="{{ request()->is('admin/users') || request()->is('admin/users/*') ? 'active' : '' }}">
+                                        <i class="fa fa-user"></i> {{ trans('cruds.user.mapping') }}
+                                    </a>
                                     @endcan
                                     @can('role_access')
                                     <a href="{{ route("admin.roles.index") }}" class="{{ request()->is('admin/roles') || request()->is('admin/roles/*') ? 'active' : '' }}">

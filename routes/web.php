@@ -118,6 +118,9 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
 
     // Users
     Route::delete('users/destroy', 'UsersController@massDestroy')->name('users.massDestroy');
+    Route::get('users/mapping', 'UsersController@mapping')->name('users.mapping');
+    Route::get('users-add-mapping', 'UsersController@addMapping')->name('users-add-mapping');
+    Route::post('users/mapping', 'UsersController@saveMapping')->name('users.mapping');
     Route::resource('users', 'UsersController');
 
     // purchase request
@@ -179,6 +182,8 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::post('rfq/import', 'RfqController@import')->name('rfq.import');
     Route::get('rfq-add-detail/{code}', 'RfqController@addDetail')->name('rfq-add-detail');
     Route::post('rfq-save-detail', 'RfqController@saveDetail')->name('rfq-save-detail');
+    Route::get('rfq-show/{code}', 'RfqController@show')->name('rfq-show');
+    Route::get('rfq-add-detail/{code}', 'RfqController@addDetail')->name('rfq-add-detail');
     Route::resource('rfq', 'RfqController');
 
     //billings 

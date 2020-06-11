@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\Vendor;
+use App\Models\MasterRfq;
+use App\Models\MasterRfqDetail;
 use App\Models\Rfq;
 use App\Models\RfqDetail;
 use App\Imports\RfqImport;
@@ -22,9 +25,9 @@ class RfqController extends Controller
     {
         // abort_if(Gate::denies('rfq_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $rfqs = Rfq::all();
+        $vendors = Vendor::all();
 
-        return view('admin.rfq.index', compact('rfqs'));
+        return view('admin.rfq.index', compact('vendors'));
     }
 
     public function import(Request $request)
@@ -55,7 +58,10 @@ class RfqController extends Controller
     {
         // abort_if(Gate::denies('rfq_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        return view('admin.rfq.create');
+        $vendors = Vendor::all();
+        $docTypes = Rfq::all();
+
+        return view('admin.rfq.create', compact('vendors', 'docTypes'));
     }
 
     /**
@@ -66,7 +72,7 @@ class RfqController extends Controller
      */
     public function store(Request $request)
     {
-        $rfq = Rfq::create($request->all());
+        $rfq = MasterRfq::create($request->all());
 
         return redirect()->route('admin.rfq.index')->with('status', trans('cruds.rfq.alert_success_insert'));
     }
@@ -78,7 +84,7 @@ class RfqController extends Controller
 
     public function saveDetail (Request $request)
     {
-        $rfq_detail = RfqDetail::create($request->all());
+        $rfq_detail = MasterRfqDetail::create($request->all());
 
         return redirect()->route('admin.rfq.index')->with('status', trans('cruds.rfq-detail.alert_success_insert'));
     }
@@ -89,11 +95,11 @@ class RfqController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($code)
     {
         // abort_if(Gate::denies('rfq_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $rfq = Rfq::findOrFail($id);
+        $rfq = MasterRfq::where('vendor', $code)->get();
 
         return view('admin.rfq.show', compact('rfq'));
     }
