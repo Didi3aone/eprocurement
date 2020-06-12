@@ -2,9 +2,9 @@
 @section('content')
 <div class="row page-titles">
     <div class="col-md-5 col-8 align-self-center">
-        <h3 class="text-themecolor">Master</h3>
+        <h3 class="text-themecolor">Purchase Order</h3>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="javascript:void(0)">{{ trans('cruds.quotation.title') }}</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">PO Repeat</a></li>
             <li class="breadcrumb-item active">View</li>
         </ol>
     </div>
@@ -20,23 +20,11 @@
                                 <tbody>
                                     <tr>
                                         <th>{{ trans('cruds.quotation.fields.id') }}</th>
-                                        <td>{{ $quotation->id }}</td>
+                                        <td>{{ $model->id }}</td>
                                     </tr>
                                     <tr>
                                         <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
-                                        <td>{{ $quotation->po_no }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ trans('cruds.quotation.fields.purchasing_leadtime') }}</th>
-                                        <td>{{ $quotation->purchasing_leadtime }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ trans('cruds.quotation.fields.target_price') }}</th>
-                                        <td>{{ number_format($quotation->target_price, 0, '', '.') }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ trans('cruds.quotation.fields.expired_date') }}</th>
-                                        <td>{{ $quotation->expired_date }}</td>
+                                        <td>{{ $model->po_no }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -46,26 +34,30 @@
                                 <thead>
                                     <tr>
                                         <th>&nbsp;</th>
+                                        <th>Vendor Code</th>
                                         <th>Vendor Name</th>
-                                        <th>Email</th>
-                                        <th>Leadtime</th>
+                                        <th>Material Code</th>
+                                        <th>Qty</th>
+                                        <th>Unit</th>
                                         <th>Price</th>
                                         <th>&nbsp;</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($quotation->detail as $det)
+                                    @foreach ($model->detail as $det)
                                     <tr>
                                         <td>
                                             <input type="checkbox" name="id[]" id="check_{{ $det->id }}" value="{{ $det->id }}">
                                             <label for="check_{{ $det->id }}"></label>
                                         </td>
-                                        <td>{{ $det->vendor->name }}</td>
-                                        <td>{{ $det->vendor->email }}</td>
-                                        <td>{{ $det->vendor_leadtime }}</td>
+                                        <td>{{ isset($det->vendor) ? $det->vendor->code : '' }}</td>
+                                        <td>{{ isset($det->vendor) ? $det->vendor->name : '' }}</td>
+                                        <td>{{ $det->material }} - {{ $det->materialDetail->description }}</td>
+                                        <td>{{ number_format($det->qty, 0, '', '.') }}</td>
+                                        <td>{{ number_format($det->unit, 0, '', '.') }}</td>
                                         <td>{{ number_format($det->vendor_price, 0, '', '.') }}</td>
                                         <td>
-                                            <a href="{{ route('admin.quotation.remove-vendor', [$quotation->id, $det->vendor_id]) }}" class="btn btn-danger"><i class="fa fa-trash"></i> Remove</a>
+                                            <a href="{{ route('admin.quotation.remove-vendor', [$model->id, $det->vendor_id]) }}" class="btn btn-danger"><i class="fa fa-trash"></i> Remove</a>
                                         </td>
                                     </tr>
                                     @endforeach

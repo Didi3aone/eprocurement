@@ -29,9 +29,7 @@
                                     <tr>
                                         <th>{{ trans('cruds.quotation.fields.id') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
-                                        <th>{{ trans('cruds.quotation.fields.qty') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.upload_file') }}</th>
-                                        <th>{{ trans('cruds.quotation.fields.price') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.status') }}</th>
                                         <th>&nbsp;</th>
                                     </tr>
@@ -41,16 +39,17 @@
                                         <tr data-entry-id="{{ $val->id }}">
                                             <td>{{ $val->id ?? '' }}</td>
                                             <td>{{ $val->po_no ?? '' }}</td>
-                                            <td>{{ number_format($val->qty, 0, '', '.') }}</td>
                                             <td>
                                                 @php $files = explode(', ', $val->upload_file); @endphp
                                                 @foreach ($files as $file)
                                                 <a href="{{ asset('uploads/' . $file) }}">{{ $file }}</a>
                                                 @endforeach
                                             </td>
-                                            <td>{{ number_format($val->target_price, 0, '', '.') }}</td>
                                             <td>{{ $val->status == 0 ? 'unapproved' : 'approved' }}</td>
                                             <td>
+                                                <a class="btn btn-xs btn-warning" href="{{ route('admin.quotation-show-repeat', $val->id) }}">
+                                                    Show Materials
+                                                </a>
                                                 @can('quotation_approve')
                                                     <a class="btn btn-xs btn-primary" href="{{ route('admin.quotation.approve', $val->id) }}">
                                                         Approve

@@ -8,7 +8,8 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\Role;
 use App\Models\User;
-use App\Models\Plant;
+use App\Models\PurchasingGroup;
+use App\Models\UserMap;
 use Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,31 +32,6 @@ class UsersController extends Controller
         $roles = Role::all()->pluck('title', 'id');
 
         return view('admin.users.create', compact('roles'));
-    }
-
-    public function addMapping ()
-    {
-        $users = User::all();
-        $plants = Plant::get();
-
-        return view('admin.users.create-mapping', compact('users', 'plants'));
-    }
-
-    public function mapping ()
-    {
-        $model = UserMap::all();
-
-        return view('admin.users.mapping', compact('model'));
-    }
-
-    public function saveMapping (Request $request)
-    {
-        $model = UserMap::create([
-            'nik' => $request->nik,
-            'plant' => $request->plant,
-        ]);
-
-        return redirect()->route('admin.users.index')->with('success', 'User map has been successfully saved');
     }
 
     public function store(StoreUserRequest $request)

@@ -14,6 +14,7 @@ use App\Models\Vendor\QuotationApproval;
 use App\Models\PurchaseRequestsDetail;
 use App\Models\PurchaseRequestHistory;
 use App\Models\PurchaseOrder;
+use App\Models\MasterRfq;
 use App\Models\WorkFlowApproval;
 use App\Models\Vendor;
 use App\Mail\PurchaseOrderMail;
@@ -73,8 +74,8 @@ class QuotationController extends Controller
 
     public function repeat ()
     {
-        $quotation = Quotation::where('status', 0)
-            ->orderBy('id', 'desc')
+        $quotation = Quotation::where('quotation.status', 0)
+            ->orderBy('quotation.id', 'desc')
             ->get();
 
         return view('admin.quotation.repeat', compact('quotation'));
@@ -151,10 +152,15 @@ class QuotationController extends Controller
         $prHistory->save();
     }
 
-    public function saveRepeat (Request $request)
+    public function previewRepeat (Request $request)
     {
         $qty = 0;
         $price = 0;
+        $po_no = $request->get('po_no');
+        $notes = $request->get('notes');
+        $plant_code = $request->get('plant_code');
+
+        $data = [];
 
         for ($i = 0; $i < count($request->get('qty')); $i++) {
             $qy = str_replace('.', '', $request->get('qty')[$i]);
@@ -163,25 +169,46 @@ class QuotationController extends Controller
             $pc = str_replace('.', '', $request->get('price')[$i]);
             $price += $pc;
 
-            // update material qty
-            $material = PurchaseRequestsDetail::where('request_no', $request->get('rn_no')[$i])
-                ->where('material_id', $request->get('material_id')[$i])
+            $rfq = MasterRfq::select('master_rfqs_details.order_unit', 'master_rfqs_details.net_order_price')
+                ->join('master_rfqs_details', 'master_rfqs_details.purchasing_document', '=', 'master_rfqs.purchasing_document')
+                ->where('master_rfqs.vendor', $request->get('vendor_id'))
+                ->where('master_rfqs_details.plant', $plant_code)
+                ->where('master_rfqs_details.material', $request->get('material_id')[$i])
                 ->first();
-            $material->qty -= $request->get('qty')[$i];
-            $material->save();
 
-            // insert to pr history
-            $data = [
-                'request_no' => $request->get('rn_no')[$i],
-                'pr_id' => $request->get('id')[$i],
+            $material = [
                 'purchase_id' => $request->get('purchase_id')[$i],
+                'pr_no' => $request->get('pr_no')[$i],
+                'request_date' => $request->get('request_date')[$i],
+                'rn_no' => $request->get('rn_no')[$i],
                 'material_id' => $request->get('material_id')[$i],
-                'vendor_id' => $request->get('vendor_id'),
+                'description' => $request->get('description')[$i],
+                'unit' => $rfq->order_unit,
                 'qty' => $request->get('qty')[$i],
-                'price' => $request->get('price')[$i]
+                'price' => $rfq->net_order_price,
             ];
 
-            $this->savePRHistory($data);
+            array_push($data, $material);
+
+            // update material qty
+            // $material = PurchaseRequestsDetail::where('request_no', $request->get('rn_no')[$i])
+            //     ->where('material_id', $request->get('material_id')[$i])
+            //     ->first();
+            // $material->qty -= $request->get('qty')[$i];
+            // $material->save();
+
+            // insert to pr history
+            // $data = [
+            //     'request_no' => $request->get('rn_no')[$i],
+            //     'pr_id' => $request->get('id')[$i],
+            //     'purchase_id' => $request->get('purchase_id')[$i],
+            //     'material_id' => $request->get('material_id')[$i],
+            //     'vendor_id' => $request->get('vendor_id'),
+            //     'qty' => $request->get('qty')[$i],
+            //     'price' => $request->get('price')[$i]
+            // ];
+
+            // $this->savePRHistory($data);
         }
 
         $upload_files = '';
@@ -202,23 +229,81 @@ class QuotationController extends Controller
             }
         }
 
-        $quotation = new Quotation;
-        $quotation->po_no = $request->get('PR_NO');
-        $quotation->notes = $request->get('notes');
-        $quotation->upload_file = $upload_files;
-        $quotation->qty = $qty;
-        $quotation->target_price = $price;
-        $quotation->status = 0;
-        $quotation->vendor_id = $request->get('vendor_id');
-        $quotation->save();
+        $vendor = Vendor::where('code', $request->get('vendor_id'))->first();
+        $data = (object) $data;
+
+        return view('admin.repeat.preview', compact('po_no', 'notes', 'upload_files', 'data', 'vendor'));
+    }
+
+    public function saveRepeat (Request $request)
+    {
+        $qty = 0;
+        $price = 0;
+        $details = [];
+
+        for ($i = 0; $i < count($request->get('qty')); $i++) {
+            $qy = str_replace('.', '', $request->get('qty')[$i]);
+            $qty += $qy;
+
+            $pc = str_replace('.', '', $request->get('price')[$i]);
+            $price += $pc;
+
+            // update material qty
+            $material = PurchaseRequestsDetail::where('request_no', $request->get('rn_no')[$i])
+                ->where('material_id', $request->get('material_id')[$i])
+                ->first();
+            $material->qty -= $request->get('qty')[$i];
+            $material->save();
+
+            // insert to pr history
+            $data = [
+                'request_no' => $request->get('rn_no')[$i],
+                'pr_id' => $request->get('pr_no')[$i],
+                'purchase_id' => $request->get('purchase_id')[$i],
+                'material_id' => $request->get('material_id')[$i],
+                'vendor_id' => $request->get('vendor'),
+                'qty' => $request->get('qty')[$i],
+                'price' => $request->get('price')[$i]
+            ];
+
+            array_push($details, $data);
+
+            $this->savePRHistory($data);
+        }
+
+        \DB::beginTransaction();
+
+        try {
+            $quotation = new Quotation;
+            $quotation->po_no = $request->get('po_no');
+            $quotation->notes = $request->get('notes');
+            $quotation->upload_file = $request->get('upload_files');
+            $quotation->status = 0;
+            $quotation->save();
+
+            foreach ($details as $detail) {
+                $quotationDetail = new QuotationDetail;
+                $quotationDetail->quotation_order_id = $quotation->id;
+                $quotationDetail->qty = $detail['qty'];
+                $quotationDetail->material = $detail['material_id'];
+                $quotationDetail->vendor_price = $detail['price'];
+                $quotationDetail->vendor_id = $request->get('vendor');
+                $quotationDetail->save();
+            }
+
+            \DB::commit();
+        } catch (Exception $e) {
+            \DB::rollBack();
+            dd($e);
+        }
 
         // send email
-        $vendor = Vendor::find($request->get('vendor_id'));
-        $data = [
-            'vendor' => $vendor,
-            'request_no' => $request->get('PR_NO'),
-            'subject' => 'PO Repeat ' . $request->get('PR_NO')
-        ];
+        // $vendor = Vendor::find($request->get('vendor_id'));
+        // $data = [
+        //     'vendor' => $vendor,
+        //     'request_no' => $request->get('PR_NO'),
+        //     'subject' => 'PO Repeat ' . $request->get('PR_NO')
+        // ];
 
         // \Mail::to($vendor->email)->send(new PurchaseOrderMail($data));
 

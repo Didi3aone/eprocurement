@@ -12,6 +12,13 @@ class QuotationDetail extends Model
 
     protected $fillable = [
         'quotation_order_id',
+        'vendor_id',
+        'vendor_leadtime',
+        'vendor_price',
+        'upload_file',
+        'notes',
+        'qty',
+        'is_winner',
         'flag',
     ];
 
@@ -22,7 +29,12 @@ class QuotationDetail extends Model
 
     public function vendor ()
     {
-        return $this->hasOne(\App\Models\Vendor::class, 'id', 'vendor_id');
+        return $this->hasOne(\App\Models\Vendor::class, 'vendor_id', 'id');
+    }
+
+    public function materialDetail ()
+    {
+        return $this->hasOne(\App\Models\MasterMaterial::class, 'code', 'material');
     }
 
     public function historyCount ()

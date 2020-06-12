@@ -337,6 +337,17 @@ return [
             'deleted_at_helper'  => '',
         ],
     ],
+    'user-mapping' => [
+        'title'         => 'User Mapping',
+        'title_singular'         => 'User Mapping',
+        'fields'         => [
+            'id' => 'ID',
+            'nik' => 'NIK',
+            'plant' => 'Plant',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+        ],
+    ],
     'user'              => [
         'title'          => 'Users',
         'title_singular' => 'User',

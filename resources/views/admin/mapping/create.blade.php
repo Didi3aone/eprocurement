@@ -13,13 +13,13 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form method="POST" action="{{ route("admin.users.mapping") }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route("admin.mapping.store") }}" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
                         <label class="required" for="nik">{{ trans('cruds.user-mapping.fields.nik') }}</label>
                         <select class="form-control select2" name="nik" id="nik">
                             @foreach ($users as $user)
-                                <option value="{{ $user->nik }}">{{ $user->nik }} - {{ $user->description }}</option>
+                                <option value="{{ $user->nik }}">{{ $user->nik }} - {{ $user->name }}</option>
                             @endforeach
                         </select>
                         @if($errors->has('nik'))
@@ -43,7 +43,7 @@
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.save') }}</button>
-                        <a href="{{ route('admin.users.index') }}" type="button" class="btn btn-inverse">Cancel</a>
+                        <a href="{{ route('admin.mapping.index') }}" type="button" class="btn btn-inverse">Cancel</a>
                     </div>
                 </form>
             </div>

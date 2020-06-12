@@ -2,7 +2,7 @@
 @section('content')
 <div class="row page-titles">
     <div class="col-md-5 col-8 align-self-center">
-        <h3 class="text-themecolor">Quotation</h3>
+        <h3 class="text-themecolor">Repeat Order</h3>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="javascript:void(0)">{{ 'PO Repeat' }}</a></li>
             <li class="breadcrumb-item active">Create</li>
@@ -21,16 +21,16 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form class="form-rn m-t-40" action="{{ route("admin.quotation-save-repeat") }}" enctype="multipart/form-data" method="post">
+                <form class="form-rn m-t-40" action="{{ route("admin.quotation-preview-repeat") }}" enctype="multipart/form-data" method="post">
                     @csrf
                     <div class="row">
                         <div class="col-lg-4">
                             <div class="form-group">
-                                <label>{{ trans('cruds.purchase-order.fields.PR_NO') }}</label>
-                                <input type="text" class="form-control form-control-line {{ $errors->has('PR_NO') ? 'is-invalid' : '' }}" name="PR_NO" value="{{ old('PR_NO', $po_no) }}" readonly> 
-                                @if($errors->has('PR_NO'))
+                                <label>{{ trans('cruds.purchase-order.fields.po_no') }}</label>
+                                <input type="text" class="form-control form-control-line {{ $errors->has('po_no') ? 'is-invalid' : '' }}" name="po_no" value="{{ old('po_no', $po_no) }}" readonly> 
+                                @if($errors->has('po_no'))
                                     <div class="invalid-feedback">
-                                        {{ $errors->first('PR_NO') }}
+                                        {{ $errors->first('po_no') }}
                                     </div>
                                 @endif
                             </div>
@@ -78,14 +78,14 @@
                                 <select name="vendor_id" class="form-control select2">
                                     @foreach ($vendor as $val)
                                     <option 
-                                        value="{{ $val->id }}"
+                                        value="{{ $val->code }}"
                                         data-id="{{ $val->id }}"
                                         data-name="{{ $val->name }}"
                                         data-email="{{ $val->email }}"
                                         data-address="{{ $val->address }}"
                                         data-npwp="{{ $val->npwp }}"
                                     >
-                                        {{ $val->name }}
+                                        {{ $val->code }} - {{ $val->name }}
                                     </option>
                                     @endforeach
                                 </select>
@@ -114,8 +114,9 @@
 
                     <div class="form-actions">
                         {{-- <input type="hidden" name="total" value="{{ $total }}"> --}}
+                        <input type="hidden" name="plant_code" value="{{ $plant_code }}">
                         <input type="hidden" name="id" value="{{ $uri['ids'] }}">
-                        <button type="submit" class="btn btn-success click"> <i class="fa fa-check"></i> {{ trans('global.save') }}</button>
+                        <button type="submit" class="btn btn-success click"> <i class="fa fa-tv"></i> {{ trans('global.preview') }}</button>
                         <a href="{{ route('admin.purchase-request.index') }}" class="btn btn-inverse">Cancel</a>
                         <img id="image_loading" src="{{ asset('img/ajax-loader.gif') }}" alt="" style="display: none">
                     </div>
