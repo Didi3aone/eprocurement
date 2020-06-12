@@ -29,7 +29,7 @@ class QuotationDetail extends Model
 
     public function vendor ()
     {
-        return $this->hasOne(\App\Models\Vendor::class, 'vendor_id', 'id');
+        return $this->hasOne(\App\Models\Vendor::class, 'code', 'vendor_id');
     }
 
     public function materialDetail ()

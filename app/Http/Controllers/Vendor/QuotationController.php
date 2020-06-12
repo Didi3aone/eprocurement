@@ -6,6 +6,8 @@ use Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\PurchaseOrder;
+use App\Models\PurchaseOrdersDetail;
 use App\Models\Vendor\Quotation;
 use App\Models\Vendor\QuotationDetail;
 use App\Models\BiddingHistory;
@@ -22,7 +24,7 @@ class QuotationController extends Controller
                 select count(*) as count 
                 from bidding_history 
                 where quotation_id = quotation.id 
-                    and vendor_id = ' . Auth::user()->id . '
+                    and vendor_id = ' . Auth::user()->id . ' 
                 group by quotation_id
             )'),
             'quotation_details.id as detail_id', 'quotation_details.*'
@@ -67,12 +69,65 @@ class QuotationController extends Controller
 
     public function repeat ()
     {
-        $quotation = Quotation::where('vendor_id', Auth::user()->id)
-            ->where('status', 0)
-            ->orderBy('id', 'desc')
+        $quotation = Quotation::select(
+            'quotation.id',
+            'quotation.po_no',
+            'quotation.approval_status',
+            \DB::raw('sum(quotation_details.qty) as total_qty'),
+            \DB::raw('sum(quotation_details.vendor_price) as total_price')
+        )
+            ->join('quotation_details', 'quotation_details.quotation_order_id', '=', 'quotation.id')
+            ->where('quotation_details.vendor_id', Auth::user()->code)
+            ->where('quotation.status', 0)
+            // ->where('quotation_details.approval', 1)
+            ->orderBy('quotation.id', 'desc')
+            ->groupBy('quotation.id')
             ->get();
 
         return view('vendor.quotation.repeat', compact('quotation'));
+    }
+
+    public function approveRepeat (Request $request)
+    {
+        // soap call
+
+
+        // create po
+        $id = $request->get('id');
+
+        $quotation = Quotation::find($id);
+
+        \DB::beginTransaction();
+        try {
+            $po = PurchaseOrder::create([
+                'request_id' => $quotation->id,
+                'po_date' => date('Y-m-d'),
+                'vendor_id' => $quotation->detail[0]->vendor_id,
+                'status' => 1,
+                'po_no' => $quotation->po_no,
+            ]);
+
+            foreach ($quotation->detail as $det) {
+                if (!empty($det->vendor_price)) {
+                    $data = [
+                        'purchase_order_id' => $po->id,
+                        'description' => isset($det->description) ?? '-',
+                        'qty' => $det->qty,
+                        'unit' => $det->unit,
+                        'notes' => isset($quotation->notes) ?? '-',
+                        'price' => $det->vendor_price,
+                    ];
+
+                    $poDetail = PurchaseOrdersDetail::create($data);
+                }
+            }
+
+            \DB::commit();
+
+            return redirect()->route('vendor.quotation-repeat')->with('status', trans('cruds.quotation.alert_success_quotation'));
+        } catch (Exception $e) {
+            \DB::rollBack();
+        }
     }
 
     public function direct ()

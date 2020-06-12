@@ -45,19 +45,19 @@
                                                 <a href="{{ asset('uploads/' . $file) }}">{{ $file }}</a>
                                                 @endforeach
                                             </td>
-                                            <td>{{ $val->status == 0 ? 'unapproved' : 'approved' }}</td>
+                                            <td>{{ $val->approval_status == 1 ? 'Approved' : 'Unapproved' }}</td>
                                             <td>
                                                 <a class="btn btn-xs btn-warning" href="{{ route('admin.quotation-show-repeat', $val->id) }}">
-                                                    Show Materials
+                                                    <i class="fa fa-tv"></i> Show Materials
                                                 </a>
                                                 @can('quotation_approve')
-                                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.quotation.approve', $val->id) }}">
+                                                    {{-- <a class="btn btn-xs btn-primary" href="{{ route('admin.quotation.approve', $val->id) }}">
                                                         Approve
-                                                    </a>
+                                                    </a> --}}
                                                 @endcan
                                                 @can('quotation_edit')
                                                     <a class="btn btn-xs btn-info" href="{{ route('admin.quotation-edit-repeat', $val->id) }}">
-                                                        {{ trans('global.edit') }}
+                                                        <i class="fa fa-edit"></i> {{ trans('global.edit') }}
                                                     </a>
                                                 @endcan
 

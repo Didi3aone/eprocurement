@@ -13,7 +13,8 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('admin.quotation.winner') }}" method="post">
+                <form action="{{ route('admin.quotation-approve-repeat') }}" method="post">
+                    @csrf
                     <div class="row">
                         <div class="col-lg-12">
                             <table class="table table-bordered table-striped">
@@ -29,7 +30,6 @@
                                 </tbody>
                             </table>
 
-                            @csrf
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
@@ -45,21 +45,26 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($model->detail as $det)
-                                    <tr>
-                                        <td>
-                                            <input type="checkbox" name="id[]" id="check_{{ $det->id }}" value="{{ $det->id }}">
-                                            <label for="check_{{ $det->id }}"></label>
-                                        </td>
-                                        <td>{{ isset($det->vendor) ? $det->vendor->code : '' }}</td>
-                                        <td>{{ isset($det->vendor) ? $det->vendor->name : '' }}</td>
-                                        <td>{{ $det->material }} - {{ $det->materialDetail->description }}</td>
-                                        <td>{{ number_format($det->qty, 0, '', '.') }}</td>
-                                        <td>{{ number_format($det->unit, 0, '', '.') }}</td>
-                                        <td>{{ number_format($det->vendor_price, 0, '', '.') }}</td>
-                                        <td>
-                                            <a href="{{ route('admin.quotation.remove-vendor', [$model->id, $det->vendor_id]) }}" class="btn btn-danger"><i class="fa fa-trash"></i> Remove</a>
-                                        </td>
-                                    </tr>
+                                        @if ($det->material)
+                                            <tr>
+                                                <td>
+                                                    <input type="checkbox" name="id[]" id="check_{{ $det->id }}" value="{{ $det->id }}">
+                                                    <label for="check_{{ $det->id }}"></label>
+                                                </td>
+                                                <td>{{ isset($det->vendor) ? $det->vendor->code : '' }}</td>
+                                                <td>{{ isset($det->vendor) ? $det->vendor->name : '' }}</td>
+                                                <td>{{ $det->material }} - {{ $det->materialDetail->description }}</td>
+                                                <td>{{ number_format($det->qty, 0, '', '.') }}</td>
+                                                <td>{{ $det->unit }}</td>
+                                                <td>{{ number_format($det->vendor_price, 0, '', '.') }}</td>
+                                                <td>
+                                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.quotation.approve', $det->id) }}">
+                                                        <i class="fa fa-check"></i> Approve
+                                                    </a>
+                                                    <a href="{{ route('admin.quotation.remove-vendor', [$model->id, $det->vendor_id]) }}" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Remove</a>
+                                                </td>
+                                            </tr>
+                                        @endif
                                     @endforeach
                                 </tbody>
                             </table>
@@ -70,7 +75,7 @@
                         <div class="col-lg-12">
                             <div class="form-actions">
                                 {{-- <input type="hidden" name="total" value="{{ $total }}"> --}}
-                                <button type="submit" class="btn btn-success click"> <i class="fa fa-check"></i> {{ 'Choose to winner' }}</button>
+                                <button type="submit" class="btn btn-success click"> <i class="fa fa-check"></i> Approve</button>
                                 <button type="button" class="btn btn-inverse">Cancel</button>
                                 <img id="image_loading" src="{{ asset('img/ajax-loader.gif') }}" alt="" style="display: none">
                             </div>

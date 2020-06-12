@@ -755,7 +755,7 @@ return [
         'fields'        => [
             'id' => 'ID',
             'vendor_id' => 'Vendor',
-            'po_no' => 'Request No',
+            'po_no' => 'PO No',
             'notes' => 'Notes',
             'upload_file' => 'Upload File',
             'leadtime_type' => 'Leadtime Type',
@@ -766,6 +766,8 @@ return [
             'expired_date' => 'Expired Date',
             'bidding_count' => 'Bidding Count',
             'qty' => 'Quantity',
+            'total_price' => 'Total Price',
+            'approval_status' => 'Approval Status',
             'status' => 'Status',
             'status_active'    => 'Active',
             'status_inactive'    => 'Inactive',

@@ -14,19 +14,33 @@
                         <li>
                             <a href="{{ route('vendor.quotation-online') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
-                                Online
+                                List Bidding
                             </a>
                         </li>
+                    </ul>
+                </li>
+                <li class=""> 
+                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-truck"></i>
+                        <span class="hide-menu"> Repeat Order </span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse">
                         <li>
                             <a href="{{ route('vendor.quotation-repeat') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
-                                PO Repeat
+                                List Repeat Order
                             </a>
                         </li>
+                    </ul>
+                </li>
+                <li class=""> 
+                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-truck"></i>
+                        <span class="hide-menu"> Direct Order </span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse">
                         <li>
                             <a href="{{ route('vendor.quotation-direct') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
-                                Direct Order
+                                List Direct Order
                             </a>
                         </li>
                     </ul>

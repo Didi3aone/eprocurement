@@ -28,9 +28,9 @@
                                 <th>{{ trans('cruds.quotation.fields.id') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.qty') }}</th>
-                                <th>
-                                    &nbsp;
-                                </th>
+                                <th>{{ trans('cruds.quotation.fields.approval_status') }}</th>
+                                <th>{{ trans('cruds.quotation.fields.total_price') }}</th>
+                                <th>&nbsp;</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -38,13 +38,15 @@
                                 <tr data-entry-id="{{ $val->id }}">
                                     <td>{{ $val->id ?? '' }}</td>
                                     <td>{{ $val->po_no ?? '' }}</td>
-                                    <td>{{ number_format($val->qty, 0, '', '.') }}</td>
+                                    <td>{{ number_format($val->total_qty, 0, '', '.') }}</td>
+                                    <td>{{ $val->approval_status == 1 ? 'Approved' : 'Unapproved' }}</td>
+                                    <td>{{ number_format($val->total_price, 0, '', '.') }}</td>
                                     <td>
-                                        {{-- @if (time() <= strtotime($val->expired_date)) --}}
+                                        @if (empty($val->approval_status))
                                         <a class="btn btn-xs btn-info" href="{{ route('vendor.quotation-repeat-detail', $val->id) }}">
-                                            {{ 'View' }}
+                                            <i class="fa fa-tv"></i> {{ 'View' }}
                                         </a>
-                                        {{-- @endif --}}
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

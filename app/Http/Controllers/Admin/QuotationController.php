@@ -176,6 +176,9 @@ class QuotationController extends Controller
                 ->where('master_rfqs_details.material', $request->get('material_id')[$i])
                 ->first();
 
+            if (empty($rfq))
+                return redirect()->back()->with('error', 'No RFQ Found!');
+
             $material = [
                 'purchase_id' => $request->get('purchase_id')[$i],
                 'pr_no' => $request->get('pr_no')[$i],
@@ -185,6 +188,8 @@ class QuotationController extends Controller
                 'description' => $request->get('description')[$i],
                 'unit' => $rfq->order_unit,
                 'qty' => $request->get('qty')[$i],
+                // 'qty' => $request->get('qty')[$i],
+                // 'qty' => $request->get('qty')[$i],
                 'price' => $rfq->net_order_price,
             ];
 
@@ -261,6 +266,7 @@ class QuotationController extends Controller
                 'pr_id' => $request->get('pr_no')[$i],
                 'purchase_id' => $request->get('purchase_id')[$i],
                 'material_id' => $request->get('material_id')[$i],
+                'unit' => $request->get('unit')[$i],
                 'vendor_id' => $request->get('vendor'),
                 'qty' => $request->get('qty')[$i],
                 'price' => $request->get('price')[$i]
@@ -285,6 +291,7 @@ class QuotationController extends Controller
                 $quotationDetail = new QuotationDetail;
                 $quotationDetail->quotation_order_id = $quotation->id;
                 $quotationDetail->qty = $detail['qty'];
+                $quotationDetail->unit = $detail['unit'];
                 $quotationDetail->material = $detail['material_id'];
                 $quotationDetail->vendor_price = $detail['price'];
                 $quotationDetail->vendor_id = $request->get('vendor');
@@ -380,6 +387,28 @@ class QuotationController extends Controller
         $model = Quotation::find($id);
 
         return view('admin.quotation.show-direct', compact('model'));
+    }
+
+    public function approveRepeat (Request $request)
+    {
+        \DB::beginTransaction();
+
+        try {
+            foreach ($request->get('id') as $id) {
+                $quotationDetail = QuotationDetail::find($id);
+
+                $model = $quotationDetail->quotation;
+                $model->approval_status = 1;
+                $model->save();
+            }
+
+            \DB::commit();
+        } catch (Exception $e) {
+            \DB::rollBack();
+            dd($e);
+        }
+
+        return redirect()->route('admin.quotation.repeat')->with('status', 'Repeat Order has been approval!');
     }
 
     public function winner (Request $request)
@@ -591,7 +620,7 @@ class QuotationController extends Controller
 
     public function approve (Request $request, $id)
     {
-        $model = Quotation::find($id);
+        $model = QuotationDetail::find($id);
         $vendor = Vendor::find($model->vendor_id);
 
         $po = new PurchaseOrder;
@@ -603,6 +632,7 @@ class QuotationController extends Controller
         $po->po_no = $model->po_no;
         $po->save();
 
+        $subject = '';
         if ($model->status == 0) {
             $subject = 'PO Repeat Order ' . $model->po_no;
         } else if ($model->status == 2) {
@@ -612,7 +642,7 @@ class QuotationController extends Controller
         $data = [
             'vendor' => $model->vendor,
             'request_no' => $model->po_no,
-            'subject' => 'Penunjukkan langsung ' . $request->get('request_no')
+            'subject' => $subject
         ];
 
         \Mail::to($vendor->email)->send(new PurchaseOrderMail($data));

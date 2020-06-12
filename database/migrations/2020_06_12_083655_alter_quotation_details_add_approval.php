@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterQuotationDetailsAddMaterial extends Migration
+class AlterQuotationDetailsAddApproval extends Migration
 {
     /**
      * Run the migrations.
@@ -14,8 +14,7 @@ class AlterQuotationDetailsAddMaterial extends Migration
     public function up()
     {
         Schema::table('quotation_details', function (Blueprint $table) {
-            $table->string('material')->nullable();
-            $table->string('unit')->nullable();
+            $table->tinyInteger('approval')->default(0);
         });
     }
 
@@ -27,8 +26,7 @@ class AlterQuotationDetailsAddMaterial extends Migration
     public function down()
     {
         Schema::table('quotation_details', function (Blueprint $table) {
-            $table->dropColumn('material');
-            $table->dropColumn('unit');
+            $table->dropColumn('approval');
         });
     }
 }

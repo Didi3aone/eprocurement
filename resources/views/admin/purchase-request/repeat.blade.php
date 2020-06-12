@@ -69,7 +69,7 @@
                                     @endforeach
                                 </tbody>
                             </table>
-                        </div>    
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="">{{ trans('cruds.purchase-order.invite_vendor') }}</label>

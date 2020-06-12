@@ -165,6 +165,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::get('quotation-show-direct/{id}', 'QuotationController@showDirect')->name('quotation-show-direct');
     Route::post('quotation-save-online', 'QuotationController@saveOnline')->name('quotation-save-online');
     Route::post('quotation-preview-repeat', 'QuotationController@previewRepeat')->name('quotation-preview-repeat');
+    Route::post('quotation-approve-repeat', 'QuotationController@approveRepeat')->name('quotation-approve-repeat');
     Route::post('quotation-save-repeat', 'QuotationController@saveRepeat')->name('quotation-save-repeat');
     Route::post('quotation-save-direct', 'QuotationController@saveDirect')->name('quotation-save-direct');
     Route::get('quotation-edit-online/{id}', 'QuotationController@editOnline')->name('quotation-edit-online');
@@ -218,6 +219,8 @@ Route::group([ 'prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor',
     Route::get('quotation-online-detail/{id}', 'QuotationController@onlineDetail')->name('quotation-online-detail');
     Route::get('quotation-repeat-detail/{id}', 'QuotationController@repeatDetail')->name('quotation-repeat-detail');
     Route::get('quotation-direct-detail/{id}', 'QuotationController@directDetail')->name('quotation-direct-detail');
+    Route::post('quotation-approve-repeat', 'QuotationController@approveRepeat')->name('quotation-approve-repeat');
+    Route::post('quotation-approve-direct', 'QuotationController@approveDirect')->name('quotation-approve-direct');
     Route::get('quotation-edit/{id}', 'QuotationController@edit')->name('quotation-edit');
     Route::post('quotation-save', 'QuotationController@store')->name('quotation-save');
     Route::get('bidding', 'BiddingController@index')->name('bidding');
