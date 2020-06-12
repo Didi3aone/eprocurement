@@ -35,3 +35,4 @@ Homestead.json
 .phpunit.result.cache
 
 composer.lock
+public
