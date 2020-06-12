@@ -58,9 +58,9 @@
                                                 <td>{{ $det->unit }}</td>
                                                 <td>{{ number_format($det->vendor_price, 0, '', '.') }}</td>
                                                 <td>
-                                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.quotation.approve', $det->id) }}">
+                                                    {{-- <a class="btn btn-xs btn-primary" href="{{ route('admin.quotation.approve', $det->id) }}">
                                                         <i class="fa fa-check"></i> Approve
-                                                    </a>
+                                                    </a> --}}
                                                     <a href="{{ route('admin.quotation.remove-vendor', [$model->id, $det->vendor_id]) }}" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Remove</a>
                                                 </td>
                                             </tr>
