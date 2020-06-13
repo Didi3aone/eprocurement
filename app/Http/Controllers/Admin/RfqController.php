@@ -30,7 +30,7 @@ class RfqController extends Controller
         return view('admin.rfq.index', compact('vendors'));
     }
 
-    public function import(Request $request)
+    public function import (Request $request)
     {
         // abort_if(Gate::denies('rfq_import_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
@@ -47,6 +47,25 @@ class RfqController extends Controller
         Excel::import(new RfqImport, public_path($path . $filename));
 
         return redirect('admin/rfq')->with('success', 'RFQ has been successfully imported');
+    }
+
+    public function importDetail (Request $request)
+    {
+        // abort_if(Gate::denies('rfq_import_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $this->validate($request, [
+            'xls_file' => 'required|file|mimes:csv,xls,xlsx',
+        ]);
+
+        $path = 'xls/';
+        $file = $request->file('xls_file');
+        $filename = $file->getClientOriginalName();
+
+        $file->move($path, $filename);
+
+        Excel::import(new RfqDetailImport, public_path($path . $filename));
+
+        return redirect('admin/rfq')->with('success', 'RFQ Detail has been successfully imported');
     }
 
     /**

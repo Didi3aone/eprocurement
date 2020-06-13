@@ -71,7 +71,6 @@ class PurchaseRequestController extends Controller
 
     protected function createPrPo ($ids, $quantities = null)
     {
-        // $po_no = 'sprintf('1%08d', time())';
         $max = PurchaseRequest::select(\DB::raw('count(id) as id'))->first()->id;
         $po_no = 'PO/' . date('m') . '/' . date('Y') . '/' . sprintf('%07d', ++$max);
         $ids = explode(',', $ids);
@@ -84,10 +83,10 @@ class PurchaseRequestController extends Controller
 
         foreach ($ids as $i => $id) {
             $pr = PurchaseRequestsDetail::select(
-                    'purchase_requests_details.*',
-                    'purchase_requests.request_no as pr_no',
-                    'purchase_requests.request_date as request_date'
-                )
+                'purchase_requests_details.*',
+                'purchase_requests.request_no as pr_no',
+                'purchase_requests.request_date as request_date'
+            )
                 ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
                 ->where('purchase_requests_details.id', $id)
                 ->first();

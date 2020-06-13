@@ -178,7 +178,6 @@
 
         $('.bidding-online').attr('href', '{{ url("admin/purchase-request-online") }}/' + ids)
 
-        console.log(check_pr.length)
         if (check_pr.length > 0) {
             $('.bidding-repeat').attr('href', '{{ url("admin/purchase-request-repeat") }}/' + ids + '/' + quantities + '/' + plant_code)
             $('.bidding-direct').attr('href', '{{ url("admin/purchase-request-direct") }}/' + ids + '/' + quantities + '/' + plant_code)

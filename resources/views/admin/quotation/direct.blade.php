@@ -2,7 +2,7 @@
 @section('content')
 <div class="row page-titles">
     <div class="col-md-5 col-8 align-self-center">
-        <h3 class="text-themecolor">Quotation</h3>
+        <h3 class="text-themecolor">Repeat Order</h3>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="javascript:void(0)">Direct Order</a></li>
             <li class="breadcrumb-item active">Index</li>
@@ -29,9 +29,8 @@
                                     <tr>
                                         <th>{{ trans('cruds.quotation.fields.id') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
-                                        <th>{{ trans('cruds.quotation.fields.notes') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.upload_file') }}</th>
-                                        <th>{{ trans('cruds.quotation.fields.target_price') }}</th>
+                                        <th>{{ trans('cruds.quotation.fields.status') }}</th>
                                         <th>&nbsp;</th>
                                     </tr>
                                 </thead>
@@ -40,33 +39,24 @@
                                         <tr data-entry-id="{{ $val->id }}">
                                             <td>{{ $val->id ?? '' }}</td>
                                             <td>{{ $val->po_no ?? '' }}</td>
-                                            <td>{{ $val->notes ?? '' }}</td>
                                             <td>
                                                 @php $files = explode(', ', $val->upload_file); @endphp
                                                 @foreach ($files as $file)
-                                                <a href="{{ asset('uploads/' . $file) }}">{{ $file }}</a>
+                                                <a href="{{ asset('uploads/direct/' . $file) }}">{{ $file }}</a>
                                                 @endforeach
                                             </td>
-                                            <td>{{ number_format($val->target_price, 0, '', '.') }}</td>
+                                            <td>{{ $val->approval_status == 1 ? 'Approved' : 'Unapproved' }}</td>
                                             <td>
-                                                @can('quotation_show')
-                                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.quotation.show', $val->id) }}">
-                                                        {{ trans('global.view') }}
-                                                    </a>
-                                                @endcan
+                                                <a class="btn btn-xs btn-warning" href="{{ route('admin.quotation-show-direct', $val->id) }}">
+                                                    <i class="fa fa-tv"></i> Show Materials
+                                                </a>
+                                                @if ($val->approval_status != 1)
                                                 @can('quotation_edit')
-                                                    <a class="btn btn-xs btn-info" href="{{ route('admin.quotation.edit', $val->id) }}">
-                                                        {{ trans('global.edit') }}
+                                                    <a class="btn btn-xs btn-info" href="{{ route('admin.quotation-edit-repeat', $val->id) }}">
+                                                        <i class="fa fa-edit"></i> {{ trans('global.edit') }}
                                                     </a>
                                                 @endcan
-
-                                                @can('quotation_delete')
-                                                    {{-- <form action="{{ route('admin.quotation.destroy', $val->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
-                                                        <input type="hidden" name="_method" value="DELETE">
-                                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                        <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
-                                                    </form> --}}
-                                                @endcan
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach

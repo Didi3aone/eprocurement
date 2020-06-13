@@ -158,19 +158,27 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::delete('quotation/destroy', 'QuotationController@massDestroy')->name('quotation.massDestroy');
     Route::post('quotation/import', 'QuotationController@import')->name('quotation.import');
     Route::get('quotation/online', 'QuotationController@online')->name('quotation.online');
+    
+    // repeat
     Route::get('quotation/repeat', 'QuotationController@repeat')->name('quotation.repeat');
-    Route::get('quotation/direct', 'QuotationController@direct')->name('quotation.direct');
-    Route::get('quotation-show-online/{id}', 'QuotationController@showOnline')->name('quotation-show-online');
     Route::get('quotation-show-repeat/{id}', 'QuotationController@showRepeat')->name('quotation-show-repeat');
-    Route::get('quotation-show-direct/{id}', 'QuotationController@showDirect')->name('quotation-show-direct');
-    Route::post('quotation-save-online', 'QuotationController@saveOnline')->name('quotation-save-online');
     Route::post('quotation-preview-repeat', 'QuotationController@previewRepeat')->name('quotation-preview-repeat');
     Route::post('quotation-approve-repeat', 'QuotationController@approveRepeat')->name('quotation-approve-repeat');
     Route::post('quotation-save-repeat', 'QuotationController@saveRepeat')->name('quotation-save-repeat');
-    Route::post('quotation-save-direct', 'QuotationController@saveDirect')->name('quotation-save-direct');
-    Route::get('quotation-edit-online/{id}', 'QuotationController@editOnline')->name('quotation-edit-online');
     Route::get('quotation-edit-repeat/{id}', 'QuotationController@editRepeat')->name('quotation-edit-repeat');
+    
+    // direct
+    Route::get('quotation/direct', 'QuotationController@direct')->name('quotation.direct');
+    Route::get('quotation-show-direct/{id}', 'QuotationController@showDirect')->name('quotation-show-direct');
+    Route::post('quotation-preview-direct', 'QuotationController@previewDirect')->name('quotation-preview-direct');
+    Route::post('quotation-approve-direct', 'QuotationController@approveDirect')->name('quotation-approve-direct');
+    Route::post('quotation-save-direct', 'QuotationController@saveDirect')->name('quotation-save-direct');
     Route::get('quotation-edit-direct/{id}', 'QuotationController@editDirect')->name('quotation-edit-direct');
+
+    // bidding
+    Route::get('quotation-show-online/{id}', 'QuotationController@showOnline')->name('quotation-show-online');
+    Route::post('quotation-save-online', 'QuotationController@saveOnline')->name('quotation-save-online');
+    Route::get('quotation-edit-online/{id}', 'QuotationController@editOnline')->name('quotation-edit-online');
     Route::post('quotation/winner', 'QuotationController@winner')->name('quotation.winner');
     Route::post('quotation/to-winner', 'QuotationController@toWinner')->name('quotation.to-winner');
     Route::get('quotation/list-winner', 'QuotationController@listWinner')->name('quotation.list-winner');
@@ -182,17 +190,19 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
 
     // rfq
     Route::post('rfq/import', 'RfqController@import')->name('rfq.import');
+    Route::post('rfq-import-detail', 'RfqController@importDetail')->name('rfq-import-detail');
     Route::get('rfq-add-detail/{code}', 'RfqController@addDetail')->name('rfq-add-detail');
     Route::post('rfq-save-detail', 'RfqController@saveDetail')->name('rfq-save-detail');
     Route::get('rfq-show/{code}', 'RfqController@show')->name('rfq-show');
     Route::get('rfq-add-detail/{code}', 'RfqController@addDetail')->name('rfq-add-detail');
     Route::resource('rfq', 'RfqController');
 
-    //billings 
+    // billings 
     Route::get('billing','BillingController@index')->name('billing');
     Route::get('billing-show/{id}','BillingController@show')->name('billing-show');
     Route::put('billing-post-approved','BillingController@storeApproved')->name('billing-post-approved');
     Route::put('billing-post-rejected','BillingController@storeRejected')->name('billing-post-rejected');
+    
     // soap
     // Route::get('soap', 'SoapController@show')->name('soap');
 });
@@ -207,30 +217,42 @@ Route::post('vendor/login', '\App\Http\Controllers\AuthVendor\LoginController@lo
 
 Route::group([ 'prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor', 'middleware' => [ 'auth:vendor' ] ], function () {
     Route::get('/', 'VendorController@index')->name('home');
+
+    // po
     Route::get('purchase-order', 'PurchaseOrderController@index')->name('purchase-order');
     Route::get('purchase-order/create', 'PurchaseOrderController@create')->name('purchase-order.create');
     Route::get('purchase-order-make-quotation/{id}', 'PurchaseOrderController@makeQuotation')->name('purchase-order-make-quotation');
     Route::post('purchase-order-save-quotation', 'PurchaseOrderController@saveQuotation')->name('purchase-order-save-quotation');
     Route::get('purchase-order/bidding', 'PurchaseOrderController@bidding')->name('purchase-order.bidding');
+    
+    // bidding
     Route::get('quotation', 'QuotationController@index')->name('quotation');
-    Route::get('quotation-online', 'QuotationController@online')->name('quotation-online');
-    Route::get('quotation-repeat', 'QuotationController@repeat')->name('quotation-repeat');
-    Route::get('quotation-direct', 'QuotationController@direct')->name('quotation-direct');
-    Route::get('quotation-online-detail/{id}', 'QuotationController@onlineDetail')->name('quotation-online-detail');
-    Route::get('quotation-repeat-detail/{id}', 'QuotationController@repeatDetail')->name('quotation-repeat-detail');
-    Route::get('quotation-direct-detail/{id}', 'QuotationController@directDetail')->name('quotation-direct-detail');
-    Route::post('quotation-approve-repeat', 'QuotationController@approveRepeat')->name('quotation-approve-repeat');
-    Route::post('quotation-approve-direct', 'QuotationController@approveDirect')->name('quotation-approve-direct');
     Route::get('quotation-edit/{id}', 'QuotationController@edit')->name('quotation-edit');
     Route::post('quotation-save', 'QuotationController@store')->name('quotation-save');
     Route::get('bidding', 'BiddingController@index')->name('bidding');
-    Route::post('logout', '\App\Http\Controllers\AuthVendor\LoginController@logout')->name('logout');
 
-    //billing
+    // online
+    Route::get('quotation-online', 'QuotationController@online')->name('quotation-online');
+    Route::get('quotation-online-detail/{id}', 'QuotationController@onlineDetail')->name('quotation-online-detail');
+
+    // repeat
+    Route::get('quotation-repeat', 'QuotationController@repeat')->name('quotation-repeat');
+    Route::get('quotation-repeat-detail/{id}', 'QuotationController@repeatDetail')->name('quotation-repeat-detail');
+    Route::post('quotation-approve-repeat', 'QuotationController@approveRepeat')->name('quotation-approve-repeat');
+
+    // direct
+    Route::get('quotation-direct', 'QuotationController@direct')->name('quotation-direct');
+    Route::get('quotation-direct-detail/{id}', 'QuotationController@directDetail')->name('quotation-direct-detail');
+    Route::post('quotation-approve-direct', 'QuotationController@approveDirect')->name('quotation-approve-direct');
+    
+    // billing
     Route::get('billing-create','BillingController@create')->name('billing-create');
     Route::get('billing','BillingController@index')->name('billing');
     Route::get('billing-show/{id}','BillingController@show')->name('billing-show');
     Route::get('billing-edit/{id}','BillingController@edit')->name('billing-edit');
     Route::post('billing-post','BillingController@store')->name('billing-post');
     Route::post('billing-post-update/{id}','BillingController@store')->name('billing-post-update');
+
+    // logout
+    Route::post('logout', '\App\Http\Controllers\AuthVendor\LoginController@logout')->name('logout');
 });

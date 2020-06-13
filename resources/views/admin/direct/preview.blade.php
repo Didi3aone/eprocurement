@@ -2,9 +2,9 @@
 @section('content')
 <div class="row page-titles">
     <div class="col-md-5 col-8 align-self-center">
-        <h3 class="text-themecolor">Repeat Order</h3>
+        <h3 class="text-themecolor">Direct Order</h3>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="javascript:void(0)">PO Repeat Order</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">PO Direct Order</a></li>
             <li class="breadcrumb-item active">Show</li>
         </ol>
     </div>
@@ -14,7 +14,7 @@
         <div class="card">
             <div class="card-body table-responsive">
                 <div class="table-responsive m-t-40">
-                    <form action="{{ route('admin.quotation-save-repeat') }}" method="post">
+                    <form action="{{ route('admin.quotation-save-direct') }}" method="post">
                         @csrf
                         <input type="hidden" name="po_no" value="{{ $po_no }}">
                         <input type="hidden" name="vendor" value="{{ $vendor->code }}">

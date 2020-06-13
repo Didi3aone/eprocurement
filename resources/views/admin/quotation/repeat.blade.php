@@ -2,7 +2,7 @@
 @section('content')
 <div class="row page-titles">
     <div class="col-md-5 col-8 align-self-center">
-        <h3 class="text-themecolor">Quotation</h3>
+        <h3 class="text-themecolor">Repeat Order</h3>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="javascript:void(0)">PO Repeat</a></li>
             <li class="breadcrumb-item active">Index</li>
@@ -42,7 +42,7 @@
                                             <td>
                                                 @php $files = explode(', ', $val->upload_file); @endphp
                                                 @foreach ($files as $file)
-                                                <a href="{{ asset('uploads/' . $file) }}">{{ $file }}</a>
+                                                <a href="{{ asset('uploads/repeat/' . $file) }}">{{ $file }}</a>
                                                 @endforeach
                                             </td>
                                             <td>{{ $val->approval_status == 1 ? 'Approved' : 'Unapproved' }}</td>
@@ -50,24 +50,13 @@
                                                 <a class="btn btn-xs btn-warning" href="{{ route('admin.quotation-show-repeat', $val->id) }}">
                                                     <i class="fa fa-tv"></i> Show Materials
                                                 </a>
-                                                @can('quotation_approve')
-                                                    {{-- <a class="btn btn-xs btn-primary" href="{{ route('admin.quotation.approve', $val->id) }}">
-                                                        Approve
-                                                    </a> --}}
-                                                @endcan
+                                                @if ($val->approval_status != 1)
                                                 @can('quotation_edit')
                                                     <a class="btn btn-xs btn-info" href="{{ route('admin.quotation-edit-repeat', $val->id) }}">
                                                         <i class="fa fa-edit"></i> {{ trans('global.edit') }}
                                                     </a>
                                                 @endcan
-
-                                                @can('quotation_delete')
-                                                    {{-- <form action="{{ route('admin.quotation.destroy', $val->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
-                                                        <input type="hidden" name="_method" value="DELETE">
-                                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                        <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
-                                                    </form> --}}
-                                                @endcan
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach

@@ -2,7 +2,7 @@
 @section('content')
 <div class="row page-titles">
     <div class="col-md-5 col-8 align-self-center">
-        <h3 class="text-themecolor">Bidding</h3>
+        <h3 class="text-themecolor">Direct Order</h3>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="javascript:void(0)">Direct Order</a></li>
             <li class="breadcrumb-item active">Index</li>
@@ -27,11 +27,10 @@
                             <tr>
                                 <th>{{ trans('cruds.quotation.fields.id') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
-                                <th>{{ trans('cruds.quotation.fields.notes') }}</th>
-                                <th>{{ trans('cruds.quotation.fields.upload_file') }}</th>
-                                <th>
-                                    &nbsp;
-                                </th>
+                                <th>{{ trans('cruds.quotation.fields.qty') }}</th>
+                                <th>{{ trans('cruds.quotation.fields.approval_status') }}</th>
+                                <th>{{ trans('cruds.quotation.fields.total_price') }}</th>
+                                <th>&nbsp;</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -39,16 +38,15 @@
                                 <tr data-entry-id="{{ $val->id }}">
                                     <td>{{ $val->id ?? '' }}</td>
                                     <td>{{ $val->po_no ?? '' }}</td>
-                                    <td>{{ $val->notes }}</td>
+                                    <td>{{ number_format($val->total_qty, 0, '', '.') }}</td>
+                                    <td>{{ $val->approval_status == 1 ? 'Approved' : 'Unapproved' }}</td>
+                                    <td>{{ number_format($val->total_price, 0, '', '.') }}</td>
                                     <td>
-                                        <a href="{{ asset('uploads/' . $val->upload_file) }}">{{ $val->upload_file }}</a>
-                                    </td>
-                                    <td>
-                                        {{-- @if (time() <= strtotime($val->expired_date)) --}}
-                                        <a class="btn btn-xs btn-info" href="{{ route('vendor.quotation-repeat-detail', $val->id) }}">
-                                            {{ 'View' }}
+                                        @if (empty($val->approval_status))
+                                        <a class="btn btn-xs btn-info" href="{{ route('vendor.quotation-direct-detail', $val->id) }}">
+                                            <i class="fa fa-tv"></i> {{ 'View' }}
                                         </a>
-                                        {{-- @endif --}}
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

@@ -2,7 +2,7 @@
 @section('content')
 <div class="row page-titles">
     <div class="col-md-5 col-8 align-self-center">
-        <h3 class="text-themecolor">Quotation</h3>
+        <h3 class="text-themecolor">Direct Order</h3>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="javascript:void(0)">{{ 'Direct Order' }}</a></li>
             <li class="breadcrumb-item active">Create</li>
@@ -21,16 +21,16 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form class="form-rn m-t-40" action="{{ route("admin.quotation-save-direct") }}" enctype="multipart/form-data" method="post">
+                <form class="form-rn m-t-40" action="{{ route("admin.quotation-preview-direct") }}" enctype="multipart/form-data" method="post">
                     @csrf
                     <div class="row">
                         <div class="col-lg-4">
                             <div class="form-group">
-                                <label>{{ trans('cruds.purchase-order.fields.PR_NO') }}</label>
-                                <input type="text" class="form-control form-control-line {{ $errors->has('PR_NO') ? 'is-invalid' : '' }}" name="PR_NO" value="{{ old('PR_NO', $po_no) }}" readonly> 
-                                @if($errors->has('PR_NO'))
+                                <label>{{ trans('cruds.purchase-order.fields.po_no') }}</label>
+                                <input type="text" class="form-control form-control-line {{ $errors->has('po_no') ? 'is-invalid' : '' }}" name="po_no" value="{{ old('po_no', $po_no) }}" readonly> 
+                                @if($errors->has('po_no'))
                                     <div class="invalid-feedback">
-                                        {{ $errors->first('PR_NO') }}
+                                        {{ $errors->first('po_no') }}
                                     </div>
                                 @endif
                             </div>
@@ -54,6 +54,7 @@
                                 <tbody>
                                     @foreach($data as $key => $value)
                                         <tr>
+                                            <input type="hidden" name="id[]" value="{{ $value->id }}">
                                             <td><input type="text" class="form-control" name="pr_no[]" readonly value="{{ $value->pr_no }}"></td>
                                             <td><input type="text" class="form-control" name="request_date[]" readonly value="{{ $value->request_date }}"></td>
                                             <td><input type="text" class="form-control" name="rn_no[]" readonly value="{{ $value->request_no }}"></td>
@@ -66,7 +67,28 @@
                                     @endforeach
                                 </tbody>
                             </table>
-                        </div>    
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="">{{ trans('cruds.purchase-order.invite_vendor') }}</label>
+                        <div class="row">
+                            <div class="col-lg-9">
+                                <select name="vendor_id" id="search-vendor" class="form-control select2">
+                                    @foreach ($vendor as $val)
+                                    <option 
+                                        value="{{ $val->code }}"
+                                        data-id="{{ $val->id }}"
+                                        data-name="{{ $val->name }}"
+                                        data-email="{{ $val->email }}"
+                                        data-address="{{ $val->address }}"
+                                        data-npwp="{{ $val->npwp }}"
+                                    >
+                                        {{ $val->code }} - {{ $val->name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.purchase-order.fields.notes') }}</label>
@@ -87,77 +109,16 @@
                         @endif
                         <span class="help-block"></span>
                     </div>
-                    <div class="form-group">
-                        <label for="">{{ trans('cruds.purchase-order.invite_vendor') }}</label>
-                        <div class="row">
-                            <div class="col-lg-9">
-                                <select name="vendor_id" id="search-vendor" class="form-control select2">
-                                    @foreach ($vendor as $val)
-                                    <option 
-                                        value="{{ $val->id }}"
-                                        data-id="{{ $val->id }}"
-                                        data-name="{{ $val->name }}"
-                                        data-email="{{ $val->email }}"
-                                        data-address="{{ $val->address }}"
-                                        data-npwp="{{ $val->npwp }}"
-                                    >
-                                        {{ $val->name }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                    </div>
 
                     <div class="form-actions">
                         {{-- <input type="hidden" name="total" value="{{ $total }}"> --}}
+                        <input type="hidden" name="plant_code" value="{{ $plant_code }}">
                         <input type="hidden" name="id" value="{{ $uri['ids'] }}">
-                        <button type="submit" class="btn btn-success click"> <i class="fa fa-check"></i> {{ trans('global.save') }}</button>
+                        <button type="submit" class="btn btn-success click"> <i class="fa fa-tv"></i> {{ trans('global.preview') }}</button>
                         <a href="{{ route('admin.purchase-request.index') }}" class="btn btn-inverse">Cancel</a>
                         <img id="image_loading" src="{{ asset('img/ajax-loader.gif') }}" alt="" style="display: none">
                     </div>
                 </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modal_material" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">{{ trans('cruds.masterMaterial.title_singular') }}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="row" style="padding: 0 15px 15px 15px;">
-                <div class="col-lg-12">
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Description</th>
-                                    <th style="width: 10%">Qty</th>
-                                    <th style="width: 10%">Unit</th>
-                                    <th>Notes</th>
-                                    <th>Price</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($data as $key => $value)
-                                    <tr>
-                                        <td><input type="text" class="form-control" name="description[]" readonly value="{{ $value->description }}"></td>
-                                        <td><input type="text" class="form-control" name="qty[]" readonly value="{{ number_format($value->qty, 0, '', '.') }}"></td>
-                                        <td><input type="text" class="form-control" name="unit[]" readonly value="{{ $value->unit }}"></td>
-                                        <td><input type="text" class="form-control" name="notes_detail[]" readonly value="{{ $value->notes }}"></td>
-                                        <td><input type="text" class="form-control" name="price[]" readonly value="{{ number_format($value->price, 0, '', '.') }}"></td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
