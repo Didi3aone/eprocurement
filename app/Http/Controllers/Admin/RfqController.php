@@ -44,7 +44,9 @@ class RfqController extends Controller
 
         $file->move($path, $filename);
 
-        Artisan::call('import:rfq', ['filename' => $real_filename]);
+        $real_filename = public_path($path . $filename);
+
+        \Artisan::call('import:rfq', ['filename' => $real_filename]);
 
         return redirect('admin/rfq')->with('success', 'RFQ has been successfully imported');
     }
@@ -63,7 +65,9 @@ class RfqController extends Controller
 
         $file->move($path, $filename);
 
-        Artisan::call('import:rfq_detail', ['filename' => $real_filename]);
+        $real_filename = public_path($path . $filename);
+
+        \Artisan::call('import:rfq_detail', ['filename' => $real_filename]);
 
         return redirect('admin/rfq')->with('success', 'RFQ Detail has been successfully imported');
     }
