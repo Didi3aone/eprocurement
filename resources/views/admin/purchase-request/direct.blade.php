@@ -48,7 +48,6 @@
                                         <th>Material Desc</th>
                                         <th>Unit</th>
                                         <th style="width: 10%">Qty</th>
-                                        <th style="width: 10%">Price</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -62,7 +61,6 @@
                                             <td><input type="text" class="form-control" name="description[]" readonly value="{{ $value->description }}"></td>
                                             <td><input type="text" class="form-control" name="unit[]" readonly value="{{ $value->unit }}"></td>
                                             <td><input type="text" class="form-control" name="qty[]" readonly value="{{ empty($value->qty) ? 0 : $value->qty }}"></td>
-                                            <td><input type="text" class="form-control" name="price[]" readonly value="{{ $value->price }}"></td>
                                         </tr>
                                     @endforeach
                                 </tbody>

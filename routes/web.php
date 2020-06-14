@@ -190,7 +190,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
 
     // rfq
     Route::post('rfq/import', 'RfqController@import')->name('rfq.import');
-    Route::post('rfq-import-detail', 'RfqController@importDetail')->name('rfq-import-detail');
+    Route::post('rfq/import-detail', 'RfqController@importDetail')->name('rfq.import-detail');
     Route::get('rfq-add-detail/{code}', 'RfqController@addDetail')->name('rfq-add-detail');
     Route::post('rfq-save-detail', 'RfqController@saveDetail')->name('rfq-save-detail');
     Route::get('rfq-show/{code}', 'RfqController@show')->name('rfq-show');

@@ -48,7 +48,6 @@
                                     <th>Description</th>
                                     <th>Unit</th>
                                     <th>Qty</th>
-                                    <th>Price</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -61,7 +60,6 @@
                                     <input type="hidden" name="description[]" value="{{ $row['description'] }}">
                                     <input type="hidden" name="unit[]" value="{{ $row['unit'] }}">
                                     <input type="hidden" name="qty[]" value="{{ $row['qty'] }}">
-                                    <input type="hidden" name="price[]" value="{{ $row['price'] }}">
                                     <td>{{ $row['pr_no'] }}</td>
                                     <td>{{ $row['request_date'] }}</td>
                                     <td>{{ $row['rn_no'] }}</td>
@@ -69,7 +67,6 @@
                                     <td>{{ $row['description'] }}</td>
                                     <td>{{ $row['unit'] }}</td>
                                     <td>{{ $row['qty'] }}</td>
-                                    <td>{{ $row['price'] }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>

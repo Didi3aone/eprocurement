@@ -145,11 +145,10 @@ class QuotationController extends Controller
         // insert to purchase_request_history
         $prHistory = new PurchaseRequestHistory;
         $prHistory->pr_id = $data['pr_id'];
-        $prHistory->request_no = $data['request_no'];
+        $prHistory->request_no = $data['rn_no'];
         $prHistory->material_id = $data['material_id'];
         $prHistory->vendor_id = $data['vendor_id'];
         $prHistory->qty = $data['qty'];
-        $prHistory->price = $data['price'];
         $prHistory->save();
     }
 
@@ -167,9 +166,6 @@ class QuotationController extends Controller
             $qy = str_replace('.', '', $request->get('qty')[$i]);
             $qty += $qy;
 
-            $pc = str_replace('.', '', $request->get('price')[$i]);
-            $price += $pc;
-
             $rfq = MasterRfq::select('master_rfqs_details.order_unit', 'master_rfqs_details.net_order_price')
                 ->join('master_rfqs_details', 'master_rfqs_details.purchasing_document', '=', 'master_rfqs.purchasing_document')
                 ->where('master_rfqs.vendor', $request->get('vendor_id'))
@@ -186,14 +182,14 @@ class QuotationController extends Controller
                 'rn_no' => $request->get('rn_no')[$i],
                 'material_id' => $request->get('material_id')[$i],
                 'description' => $request->get('description')[$i],
+                'vendor_id' => $request->get('vendor_id'),
                 'unit' => $rfq->order_unit,
-                'qty' => $request->get('qty')[$i],
-                'price' => $rfq->net_order_price,
+                'qty' => $request->get('qty')[$i]
             ];
 
             array_push($data, $material);
 
-            $this->savePRHistory($material);
+            // $this->savePRHistory($material);
         }
 
         $upload_files = '';
@@ -230,9 +226,6 @@ class QuotationController extends Controller
             $qy = str_replace('.', '', $request->get('qty')[$i]);
             $qty += $qy;
 
-            $pc = str_replace('.', '', $request->get('price')[$i]);
-            $price += $pc;
-
             // update material qty
             $material = PurchaseRequestsDetail::where('request_no', $request->get('rn_no')[$i])
                 ->where('material_id', $request->get('material_id')[$i])
@@ -244,11 +237,11 @@ class QuotationController extends Controller
             $data = [
                 'request_no' => $request->get('rn_no')[$i],
                 'pr_id' => $request->get('pr_no')[$i],
+                'rn_no' => $request->get('rn_no')[$i],
                 'material_id' => $request->get('material_id')[$i],
                 'unit' => $request->get('unit')[$i],
                 'vendor_id' => $request->get('vendor'),
-                'qty' => $request->get('qty')[$i],
-                'price' => $request->get('price')[$i]
+                'qty' => $request->get('qty')[$i]
             ];
 
             array_push($details, $data);
@@ -272,7 +265,6 @@ class QuotationController extends Controller
                 $quotationDetail->qty = $detail['qty'];
                 $quotationDetail->unit = $detail['unit'];
                 $quotationDetail->material = $detail['material_id'];
-                $quotationDetail->vendor_price = $detail['price'];
                 $quotationDetail->vendor_id = $request->get('vendor');
                 $quotationDetail->save();
             }
@@ -310,9 +302,6 @@ class QuotationController extends Controller
             $qy = str_replace('.', '', $request->get('qty')[$i]);
             $qty += $qy;
 
-            $pc = str_replace('.', '', $request->get('price')[$i]);
-            $price += $pc;
-
             $rfq = MasterRfq::select('master_rfqs_details.order_unit', 'master_rfqs_details.net_order_price')
                 ->join('master_rfqs_details', 'master_rfqs_details.purchasing_document', '=', 'master_rfqs.purchasing_document')
                 ->where('master_rfqs.vendor', $request->get('vendor_id'))
@@ -329,14 +318,14 @@ class QuotationController extends Controller
                 'rn_no' => $request->get('rn_no')[$i],
                 'material_id' => $request->get('material_id')[$i],
                 'description' => $request->get('description')[$i],
+                'vendor_id' => $request->get('vendor_id'),
                 'unit' => $rfq->order_unit,
-                'qty' => $request->get('qty')[$i],
-                'price' => $rfq->net_order_price,
+                'qty' => $request->get('qty')[$i]
             ];
 
             array_push($data, $material);
 
-            $this->savePRHistory($material);
+            // $this->savePRHistory($material);
         }
 
         $upload_files = '';
@@ -373,9 +362,6 @@ class QuotationController extends Controller
             $qy = str_replace('.', '', $request->get('qty')[$i]);
             $qty += $qy;
 
-            $pc = str_replace('.', '', $request->get('price')[$i]);
-            $price += $pc;
-
             // update material qty
             $material = PurchaseRequestsDetail::where('request_no', $request->get('rn_no')[$i])
                 ->where('material_id', $request->get('material_id')[$i])
@@ -388,10 +374,10 @@ class QuotationController extends Controller
                 'request_no' => $request->get('rn_no')[$i],
                 'pr_id' => $request->get('pr_no')[$i],
                 'material_id' => $request->get('material_id')[$i],
+                'rn_no' => $request->get('rn_no')[$i],
                 'unit' => $request->get('unit')[$i],
                 'vendor_id' => $request->get('vendor'),
-                'qty' => $request->get('qty')[$i],
-                'price' => $request->get('price')[$i]
+                'qty' => $request->get('qty')[$i]
             ];
 
             array_push($details, $data);
@@ -415,7 +401,6 @@ class QuotationController extends Controller
                 $quotationDetail->qty = $detail['qty'];
                 $quotationDetail->unit = $detail['unit'];
                 $quotationDetail->material = $detail['material_id'];
-                $quotationDetail->vendor_price = $detail['price'];
                 $quotationDetail->vendor_id = $request->get('vendor');
                 $quotationDetail->save();
             }

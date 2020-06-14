@@ -51,7 +51,7 @@
                                 <td>{{ $row->last_changed }}</td>
                                 <td>
                                     <a class="btn btn-xs btn-primary" href="{{ url('admin/rfq-add-detail/' . $row->purchasing_document) }}">
-                                        {{ trans('global.add') }} Detail
+                                        <i class="fa fa-plus"></i> {{ trans('global.add') }} Detail
                                     </a>
                                 </td>
                             </tr>
