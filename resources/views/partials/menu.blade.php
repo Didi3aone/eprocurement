@@ -70,19 +70,6 @@
                         </li>
                     </ul>
                 </li>
-                <li class=""> 
-                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-file"></i>
-                        <span class="hide-menu"> RFQ </span>
-                    </a>
-                    <ul aria-expanded="false" class="collapse">
-                        <li>
-                            <a href="{{ route('admin.rfq.index') }}">
-                                <i class="fa fa-cubes"></i> 
-                                List RFQ
-                            </a>
-                        </li>
-                    </ul>
-                </li>
                 @can('purchase_order_access')
                 <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-truck"></i>
@@ -220,6 +207,19 @@
                             </ul>
                         </li>
                         @endcan
+                        <li class=""> 
+                            <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-file"></i>
+                                <span class="hide-menu"> RFQ </span>
+                            </a>
+                            <ul aria-expanded="false" class="collapse">
+                                <li>
+                                    <a href="{{ route('admin.rfq.index') }}">
+                                        <i class="fa fa-cubes"></i> 
+                                        List RFQ
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                         @can('vendor_management_access')
                         <li>
                             <a href="#" class="has-arrow">
