@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Imports\RfqDetailImport;
+use App\Imports\RfqImportDetail;
 
 class ImportRfqDetail extends Command
 {
@@ -43,6 +43,6 @@ class ImportRfqDetail extends Command
         // (new MaterialImport)->withOutput($this->output)->import($this->argument('filename'));
         // $this->output->success('Import successful');
 
-        Excel::import(new RfqDetailImport, $this->argument('filename'));
+        Excel::import(new RfqImportDetail, $this->argument('filename'));
     }
 }

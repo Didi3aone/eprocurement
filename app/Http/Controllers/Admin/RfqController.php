@@ -55,13 +55,14 @@ class RfqController extends Controller
     {
         // abort_if(Gate::denies('rfq_import_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $this->validate($request, [
-            'xls_file' => 'required|file|mimes:csv,xls,xlsx',
-        ]);
+        // $this->validate($request, [
+        //     'xls_file' => 'required|file|mimes:csv,xls,xlsx',
+        // ]);
 
         $path = 'xls/';
         $file = $request->file('xls_file');
         $filename = $file->getClientOriginalName();
+        // dd($file); die();
 
         $file->move($path, $filename);
 

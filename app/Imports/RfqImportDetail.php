@@ -2,10 +2,10 @@
 
 namespace App\Imports;
 
-use App\Models\Rfq;
+use App\Models\MasterRfqDetail;
 use Maatwebsite\Excel\Concerns\ToModel;
 
-class RfqImport implements ToModel
+class RfqImportDetail implements ToModel
 {
     /**
     * @param array $row
@@ -14,7 +14,7 @@ class RfqImport implements ToModel
     */
     public function model(array $row)
     {
-        return new Rfq([
+        return new MasterRfqDetail([
             'purchasing_document' => $row[0],
             'item' => $row[1],
             'document_item' => $row[2],
@@ -38,15 +38,15 @@ class RfqImport implements ToModel
             'net_order_price' => $row[22],
             'price_unit' => $row[23],
             'gross_order_value' => $row[24],
-            'quotation_deadline' => $row[25],
+            'quotation_deadline' => date('Y-m-d', strtotime($row[25])),
             'gr_processing_time' => $row[26],
             'tax_code' => $row[27],
             'base_unit_of_measures' => $row[30],
             'oa_target_value' => $row[31],
-            'price_date' => $row[32],
+            'price_date' => date('Y-m-d', strtotime($row[32])),
             'purchasing_doc_category' => $row[33],
-            'net_weight' => $row[37],
-            'unit_of_weight' => $row[38],
+            'net_weight' => $row[38],
+            'unit_of_weight' => $row[39],
             'profit_center' => $row[39],
             'gross_weight' => $row[40],
             'package_number' => $row[41],
