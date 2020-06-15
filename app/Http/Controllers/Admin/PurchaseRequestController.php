@@ -13,6 +13,7 @@ use App\Models\RequestNotesDetail;
 use App\Models\WorkFlowApproval;
 use App\Models\WorkFlow;
 use App\Models\Plant;
+use App\Models\DocumentType;
 use App\Models\UserMap;
 use App\Models\Vendor;
 use DB,Gate;
@@ -60,13 +61,11 @@ class PurchaseRequestController extends Controller
             ->orderBy('purchase_requests.created_at', 'desc')
             ->get();
 
-        $plant_code = $userMapping->plant;
-
         foreach ($materials as $row) {
             $row->uuid = $row->getAttributes()['id'];
         }
 
-        return view('admin.purchase-request.index', compact('plant_code', 'materials'));
+        return view('admin.purchase-request.index', compact('materials'));
     }
 
     protected function createPrPo ($ids, $quantities = null)
@@ -122,7 +121,7 @@ class PurchaseRequestController extends Controller
         return view('admin.purchase-request.online', compact('data', 'po_no', 'vendor', 'uri'));
     }
 
-    public function repeat (Request $request, $ids, $quantities, $plant_code)
+    public function repeat (Request $request, $ids, $quantities)
     {
         $ids = base64_decode($ids);
         $quantities = base64_decode($quantities);
@@ -132,15 +131,17 @@ class PurchaseRequestController extends Controller
         $po_no = $return['po_no'];
         $vendor = $return['vendor'];
 
+        $docTypes = DocumentType::get();
+
         $uri = [
             'ids' => base64_encode($ids),
             'quantities' => base64_encode($quantities)
         ];
         
-        return view('admin.purchase-request.repeat', compact('data', 'plant_code', 'po_no', 'vendor', 'uri'));
+        return view('admin.purchase-request.repeat', compact('data', 'docTypes', 'po_no', 'vendor', 'uri'));
     }
 
-    public function direct (Request $request, $ids, $quantities, $plant_code)
+    public function direct (Request $request, $ids, $quantities)
     {
         $ids = base64_decode($ids);
         $quantities = base64_decode($quantities);
@@ -150,12 +151,14 @@ class PurchaseRequestController extends Controller
         $po_no = $return['po_no'];
         $vendor = $return['vendor'];
 
+        $docTypes = DocumentType::get();
+
         $uri = [
             'ids' => base64_encode($ids),
             'quantities' => base64_encode($quantities)
         ];
         
-        return view('admin.purchase-request.direct', compact('data', 'plant_code', 'po_no', 'vendor', 'uri'));
+        return view('admin.purchase-request.direct', compact('data', 'docTypes', 'po_no', 'vendor', 'uri'));
     }
 
     /**
