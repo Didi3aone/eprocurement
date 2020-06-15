@@ -13,6 +13,7 @@ use App\Models\RequestNotesDetail;
 use App\Models\WorkFlowApproval;
 use App\Models\WorkFlow;
 use App\Models\Plant;
+use App\Models\DocumentType;
 use App\Models\UserMap;
 use App\Models\Vendor;
 use DB,Gate;
@@ -46,7 +47,6 @@ class PurchaseRequestController extends Controller
             'purchase_requests_details.release_date',
             \DB::raw('purchase_requests.request_no as pr_no'),
             'purchase_requests.request_date',
-            'purchase_requests.doc_type',
             'purchase_requests.total'
         )
             ->leftJoin('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
@@ -61,13 +61,11 @@ class PurchaseRequestController extends Controller
             ->orderBy('purchase_requests.created_at', 'desc')
             ->get();
 
-        $doc_type = $materials[0]->doc_type;
-
         foreach ($materials as $row) {
             $row->uuid = $row->getAttributes()['id'];
         }
 
-        return view('admin.purchase-request.index', compact('doc_type', 'materials'));
+        return view('admin.purchase-request.index', compact('materials'));
     }
 
     protected function createPrPo ($ids, $quantities = null)
@@ -123,7 +121,7 @@ class PurchaseRequestController extends Controller
         return view('admin.purchase-request.online', compact('data', 'po_no', 'vendor', 'uri'));
     }
 
-    public function repeat (Request $request, $ids, $quantities, $doc_type)
+    public function repeat (Request $request, $ids, $quantities)
     {
         $ids = base64_decode($ids);
         $quantities = base64_decode($quantities);
@@ -133,15 +131,17 @@ class PurchaseRequestController extends Controller
         $po_no = $return['po_no'];
         $vendor = $return['vendor'];
 
+        $docTypes = DocumentType::get();
+
         $uri = [
             'ids' => base64_encode($ids),
             'quantities' => base64_encode($quantities)
         ];
         
-        return view('admin.purchase-request.repeat', compact('data', 'doc_type', 'po_no', 'vendor', 'uri'));
+        return view('admin.purchase-request.repeat', compact('data', 'docTypes', 'po_no', 'vendor', 'uri'));
     }
 
-    public function direct (Request $request, $ids, $quantities, $doc_type)
+    public function direct (Request $request, $ids, $quantities)
     {
         $ids = base64_decode($ids);
         $quantities = base64_decode($quantities);
@@ -151,12 +151,14 @@ class PurchaseRequestController extends Controller
         $po_no = $return['po_no'];
         $vendor = $return['vendor'];
 
+        $docTypes = DocumentType::get();
+
         $uri = [
             'ids' => base64_encode($ids),
             'quantities' => base64_encode($quantities)
         ];
         
-        return view('admin.purchase-request.direct', compact('data', 'doc_type', 'po_no', 'vendor', 'uri'));
+        return view('admin.purchase-request.direct', compact('data', 'docTypes', 'po_no', 'vendor', 'uri'));
     }
 
     /**

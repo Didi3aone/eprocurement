@@ -40,12 +40,11 @@
                         <div class="col-lg-4">
                             <div class="form-group">
                                 <label>{{ trans('cruds.purchase-order.fields.doc_type') }}</label>
-                                <input type="text" class="form-control form-control-line {{ $errors->has('doc_type') ? 'is-invalid' : '' }}" name="doc_type" value="{{ old('doc_type', $doc_type) }}" readonly> 
-                                @if($errors->has('doc_type'))
-                                    <div class="invalid-feedback">
-                                        {{ $errors->first('doc_type') }}
-                                    </div>
-                                @endif
+                                <select class="form-control form-control-line select2 {{ $errors->has('doc_type') ? 'is-invalid' : '' }}" name="doc_type">
+                                    @foreach ($docTypes as $type)
+                                        <option value="{{ $type->code }}">{{ $type->code }} - {{ $type->description }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                     </div>

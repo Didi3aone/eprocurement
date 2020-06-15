@@ -158,8 +158,6 @@
         countQty($(this))
     })
 
-    const doc_type = '{{ isset($doc_type) ? $doc_type : '' }}'
-
     $(document).on('click', '#open_modal', function (e) {
         e.preventDefault()
 
@@ -185,8 +183,8 @@
         $('.bidding-online').attr('href', '{{ url("admin/purchase-request-online") }}/' + ids)
 
         if (check_pr.length > 0) {
-            $('.bidding-repeat').attr('href', '{{ url("admin/purchase-request-repeat") }}/' + ids + '/' + quantities + '/' + doc_type)
-            $('.bidding-direct').attr('href', '{{ url("admin/purchase-request-direct") }}/' + ids + '/' + quantities + '/' + doc_type)
+            $('.bidding-repeat').attr('href', '{{ url("admin/purchase-request-repeat") }}/' + ids + '/' + quantities)
+            $('.bidding-direct').attr('href', '{{ url("admin/purchase-request-direct") }}/' + ids + '/' + quantities)
         } else {
             alert('Please check your material!')
             $('#modal_create_po').modal('hide')
