@@ -17,6 +17,7 @@
                     @csrf
                     <div class="row">
                         <div class="col-lg-12">
+                            <input type="hidden" name="quotation_id" value="{{ $model->id }}">
                             <table class="table table-bordered table-striped">
                                 <tbody>
                                     <tr>
@@ -26,6 +27,10 @@
                                     <tr>
                                         <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
                                         <td>{{ $model->po_no }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>{{ trans('cruds.quotation.fields.doc_type') }}</th>
+                                        <td>{{ $model->doc_type }}</td>
                                     </tr>
                                     <tr>
                                         <th>{{ trans('cruds.quotation.fields.vendor') }}</th>
@@ -44,6 +49,7 @@
                                         <th>Qty</th>
                                         <th>Unit</th>
                                         <th>Price</th>
+                                        <th>Plant Code</th>
                                         <th>&nbsp;</th>
                                     </tr>
                                 </thead>
@@ -61,6 +67,7 @@
                                                 <td>{{ number_format($det->qty, 0, '', '.') }}</td>
                                                 <td>{{ $det->unit }}</td>
                                                 <td>{{ number_format($det->vendor_price, 0, '', '.') }}</td>
+                                                <td>{{ $det->plant_code }}</td>
                                                 <td>
                                                     @if ($model->approval_status != 1)
                                                     <a href="{{ route('admin.quotation.remove-vendor', [$model->id, $det->vendor_id]) }}" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Remove</a>

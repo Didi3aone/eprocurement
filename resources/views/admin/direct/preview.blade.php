@@ -19,6 +19,7 @@
                         <input type="hidden" name="po_no" value="{{ $po_no }}">
                         <input type="hidden" name="vendor" value="{{ $vendor->code }}">
                         <input type="hidden" name="upload_files" value="{{ $upload_files }}">
+                        <input type="hidden" name="doc_type" value="{{ $doc_type }}">
                         <input type="hidden" name="notes" value="{{ $notes }}">
                         <table class="table table-striped">
                             <tr>
@@ -32,6 +33,10 @@
                             <tr>
                                 <td>Notes</td>
                                 <td>{{ $notes }}</td>
+                            </tr>
+                            <tr>
+                                <td>Document Type</td>
+                                <td>{{ $doc_type }}</td>
                             </tr>
                             <tr>
                                 <td>Files</td>
@@ -48,6 +53,8 @@
                                     <th>Description</th>
                                     <th>Unit</th>
                                     <th>Qty</th>
+                                    <th>Price</th>
+                                    <th>Plant Code</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -60,6 +67,8 @@
                                     <input type="hidden" name="description[]" value="{{ $row['description'] }}">
                                     <input type="hidden" name="unit[]" value="{{ $row['unit'] }}">
                                     <input type="hidden" name="qty[]" value="{{ $row['qty'] }}">
+                                    <input type="hidden" name="price[]" value="{{ $row['price'] }}">
+                                    <input type="hidden" name="plant_code[]" value="{{ $row['plant_code'] }}">
                                     <td>{{ $row['pr_no'] }}</td>
                                     <td>{{ $row['request_date'] }}</td>
                                     <td>{{ $row['rn_no'] }}</td>
@@ -67,6 +76,8 @@
                                     <td>{{ $row['description'] }}</td>
                                     <td>{{ $row['unit'] }}</td>
                                     <td>{{ $row['qty'] }}</td>
+                                    <td>{{ $row['price'] }}</td>
+                                    <td>{{ $row['plant_code'] }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>

@@ -36,6 +36,19 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label>{{ trans('cruds.purchase-order.fields.doc_type') }}</label>
+                                <input type="text" class="form-control form-control-line {{ $errors->has('doc_type') ? 'is-invalid' : '' }}" name="doc_type" value="{{ old('doc_type', $doc_type) }}" readonly> 
+                                @if($errors->has('doc_type'))
+                                    <div class="invalid-feedback">
+                                        {{ $errors->first('doc_type') }}
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <div class="table-responsive">
                             <table class="table table-striped">
@@ -54,6 +67,7 @@
                                     @foreach($data as $key => $value)
                                         <tr>
                                             <input type="hidden" name="id[]" value="{{ $value->id }}">
+                                            <input type="hidden" name="plant_code[]" value="{{ $value->plant_code }}">
                                             <td><input type="text" class="form-control" name="pr_no[]" readonly value="{{ $value->pr_no }}"></td>
                                             <td><input type="text" class="form-control" name="request_date[]" readonly value="{{ $value->request_date }}"></td>
                                             <td><input type="text" class="form-control" name="rn_no[]" readonly value="{{ $value->request_no }}"></td>
@@ -110,7 +124,6 @@
 
                     <div class="form-actions">
                         {{-- <input type="hidden" name="total" value="{{ $total }}"> --}}
-                        <input type="hidden" name="plant_code" value="{{ $plant_code }}">
                         <input type="hidden" name="id" value="{{ $uri['ids'] }}">
                         <button type="submit" class="btn btn-success click"> <i class="fa fa-tv"></i> {{ trans('global.preview') }}</button>
                         <a href="{{ route('admin.purchase-request.index') }}" class="btn btn-inverse">Cancel</a>

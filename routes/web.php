@@ -132,8 +132,8 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::put('purchase-request-approval/{id}','PurchaseRequestController@approvalPr')->name('purchase-request-approval');
     Route::get('purchase-request-show/{id}','PurchaseRequestController@showDetail')->name('purchase-request-show');
     Route::get('purchase-request-online/{ids}/{quantities}','PurchaseRequestController@online')->name('purchase-request-online');
-    Route::get('purchase-request-repeat/{ids}/{quantities}/{plant_code}','PurchaseRequestController@repeat')->name('purchase-request-repeat');
-    Route::get('purchase-request-direct/{ids}/{quantities}/{plant_code}','PurchaseRequestController@direct')->name('purchase-request-direct');
+    Route::get('purchase-request-repeat/{ids}/{quantities}/{doc_type}','PurchaseRequestController@repeat')->name('purchase-request-repeat');
+    Route::get('purchase-request-direct/{ids}/{quantities}/{doc_type}','PurchaseRequestController@direct')->name('purchase-request-direct');
     Route::resource('purchase-request', 'PurchaseRequestController');
 
     // request note

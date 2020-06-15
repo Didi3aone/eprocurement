@@ -67,7 +67,9 @@ class QuotationController extends Controller
 
     public function online ()
     {
-        $quotation = Quotation::where('status', 1)->orderBy('id', 'desc')->get();
+        $quotation = Quotation::where('status', 1)
+            ->orderBy('id', 'desc')
+            ->get();
 
         return view('admin.quotation.online', compact('quotation'));
     }
@@ -158,7 +160,7 @@ class QuotationController extends Controller
         $price = 0;
         $po_no = $request->get('po_no');
         $notes = $request->get('notes');
-        $plant_code = $request->get('plant_code');
+        $doc_type = $request->get('doc_type');
 
         $data = [];
 
@@ -169,7 +171,6 @@ class QuotationController extends Controller
             $rfq = MasterRfq::select('master_rfqs_details.order_unit', 'master_rfqs_details.net_order_price')
                 ->join('master_rfqs_details', 'master_rfqs_details.purchasing_document', '=', 'master_rfqs.purchasing_document')
                 ->where('master_rfqs.vendor', $request->get('vendor_id'))
-                ->where('master_rfqs_details.plant', $plant_code)
                 ->where('master_rfqs_details.material', $request->get('material_id')[$i])
                 ->first();
 
@@ -184,12 +185,12 @@ class QuotationController extends Controller
                 'description' => $request->get('description')[$i],
                 'vendor_id' => $request->get('vendor_id'),
                 'unit' => $rfq->order_unit,
-                'qty' => $request->get('qty')[$i]
+                'qty' => $request->get('qty')[$i],
+                'price' => $rfq->net_order_price,
+                'plant_code' => $request->get('plant_code')[$i]
             ];
 
             array_push($data, $material);
-
-            // $this->savePRHistory($material);
         }
 
         $upload_files = '';
@@ -213,7 +214,7 @@ class QuotationController extends Controller
         $vendor = Vendor::where('code', $request->get('vendor_id'))->first();
         $data = (object) $data;
 
-        return view('admin.repeat.preview', compact('po_no', 'notes', 'upload_files', 'data', 'vendor'));
+        return view('admin.repeat.preview', compact('po_no', 'notes', 'doc_type', 'upload_files', 'data', 'vendor'));
     }
 
     public function saveRepeat (Request $request)
@@ -241,6 +242,8 @@ class QuotationController extends Controller
                 'material_id' => $request->get('material_id')[$i],
                 'unit' => $request->get('unit')[$i],
                 'vendor_id' => $request->get('vendor'),
+                'plant_code' => $request->get('plant_code')[$i],
+                'price' => $request->get('price')[$i],
                 'qty' => $request->get('qty')[$i]
             ];
 
@@ -255,8 +258,10 @@ class QuotationController extends Controller
             $quotation = new Quotation;
             $quotation->po_no = $request->get('po_no');
             $quotation->notes = $request->get('notes');
+            $quotation->doc_type = $request->get('doc_type');
             $quotation->upload_file = $request->get('upload_files');
             $quotation->status = 0;
+            dd($quotation);
             $quotation->save();
 
             foreach ($details as $detail) {
@@ -265,7 +270,9 @@ class QuotationController extends Controller
                 $quotationDetail->qty = $detail['qty'];
                 $quotationDetail->unit = $detail['unit'];
                 $quotationDetail->material = $detail['material_id'];
-                $quotationDetail->vendor_id = $request->get('vendor');
+                $quotationDetail->plant_code = $detail['plant_code'];
+                $quotationDetail->vendor_price = $detail['price'];
+                $quotationDetail->vendor_id = $detail['vendor_id'];
                 $quotationDetail->save();
             }
 
@@ -276,16 +283,23 @@ class QuotationController extends Controller
         }
 
         // send email
-        // $vendor = Vendor::where('code', $request->get('vendor'))->first();
-        // $data = [
-        //     'vendor' => $vendor,
-        //     'request_no' => $request->get('PR_NO'),
-        //     'subject' => 'PO Repeat ' . $request->get('PR_NO')
-        // ];
+        $vendor = Vendor::where('code', $request->get('vendor'))->first();
+        $files = explode(', ', $request->get('upload_files'));
+        $attachments = [];
+        $data = [
+            'vendor' => $vendor,
+            'request_no' => $request->get('po_no'),
+            'attachments' => $attachments,
+            'subject' => 'Repeat Order ' . $request->get('po_no')
+        ];
 
-        // \Mail::to($vendor->email)->send(new PurchaseOrderMail($data));
+        $mail_sent = '';
+        if (!empty($vendor->email))
+            \Mail::to($vendor->email)->send(new PurchaseOrderMail($data));
+        else
+            $mail_sent = '<br>But Email cannot be send, because vendor doesnot have an email address';
 
-        return redirect()->route('admin.quotation.repeat')->with('status', 'PO Repeat has been successfully ordered!');
+        return redirect()->route('admin.quotation.repeat')->with('status', 'Repeat Order has been successfully ordered!' . $mail_sent);
     }
 
     public function previewDirect (Request $request)
@@ -294,7 +308,7 @@ class QuotationController extends Controller
         $price = 0;
         $po_no = $request->get('po_no');
         $notes = $request->get('notes');
-        $plant_code = $request->get('plant_code');
+        $doc_type = $request->get('doc_type');
 
         $data = [];
 
@@ -305,7 +319,6 @@ class QuotationController extends Controller
             $rfq = MasterRfq::select('master_rfqs_details.order_unit', 'master_rfqs_details.net_order_price')
                 ->join('master_rfqs_details', 'master_rfqs_details.purchasing_document', '=', 'master_rfqs.purchasing_document')
                 ->where('master_rfqs.vendor', $request->get('vendor_id'))
-                ->where('master_rfqs_details.plant', $plant_code)
                 ->where('master_rfqs_details.material', $request->get('material_id')[$i])
                 ->first();
 
@@ -320,12 +333,12 @@ class QuotationController extends Controller
                 'description' => $request->get('description')[$i],
                 'vendor_id' => $request->get('vendor_id'),
                 'unit' => $rfq->order_unit,
-                'qty' => $request->get('qty')[$i]
+                'qty' => $request->get('qty')[$i],
+                'price' => $rfq->net_order_price,
+                'plant_code' => $request->get('plant_code')[$i]
             ];
 
             array_push($data, $material);
-
-            // $this->savePRHistory($material);
         }
 
         $upload_files = '';
@@ -349,7 +362,7 @@ class QuotationController extends Controller
         $vendor = Vendor::where('code', $request->get('vendor_id'))->first();
         $data = (object) $data;
 
-        return view('admin.direct.preview', compact('po_no', 'notes', 'upload_files', 'data', 'vendor'));
+        return view('admin.direct.preview', compact('po_no', 'notes', 'doc_type', 'upload_files', 'data', 'vendor'));
     }
 
     public function saveDirect (Request $request)
@@ -377,6 +390,8 @@ class QuotationController extends Controller
                 'rn_no' => $request->get('rn_no')[$i],
                 'unit' => $request->get('unit')[$i],
                 'vendor_id' => $request->get('vendor'),
+                'plant_code' => $request->get('plant_code')[$i],
+                'price' => $request->get('price')[$i],
                 'qty' => $request->get('qty')[$i]
             ];
 
@@ -391,6 +406,7 @@ class QuotationController extends Controller
             $quotation = new Quotation;
             $quotation->po_no = $request->get('po_no');
             $quotation->notes = $request->get('notes');
+            $quotation->doc_type = $request->get('doc_type');
             $quotation->upload_file = $request->get('upload_files');
             $quotation->status = 2;
             $quotation->save();
@@ -401,7 +417,9 @@ class QuotationController extends Controller
                 $quotationDetail->qty = $detail['qty'];
                 $quotationDetail->unit = $detail['unit'];
                 $quotationDetail->material = $detail['material_id'];
-                $quotationDetail->vendor_id = $request->get('vendor');
+                $quotationDetail->plant_code = $detail['plant_code'];
+                $quotationDetail->vendor_price = $detail['price'];
+                $quotationDetail->vendor_id = $detail['vendor_id'];
                 $quotationDetail->save();
             }
 
@@ -412,16 +430,23 @@ class QuotationController extends Controller
         }
 
         // send email
-        // $vendor = Vendor::where('code', $request->get('vendor'))->first();
-        // $data = [
-        //     'vendor' => $vendor,
-        //     'request_no' => $request->get('PR_NO'),
-        //     'subject' => 'PO Repeat ' . $request->get('PR_NO')
-        // ];
+        $vendor = Vendor::where('code', $request->get('vendor'))->first();
+        $files = explode(', ', $request->get('upload_files'));
+        $attachments = [];
+        $data = [
+            'vendor' => $vendor,
+            'request_no' => $request->get('po_no'),
+            'attachments' => $attachments,
+            'subject' => 'PO Repeat ' . $request->get('po_no')
+        ];
 
-        // \Mail::to($vendor->email)->send(new PurchaseOrderMail($data));
+        $mail_sent = '';
+        if (!empty($vendor->email))
+            \Mail::to($vendor->email)->send(new PurchaseOrderMail($data));
+        else
+            $mail_sent = '<br>But Email cannot be send, because vendor doesnot have an email address';
 
-        return redirect()->route('admin.quotation.direct')->with('status', 'Direct Order has been successfully ordered!');
+        return redirect()->route('admin.quotation.direct')->with('status', 'Direct Order has been successfully ordered!' . $mail_sent);
     }
 
     public function showOnline (Request $request, $id)
@@ -447,6 +472,9 @@ class QuotationController extends Controller
 
     public function approveRepeat (Request $request)
     {
+        if (empty($request->get('id')))
+            return redirect()->route('admin.quotation-show-repeat', $request->get('quotation_id'))->with('error', 'Please check your material!');
+
         \DB::beginTransaction();
 
         try {
@@ -469,6 +497,9 @@ class QuotationController extends Controller
 
     public function approveDirect (Request $request)
     {
+        if (empty($request->get('id')))
+            return redirect()->route('admin.quotation-show-direct', $request->get('quotation_id'))->with('error', 'Please check your material!');
+
         \DB::beginTransaction();
 
         try {

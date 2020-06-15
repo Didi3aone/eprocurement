@@ -17,5 +17,11 @@
     <p>
         You have been bidding in {{ $data['request_no'] }}
     </p>
+    <p>Attachment files here:</p>
+    <ul>
+        @foreach ($data['attachments'] as $attachment)
+            <li><a href="{{ asset('uploads/xls/' . trim($attachment)) }}">{{ trim($attachment) }}</a></li>
+        @endforeach
+    </ul>
 </body>
 </html>
