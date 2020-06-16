@@ -111,12 +111,30 @@ class QuotationController extends Controller
             foreach ($quotation->detail as $det) {
                 if (!empty($det->vendor_price)) {
                     $data = [
-                        'purchase_order_id' => $po->id,
-                        'description' => isset($det->description) ?? '-',
-                        'qty' => $det->qty,
-                        'unit' => $det->unit,
-                        'notes' => isset($quotation->notes) ?? '-',
-                        'price' => $det->vendor_price,
+                        'purchase_order_id'         => $po->id,
+                        'description'               => isset($det->description) ?? '-',
+                        'qty'                       => $det->qty,
+                        'unit'                      => $det->unit,
+                        'notes'                     => isset($quotation->notes) ?? '-',
+                        'price'                     => $det->vendor_price,
+                        'material_id'               => $det->material,
+                        'plant_code'                => $det->plant_code,
+                        'is_assets'                 => $det->is_assets,
+                        'assets_no'                 => $det->assets_no,
+                        'short_text'                => $det->short_text,
+                        'text_id'                   => $det->text_id,
+                        'text_form'                 => $det->text_form,
+                        'text_line'                 => $det->text_line,
+                        'delivery_date_category'    => $det->delivery_date_category,
+                        'account_assignment'        => $det->account_assigment,
+                        'purchasing_group_code'     => $det->purchasing_group_code,
+                        'preq_name'                 => $det->preq_name,
+                        'gl_acct_code'              => $det->gl_acct_code,
+                        'cost_center_code'          => $det->cost_center_code,
+                        'profit_center_code'        => $det->profit_center_code,
+                        'storage_location'          => $det->storage_location,
+                        'material_group'            => $det->material_group,
+                        'preq_item'                 => $det->preq_item
                     ];
 
                     $poDetail = PurchaseOrdersDetail::create($data);
