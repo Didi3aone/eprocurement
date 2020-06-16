@@ -55,16 +55,6 @@
                                             <td style="text-align: right;">{{ $value->qty }}</td>
                                             <td><input type="text" class="money form-control qty qty_{{ $value->uuid }}" name="qty[]" value="{{ $value->qty }}" style="width: 70%;"></td>
                                             <td class="qty_open_text" style="text-align: right;"><span>0</span></td>
-                                            <td>
-                                                {{-- @if( $value->is_validate == 1 && $value->approval_status == 12) --}}
-                                                {{-- <a class="open_modal_bidding btn btn-xs btn-success" id="open_modal" data-id="{{ $value->id }}" data-toggle="modal" data-target="#modal_create_po" href="javascript:;" >
-                                                    <i class="fa fa-truck"></i> Create PO
-                                                </a> --}}
-                                                {{-- @endif --}}
-                                                {{-- <a class="open_modal_bidding btn btn-xs btn-info" href="{{ route('admin.purchase-request-show',$value->id) }}" >
-                                                    <i class="fa fa-eye"></i> Show
-                                                </a>  --}}
-                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -94,7 +84,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalImport">{{ 'Bidding Model' }}</h5>
+                <h5 class="modal-title" id="modalImport">{{ 'Purchase Order Model' }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

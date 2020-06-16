@@ -31,21 +31,21 @@
                 </li>
                 @endcan
                 <li class=""> 
-                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-file"></i>
+                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-clipboard"></i>
                         <span class="hide-menu"> {{ trans('cruds.quotation.title') }} </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">
                         @can('purchase_request_access')
                         <li>
                             <a href="{{ route('admin.quotation.online') }}">
-                                <i class="fa fa-cubes"></i> 
+                                <i class="fa fas fa-caret-right"></i> 
                                 List Bidding
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('admin.quotation.list-winner') }}" class="">
-                                <i class="fa fa-cubes"></i> 
-                                List ACP
+                            <a href="{{ route('admin.quotation.index') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> 
+                                List PO
                             </a>
                         </li>
                         @endcan                        
@@ -58,14 +58,21 @@
                     <ul aria-expanded="false" class="collapse">
                         <li>
                             <a href="{{ route('admin.quotation.repeat') }}">
-                                <i class="fa fa-cubes"></i> 
+                                <i class="fa fas fa-caret-right"></i> 
                                 PO Repeat
                             </a>
                         </li>
                         <li>
+                            <a href="{{ route('admin.quotation.list-winner') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> 
+                                List ACP Bidding
+                            </a>
+                        </li>
+                        </li>
+                        <li>
                             <a href="{{ route('admin.quotation.direct') }}">
-                                <i class="fa fa-cubes"></i> 
-                                Direct Order
+                                <i class="fa fas fa-caret-right"></i> 
+                                List ACP Direct Order
                             </a>
                         </li>
                     </ul>

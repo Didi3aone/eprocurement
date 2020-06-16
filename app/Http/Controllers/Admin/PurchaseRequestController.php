@@ -89,10 +89,9 @@ class PurchaseRequestController extends Controller
                 ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
                 ->where('purchase_requests_details.id', $id)
                 ->first();
-
             if ($quantities)
                 $pr->qty = $quantities[$i];
-
+                
             array_push($data, $pr);
         }
 
@@ -135,7 +134,7 @@ class PurchaseRequestController extends Controller
 
         $uri = [
             'ids' => base64_encode($ids),
-            'quantities' => base64_encode($quantities)
+            'quantities' => ($quantities)
         ];
         
         return view('admin.purchase-request.repeat', compact('data', 'docTypes', 'po_no', 'vendor', 'uri'));

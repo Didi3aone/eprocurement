@@ -9,28 +9,6 @@
         </ol>
     </div>
 </div>
-@if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-        {{ session('success') }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-@endif
-{{-- @can('quotation_create')
-    <div style="margin-bottom: 10px;" class="row">
-        <div class="col-lg-6">
-            <a class="btn btn-success" href="{{ route("admin.quotation.create") }}">
-                <i class='fa fa-plus'></i> {{ trans('global.add') }} {{ trans('cruds.quotation.title_singular') }}
-            </a>
-        </div>
-        <div class="col-lg-6 text-right">
-            <button class="btn btn-info" data-toggle="modal" data-target="#modal_import">
-                <i class="fa fa-download"></i> {{ trans('cruds.quotation.import') }}
-            </button>
-        </div>
-    </div>
-@endcan --}}
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -43,12 +21,8 @@
                                     <tr>
                                         <th>{{ trans('cruds.quotation.fields.id') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
-                                        <th>{{ trans('cruds.quotation.fields.status') }}</th>
-                                        <th>{{ trans('cruds.quotation.fields.leadtime_type') }}</th>
-                                        <th>{{ trans('cruds.quotation.fields.purchasing_leadtime') }}</th>
-                                        <th>{{ trans('cruds.quotation.fields.target_price') }}</th>
-                                        <th>{{ trans('cruds.quotation.fields.expired_date') }}</th>
-                                        <th>{{ trans('cruds.quotation.fields.qty') }}</th>
+                                        <th>PO Type</th>
+                                        <th>Approval Status</th>
                                         <th>
                                             &nbsp;
                                         </th>
@@ -60,44 +34,20 @@
                                             <td>{{ $val->id ?? '' }}</td>
                                             <td>{{ $val->po_no ?? '' }}</td>
                                             <td>{{ $val->status == 0 ? 'PO repeat' : ($val->status == 1 ? 'Online' : 'Direct Order') }}</td>
-                                            <td>{{ $val->leadtime_type == 0 ? 'Date' : 'Day Count' }}</td>
-                                            <td>{{ $val->purchasing_leadtime ?? '' }}</td>
-                                            <td>{{ number_format($val->target_price, 0, '', '.') ?? '' }}</td>
                                             <td>
-                                                @php
-                                                $is_expired = '#67757c';
-                                                @endphp
-                                                @if (time() > strtotime($val->expired_date))
-                                                    @php $is_expired = 'red'; @endphp
-                                                @elseif (time() > strtotime('-2 days', strtotime($val->expired_date)) && time() <= strtotime($val->expired_date))
-                                                    @php $is_expired = 'orange'; @endphp
+                                                @if($val->approval_status == 1) 
+                                                    <span class="badge badge-success"> Approved </span>
+                                                @elseif( $val->approval_status == 0)
+                                                    <span class="badge badge-primary"> Waiting For Approval </span>
+                                                @elseif( $val->approval_status == 2)
+                                                    <span class="badge badge-success"> Vendor Confirm </span>
+                                                @elseif( $val->approval_status == 3)
+                                                    <span class="badge badge-danger"> Rejected </span>
+                                                @elseif( $val->approval_status == 4)
+                                                    <span class="badge badge-danger"> Vendor Rejected </span>
                                                 @endif
-                                                <span style="color: {{ $is_expired }}">{{ $val->expired_date ?? '' }}</span>
                                             </td>
-                                            <td>{{ number_format($val->qty, 0, '', '.') }}</td>
-                                            <td>
-                                                @can('quotation_show')
-                                                @if (time() <= strtotime($val->expired_date))
-                                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.quotation.show', $val->id) }}">
-                                                        {{ trans('global.view') }}
-                                                    </a>
-                                                @endif
-                                                @endcan
-
-                                                @can('quotation_edit')
-                                                    <a class="btn btn-xs btn-info" href="{{ route('admin.quotation.edit', $val->id) }}">
-                                                        {{ trans('global.edit') }}
-                                                    </a>
-                                                @endcan
-
-                                                @can('quotation_delete')
-                                                    {{-- <form action="{{ route('admin.quotation.destroy', $val->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
-                                                        <input type="hidden" name="_method" value="DELETE">
-                                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                        <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
-                                                    </form> --}}
-                                                @endcan
-                                            </td>
+                                            <td></td>
                                         </tr>
                                     @endforeach
                                 </tbody>

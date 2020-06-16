@@ -29,7 +29,7 @@
                                     <tr>
                                         <th>{{ trans('cruds.quotation.fields.id') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
-                                        <th>{{ trans('cruds.quotation.fields.upload_file') }}</th>
+                                        <th>Notes</th>
                                         <th>{{ trans('cruds.quotation.fields.status') }}</th>
                                         <th>&nbsp;</th>
                                     </tr>
@@ -39,24 +39,24 @@
                                         <tr data-entry-id="{{ $val->id }}">
                                             <td>{{ $val->id ?? '' }}</td>
                                             <td>{{ $val->po_no ?? '' }}</td>
+                                            <td>{{ $val->notes ?? '' }}</td>
                                             <td>
-                                                @php $files = explode(', ', $val->upload_file); @endphp
-                                                @foreach ($files as $file)
-                                                <a href="{{ asset('uploads/repeat/' . $file) }}">{{ $file }}</a>
-                                                @endforeach
+                                                @if($val->approval_status == 1) 
+                                                    <span class="badge badge-success"> Approved </span>
+                                                @elseif( $val->approval_status == 0)
+                                                    <span class="badge badge-primary"> Waiting For Approval </span>
+                                                @elseif( $val->approval_status == 2)
+                                                    <span class="badge badge-success"> Vendor Confirm </span>
+                                                @elseif( $val->approval_status == 3)
+                                                    <span class="badge badge-danger"> Rejected </span>
+                                                @elseif( $val->approval_status == 4)
+                                                    <span class="badge badge-danger"> Vendor Rejected </span>
+                                                @endif
                                             </td>
-                                            <td>{{ $val->approval_status == 1 ? 'Approved' : 'Unapproved' }}</td>
                                             <td>
                                                 <a class="btn btn-xs btn-warning" href="{{ route('admin.quotation-show-repeat', $val->id) }}">
-                                                    <i class="fa fa-tv"></i> Show Materials
+                                                    <i class="fa fa-eye"></i> Show
                                                 </a>
-                                                {{-- @if ($val->approval_status != 1)
-                                                @can('quotation_edit')
-                                                    <a class="btn btn-xs btn-info" href="{{ route('admin.quotation-edit-repeat', $val->id) }}">
-                                                        <i class="fa fa-edit"></i> {{ trans('global.edit') }}
-                                                    </a>
-                                                @endcan
-                                                @endif --}}
                                             </td>
                                         </tr>
                                     @endforeach
