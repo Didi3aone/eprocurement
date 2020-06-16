@@ -95,6 +95,8 @@ class QuotationController extends Controller
         $id = $request->get('id');
 
         $quotation = Quotation::find($id);
+        $quotaion->approval_status = 2;
+        $quotaion->save();
 
         \DB::beginTransaction();
         try {
@@ -102,7 +104,7 @@ class QuotationController extends Controller
                 'request_id' => $quotation->id,
                 'po_date' => date('Y-m-d'),
                 'vendor_id' => $quotation->detail[0]->vendor_id,
-                'status' => 2,
+                'status' => 1,
                 'po_no' => $quotation->po_no,
             ]);
 
