@@ -293,13 +293,13 @@ class QuotationController extends Controller
             'subject' => 'Repeat Order ' . $request->get('po_no')
         ];
 
-        $mail_sent = '';
-        if (!empty($vendor->email))
-            \Mail::to($vendor->email)->send(new PurchaseOrderMail($data));
-        else
-            $mail_sent = '<br>But Email cannot be send, because vendor doesnot have an email address';
+        // $mail_sent = '';
+        // if (!empty($vendor->email))
+        //     \Mail::to($vendor->email)->send(new PurchaseOrderMail($data));
+        // else
+        //     $mail_sent = '<br>But Email cannot be send, because vendor doesnot have an email address';
 
-        return redirect()->route('admin.quotation.repeat')->with('status', 'Repeat Order has been successfully ordered!' . $mail_sent);
+        return redirect()->route('admin.quotation.repeat')->with('status', 'Repeat Order has been successfully ordered!');
     }
 
     public function previewDirect (Request $request)

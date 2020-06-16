@@ -178,7 +178,7 @@
 
         const url = '{{ route('admin.rfq-get-by-vendor') }}'
         const row = $(this).closest('tr')
-        console.log(row)
+
         $rfq = $(".rfq");
         $.ajax({
             url: url,
@@ -186,7 +186,7 @@
                 vendor_id : vendorId
             },
             success: function (data) {
-                 $("#image_loading").hide()
+                $("#image_loading").hide()
                 $rfq.empty()
                 $rfq.append('<option value="">-- Select --</option>')
 
