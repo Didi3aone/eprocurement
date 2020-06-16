@@ -39,7 +39,7 @@
                                     <td>{{ $val->id ?? '' }}</td>
                                     <td>{{ $val->po_no ?? '' }}</td>
                                     <td>{{ number_format($val->total_qty, 0, '', '.') }}</td>
-                                    <td>{{ $val->approval_status == 1 ? 'Approved' : 'Unapproved' }}</td>
+                                    <td>{{ $val->approval_status == 2 ? 'Approved' : 'Unapproved' }}</td>
                                     <td>{{ number_format($val->total_price, 0, '', '.') }}</td>
                                     <td>
                                         @if ($val->approval_status == 1)
