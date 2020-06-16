@@ -22,6 +22,9 @@ class QuotationApproval extends Model
     public const waitingApproval = 0;
     public const atasanLangsung = 1;
     public const cLevel = 2;
+    public const NotYetApproval = 1;
+    public const alreadyApproval = 2;
+    public const Approved = 1;
 
     public function quotation ()
     {

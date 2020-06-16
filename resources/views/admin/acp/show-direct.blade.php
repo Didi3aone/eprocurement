@@ -13,17 +13,13 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('admin.quotation-approve-direct') }}" method="post">
+                <form action="{{ route('admin.post-acp-direct') }}" method="post">
                     @csrf
                     <div class="row">
                         <div class="col-lg-12">
                             <input type="hidden" name="quotation_id" value="{{ $model->id }}">
                             <table class="table table-bordered table-striped">
                                 <tbody>
-                                    <tr>
-                                        <th>{{ trans('cruds.quotation.fields.id') }}</th>
-                                        <td>{{ $model->id }}</td>
-                                    </tr>
                                     <tr>
                                         <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
                                         <td>{{ $model->po_no }}</td>
@@ -49,8 +45,6 @@
                                         <th>Qty</th>
                                         <th>Unit</th>
                                         <th>Price</th>
-                                        <th>Plant Code</th>
-                                        <th>&nbsp;</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -67,12 +61,6 @@
                                                 <td>{{ number_format($det->qty, 0, '', '.') }}</td>
                                                 <td>{{ $det->unit }}</td>
                                                 <td>{{ number_format($det->vendor_price, 0, '', '.') }}</td>
-                                                <td>{{ $det->plant_code }}</td>
-                                                <td>
-                                                    @if ($model->approval_status != 1)
-                                                    <a href="{{ route('admin.quotation.remove-vendor', [$model->id, $det->vendor_id]) }}" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Remove</a>
-                                                    @endif
-                                                </td>
                                             </tr>
                                         @endif
                                     @endforeach

@@ -20,6 +20,8 @@ class Quotation extends Model
         'status'
     ];
 
+    public const Approved = 1;
+
     public function detail ()
     {
         return $this->hasMany(QuotationDetail::class, 'quotation_order_id', 'id');

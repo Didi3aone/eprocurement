@@ -79,7 +79,7 @@
                                         <th>Material Desc</th>
                                         <th>Unit</th>
                                         <th style="width: 10%">Qty</th>
-                                        <th style="width: 20%">RFQ</th>
+                                        <th style="width: 20%">History PO</th>
                                         <th style="width: 20%">Net Price</th>
                                     </tr>
                                 </thead>
@@ -112,8 +112,11 @@
                                             <td><input type="text" class="form-control" name="unit[]" readonly value="{{ $value->unit }}"></td>
                                             <td><input type="text" class="form-control" name="qty[]" readonly value="{{ empty($value->qty) ? 0 : $value->qty }}"></td>
                                             <td>
-                                                <select name="rfq[]" id="rfq" class="form-control select2 rfq">
-                                                    <option></option>
+                                                <select name="history[]" id="history" class="form-control select2 history" required>
+                                                    <option> Select </option>
+                                                    @foreach(getHistoryPo($value->material_id) as $key => $rows)
+                                                        <option value="{{ $rows->price }}">{{ $rows->po['po_no']." - ".$rows->po->vendors['name'] }}</option>
+                                                    @endforeach
                                                 </select>
                                             </td>
                                             <td><input type="text" class="form-control net_price" name="price[]" id="net_price" value="" readonly></td>
@@ -234,6 +237,20 @@
                 net.val('Not found RFQ price')
             }
         })
+    })
+
+    $('.history').on('change', function (e) {
+        e.preventDefault()
+        $("#image_loading").show()
+        const price = $(this).val()
+        const row = $(this).closest('tr')
+        const net = row.find('.net_price')
+
+        if( price ) {
+            net.val(price)
+        } else {
+            net.val(0)
+        }
     })
 
     loadRfq()

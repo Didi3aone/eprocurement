@@ -70,7 +70,7 @@
                         </li>
                         </li>
                         <li>
-                            <a href="{{ route('admin.quotation.direct') }}">
+                            <a href="{{ route('admin.acp-direct') }}">
                                 <i class="fa fas fa-caret-right"></i> 
                                 List ACP Direct Order
                             </a>

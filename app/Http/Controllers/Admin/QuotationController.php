@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Gate, Artisan;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Database\Eloquent\Builder;
-
 use App\Models\Vendor\Quotation;
 use App\Models\Vendor\QuotationDetail;
 use App\Models\Vendor\QuotationApproval;
@@ -15,7 +14,6 @@ use App\Models\PurchaseRequestsDetail;
 use App\Models\PurchaseRequestHistory;
 use App\Models\PurchaseOrder;
 use App\Models\MasterRfq;
-use App\Models\WorkFlowApproval;
 use App\Models\Vendor;
 use App\Mail\PurchaseOrderMail;
 
@@ -47,24 +45,6 @@ class QuotationController extends Controller
         return view('admin.quotation.create');
     }
 
-    public function import(Request $request)
-    {
-        // abort_if(Gate::denies('vendor_import_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-        
-        $path = 'xls/';
-        $file = $request->file('xls_file');
-        
-        $filename = $file->getClientOriginalName();
-
-        $file->move($path, $filename);
-
-        $real_filename = public_path($path . $filename);
-
-        Artisan::call('import:quotation', ['filename' => $real_filename]);
-
-        return redirect('admin/quotation')->with('success', 'Quotation has been successfully imported');
-    }
-
     public function online ()
     {
         $quotation = Quotation::where('status', 1)
@@ -81,15 +61,6 @@ class QuotationController extends Controller
             ->get();
 
         return view('admin.quotation.repeat', compact('quotation'));
-    }
-
-    public function direct ()
-    {
-        $quotation = Quotation::where('status', 2)
-            ->orderBy('id', 'desc')
-            ->get();
-
-        return view('admin.quotation.direct', compact('quotation'));
     }
 
     public function saveOnline (Request $request)
@@ -142,82 +113,6 @@ class QuotationController extends Controller
         }
     }
 
-    protected function savePRHistory ($data)
-    {
-        // insert to purchase_request_history
-        $prHistory = new PurchaseRequestHistory;
-        $prHistory->pr_id       = $data['pr_id'];
-        $prHistory->request_no  = $data['rn_no'];
-        $prHistory->material_id = $data['material_id'];
-        $prHistory->vendor_id   = $data['vendor_id'];
-        $prHistory->qty         = $data['qty_pr'];
-        $prHistory->qty_po          = $data['qty'] ?? 0;
-        $prHistory->qty_outstanding = $data['qty_pr'] - $data['qty'];
-        $prHistory->save();
-    }
-
-    public function previewRepeat (Request $request)
-    {
-        $qty = 0;
-        $price = 0;
-        $po_no = $request->get('po_no');
-        $notes = $request->get('notes');
-        $doc_type = $request->get('doc_type');
-
-        $data = [];
-
-        for ($i = 0; $i < count($request->get('qty')); $i++) {
-            $qy = str_replace('.', '', $request->get('qty')[$i]);
-            $qty += $qy;
-
-            $rfq = MasterRfq::select('master_rfqs_details.order_unit', 'master_rfqs_details.net_order_price')
-                ->join('master_rfqs_details', 'master_rfqs_details.purchasing_document', '=', 'master_rfqs.purchasing_document')
-                ->where('master_rfqs.vendor', $request->get('vendor_id'))
-                ->where('master_rfqs_details.material', $request->get('material_id')[$i])
-                ->first();
-
-            if (empty($rfq))
-                return redirect()->back()->with('error', 'No RFQ Found!');
-
-            $material = [
-                'pr_no' => $request->get('pr_no')[$i],
-                'request_date' => $request->get('request_date')[$i],
-                'rn_no' => $request->get('rn_no')[$i],
-                'material_id' => $request->get('material_id')[$i],
-                'description' => $request->get('description')[$i],
-                'vendor_id' => $request->get('vendor_id'),
-                'unit' => $rfq->order_unit,
-                'qty' => $request->get('qty')[$i],
-                'price' => $rfq->net_order_price,
-                'plant_code' => $request->get('plant_code')[$i]
-            ];
-
-            array_push($data, $material);
-        }
-
-        $upload_files = '';
-
-        $files = $request->file('upload_file');
-        if ($request->hasFile('upload_file')) {
-            $inc = 0;
-            foreach ($files as $file) {
-                $path = 'repeat/';
-                $filename = strtolower($file->getClientOriginalName());
-                $file->move($path, $filename);
-
-                if ($inc < count($files))
-                    $upload_files .= $filename . ', ';
-                rtrim($upload_files, ', ');
-
-                $inc++;
-            }
-        }
-
-        $vendor = Vendor::where('code', $request->get('vendor_id'))->first();
-        $data = (object) $data;
-
-        return view('admin.repeat.preview', compact('po_no', 'notes', 'doc_type', 'upload_files', 'data', 'vendor'));
-    }
 
     public function saveRepeat (Request $request)
     {
@@ -314,69 +209,6 @@ class QuotationController extends Controller
         return redirect()->route('admin.quotation.index')->with('status', 'Repeat Order has been successfully ordered!');
     }
 
-    public function previewDirect (Request $request)
-    {
-        $qty = 0;
-        $price = 0;
-        $po_no = $request->get('po_no');
-        $notes = $request->get('notes');
-        $doc_type = $request->get('doc_type');
-
-        $data = [];
-
-        for ($i = 0; $i < count($request->get('qty')); $i++) {
-            $qy = str_replace('.', '', $request->get('qty')[$i]);
-            $qty += $qy;
-
-            $rfq = MasterRfq::select('master_rfqs_details.order_unit', 'master_rfqs_details.net_order_price')
-                ->join('master_rfqs_details', 'master_rfqs_details.purchasing_document', '=', 'master_rfqs.purchasing_document')
-                ->where('master_rfqs.vendor', $request->get('vendor_id'))
-                ->where('master_rfqs_details.material', $request->get('material_id')[$i])
-                ->first();
-
-            if (empty($rfq))
-                return redirect()->back()->with('error', 'No RFQ Found!');
-
-            $material = [
-                'pr_no' => $request->get('pr_no')[$i],
-                'request_date' => $request->get('request_date')[$i],
-                'rn_no' => $request->get('rn_no')[$i],
-                'material_id' => $request->get('material_id')[$i],
-                'description' => $request->get('description')[$i],
-                'vendor_id' => $request->get('vendor_id'),
-                'unit' => $rfq->order_unit,
-                'qty' => $request->get('qty')[$i],
-                'price' => $rfq->net_order_price,
-                'plant_code' => $request->get('plant_code')[$i]
-            ];
-
-            array_push($data, $material);
-        }
-
-        $upload_files = '';
-
-        $files = $request->file('upload_file');
-        if ($request->hasFile('upload_file')) {
-            $inc = 0;
-            foreach ($files as $file) {
-                $path = 'direct/';
-                $filename = strtolower($file->getClientOriginalName());
-                $file->move($path, $filename);
-
-                if ($inc < count($files))
-                    $upload_files .= $filename . ', ';
-                rtrim($upload_files, ', ');
-
-                $inc++;
-            }
-        }
-
-        $vendor = Vendor::where('code', $request->get('vendor_id'))->first();
-        $data = (object) $data;
-
-        return view('admin.direct.preview', compact('po_no', 'notes', 'doc_type', 'upload_files', 'data', 'vendor'));
-    }
-
     public function saveDirect (Request $request)
     {
         $qty = 0;
@@ -386,13 +218,8 @@ class QuotationController extends Controller
         for ($i = 0; $i < count($request->get('qty')); $i++) {
             $qy = str_replace('.', '', $request->get('qty')[$i]);
             $qty += $qy;
-
             // update material qty
-            $material = PurchaseRequestsDetail::where('request_no', $request->get('rn_no')[$i])
-                ->where('material_id', $request->get('material_id')[$i])
-                ->first();
-            $material->qty -= $request->get('qty')[$i];
-            $material->save();
+            $material = PurchaseRequestsDetail::where('id', $request->id[$i])->first();
 
             // insert to pr history
             $data = [
@@ -401,16 +228,19 @@ class QuotationController extends Controller
                 'material_id'       => $request->get('material_id')[$i],
                 'rn_no'             => $request->get('rn_no')[$i],
                 'unit'              => $request->get('unit')[$i],
-                'vendor_id'         => $request->get('vendor'),
+                'vendor_id'         => $request->get('vendor_id'),
                 'plant_code'        => $request->get('plant_code')[$i],
                 'price'             => $request->get('price')[$i],
                 'qty'               => $request->get('qty')[$i],
-                'qty_pr'            => $request->get('qty_pr')[$i],
+                'qty_pr'            => $material->qty,
             ];
 
             array_push($details, $data);
 
             $this->savePRHistory($data);
+
+            $material->qty -= $request->get('qty')[$i];
+            $material->save();
         }
 
         \DB::beginTransaction();
@@ -424,7 +254,10 @@ class QuotationController extends Controller
             $quotation->status = 2;
             $quotation->save();
 
+            $price = 0;
             foreach ($details as $detail) {
+                $price += $detail['price'];
+
                 $quotationDetail = new QuotationDetail;
                 $quotationDetail->quotation_order_id = $quotation->id;
                 $quotationDetail->qty = $detail['qty'];
@@ -436,6 +269,19 @@ class QuotationController extends Controller
                 $quotationDetail->save();
             }
 
+            if( $price <= 25000000 ) {
+                $tingkat = 'STAFF';
+                $this->saveApprovals($quotation->id,$tingkat);
+            } else if( $price > 25000000 && $price < 100000000) {
+                $tingkat = 'CMO';
+                $this->saveApprovals($quotation->id,$tingkat);
+            } else if( $price > 100000000 && $price <= 250000000) {
+                $tingkat = 'CFO';
+                $this->saveApprovals($quotation->id,$tingkat);
+            } else if( $price > 250000000) {
+                $tingkat = 'COO';
+                $this->saveApprovals($quotation->id,$tingkat);
+            }
             \DB::commit();
         } catch (Exception $e) {
             \DB::rollBack();
@@ -474,13 +320,6 @@ class QuotationController extends Controller
         $model = Quotation::find($id);
 
         return view('admin.quotation.show-repeat', compact('model'));
-    }
-
-    public function showDirect (Request $request, $id)
-    {
-        $model = Quotation::find($id);
-
-        return view('admin.quotation.show-direct', compact('model'));
     }
 
     public function approveRepeat (Request $request)
@@ -527,31 +366,6 @@ class QuotationController extends Controller
         return redirect()->route('admin.quotation.repeat')->with('status', 'Repeat Order has been approval!' . $mail_sent);
     }
 
-    public function approveDirect (Request $request)
-    {
-        if (empty($request->get('id')))
-            return redirect()->route('admin.quotation-show-direct', $request->get('quotation_id'))->with('error', 'Please check your material!');
-
-        \DB::beginTransaction();
-
-        try {
-            foreach ($request->get('id') as $id) {
-                $quotationDetail = QuotationDetail::find($id);
-
-                $model = $quotationDetail->quotation;
-                $model->approval_status = 1;
-                $model->save();
-            }
-
-            \DB::commit();
-        } catch (Exception $e) {
-            \DB::rollBack();
-            dd($e);
-        }
-
-        return redirect()->route('admin.quotation.direct')->with('status', 'Direct Order has been approval!');
-    }
-
     public function winner (Request $request)
     {
         $quotation = [];
@@ -562,39 +376,12 @@ class QuotationController extends Controller
         return view('admin.quotation.winner', compact('quotation'));
     }
 
-    private function workflowApproval ($no, $quotation_id)
+    private function saveApprovals($quotation_id, $tingkat)
     {
-        $workFlowAppr = WorkFlowApproval::where([
-            'workflow_id' => $no
-        ])->get();
 
-        foreach( $workFlowAppr as $rows ) {
-            $flag = 0;
-            if( $rows->approval_position == 1 ) {
-                $flag = 1;
-            }
-
-            $model = new QuotationApproval;
-            $model->nik = $rows->nik;
-            $model->approval_position = $rows->approval_position;
-            $model->status = 0;
-            $model->quotation_id = $quotation_id;
-            $model->flag = $flag;
-            $model->save();
-        }
-    }
-
-    private function saveApproval($quotation_id, $tingkat)
-    {
-        $spv = \App\Models\OrangeHrm\SuperiorUser::where('employee_id', \Auth::user()->nik)
-                ->where('valid_to','>=',date('Y-m-d'))
-                ->first();
-
-        $employee = getZigZagDepartment(\Auth::user()->nik);
-
-        if( $tingkat == 'C_LEVEL' ) {
+        if( $tingkat == 'STAFF' ) {
             QuotationApproval::create([
-                'nik'                   => $spv->supervisor_id,
+                'nik'                   => 190256,
                 'approval_position'     => 1,
                 'status'                => QuotationApproval::waitingApproval,
                 'quotation_id'          => $quotation_id,
@@ -602,13 +389,29 @@ class QuotationController extends Controller
             ]);
 
             QuotationApproval::create([
-                'nik'                   => getCLevelByDept($employee->department)->nik,
+                'nik'                   => 190089,
                 'approval_position'     => 2,
                 'status'                => QuotationApproval::waitingApproval,
                 'quotation_id'          => $quotation_id,
                 'flag'                  => 0,
             ]);
-        } else if ($tingkat == 'CFO') {
+        } else if ($tingkat == 'CMO') {
+            QuotationApproval::create([
+                'nik'                   => 190256,
+                'approval_position'     => 1,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 1,
+            ]);
+
+            QuotationApproval::create([
+                'nik'                   => 190089,
+                'approval_position'     => 2,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 0,
+            ]);
+
             QuotationApproval::create([
                 'nik'                   => 180095,
                 'approval_position'     => 3,
@@ -616,7 +419,30 @@ class QuotationController extends Controller
                 'quotation_id'          => $quotation_id,
                 'flag'                  => 0,
             ]);
-        } else if ($tingkat == 'COO') {
+        } else if ($tingkat == 'CMO') {
+            QuotationApproval::create([
+                'nik'                   => 190256,
+                'approval_position'     => 1,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 1,
+            ]);
+
+            QuotationApproval::create([
+                'nik'                   => 190089,
+                'approval_position'     => 2,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 0,
+            ]);
+            
+            QuotationApproval::create([
+                'nik'                   => 180095,
+                'approval_position'     => 3,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 0,
+            ]);
             QuotationApproval::create([
                 'nik'                   => 180178,
                 'approval_position'     => 4,
@@ -624,69 +450,43 @@ class QuotationController extends Controller
                 'quotation_id'          => $quotation_id,
                 'flag'                  => 0,
             ]);
-        // } else if($tingkat == 'COO' ) {
-        //     PurchaseRequestsApproval::create([
-        //         'nik'                   => $spv->supervisor_id,
-        //         'approval_position'     => PurchaseRequestsApproval::postionAtasanLangsung,
-        //         'status'                => PurchaseRequestsApproval::waitingApproval,
-        //         'quotation_id'          => $quotation_id,
-        //         'flag'                  => 1,
-        //     ]);
-    
-        //     PurchaseRequestsApproval::create([
-        //         'nik'                   => getCLevelByDept($employee->department)->nik,
-        //         'approval_position'     => postionAtasanLangsung::postionClevel,
-        //         'status'                => PurchaseRequestsApproval::waitingApproval,
-        //         'purchase_request_id'   => $pr_id,
-        //         'flag'                  => 0,
-        //     ]);
-
-        //     PurchaseRequestsApproval::create([
-        //         'nik'                   => \App\Models\Configuration::where('name','COO')->first()->value,
-        //         'approval_position'     => postionAtasanLangsung::postionClevel,
-        //         'status'                => PurchaseRequestsApproval::waitingApproval,
-        //         'purchase_request_id'   => $pr_id,
-        //         'flag'                  => 0,
-        //     ]);
-        // }else if( $tingkat == 'OWNER') {
-        //     PurchaseRequestsApproval::create([
-        //         'nik'                   => $spv->supervisor_id,
-        //         'approval_position'     => PurchaseRequestsApproval::postionAtasanLangsung,
-        //         'status'                => PurchaseRequestsApproval::waitingApproval,
-        //         'purchase_request_id'   => $pr_id,
-        //         'flag'                  => 1,
-        //     ]);
-    
-        //     PurchaseRequestsApproval::create([
-        //         'nik'                   => getCLevelByDept($employee->department)->nik,
-        //         'approval_position'     => postionAtasanLangsung::postionClevel,
-        //         'status'                => PurchaseRequestsApproval::waitingApproval,
-        //         'purchase_request_id'   => $pr_id,
-        //         'flag'                  => 0,
-        //     ]);
-
-        //     PurchaseRequestsApproval::create([
-        //         'nik'                   => \App\Models\Configuration::where('name','COO')->first()->value,
-        //         'approval_position'     => PurchaseRequestsApproval::postionAtasanLangsung,
-        //         'status'                => PurchaseRequestsApproval::waitingApproval,
-        //         'purchase_request_id'   => $pr_id,
-        //         'flag'                  => 0,
-        //     ]);
-    
-        //     PurchaseRequestsApproval::create([
-        //         'nik'                   => \App\Models\Configuration::where('name','OWNER')->first()->value,
-        //         'approval_position'     => postionAtasanLangsung::postionClevel,
-        //         'status'                => PurchaseRequestsApproval::waitingApproval,
-        //         'purchase_request_id'   => $pr_id,
-        //         'flag'                  => 0,
-        //     ]);
-        } else {
+        } else if ($tingkat == 'COO') {
             QuotationApproval::create([
-                'nik'                   => $spv->supervisor_id,
-                'approval_position'     => QuotationApproval::atasanLangsung,
+                'nik'                   => 190256,
+                'approval_position'     => 1,
                 'status'                => QuotationApproval::waitingApproval,
-                'purchase_request_id'   => $quotation_id,
+                'quotation_id'          => $quotation_id,
                 'flag'                  => 1,
+            ]);
+
+            QuotationApproval::create([
+                'nik'                   => 190089,
+                'approval_position'     => 2,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 0,
+            ]);
+            
+            QuotationApproval::create([
+                'nik'                   => 180095,
+                'approval_position'     => 3,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 0,
+            ]);
+            QuotationApproval::create([
+                'nik'                   => 180178,
+                'approval_position'     => 4,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 0,
+            ]);
+            QuotationApproval::create([
+                'nik'                   => 180178,
+                'approval_position'     => 5,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 0,
             ]);
         }
     }
@@ -732,32 +532,6 @@ class QuotationController extends Controller
 
         return view('admin.quotation.show-winner', compact('quotation', 'id'));
     }
-
-    // public function listAcp ()
-    // {
-    //     $quotation = QuotationApproval::select(
-    //         'quotation.id as id',
-    //         'quotation.po_no as po_no',
-    //         'vendors.name as name',
-    //         'vendors.email as email',
-    //         'quotation.target_price as target_price',
-    //         'quotation.expired_date as expired_date',
-    //         'quotation.vendor_leadtime as vendor_leadtime',
-    //         'quotation.vendor_price as vendor_price',
-    //         'quotation.qty as qty',
-    //         'quotation_approvals.id as approval_id',
-    //         'quotation_approvals.quotation_id as quotation_id',
-    //     )
-    //         ->join('quotation', 'quotation.id', '=', 'quotation_approvals.quotation_id')
-    //         ->join('vendors', 'vendors.id', '=', 'quotation.vendor_id')
-    //         ->where('quotation_approvals.nik', \Auth::user()->nik)
-    //         ->where('quotation_approvals.flag', 1)
-    //         ->where('quotation.is_winner', 1)
-    //         ->distinct()
-    //         ->get();
-
-    //     return view('admin.quotation.list-winner', compact('quotation'));
-    // }
 
     public function approve (Request $request, $id)
     {
@@ -986,5 +760,37 @@ class QuotationController extends Controller
             'success' => $success,
             'message' => $message,
         ]);
+    }
+
+    protected function savePRHistory ($data)
+    {
+        // insert to purchase_request_history
+        $prHistory = new PurchaseRequestHistory;
+        $prHistory->pr_id       = $data['pr_id'];
+        $prHistory->request_no  = $data['rn_no'];
+        $prHistory->material_id = $data['material_id'];
+        $prHistory->vendor_id   = $data['vendor_id'];
+        $prHistory->qty         = $data['qty_pr'];
+        $prHistory->qty_po          = $data['qty'] ?? 0;
+        $prHistory->qty_outstanding = $data['qty_pr'] - $data['qty'];
+        $prHistory->save();
+    }
+
+    public function import(Request $request)
+    {
+        // abort_if(Gate::denies('vendor_import_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        
+        $path = 'xls/';
+        $file = $request->file('xls_file');
+        
+        $filename = $file->getClientOriginalName();
+
+        $file->move($path, $filename);
+
+        $real_filename = public_path($path . $filename);
+
+        Artisan::call('import:quotation', ['filename' => $real_filename]);
+
+        return redirect('admin/quotation')->with('success', 'Quotation has been successfully imported');
     }
 }

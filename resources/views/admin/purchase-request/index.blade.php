@@ -21,6 +21,15 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
+                <a 
+                    class="open_modal_bidding btn btn-success" 
+                    id="open_modal" 
+                    data-toggle="modal" 
+                    data-target="#modal_create_po" 
+                    href="javascript:;"
+                >
+                    <i class="fa fa-truck"></i> Create PO
+                </a>
                 <div class="row" style="margin-bottom: 20px">
                     <div class="col-lg-12">
                         <div class="table-responsive m-t-40">
@@ -60,19 +69,6 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <a 
-                            class="open_modal_bidding btn btn-success" 
-                            id="open_modal" 
-                            data-toggle="modal" 
-                            data-target="#modal_create_po" 
-                            href="javascript:;"
-                        >
-                            <i class="fa fa-check"></i> Create PO
-                        </a>
                     </div>
                 </div>
             </div>

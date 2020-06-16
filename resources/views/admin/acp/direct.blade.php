@@ -29,7 +29,6 @@
                                     <tr>
                                         <th>{{ trans('cruds.quotation.fields.id') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
-                                        <th>{{ trans('cruds.quotation.fields.upload_file') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.status') }}</th>
                                         <th>&nbsp;</th>
                                     </tr>
@@ -38,25 +37,18 @@
                                     @foreach($quotation as $key => $val)
                                         <tr data-entry-id="{{ $val->id }}">
                                             <td>{{ $val->id ?? '' }}</td>
-                                            <td>{{ $val->po_no ?? '' }}</td>
+                                            <td>{{ $val->quotation['po_no'] ?? '' }}</td>
                                             <td>
-                                                @php $files = explode(', ', $val->upload_file); @endphp
-                                                @foreach ($files as $file)
-                                                <a href="{{ asset('uploads/direct/' . $file) }}">{{ $file }}</a>
-                                                @endforeach
-                                            </td>
-                                            <td>{{ $val->approval_status == 1 ? 'Approved' : 'Unapproved' }}</td>
-                                            <td>
-                                                <a class="btn btn-xs btn-warning" href="{{ route('admin.quotation-show-direct', $val->id) }}">
-                                                    <i class="fa fa-tv"></i> Show Materials
-                                                </a>
-                                                @if ($val->approval_status != 1)
-                                                @can('quotation_edit')
-                                                    <a class="btn btn-xs btn-info" href="{{ route('admin.quotation-edit-repeat', $val->id) }}">
-                                                        <i class="fa fa-edit"></i> {{ trans('global.edit') }}
-                                                    </a>
-                                                @endcan
+                                                @if($val->status == 0)
+                                                    <span class="badge badge-primary">Waiting For Approval</span>
+                                                @else 
+                                                    <span class="badge badge-primary">Approved</span>
                                                 @endif
+                                            </td>
+                                            <td>
+                                                <a class="btn btn-xs btn-warning" href="{{ route('admin.show-acp-direct', $val->quotation['id']) }}">
+                                                    <i class="fa fa-eye"></i> Show
+                                                </a>
                                             </td>
                                         </tr>
                                     @endforeach

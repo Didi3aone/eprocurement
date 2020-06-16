@@ -205,6 +205,10 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::put('billing-post-approved','BillingController@storeApproved')->name('billing-post-approved');
     Route::put('billing-post-rejected','BillingController@storeRejected')->name('billing-post-rejected');
     
+    //ACP 
+    Route::get('acp-direct','AcpController@directAcp')->name('acp-direct');
+    Route::get('show-acp-direct/{id}','AcpController@showDirect')->name('show-acp-direct');
+    Route::post('post-acp-direct','AcpController@approvalDirectAcp')->name('post-acp-direct');
     // soap
     // Route::get('soap', 'SoapController@show')->name('soap');
 });

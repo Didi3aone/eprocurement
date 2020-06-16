@@ -80,4 +80,10 @@
 
         return $cLevel;
     }
+
+    function getHistoryPo($material_id)
+    {
+        $data = \App\Models\PurchaseOrdersDetail::where('material_id', $material_id)->get();
+        return $data;
+    }
 ?>

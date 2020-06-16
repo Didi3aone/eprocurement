@@ -19,4 +19,9 @@ class PurchaseOrdersDetail extends Model
         'created_at',
         'updated_at'
     ];
+
+    public function po()
+    {
+        return $this->belongsTo(\App\Models\PurchaseOrder::class,'purchase_order_id');
+    }
 }
