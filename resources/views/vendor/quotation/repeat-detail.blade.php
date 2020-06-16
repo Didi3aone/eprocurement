@@ -54,12 +54,13 @@
                             @endforeach
                         </tbody>
                     </table>
-
+                    @if( $quotation->approval_status == 1)
                     <div class="form-actions">
                         <input type="hidden" name="id" value="{{ $quotation->id }}">
                         <input type="hidden" name="po_no" value="{{ $quotation->po_no }}">
                         <button type="submit" class="btn btn-success click"> <i class="fa fa-check"></i> {{ trans('global.approve') }}</button>
                     </div>
+                    @endif
                 </form>
             </div>
         </div>
