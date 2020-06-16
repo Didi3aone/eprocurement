@@ -164,7 +164,7 @@
         ids = btoa(ids)
         quantities = btoa(quantities)
 
-        $('.bidding-online').attr('href', '{{ url("admin/purchase-request-online") }}/' + ids)
+        $('.bidding-online').attr('href', '{{ url("admin/purchase-request-online") }}/' + ids + '/' + quantities)
 
         if (check_pr.length > 0) {
             $('.bidding-repeat').attr('href', '{{ url("admin/purchase-request-repeat") }}/' + ids + '/' + quantities)

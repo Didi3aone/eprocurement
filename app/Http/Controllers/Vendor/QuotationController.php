@@ -60,7 +60,7 @@ class QuotationController extends Controller
         )
             ->join('quotation_details', 'quotation_details.quotation_order_id', 'quotation.id')
             ->where('quotation_details.vendor_id', Auth::user()->id)
-            ->where('quotation.status', 1)
+            ->where('quotation.status', Quotation::Bidding)
             ->orderBy('quotation.id', 'desc')
             ->get();
 

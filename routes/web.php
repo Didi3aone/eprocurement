@@ -207,7 +207,9 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     
     //ACP 
     Route::get('acp-direct','AcpController@directAcp')->name('acp-direct');
+    Route::get('acp-bidding','AcpController@biddingAcp')->name('acp-bidding');
     Route::get('show-acp-direct/{id}','AcpController@showDirect')->name('show-acp-direct');
+    Route::get('show-acp-bidding/{id}','AcpController@showBidding')->name('show-acp-bidding');
     Route::post('post-acp-direct','AcpController@approvalDirectAcp')->name('post-acp-direct');
     // soap
     // Route::get('soap', 'SoapController@show')->name('soap');

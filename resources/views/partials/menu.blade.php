@@ -63,7 +63,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('admin.quotation.list-winner') }}" class="">
+                            <a href="{{ route('admin.acp-bidding') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
                                 List ACP Bidding
                             </a>

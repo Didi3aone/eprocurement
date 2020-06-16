@@ -14,9 +14,20 @@ class AcpController extends Controller
     {
         $quotation = QuotationApproval::where('nik', \Auth::user()->nik)
                 ->where('flag', QuotationApproval::NotYetApproval)
+                ->where('acp_type', 'DIRECT')
                 ->get();
 
         return view('admin.acp.direct', compact('quotation'));
+    }
+
+    public function biddingAcp ()
+    {
+        $quotation = QuotationApproval::where('nik', \Auth::user()->nik)
+                ->where('flag', QuotationApproval::NotYetApproval)
+                ->where('acp_type', 'BIDDING')
+                ->get();
+
+        return view('admin.acp.bidding', compact('quotation'));
     }
 
     public function showDirect (Request $request, $id)
@@ -24,6 +35,13 @@ class AcpController extends Controller
         $model = Quotation::find($id);
 
         return view('admin.acp.show-direct', compact('model'));
+    }
+
+    public function showBidding (Request $request, $id)
+    {
+        $quotation = Quotation::find($id);
+
+        return view('admin.acp.show-bidding', compact('quotation'));
     }
 
     /**

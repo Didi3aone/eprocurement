@@ -21,6 +21,9 @@ class Quotation extends Model
     ];
 
     public const Approved = 1;
+    public const Bidding = 1;
+    public const Repeat = 0;
+    public const Direct = 0;
 
     public function detail ()
     {

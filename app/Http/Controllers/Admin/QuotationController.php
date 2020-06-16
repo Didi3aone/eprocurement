@@ -79,13 +79,15 @@ class QuotationController extends Controller
                 return redirect()->route('admin.purchase-request-online', $request->get('id'))->with('status', 'Vendor is required');
 
             $quotation = new Quotation;
-            $quotation->po_no = $request->get('PR_NO');
-            $quotation->leadtime_type = $request->get('leadtime_type');
+            $quotation->po_no               = $request->get('PR_NO');
+            $quotation->leadtime_type       = $request->get('leadtime_type');
             $quotation->purchasing_leadtime = $request->get('purchasing_leadtime');
-            $quotation->target_price = str_replace('.', '', $request->get('target_price'));
-            $quotation->expired_date = $request->get('expired_date');
-            $quotation->status = 1;
+            $quotation->target_price        = str_replace('.', '', $request->get('target_price'));
+            $quotation->expired_date        = $request->get('expired_date');
+            $quotation->status              = 1;
             $quotation->save();
+            
+            $price = str_replace('.', '', $request->get('target_price'));
 
             foreach ($vendors as $row) {
                 $quotationDetail = new QuotationDetail;
@@ -95,13 +97,19 @@ class QuotationController extends Controller
                 $quotationDetail->save();
             }
 
-            $purchaseOrder = new PurchaseOrder;
-            $purchaseOrder->bidding = 1;
-            $purchaseOrder->po_no = $request->get('PR_NO');
-            $purchaseOrder->po_date = date('Y-m-d');
-            $purchaseOrder->request_id = $request->get('request_id');
-            $purchaseOrder->status = 1;
-            $purchaseOrder->save();
+            if( $price <= 25000000 ) {
+                $tingkat = 'STAFF';
+                $this->saveApprovals($quotation->id,$tingkat,'BIDDING');
+            } else if( $price > 25000000 && $price < 100000000) {
+                $tingkat = 'CMO';
+                $this->saveApprovals($quotation->id,$tingkat,'BIDDING');
+            } else if( $price > 100000000 && $price <= 250000000) {
+                $tingkat = 'CFO';
+                $this->saveApprovals($quotation->id,$tingkat,'BIDDING');
+            } else if( $price > 250000000) {
+                $tingkat = 'COO';
+                $this->saveApprovals($quotation->id,$tingkat,'BIDDING');
+            }
 
             \DB::commit();
 
@@ -271,16 +279,16 @@ class QuotationController extends Controller
 
             if( $price <= 25000000 ) {
                 $tingkat = 'STAFF';
-                $this->saveApprovals($quotation->id,$tingkat);
+                $this->saveApprovals($quotation->id,$tingkat,'DIRECT');
             } else if( $price > 25000000 && $price < 100000000) {
                 $tingkat = 'CMO';
-                $this->saveApprovals($quotation->id,$tingkat);
+                $this->saveApprovals($quotation->id,$tingkat,'DIRECT');
             } else if( $price > 100000000 && $price <= 250000000) {
                 $tingkat = 'CFO';
-                $this->saveApprovals($quotation->id,$tingkat);
+                $this->saveApprovals($quotation->id,$tingkat,'DIRECT');
             } else if( $price > 250000000) {
                 $tingkat = 'COO';
-                $this->saveApprovals($quotation->id,$tingkat);
+                $this->saveApprovals($quotation->id,$tingkat,'DIRECT');
             }
             \DB::commit();
         } catch (Exception $e) {
@@ -376,7 +384,7 @@ class QuotationController extends Controller
         return view('admin.quotation.winner', compact('quotation'));
     }
 
-    private function saveApprovals($quotation_id, $tingkat)
+    private function saveApprovals($quotation_id, $tingkat,$type)
     {
 
         if( $tingkat == 'STAFF' ) {
@@ -386,6 +394,7 @@ class QuotationController extends Controller
                 'status'                => QuotationApproval::waitingApproval,
                 'quotation_id'          => $quotation_id,
                 'flag'                  => 1,
+                'acp_type'              => $type
             ]);
 
             QuotationApproval::create([
@@ -394,6 +403,7 @@ class QuotationController extends Controller
                 'status'                => QuotationApproval::waitingApproval,
                 'quotation_id'          => $quotation_id,
                 'flag'                  => 0,
+                'acp_type'              => $type
             ]);
         } else if ($tingkat == 'CMO') {
             QuotationApproval::create([
@@ -402,6 +412,7 @@ class QuotationController extends Controller
                 'status'                => QuotationApproval::waitingApproval,
                 'quotation_id'          => $quotation_id,
                 'flag'                  => 1,
+                'acp_type'              => $type
             ]);
 
             QuotationApproval::create([
@@ -410,6 +421,7 @@ class QuotationController extends Controller
                 'status'                => QuotationApproval::waitingApproval,
                 'quotation_id'          => $quotation_id,
                 'flag'                  => 0,
+                'acp_type'              => $type
             ]);
 
             QuotationApproval::create([
@@ -418,6 +430,7 @@ class QuotationController extends Controller
                 'status'                => QuotationApproval::waitingApproval,
                 'quotation_id'          => $quotation_id,
                 'flag'                  => 0,
+                'acp_type'              => $type
             ]);
         } else if ($tingkat == 'CMO') {
             QuotationApproval::create([
@@ -426,6 +439,7 @@ class QuotationController extends Controller
                 'status'                => QuotationApproval::waitingApproval,
                 'quotation_id'          => $quotation_id,
                 'flag'                  => 1,
+                'acp_type'              => $type
             ]);
 
             QuotationApproval::create([
@@ -434,6 +448,7 @@ class QuotationController extends Controller
                 'status'                => QuotationApproval::waitingApproval,
                 'quotation_id'          => $quotation_id,
                 'flag'                  => 0,
+                'acp_type'              => $type
             ]);
             
             QuotationApproval::create([
@@ -442,6 +457,7 @@ class QuotationController extends Controller
                 'status'                => QuotationApproval::waitingApproval,
                 'quotation_id'          => $quotation_id,
                 'flag'                  => 0,
+                'acp_type'              => $type
             ]);
             QuotationApproval::create([
                 'nik'                   => 180178,
@@ -449,6 +465,7 @@ class QuotationController extends Controller
                 'status'                => QuotationApproval::waitingApproval,
                 'quotation_id'          => $quotation_id,
                 'flag'                  => 0,
+                'acp_type'              => $type
             ]);
         } else if ($tingkat == 'COO') {
             QuotationApproval::create([
@@ -457,6 +474,7 @@ class QuotationController extends Controller
                 'status'                => QuotationApproval::waitingApproval,
                 'quotation_id'          => $quotation_id,
                 'flag'                  => 1,
+                'acp_type'              => $type
             ]);
 
             QuotationApproval::create([
@@ -465,6 +483,7 @@ class QuotationController extends Controller
                 'status'                => QuotationApproval::waitingApproval,
                 'quotation_id'          => $quotation_id,
                 'flag'                  => 0,
+                'acp_type'              => $type
             ]);
             
             QuotationApproval::create([
@@ -473,6 +492,7 @@ class QuotationController extends Controller
                 'status'                => QuotationApproval::waitingApproval,
                 'quotation_id'          => $quotation_id,
                 'flag'                  => 0,
+                'acp_type'              => $type
             ]);
             QuotationApproval::create([
                 'nik'                   => 180178,
@@ -480,6 +500,7 @@ class QuotationController extends Controller
                 'status'                => QuotationApproval::waitingApproval,
                 'quotation_id'          => $quotation_id,
                 'flag'                  => 0,
+                'acp_type'              => $type
             ]);
             QuotationApproval::create([
                 'nik'                   => 180178,
@@ -487,6 +508,7 @@ class QuotationController extends Controller
                 'status'                => QuotationApproval::waitingApproval,
                 'quotation_id'          => $quotation_id,
                 'flag'                  => 0,
+                'acp_type'              => $type
             ]);
         }
     }

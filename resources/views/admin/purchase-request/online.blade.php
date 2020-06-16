@@ -26,7 +26,7 @@
                     <div class="row">
                         <div class="col-lg-4">
                             <div class="form-group">
-                                <label>{{ trans('cruds.purchase-order.fields.PR_NO') }}</label>
+                                <label>PO NO.</label>
                                 <input type="text" class="form-control form-control-line {{ $errors->has('PR_NO') ? 'is-invalid' : '' }}" name="PR_NO" value="{{ old('PR_NO', $po_no) }}" readonly> 
                                 @if($errors->has('PR_NO'))
                                     <div class="invalid-feedback">
@@ -37,7 +37,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <a href="javascript:;" data-toggle="modal" data-target="#modal_material" class="btn btn-primary">{{ trans('cruds.purchase-order.show_modal') }}</a>
+                        <a href="javascript:;" data-toggle="modal" data-target="#modal_material" class="btn btn-primary">Show Material</a>
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.purchase-order.fields.purchasing_leadtime') }}</label>
@@ -81,16 +81,17 @@
                         <div class="row">
                             <div class="col-lg-9">
                                 <select name="search-vendor" id="search-vendor" class="form-control select2">
+                                    <option>-- Select --</option>
                                     @foreach ($vendor as $val)
                                     <option 
-                                        value="{{ $val->id }}"
+                                        value="{{ $val->code }}"
                                         data-id="{{ $val->id }}"
                                         data-name="{{ $val->name }}"
                                         data-email="{{ $val->email }}"
                                         data-address="{{ $val->address }}"
                                         data-npwp="{{ $val->npwp }}"
                                     >
-                                        {{ $val->name }}
+                                        {{ $val->code." - ".$val->name }}
                                     </option>
                                     @endforeach
                                 </select>
@@ -119,7 +120,7 @@
 
                     <div class="form-actions">
                         <input type="hidden" name="id" value="{{ $uri['ids'] }}">
-                        <button type="submit" class="btn btn-success click"> <i class="fa fa-check"></i> {{ trans('global.save') }}</button>
+                        <button type="submit" class="btn btn-success click" id="save"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
                         <a href="{{ route('admin.purchase-request.index') }}" class="btn btn-inverse">Cancel</a>
                         <img id="image_loading" src="{{ asset('img/ajax-loader.gif') }}" alt="" style="display: none">
                     </div>
@@ -148,7 +149,6 @@
                                     <th style="width: 10%">Qty</th>
                                     <th style="width: 10%">Unit</th>
                                     <th>Notes</th>
-                                    <th>Price</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -158,7 +158,6 @@
                                         <td><input type="text" class="form-control" name="qty[]" readonly value="{{ number_format($value->qty, 0, '', '.') }}"></td>
                                         <td><input type="text" class="form-control" name="unit[]" readonly value="{{ $value->unit }}"></td>
                                         <td><input type="text" class="form-control" name="notes_detail[]" readonly value="{{ $value->notes }}"></td>
-                                        <td><input type="text" class="form-control" name="price[]" readonly value="{{ number_format($value->price, 0, '', '.') }}"></td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -226,10 +225,10 @@
                 <td>
                     <input type="hidden" name="vendor_id[]" value="${id_vendor}">
                     <button 
-                        className="remove-vendor btn btn-xs btn-danger" 
+                        class="remove-vendor btn btn-xs btn-danger" 
                         onclick="document.getElementById('btn-search-vendor').removeAttribute('disabled'); this.parentNode.parentNode.remove()"
                     >
-                        <i className="fa fa-trash"></i> Remove
+                        <i class="fa fa-trash"></i> Remove
                     </button>
                 </td>
             </tr>
