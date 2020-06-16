@@ -95,8 +95,9 @@ class QuotationController extends Controller
         $id = $request->get('id');
 
         $quotation = Quotation::find($id);
-        $quotaion->approval_status = 2;
-        $quotaion->save();
+        // dd($quotaion);
+        $quotation->approval_status = 2;
+        $quotation->update();
 
         \DB::beginTransaction();
         try {
