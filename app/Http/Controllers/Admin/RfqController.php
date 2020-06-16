@@ -187,4 +187,22 @@ class RfqController extends Controller
             'message' => $message,
         ]);
     }
+
+    public function getRfq(Request $request)
+    {
+        $data = MasterRfq::where('master_rfqs.vendor', $request->get('vendor_id'))
+                ->take(20)->skip(2)
+                ->get();
+
+        return response()->json($data, 200);
+    }
+
+    public function getRfqNetPrice(Request $request)
+    {
+        $data = MasterRfqDetail::where('purchasing_document', $request->purchasing_document)
+                ->where('plant', $request->plant)
+                ->first();
+
+        return response()->json($data, 200);
+    }
 }

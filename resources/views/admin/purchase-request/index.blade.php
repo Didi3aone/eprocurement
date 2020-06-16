@@ -30,7 +30,6 @@
                                         <th>&nbsp;</th>
                                         <th>PR No</th>
                                         <th>Request Date</th>
-                                        <th>RN No</th>
                                         <th>Material ID</th>
                                         <th>Unit</th>
                                         <th>Description</th>
@@ -50,7 +49,6 @@
                                             </td>
                                             <td>{{ $value->pr_no }}</td>
                                             <td>{{ $value->request_date }}</td>
-                                            <td>{{ $value->rn_no }}</td>
                                             <td>{{ $value->material_id }}</td>
                                             <td>{{ $value->unit }}</td>
                                             <td>{{ $value->description }}</td>

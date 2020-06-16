@@ -21,7 +21,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form class="form-rn m-t-40" action="{{ route("admin.quotation-preview-repeat") }}" enctype="multipart/form-data" method="post">
+                <form class="form-rn m-t-40" action="{{ route("admin.quotation-save-repeat") }}" enctype="multipart/form-data" method="post">
                     @csrf
                     <div class="row">
                         <div class="col-lg-4">
@@ -49,43 +49,11 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>PR No</th>
-                                        <th>Request Date</th>
-                                        <th>RN No</th>
-                                        <th>Material ID</th>
-                                        <th>Material Desc</th>
-                                        <th>Unit</th>
-                                        <th style="width: 10%">Qty</th>
-                                    </tr>
-                                </thead>
-                                {{-- get from rfq,  net_order_price untuk pricenya --}}
-                                <tbody>
-                                    @foreach($data as $key => $value)
-                                        <tr>
-                                            <input type="hidden" name="id[]" value="{{ $value->id }}">
-                                            <input type="hidden" name="plant_code[]" value="{{ $value->plant_code }}">
-                                            <td><input type="text" class="form-control" name="pr_no[]" readonly value="{{ $value->pr_no }}"></td>
-                                            <td><input type="text" class="form-control" name="request_date[]" readonly value="{{ $value->request_date }}"></td>
-                                            <td><input type="text" class="form-control" name="rn_no[]" readonly value="{{ $value->request_no }}"></td>
-                                            <td><input type="text" class="form-control" name="material_id[]" readonly value="{{ $value->material_id }}"></td>
-                                            <td><input type="text" class="form-control" name="description[]" readonly value="{{ $value->description }}"></td>
-                                            <td><input type="text" class="form-control" name="unit[]" readonly value="{{ $value->unit }}"></td>
-                                            <td><input type="text" class="form-control" name="qty[]" readonly value="{{ empty($value->qty) ? 0 : $value->qty }}"></td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="">{{ trans('cruds.purchase-order.invite_vendor') }}</label>
+                        <label for="">Vendor</label>
                         <div class="row">
                             <div class="col-lg-6">
-                                <select name="vendor_id" class="form-control select2">
+                                <select name="vendor_id" id="vendor_id" class="form-control select2" required>
+                                    <option>-- Select --</option>
                                     @foreach ($vendor as $val)
                                     <option 
                                         value="{{ $val->code }}"
@@ -102,6 +70,45 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Material ID</th>
+                                        <th>Material Desc</th>
+                                        <th>Unit</th>
+                                        <th style="width: 10%">Qty</th>
+                                        <th style="width: 20%">RFQ</th>
+                                        <th style="width: 20%">Net Price</th>
+                                    </tr>
+                                </thead>
+                                {{-- get from rfq,  net_order_price untuk pricenya --}}
+                                <tbody>
+                                    @foreach($data as $key => $value)
+                                        <tr>
+                                            <input type="hidden" name="id[]" value="{{ $value->id }}">
+                                            <input type="hidden" name="plant_code[]" id="plant_code" value="{{ $value->plant_code }}">
+                                            <input type="hidden" class="form-control" name="pr_no[]" readonly value="{{ $value->pr_no }}">
+                                            <input type="hidden" class="form-control" name="request_date[]" readonly value="{{ $value->request_date }}">
+                                            <input type="hidden" class="form-control" name="rn_no[]" readonly value="{{ $value->request_no }}">
+                                            <td><input type="text" class="form-control material_id" name="material_id[]"  id="material_id" readonly value="{{ $value->material_id }}"></td>
+                                            <td><input type="text" class="form-control" name="description[]" readonly value="{{ $value->description }}"></td>
+                                            <td><input type="text" class="form-control" name="unit[]" readonly value="{{ $value->unit }}"></td>
+                                            <td><input type="text" class="form-control" name="qty[]" readonly value="{{ empty($value->qty) ? 0 : $value->qty }}"></td>
+                                            <td>
+                                                <select name="rfq[]" id="rfq" class="form-control select2 rfq">
+                                                    <option></option>
+                                                </select>
+                                            </td>
+                                            <td><input type="text" class="form-control net_price" name="price[]" id="net_price" value="" readonly></td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                   
                     <div class="form-group">
                         <label>{{ trans('cruds.purchase-order.fields.notes') }}</label>
                         <input type="text" id="notes" class="form-control form-control-line {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" value="{{ old('notes', '') }}" required>
@@ -125,7 +132,8 @@
                     <div class="form-actions">
                         {{-- <input type="hidden" name="total" value="{{ $total }}"> --}}
                         <input type="hidden" name="id" value="{{ $uri['ids'] }}">
-                        <button type="submit" class="btn btn-success click"> <i class="fa fa-tv"></i> {{ trans('global.preview') }}</button>
+                        <button type="submit" class="btn btn-success click" id="save"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
+                        {{-- <button type="submit" class="btn btn-success click"> <i class="fa fa-tv"></i> {{ trans('global.preview') }}</button> --}}
                         <a href="{{ route('admin.purchase-request.index') }}" class="btn btn-inverse">Cancel</a>
                         <img id="image_loading" src="{{ asset('img/ajax-loader.gif') }}" alt="" style="display: none">
                     </div>
@@ -156,5 +164,63 @@
     }
 
     $('.money').mask('#.##0', { reverse: true });
+
+    const loadRfq = function () {
+        $("#vendor_id").change(function() {
+            const vendorId = $(this).val()
+            getRq(vendorId)
+        }).trigger('change');
+    }
+
+    function getRq(vendorId)
+    {
+        $("#image_loading").show()
+
+        const url = '{{ route('admin.rfq-get-by-vendor') }}'
+        const row = $(this).closest('tr')
+        console.log(row)
+        $rfq = $(".rfq");
+        $.ajax({
+            url: url,
+            data: {
+                vendor_id : vendorId
+            },
+            success: function (data) {
+                 $("#image_loading").hide()
+                $rfq.empty()
+                $rfq.append('<option value="">-- Select --</option>')
+
+                for (var i = 0; i < data.length; i++) {
+                    $rfq.append('<option value=' + data[i].purchasing_document + '>'+ data[i].purchasing_document +' </option>');
+                }
+
+                $rfq.change()
+            }
+        });
+        $('.select2').select2()
+    }
+
+    $('.rfq').on('change', function (e) {
+        e.preventDefault()
+        $("#image_loading").show()
+        const purchasing_document = $(this).val()
+        const row = $(this).closest('tr')
+        const net = row.find('.net_price')
+        const url = '{{ route('admin.rfq-get-net-price') }}'
+        const materialId = row.find('.material_id')
+        const plant_code = $("#plant_code").val()
+
+        $.getJSON(url,{'purchasing_document': purchasing_document,'plant' : plant_code }, function (items) {
+            $("#image_loading").hide()
+            if(items.purchasing_document) {
+                let nets = items.net_order_price ? items.net_order_price : 'Not found RFQ price'
+                net.val(nets)
+            } else {
+                net.val('Not found RFQ price')
+            }
+        })
+    })
+
+    loadRfq()
 </script>
 @endsection

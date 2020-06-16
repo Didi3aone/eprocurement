@@ -195,6 +195,8 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::post('rfq-save-detail', 'RfqController@saveDetail')->name('rfq-save-detail');
     Route::get('rfq-show/{code}', 'RfqController@show')->name('rfq-show');
     Route::get('rfq-add-detail/{code}', 'RfqController@addDetail')->name('rfq-add-detail');
+    Route::get('rfq-get-by-vendor','RfqController@getRfq')->name('rfq-get-by-vendor');
+    Route::get('rfq-get-net-price','RfqController@getRfqNetPrice')->name('rfq-get-net-price');
     Route::resource('rfq', 'RfqController');
 
     // billings 
