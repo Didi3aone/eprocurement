@@ -16,16 +16,8 @@
                 <table class="table table-bordered table-striped">
                     <tbody>
                         <tr>
-                            <td>{{ trans('cruds.quotation.fields.id') }}</td>
-                            <td>{{ $quotation->id }}</td>
-                        </tr>
-                        <tr>
                             <td>{{ trans('cruds.quotation.fields.po_no') }}</td>
                             <td>{{ $quotation->po_no }}</td>
-                        </tr>
-                        <tr>
-                            <td>{{ trans('cruds.quotation.fields.status') }}</td>
-                            <td>{{ $quotation->status == 0 ? 'PO repeat' : ($quotation->status == 1 ? 'Online' : 'Penunjukkan Langsung') }}</td>
                         </tr>
                         <tr>
                             <td>{{ trans('cruds.quotation.fields.leadtime_type') }}</td>
@@ -48,7 +40,9 @@
 
                 <div class="form-actions">
                     @if ($quotation->status != 0)
-                    <a href="{{ route('vendor.quotation-edit', $quotation->id) }}" class="btn btn-inverse">Bid</a>
+                        <a href="{{ route('vendor.quotation-bid', $quotation->id) }}" class="btn btn-primary">
+                            <i class="fa fa-check"></i> Bid
+                        </a>
                     @endif
                 </div>
             </div>

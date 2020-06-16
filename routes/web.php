@@ -236,6 +236,7 @@ Route::group([ 'prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor',
     // bidding
     Route::get('quotation', 'QuotationController@index')->name('quotation');
     Route::get('quotation-edit/{id}', 'QuotationController@edit')->name('quotation-edit');
+    Route::get('quotation-bid/{id}', 'QuotationController@bid')->name('quotation-bid');
     Route::post('quotation-save', 'QuotationController@store')->name('quotation-save');
     Route::get('bidding', 'BiddingController@index')->name('bidding');
 

@@ -81,8 +81,10 @@
                         @endif
                     </div>
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.save') }}</button>
-                        <a href="{{ route('admin.quotation.index') }}" type="button" class="btn btn-inverse">Cancel</a>
+                        <button type="submit" class="btn btn-success" id="save"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
+                        <a href="{{ route('vendor.quotation-online') }}" type="button" class="btn btn-danger">
+                            <i class="fa fa-times"></i> Cancel
+                        </a>
                     </div>
                 </div>
             </div>

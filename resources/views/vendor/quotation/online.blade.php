@@ -62,7 +62,7 @@
                                     <td>
                                         {{-- @if (time() <= strtotime($val->expired_date)) --}}
                                         <a class="btn btn-xs btn-info" href="{{ route('vendor.quotation-online-detail', $val->id) }}">
-                                            {{ 'View' }}
+                                            <i class="fa fa-eye"></i> {{ 'Show' }}
                                         </a>
                                         {{-- @endif --}}
                                     </td>

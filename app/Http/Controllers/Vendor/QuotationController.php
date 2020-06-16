@@ -59,7 +59,7 @@ class QuotationController extends Controller
             'quotation_details.id as detail_id', 'quotation_details.*'
         )
             ->join('quotation_details', 'quotation_details.quotation_order_id', 'quotation.id')
-            ->where('quotation_details.vendor_id', Auth::user()->id)
+            ->where('quotation_details.vendor_id', Auth::user()->code)
             ->where('quotation.status', Quotation::Bidding)
             ->orderBy('quotation.id', 'desc')
             ->get();
@@ -201,7 +201,7 @@ class QuotationController extends Controller
         return view('vendor.quotation.direct-detail', compact('quotation'));
     }
 
-    public function edit ($id)
+    public function bid ($id)
     {
         $quotation = Quotation::find($id);
         $maxPrice = QuotationDetail::where('quotation_order_id', $id)
@@ -219,7 +219,7 @@ class QuotationController extends Controller
                 ->get();
         }
 
-        return view('vendor.quotation.edit', compact('quotation', 'vendors'));
+        return view('vendor.quotation.bid', compact('quotation', 'vendors'));
     }
 
     public function store (Request $request)

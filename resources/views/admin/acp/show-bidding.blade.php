@@ -14,6 +14,7 @@
         <div class="card">
             <div class="card-body">
                 <form action="{{ route('admin.quotation.winner') }}" method="post">
+                    @csrf
                     <div class="row">
                         <div class="col-lg-12">
                             <table class="table table-bordered table-striped">
@@ -40,17 +41,13 @@
                                     </tr>
                                 </tbody>
                             </table>
-
-                            @csrf
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
                                         <th>&nbsp;</th>
                                         <th>Vendor Name</th>
-                                        <th>Email</th>
                                         <th>Leadtime</th>
-                                        <th>Price</th>
-                                        <th>&nbsp;</th>
+                                        <th>Vendor Price</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -61,12 +58,8 @@
                                             <label for="check_{{ $det->id }}"></label>
                                         </td>
                                         <td>{{ $det->vendor->name }}</td>
-                                        <td>{{ $det->vendor->email }}</td>
                                         <td>{{ $det->vendor_leadtime }}</td>
                                         <td>{{ number_format($det->vendor_price, 0, '', '.') }}</td>
-                                        <td>
-                                            <a href="{{ route('admin.quotation.remove-vendor', [$quotation->id, $det->vendor_id]) }}" class="btn btn-danger"><i class="fa fa-trash"></i> Remove</a>
-                                        </td>
                                     </tr>
                                     @endforeach
                                 </tbody>
