@@ -261,7 +261,7 @@ class QuotationController extends Controller
             $quotation->doc_type = $request->get('doc_type');
             $quotation->upload_file = $request->get('upload_files');
             $quotation->status = 0;
-            dd($quotation);
+            //dd($quotation);
             $quotation->save();
 
             foreach ($details as $detail) {
