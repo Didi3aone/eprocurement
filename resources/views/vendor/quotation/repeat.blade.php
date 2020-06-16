@@ -42,7 +42,7 @@
                                     <td>{{ $val->approval_status == 1 ? 'Approved' : 'Unapproved' }}</td>
                                     <td>{{ number_format($val->total_price, 0, '', '.') }}</td>
                                     <td>
-                                        @if (empty($val->approval_status))
+                                        @if ($val->approval_status == 1)
                                         <a class="btn btn-xs btn-info" href="{{ route('vendor.quotation-repeat-detail', $val->id) }}">
                                             <i class="fa fa-tv"></i> {{ 'View' }}
                                         </a>

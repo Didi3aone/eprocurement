@@ -102,7 +102,7 @@ class QuotationController extends Controller
                 'request_id' => $quotation->id,
                 'po_date' => date('Y-m-d'),
                 'vendor_id' => $quotation->detail[0]->vendor_id,
-                'status' => 1,
+                'status' => 2,
                 'po_no' => $quotation->po_no,
             ]);
 
