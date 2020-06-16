@@ -50,13 +50,13 @@
                                                 <a class="btn btn-xs btn-warning" href="{{ route('admin.quotation-show-repeat', $val->id) }}">
                                                     <i class="fa fa-tv"></i> Show Materials
                                                 </a>
-                                                @if ($val->approval_status != 1)
+                                                {{-- @if ($val->approval_status != 1)
                                                 @can('quotation_edit')
                                                     <a class="btn btn-xs btn-info" href="{{ route('admin.quotation-edit-repeat', $val->id) }}">
                                                         <i class="fa fa-edit"></i> {{ trans('global.edit') }}
                                                     </a>
                                                 @endcan
-                                                @endif
+                                                @endif --}}
                                             </td>
                                         </tr>
                                     @endforeach
