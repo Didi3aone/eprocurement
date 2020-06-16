@@ -241,7 +241,7 @@ class QuotationController extends Controller
                 'rn_no' => $request->get('rn_no')[$i],
                 'material_id' => $request->get('material_id')[$i],
                 'unit' => $request->get('unit')[$i],
-                'vendor_id' => $request->get('vendor'),
+                'vendor_id' => $request->get('vendor_id'),
                 'plant_code' => $request->get('plant_code')[$i],
                 'price' => $request->get('price')[$i],
                 'qty' => $request->get('qty')[$i]
@@ -263,7 +263,6 @@ class QuotationController extends Controller
             $quotation->status = 0;
             //dd($quotation);
             $quotation->save();
-
             foreach ($details as $detail) {
                 $quotationDetail = new QuotationDetail;
                 $quotationDetail->quotation_order_id = $quotation->id;
