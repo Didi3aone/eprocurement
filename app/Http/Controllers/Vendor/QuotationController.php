@@ -376,7 +376,8 @@ class QuotationController extends Controller
         $params[0]['POEXPIMPITEM'] = array();
         $params[0]['POEXPIMPITEMX'] = array();
         $POHEADER = [
-            'PO_NUMBER' => 'PO/06/2020/0000012',
+            // 'PO_NUMBER' => 'PO/06/2020/0000012',
+            'PO_NUMBER' => '',
             'COMP_CODE' => '1100',
             'DOC_TYPE' => 'z302',
             'DELETE_IND' => '',
@@ -447,7 +448,8 @@ class QuotationController extends Controller
         ];
         $params[0]['POHEADER'] = $POHEADER;
         $POHEADERX = [
-            'PO_NUMBER' => 'PO/06/2020/0000012',
+            // 'PO_NUMBER' => 'PO/06/2020/0000012',
+            'PO_NUMBER' => '',
             'COMP_CODE' => 'X',
             'DOC_TYPE' => 'X',
             'DELETE_IND' => '',
@@ -976,7 +978,8 @@ class QuotationController extends Controller
         $params[0]['POSHIPPINGX'] = array();
         $params[0]['POSRVACCESSVALUES'] = array();
         $POTEXTHEADER = [
-            'PO_NUMBER' => 'PO/06/2020/0000012',
+            // 'PO_NUMBER' => 'PO/06/2020/0000012',
+            'PO_NUMBER' => '',
             'PO_ITEM' => '00010',
             'TEXT_ID' => 'EKKO',
             'TEXT_FORM' => 'EN',
@@ -984,7 +987,8 @@ class QuotationController extends Controller
         ];
         $params[0]['POTEXTHEADER'] = $POTEXTHEADER;
         $POTEXTITEM = [
-            'PO_NUMBER' => 'PO/06/2020/0000012',
+            // 'PO_NUMBER' => 'PO/06/2020/0000012',
+            'PO_NUMBER' => '',
             'PO_ITEM' => '00010',
             'TEXT_ID' => 'EKPO',
             'TEXT_FORM' => 'EN',
