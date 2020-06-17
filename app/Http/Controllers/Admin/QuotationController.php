@@ -97,19 +97,19 @@ class QuotationController extends Controller
                 $quotationDetail->save();
             }
 
-            if( $price <= 25000000 ) {
-                $tingkat = 'STAFF';
-                $this->saveApprovals($quotation->id,$tingkat,'BIDDING');
-            } else if( $price > 25000000 && $price < 100000000) {
-                $tingkat = 'CMO';
-                $this->saveApprovals($quotation->id,$tingkat,'BIDDING');
-            } else if( $price > 100000000 && $price <= 250000000) {
-                $tingkat = 'CFO';
-                $this->saveApprovals($quotation->id,$tingkat,'BIDDING');
-            } else if( $price > 250000000) {
-                $tingkat = 'COO';
-                $this->saveApprovals($quotation->id,$tingkat,'BIDDING');
-            }
+            // if( $price <= 25000000 ) {
+            //     $tingkat = 'STAFF';
+            //     $this->saveApprovals($quotation->id,$tingkat,'BIDDING');
+            // } else if( $price > 25000000 && $price < 100000000) {
+            //     $tingkat = 'CMO';
+            //     $this->saveApprovals($quotation->id,$tingkat,'BIDDING');
+            // } else if( $price > 100000000 && $price <= 250000000) {
+            //     $tingkat = 'CFO';
+            //     $this->saveApprovals($quotation->id,$tingkat,'BIDDING');
+            // } else if( $price > 250000000) {
+            //     $tingkat = 'COO';
+            //     $this->saveApprovals($quotation->id,$tingkat,'BIDDING');
+            // }
 
             \DB::commit();
 
