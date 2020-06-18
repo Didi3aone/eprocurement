@@ -98,7 +98,8 @@ class PurchaseRequestController extends Controller
         return [
             'po_no' => $po_no,
             'data' => $data,
-            'vendor' => $vendor
+            'vendor' => $vendor,
+            'top'    => \App\Models\PaymentTerm::all()
         ];
     }
 
@@ -127,15 +128,16 @@ class PurchaseRequestController extends Controller
         $data = $return['data'];
         $po_no = $return['po_no'];
         $vendor = $return['vendor'];
+        $top = $return['top'];
 
-        $docTypes = DocumentType::get();
+        $docTypes = DocumentType::where('type','2')->get();
 
         $uri = [
             'ids' => base64_encode($ids),
             'quantities' => ($quantities)
         ];
         
-        return view('admin.purchase-request.repeat', compact('data', 'docTypes', 'po_no', 'vendor', 'uri'));
+        return view('admin.purchase-request.repeat', compact('data', 'docTypes', 'po_no', 'vendor', 'uri','top'));
     }
 
     public function direct (Request $request, $ids, $quantities)
