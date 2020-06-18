@@ -671,6 +671,7 @@ return [
         'alert_success'        => 'Purchase Order successfully saved',
         'fields'        => [
             'id' => 'ID',
+            'model' => 'Model',
             'bidding' => 'Bidding',
             'type' => 'Document Type',
             'po_no' => 'PO No',
@@ -683,6 +684,7 @@ return [
             'request_no' => 'Purchase Request No',
             'purchasing_leadtime' => 'Purchasing Leadtime',
             'target_price' => 'Target Price',
+            'start_date' => 'Start Date',
             'expired_date' => 'Expired Date',
             'notes' => 'Notes',
             'vendor_id' => 'Vendor',

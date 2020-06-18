@@ -65,24 +65,25 @@ class QuotationController extends Controller
 
     public function saveOnline (Request $request)
     {
-        if (empty($request->get('vendor_id')))
-            return redirect()->route('admin.purchase-request-online', $request->get('id'))->with('status', 'No vendor chosen!');
+        if ($request->get('search-vendor') == '-- Select --')
+            return redirect()->route('admin.purchase-request-online', [$request->get('id'), $request->get('quantities')])->with('status', 'No vendor chosen!');
 
         if (empty($request->get('target_price')))
-            return redirect()->route('admin.purchase-request-online', $request->get('id'))->with('status', 'Target Price cannot be zero!');
+            return redirect()->route('admin.purchase-request-online', [$request->get('id'), $request->get('quantities')])->with('status', 'Target Price cannot be zero!');
+
+        $vendors = $request->get('search-vendor');
 
         \DB::beginTransaction();
+        dd('stop');
 
         try {
-            $vendors = $request->get('vendor_id');
-            if (!$vendors)
-                return redirect()->route('admin.purchase-request-online', $request->get('id'))->with('status', 'Vendor is required');
-
             $quotation = new Quotation;
             $quotation->po_no               = $request->get('PR_NO');
+            $quotation->model               = $request->get('model');
             $quotation->leadtime_type       = $request->get('leadtime_type');
             $quotation->purchasing_leadtime = $request->get('purchasing_leadtime');
             $quotation->target_price        = str_replace('.', '', $request->get('target_price'));
+            $quotation->start_date          = $request->get('start_date');
             $quotation->expired_date        = $request->get('expired_date');
             $quotation->status              = 1;
             $quotation->save();
