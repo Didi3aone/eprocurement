@@ -149,6 +149,7 @@
 
                     <div class="form-actions">
                         {{-- <input type="hidden" name="total" value="{{ $total }}"> --}}
+                        <input type="hidden" name="id" value="{{ $uri['ids'] }}">
                         <input type="hidden" name="quantities" value="{{ $uri['quantities'] }}">
                         <button type="submit" class="btn btn-success click" id="save"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
                         {{-- <button type="submit" class="btn btn-success click"> <i class="fa fa-tv"></i> {{ trans('global.preview') }}</button> --}}
