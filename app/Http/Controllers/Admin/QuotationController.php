@@ -178,11 +178,15 @@ class QuotationController extends Controller
 
         try {
             $quotation = new Quotation;
-            $quotation->po_no = $request->get('po_no');
-            $quotation->notes = $request->get('notes');
-            $quotation->doc_type = $request->get('doc_type');
-            $quotation->upload_file = $request->get('upload_files');
-            $quotation->status = 0;
+            $quotation->po_no           = $request->get('po_no');
+            $quotation->notes           = $request->get('notes');
+            $quotation->doc_type        = $request->get('doc_type');
+            $quotation->upload_file     = $request->get('upload_files');
+            $quotation->currency        = $request->get('currency');
+            $quotation->payment_term    = $request->get('payment_term');
+            $quotation->vendor_id       = $request->vendor_id;
+            $quotation->status          = 0;
+
             $quotation->save();
             foreach ($details as $detail) {
                 $quotationDetail = new QuotationDetail;
@@ -208,6 +212,7 @@ class QuotationController extends Controller
                 $quotationDetail->storage_location          = $detail['storage_location'];
                 $quotationDetail->material_group            = $detail['material_group'];
                 $quotationDetail->preq_item                 = $detail['preq_item'];
+                $quotationDetail->vendor_id                 = $request->vendor_id;
 
                 $quotationDetail->save();
             }

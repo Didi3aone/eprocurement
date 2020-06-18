@@ -69,22 +69,6 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <label for="">Currency</label>
-                                <select name="currency" id="currency" class="form-control select2" required>
-                                    <option>-- Select --</option>
-                                    <option value="IDR">
-                                        IDR
-                                    </option>
-                                    <option value="USD">
-                                        USD
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="form-group">
                                 <label for="">Payment Term</label>
                                 <select name="payment_term" id="payment_term" class="form-control select2" required>
                                     <option>-- Select --</option>
@@ -94,13 +78,6 @@
                                     </option>
                                     @endforeach
                                 </select>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <label>Exchange Rate</label>
-                                <input type="text" class="form-control form-control-line exchange_rate" name="exchange_rate" value="{{ old('exchange_rate', '') }}" disabled> 
                             </div>
                         </div>
                     </div>
@@ -124,9 +101,31 @@
                         @endif
                         <span class="help-block"></span>
                     </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="">Currency</label>
+                                <select name="currency" id="currency" class="form-control select2" required>
+                                    <option>-- Select --</option>
+                                    <option value="IDR">
+                                        IDR
+                                    </option>
+                                    <option value="USD">
+                                        USD
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Exchange Rate</label>
+                                <input type="text" class="form-control form-control-line exchange_rate" name="exchange_rate" value="{{ old('exchange_rate', '') }}" disabled> 
+                            </div>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <div class="table-responsive">
-                            <table class="table table-striped">
+                            <table class="table table-striped" id="tabs">
                                 <thead>
                                     <tr>
                                         <th>Material ID</th>
@@ -180,7 +179,6 @@
                             </table>
                         </div>
                     </div>
-
                     <div class="form-actions">
                         <input type="hidden" name="quantities" value="{{ $uri['quantities'] }}">
                         <button type="submit" class="btn btn-success click" id="save"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
@@ -205,6 +203,7 @@
         if( id == 'USD' ) {
             $(".exchange_rate").attr('disabled',false)
         } else {
+            $(".exchange_rate").val(' ')
             $(".exchange_rate").attr('disabled',true)
         }
     })
@@ -225,14 +224,20 @@
 
     $('.money').mask('#.##0', { reverse: true });
 
-    const loadRfq = function () {
-        $("#vendor_id").change(function() {
-            const vendorId = $(this).val()
-            getRq(vendorId)
+    const loadChangeRate = function () {
+        $("#currency").on('change',function(e) {
+            let id = $(this).val()
+            
+            if( id == 'USD' ) {
+                $(".exchange_rate").attr('disabled',false)
+            } else {
+                $(".exchange_rate").val(' ')
+                $(".exchange_rate").attr('disabled',true)
+            }
         }).trigger('change');
     }
 
-    function getRq(vendorId)
+    /*function getRq(vendorId)
     {
         $("#image_loading").show()
 
@@ -258,7 +263,7 @@
             }
         });
         $('.select2').select2()
-    }
+    }*/
 
     $('.rfq').on('change', function (e) {
         e.preventDefault()
@@ -289,12 +294,29 @@
         const net = row.find('.net_price')
 
         if( price ) {
-            net.val(price)
+            let fixPrice = 0
+            const rate = $(".exchange_rate").val()
+            if( $("#currency").val() == 'USD' ) {
+                fixPrice = price / rate
+            } else {
+                fixPrice = price
+            }
+            net.val(Math.round(fixPrice))
         } else {
             net.val(0)
         }
     })
+    loadChangeRate()
 
-    loadRfq()
+    /*$(document).on('keyup', '.exchange_rate', function(event) {
+        numberWithComma($(this).val())
+    });
+
+    function numberWithComma(number) {
+        let numbers         = number + ''
+        let components      = numbers.split(".");
+            components [0]  = components [0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return components.join(".");
+    }*/
 </script>
 @endsection
