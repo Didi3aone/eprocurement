@@ -32,32 +32,16 @@
                     <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                             <tr>
-                                <th width="10">
-
-                                </th>
-                                <th>
-                                    {{ trans('cruds.purchase-order.fields.id') }}
-                                </th>
-                                <th>
-                                    PO No.
-                                </th>
-                                <th>
-                                    {{ trans('cruds.purchase-order.fields.bidding') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.purchase-order.fields.request_date') }}
-                                </th>
-                                <th>
-                                    &nbsp;
-                                </th>
+                                <th>{{ trans('cruds.purchase-order.fields.id') }}</th>
+                                <th>PO No.</th>
+                                <th>{{ trans('cruds.purchase-order.fields.bidding') }}</th>
+                                <th>{{ trans('cruds.purchase-order.fields.request_date') }}</th>
+                                <th>&nbsp;</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($purchaseOrders as $key => $po)
                                 <tr data-entry-id="{{ $po->id }}">
-                                    <td>
-
-                                    </td>
                                     <td>{{ $po->id ?? '' }}</td>
                                     <td>{{ $po->po_no }}</td>
                                     <td>{{ $po->bidding == 1 ? 'Yes' : 'No' }}</td>

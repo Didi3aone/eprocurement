@@ -56,7 +56,6 @@
                                         <th>Material Desc</th>
                                         <th>Unit</th>
                                         <th style="width: 10%">Qty</th>
-                                        <th style="width: 20%">History PO</th>
                                         <th style="width: 20%">Net Price</th>
                                     </tr>
                                 </thead>
@@ -88,15 +87,7 @@
                                             <td><input type="text" class="form-control" name="description[]" readonly value="{{ $value->description }}"></td>
                                             <td><input type="text" class="form-control" name="unit[]" readonly value="{{ $value->unit }}"></td>
                                             <td><input type="text" class="form-control" name="qty[]" readonly value="{{ empty($value->qty) ? 0 : $value->qty }}"></td>
-                                            <td>
-                                                <select name="history[]" id="history" class="form-control select2 history" required>
-                                                    <option> Select </option>
-                                                    @foreach(getHistoryPo($value->material_id) as $key => $rows)
-                                                        <option value="{{ $rows->price }}">{{ $rows->po['po_no']." - ".$rows->po->vendors['name'] }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </td>
-                                            <td><input type="text" class="form-control net_price" name="price[]" id="net_price" value="{{ $value->price }}" readonly></td>
+                                            <td><input type="text" class="form-control net_price" name="price[]" id="net_price" value="" readonly></td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -124,7 +115,7 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.purchase-order.fields.target_price') }}</label>
-                        <input type="text" class="money form-control form-control-line {{ $errors->has('target_price') ? 'is-invalid' : '' }}" name="target_price" value="{{ old('target_price', 0) }}">
+                        <input type="text" class="money form-control form-control-line {{ $errors->has('target_price') ? 'is-invalid' : '' }}" id="target_price" name="target_price" value="{{ old('target_price', 0) }}">
                         @if($errors->has('target_price'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('target_price') }}
@@ -133,7 +124,7 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.purchase-order.fields.start_date') }}</label>
-                        <input type="text" id="datetimepicker" class="form-control form-control-line {{ $errors->has('start_date') ? 'is-invalid' : '' }}" name="start_date" value="{{ old('start_date', date('Y-m-d H:i')) }}">
+                        <input type="text" class="datetimepicker form-control form-control-line {{ $errors->has('start_date') ? 'is-invalid' : '' }}" name="start_date" value="{{ old('start_date', date('Y-m-d H:i')) }}">
                         @if($errors->has('start_date'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('start_date') }}
@@ -142,7 +133,7 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.purchase-order.fields.expired_date') }}</label>
-                        <input type="text" id="datetimepicker" class="form-control form-control-line {{ $errors->has('expired_date') ? 'is-invalid' : '' }}" name="expired_date" value="{{ old('expired_date', date('Y-m-d H:i', strtotime('+3 months', time()))) }}">
+                        <input type="text" class="datetimepicker form-control form-control-line {{ $errors->has('expired_date') ? 'is-invalid' : '' }}" name="expired_date" value="{{ old('expired_date', date('Y-m-d H:i', strtotime('+3 months', time()))) }}">
                         @if($errors->has('expired_date'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('expired_date') }}
@@ -264,6 +255,14 @@
         return [year, month, day].join('-');
     }
 
+    $('#model').on('change', function () {
+        $('#target_price').attr('readonly', true)
+        if ($(this).val() == 0) {
+            $('#target_price').removeAttr('readonly')
+            $('#target_price').val(0)
+        }
+    }).trigger('change')
+
     $("#leadtime_type").change(function() {
         const leadtime_type = $(this).val();
 
@@ -314,9 +313,9 @@
     })
 
     $(function() {
-        $('#datetimepicker').datetimepicker({
+        $('.datetimepicker').datetimepicker({
             format: 'Y-m-d H:i',
-            mask: true
+            // mask: true
         }).trigger('change');
     });
 

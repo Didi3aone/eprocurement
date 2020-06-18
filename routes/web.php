@@ -238,6 +238,7 @@ Route::group([ 'prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor',
     Route::get('quotation-edit/{id}', 'QuotationController@edit')->name('quotation-edit');
     Route::get('quotation-bid/{id}', 'QuotationController@bid')->name('quotation-bid');
     Route::post('quotation-save', 'QuotationController@store')->name('quotation-save');
+    Route::post('quotation-save-bid', 'QuotationController@saveBid')->name('quotation-save-bid');
     Route::get('bidding', 'BiddingController@index')->name('bidding');
 
     // online
