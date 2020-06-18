@@ -87,11 +87,6 @@ class PurchaseRequestController extends Controller
                 ->where('purchase_requests_details.id', $id)
                 ->first();
 
-            $rfq = MasterRfqDetail::where('material', $pr->material_id)->first();
-
-            if ($rfq)
-                $pr->price = $rfq->net_order_price;
-
             if ($quantities[$i])
                 $pr->qty = $quantities[$i];
                 

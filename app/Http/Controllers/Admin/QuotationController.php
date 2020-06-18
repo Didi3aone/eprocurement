@@ -71,10 +71,14 @@ class QuotationController extends Controller
         if (empty($request->get('target_price')))
             return redirect()->route('admin.purchase-request-online', [$request->get('id'), $request->get('quantities')])->with('status', 'Target Price cannot be zero!');
 
-        $vendors = $request->get('search-vendor');
+        $vendors = $request->get('vendor_id');
+
+        if (empty($vendors))
+            return redirect()->route('admin.purchase-request-online', [$request->get('id'), $request->get('quantities')])->with('status', 'No vendors selected!');
+
+        $price = str_replace('.', '', $request->get('target_price'));
 
         \DB::beginTransaction();
-        dd('stop');
 
         try {
             $quotation = new Quotation;
@@ -82,18 +86,17 @@ class QuotationController extends Controller
             $quotation->model               = $request->get('model');
             $quotation->leadtime_type       = $request->get('leadtime_type');
             $quotation->purchasing_leadtime = $request->get('purchasing_leadtime');
-            $quotation->target_price        = str_replace('.', '', $request->get('target_price'));
+            $quotation->target_price        = $target_price;
             $quotation->start_date          = $request->get('start_date');
             $quotation->expired_date        = $request->get('expired_date');
             $quotation->status              = 1;
             $quotation->save();
             
-            $price = str_replace('.', '', $request->get('target_price'));
-
             foreach ($vendors as $row) {
                 $quotationDetail = new QuotationDetail;
                 $quotationDetail->quotation_order_id = $quotation->id;
                 $quotationDetail->vendor_id = $row;
+                $quotationDetail->price = $target_price;
                 $quotationDetail->flag = 0;
                 $quotationDetail->save();
             }
@@ -677,8 +680,9 @@ class QuotationController extends Controller
     public function show($id)
     {
         $quotation = Quotation::findOrFail($id);
+        $detail = QuotationDetail::where('quotation_order_id', $id)->get();
 
-        return view('admin.quotation.show', compact('quotation'));
+        return view('admin.quotation.show', compact('quotation', 'detail'));
     }
 
     /**
