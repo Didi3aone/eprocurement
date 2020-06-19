@@ -771,6 +771,7 @@ return [
             'target_price' => 'Target Price',
             'vendor_leadtime' => 'Vendor Leadtime',
             'vendor_price' => 'Vendor Price',
+            'start_date' => 'Start Date',
             'expired_date' => 'Expired Date',
             'bidding_count' => 'Bidding Count',
             'qty' => 'Quantity',

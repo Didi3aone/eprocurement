@@ -68,39 +68,49 @@ class QuotationController extends Controller
         if ($request->get('search-vendor') == '-- Select --')
             return redirect()->route('admin.purchase-request-online', [$request->get('id'), $request->get('quantities')])->with('status', 'No vendor chosen!');
 
-        if (empty($request->get('target_price')))
-            return redirect()->route('admin.purchase-request-online', [$request->get('id'), $request->get('quantities')])->with('status', 'Target Price cannot be zero!');
-
         $vendors = $request->get('vendor_id');
 
         if (empty($vendors))
             return redirect()->route('admin.purchase-request-online', [$request->get('id'), $request->get('quantities')])->with('status', 'No vendors selected!');
 
-        $price = str_replace('.', '', $request->get('target_price'));
-
         \DB::beginTransaction();
 
         try {
+            $net_price = $request->get('net_price');
+            if ($request->input('model') == 0)
+                for ($i = 0; $i < count($net_price); $i++)
+                    if (empty($net_price[$i]))
+                        return redirect()->route('admin.purchase-request-online', [$request->get('id'), $request->get('quantities')])->with('status', 'Net price cannot be zero!');
+                        
             $quotation = new Quotation;
             $quotation->po_no               = $request->get('PR_NO');
             $quotation->model               = $request->get('model');
             $quotation->leadtime_type       = $request->get('leadtime_type');
             $quotation->purchasing_leadtime = $request->get('purchasing_leadtime');
-            $quotation->target_price        = $target_price;
             $quotation->start_date          = $request->get('start_date');
             $quotation->expired_date        = $request->get('expired_date');
             $quotation->status              = 1;
             $quotation->save();
             
-            foreach ($vendors as $row) {
+            $quotation_ids = [];
+            foreach ($vendors as $key => $val) {
                 $quotationDetail = new QuotationDetail;
                 $quotationDetail->quotation_order_id = $quotation->id;
-                $quotationDetail->vendor_id = $row;
-                $quotationDetail->price = $target_price;
+                $quotationDetail->vendor_id = $val;
                 $quotationDetail->flag = 0;
                 $quotationDetail->save();
+
+                array_push($quotation_ids, $quotationDetail->id);
             }
 
+            for ($i = 0; $i < count($net_price); $i++) {
+                if ($net_price[$i]) {
+                    $detail = QuotationDetail::find($quotation_ids[$i]);
+                    $detail->price = $net_price[$i];
+                    $detail->save();
+                }
+            }
+                        
             // if( $price <= 25000000 ) {
             //     $tingkat = 'STAFF';
             //     $this->saveApprovals($quotation->id,$tingkat,'BIDDING');

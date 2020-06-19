@@ -39,14 +39,8 @@
                                         <td>{{ $quotation->purchasing_leadtime }}</td>
                                     </tr>
                                     <tr>
-                                        <td>{{ trans('cruds.quotation.fields.target_price') }}</td>
-                                        @if ($quotation->model == 1)
-                                        <td>
-                                            <input type="text" name="target_price" id="target_price" class="money form-control" value="{{ $quotation->target_price }}">
-                                        </td>
-                                        @else
-                                        <td>{{ $quotation->target_price }}</td>
-                                        @endif
+                                        <td>{{ trans('cruds.quotation.fields.start_date') }}</td>
+                                        <td>{{ $quotation->start_date }}</td>
                                     </tr>
                                     <tr>
                                         <td>{{ trans('cruds.quotation.fields.expired_date') }}</td>

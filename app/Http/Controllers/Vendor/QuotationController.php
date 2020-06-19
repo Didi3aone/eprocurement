@@ -48,7 +48,7 @@ class QuotationController extends Controller
             'quotation.po_no',
             'quotation.leadtime_type',
             'quotation.purchasing_leadtime',
-            'quotation.target_price',
+            'quotation.start_date',
             'quotation.expired_date',
             'quotation.qty',
             'quotation_details.quotation_order_id',
@@ -59,7 +59,8 @@ class QuotationController extends Controller
                     and vendor_id = ' . Auth::user()->id . '
                 group by quotation_id
             )'),
-            'quotation_details.id as detail_id', 'quotation_details.*'
+            'quotation_details.id as detail_id',
+            'quotation_details.*'
         )
             ->join('quotation_details', 'quotation_details.quotation_order_id', 'quotation.id')
             ->where('quotation_details.vendor_id', Auth::user()->code)
@@ -68,6 +69,28 @@ class QuotationController extends Controller
             ->get();
 
         return view('vendor.quotation.online', compact('quotation'));
+    }
+
+    public function onlineDetail ($id)
+    {
+        $quotation = Quotation::select(
+            'quotation.id as id',
+            'quotation_details.id as detail_id',
+            'quotation.status',
+            'quotation.po_no',
+            'quotation.model',
+            'quotation.leadtime_type',
+            'quotation.purchasing_leadtime',
+            'quotation.target_price',
+            'quotation.start_date',
+            'quotation.expired_date',
+            'quotation.qty'
+        )
+            ->join('quotation_details', 'quotation_details.quotation_order_id', '=', 'quotation.id')
+            ->where('quotation.id', $id)
+            ->first();
+
+        return view('vendor.quotation.online-detail', compact('quotation'));
     }
 
     public function repeat ()
@@ -1091,27 +1114,6 @@ class QuotationController extends Controller
             ->get();
 
         return view('vendor.quotation.direct', compact('quotation'));
-    }
-
-    public function onlineDetail ($id)
-    {
-        $quotation = Quotation::select(
-            'quotation.id as id',
-            'quotation_details.id as detail_id',
-            'quotation.status',
-            'quotation.po_no',
-            'quotation.model',
-            'quotation.leadtime_type',
-            'quotation.purchasing_leadtime',
-            'quotation.target_price',
-            'quotation.expired_date',
-            'quotation.qty'
-        )
-            ->join('quotation_details', 'quotation_details.quotation_order_id', '=', 'quotation.id')
-            ->where('quotation_details.id', $id)
-            ->first();
-
-        return view('vendor.quotation.online-detail', compact('quotation'));
     }
 
     public function repeatDetail ($id)

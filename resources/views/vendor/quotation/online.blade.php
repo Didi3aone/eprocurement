@@ -30,8 +30,8 @@
                                 <th>{{ trans('cruds.quotation.fields.model') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.leadtime_type') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.purchasing_leadtime') }}</th>
+                                <th>{{ trans('cruds.quotation.fields.start_date') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.expired_date') }}</th>
-                                <th>{{ trans('cruds.quotation.fields.target_price') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.vendor_leadtime') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.vendor_price') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.bidding_count') }}</th>
@@ -41,11 +41,12 @@
                         <tbody>
                             @foreach($quotation as $key => $val)
                                 <tr data-entry-id="{{ $val->id }}">
-                                    <td>{{ $val->id ?? '' }}</td>
+                                    <td>{{ $val->quotation_order_id ?? '' }}</td>
                                     <td>{{ $val->po_no ?? '' }}</td>
                                     <td>{{ $val->model == 1 ? 'Open' : 'Close' }}</td>
                                     <td>{{ $val->leadtime_type == 0 ? 'Date' : 'Day Count' }}</td>
                                     <td>{{ $val->purchasing_leadtime ?? '' }}</td>
+                                    <td>{{ $val->start_date ?? '' }}</td>
                                     <td>
                                         @php $is_expired = '#67757c' @endphp
                                         @if (time() > strtotime($val->expired_date))
@@ -55,13 +56,12 @@
                                         @endif
                                         <span style="color: {{ $is_expired }}">{{ $val->expired_date ?? '' }}</span>
                                     </td>
-                                    <td>{{ number_format($val->target_price, 0, '', '.') ?? '' }}</td>
                                     <td>{{ $val->vendor_leadtime ?? '' }}</td>
                                     <td>{{ number_format($val->vendor_price, 0, '', '.') ?? '' }}</td>
                                     <td>{{ $val->count }}</td>
                                     <td>
                                         {{-- @if (time() <= strtotime($val->expired_date)) --}}
-                                        <a class="btn btn-xs btn-info" href="{{ route('vendor.quotation-online-detail', $val->id) }}">
+                                        <a class="btn btn-xs btn-info" href="{{ route('vendor.quotation-online-detail', $val->quotation_order_id) }}">
                                             <i class="fa fa-eye"></i> {{ 'Show' }}
                                         </a>
                                         {{-- @endif --}}

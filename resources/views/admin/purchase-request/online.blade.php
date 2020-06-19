@@ -87,7 +87,7 @@
                                             <td><input type="text" class="form-control" name="description[]" readonly value="{{ $value->description }}"></td>
                                             <td><input type="text" class="form-control" name="unit[]" readonly value="{{ $value->unit }}"></td>
                                             <td><input type="text" class="form-control" name="qty[]" readonly value="{{ empty($value->qty) ? 0 : $value->qty }}"></td>
-                                            <td><input type="text" class="form-control net_price" name="price[]" id="net_price" value="" readonly></td>
+                                            <td><input type="text" class="form-control net_price" name="net_price[]" id="net_price" value="" readonly></td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -112,15 +112,6 @@
                                 @endif
                             </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label>{{ trans('cruds.purchase-order.fields.target_price') }}</label>
-                        <input type="text" class="money form-control form-control-line {{ $errors->has('target_price') ? 'is-invalid' : '' }}" id="target_price" name="target_price" value="{{ old('target_price', 0) }}">
-                        @if($errors->has('target_price'))
-                            <div class="invalid-feedback">
-                                {{ $errors->first('target_price') }}
-                            </div>
-                        @endif
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.purchase-order.fields.start_date') }}</label>
@@ -256,10 +247,11 @@
     }
 
     $('#model').on('change', function () {
-        $('#target_price').attr('readonly', true)
+        $('.net_price').attr('readonly', true)
         if ($(this).val() == 0) {
-            $('#target_price').removeAttr('readonly')
-            $('#target_price').val(0)
+            $('.net_price').removeAttr('readonly')
+            $('.net_price').val(0)
+            $('.net_price')[0].focus()
         }
     }).trigger('change')
 
@@ -284,32 +276,37 @@
 
         const $search = $('#search-vendor').children('option:selected')
         const input_vendor = $search.val()
-        const id_vendor = $search.data('id')
-        const title_vendor = $search.data('title')
-        const name_vendor = $search.data('name')
-        const email_vendor = $search.data('email')
-        const street_vendor = $search.data('street')
-        const city_vendor = $search.data('city')
 
-        let template = `
-            <tr>
-                <td>${title_vendor} ${name_vendor}</td>
-                <td>${email_vendor}</td>
-                <td>${street_vendor}</td>
-                <td>${city_vendor}</td>
-                <td>
-                    <input type="hidden" name="vendor_id[]" value="${id_vendor}">
-                    <button 
-                        class="remove-vendor btn btn-xs btn-danger" 
-                        onclick="document.getElementById('btn-search-vendor').removeAttribute('disabled'); this.parentNode.parentNode.remove()"
-                    >
-                        <i class="fa fa-trash"></i> Remove
-                    </button>
-                </td>
-            </tr>
-        `
+        if (input_vendor != '-- Select --') {
+            const id_vendor = $search.data('id')
+            const title_vendor = $search.data('title')
+            const name_vendor = $search.data('name')
+            const email_vendor = $search.data('email')
+            const street_vendor = $search.data('street')
+            const city_vendor = $search.data('city')
 
-        $('#vendors').append(template)
+            let template = `
+                <tr>
+                    <td>${title_vendor} ${name_vendor}</td>
+                    <td>${email_vendor}</td>
+                    <td>${street_vendor}</td>
+                    <td>${city_vendor}</td>
+                    <td>
+                        <input type="hidden" name="vendor_id[]" value="${input_vendor}">
+                        <button 
+                            class="remove-vendor btn btn-xs btn-danger" 
+                            onclick="document.getElementById('btn-search-vendor').removeAttribute('disabled'); this.parentNode.parentNode.remove()"
+                        >
+                            <i class="fa fa-trash"></i> Remove
+                        </button>
+                    </td>
+                </tr>
+            `
+
+            $('#vendors').append(template)
+        } else {
+            alert('No vendor selected')
+        }
     })
 
     $(function() {
