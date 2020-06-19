@@ -29,10 +29,6 @@
                             <table class="table table-bordered table-striped">
                                 <tbody>
                                     <tr>
-                                        <th>{{ trans('cruds.quotation.fields.id') }}</th>
-                                        <td>{{ $model->id }}</td>
-                                    </tr>
-                                    <tr>
                                         <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
                                         <td>{{ $model->po_no }}</td>
                                     </tr>
@@ -42,8 +38,8 @@
                                     </tr>
                                     <tr>
                                         <th>{{ trans('cruds.quotation.fields.vendor') }}</th>
-                                        <td>{{ isset($model->detail[0]) ? $model->detail[0]->vendor->code . ' - ' . $model->detail[0]->vendor->name : '' }}</td>
-                                        <input type="hidden" name="vendor_code" value="{{ $model->detail[0]->vendor->code }}">
+                                        <td>{{ $model->getVendor->code." - ".$model->getVendor->name  }}</td>
+                                        <input type="hidden" name="vendor_code" value="{{ $model->getVendor->code }}">
                                     </tr>
                                 </tbody>
                             </table>

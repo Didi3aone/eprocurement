@@ -10,6 +10,7 @@ use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrdersDetail;
 use App\Models\Vendor\Quotation;
 use App\Models\Vendor\QuotationDetail;
+use App\Models\Vendor\Wholesale;
 use App\Models\BiddingHistory;
 use SoapClient;
 // use Gate;
@@ -43,6 +44,7 @@ class QuotationController extends Controller
         $quotation = Quotation::select(
             \DB::raw('quotation.id as id'),
             'quotation.status',
+            'quotation.model',
             'quotation.po_no',
             'quotation.leadtime_type',
             'quotation.purchasing_leadtime',
@@ -1727,8 +1729,10 @@ class QuotationController extends Controller
     {
         $quotation = Quotation::select(
             'quotation.id as id',
+            'quotation_details.id as detail_id',
             'quotation.status',
             'quotation.po_no',
+            'quotation.model',
             'quotation.leadtime_type',
             'quotation.purchasing_leadtime',
             'quotation.target_price',
@@ -1754,6 +1758,61 @@ class QuotationController extends Controller
         $quotation = Quotation::find($id);
 
         return view('vendor.quotation.direct-detail', compact('quotation'));
+    }
+
+    public function saveBid (Request $request)
+    {
+        $target_price = str_replace('.', '', $request->get('target_price'));
+
+        if (empty($request->get('min')))
+            return redirect()->route('vendor.quotation-online-detail', $request->get('detail_id'))->with('status', 'Min cannot be zero!');
+
+        if (empty($request->get('max')))
+            return redirect()->route('vendor.quotation-online-detail', $request->get('detail_id'))->with('status', 'Max cannot be zero!');
+
+        if (empty($request->get('price')))
+            return redirect()->route('vendor.quotation-online-detail', $request->get('detail_id'))->with('status', 'Price cannot be zero!');
+
+        if (empty($request->get('target_price')) && $request->get('model') == 1)
+            return redirect()->route('vendor.quotation-online-detail', $request->get('detail_id'))->with('status', 'Price cannot be zero!');
+
+        \DB::beginTransaction();
+
+        $id = $request->get('id');
+
+        try {
+            $quotation = Quotation::find($id);
+            $quotation->target_price = $target_price;
+            $quotation->save();
+
+            $names = $request->get('name');
+            $mins = $request->get('min');
+            $maxs = $request->get('max');
+            $prices = $request->get('price');
+
+            for ($i = 0; $i < count($mins); $i++) {
+                $wholesale = new Wholesale();
+                $wholesale->quotation_id = $id;
+                $wholesale->name = isset($names[$i]) ? $names[$i] : '';
+                $wholesale->min = isset($mins[$i]) ? $mins[$i] : '';
+                $wholesale->max = isset($maxs[$i]) ? $maxs[$i] : '';
+                $wholesale->price = isset($prices[$i]) ? $prices[$i] : '';
+                $wholesale->save();
+            }
+
+            $vendors = QuotationDetail::where('quotation_order_id', $id)
+                ->where('vendor_id', '<>', Auth::user()->id)
+                // ->where('vendor_price', $maxPrice)
+                ->orderBy('id', 'desc')
+                ->get();
+
+            \DB::commit();
+
+            return view('vendor.quotation.bid', compact('quotation', 'vendors'));
+        } catch (Exception $e) {
+            \DB::rollBack();
+            dd($e);
+        }
     }
 
     public function bid ($id)

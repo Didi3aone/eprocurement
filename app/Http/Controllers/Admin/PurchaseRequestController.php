@@ -10,6 +10,7 @@ use App\Models\PurchaseRequestsDetail;
 use App\Models\PurchaseRequestsApproval;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrdersDetail;
+use App\Models\MasterRfqDetail;
 use App\Models\Plant;
 use App\Models\DocumentType;
 use App\Models\UserMap;
@@ -76,8 +77,6 @@ class PurchaseRequestController extends Controller
             $quantities = explode(',', $quantities);
 
         $data = [];
-        $prs = [];
-
         foreach ($ids as $i => $id) {
             $pr = PurchaseRequestsDetail::select(
                 'purchase_requests_details.*',
@@ -87,7 +86,8 @@ class PurchaseRequestController extends Controller
                 ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
                 ->where('purchase_requests_details.id', $id)
                 ->first();
-            if ($quantities)
+
+            if ($quantities[$i])
                 $pr->qty = $quantities[$i];
                 
             array_push($data, $pr);
@@ -98,21 +98,24 @@ class PurchaseRequestController extends Controller
         return [
             'po_no' => $po_no,
             'data' => $data,
-            'vendor' => $vendor
+            'vendor' => $vendor,
+            'top'    => \App\Models\PaymentTerm::all()
         ];
     }
 
-    public function online (Request $request, $ids)
+    public function online (Request $request, $ids, $quantities)
     {
         $ids = base64_decode($ids);
-        $return = $this->createPrPo($ids);
+        $quantities = base64_decode($quantities);
+        $return = $this->createPrPo($ids, $quantities);
 
         $data = $return['data'];
         $po_no = $return['po_no'];
         $vendor = $return['vendor'];
 
         $uri = [
-            'ids' => base64_encode($ids)
+            'ids' => base64_encode($ids),
+            'quantities' => base64_encode($quantities)
         ];
         
         return view('admin.purchase-request.online', compact('data', 'po_no', 'vendor', 'uri'));
@@ -127,15 +130,16 @@ class PurchaseRequestController extends Controller
         $data = $return['data'];
         $po_no = $return['po_no'];
         $vendor = $return['vendor'];
+        $top = $return['top'];
 
-        $docTypes = DocumentType::get();
+        $docTypes = DocumentType::where('type','2')->get();
 
         $uri = [
             'ids' => base64_encode($ids),
-            'quantities' => ($quantities)
+            'quantities' => base64_encode($quantities)
         ];
         
-        return view('admin.purchase-request.repeat', compact('data', 'docTypes', 'po_no', 'vendor', 'uri'));
+        return view('admin.purchase-request.repeat', compact('data', 'docTypes', 'po_no', 'vendor', 'uri','top'));
     }
 
     public function direct (Request $request, $ids, $quantities)

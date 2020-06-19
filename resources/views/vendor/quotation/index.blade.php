@@ -41,6 +41,7 @@
                             <tr>
                                 <th>{{ trans('cruds.quotation.fields.id') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
+                                <th>{{ trans('cruds.quotation.fields.model') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.status') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.leadtime_type') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.purchasing_leadtime') }}</th>
@@ -50,9 +51,7 @@
                                 <th>{{ trans('cruds.quotation.fields.vendor_price') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.qty') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.bidding_count') }}</th>
-                                <th>
-                                    &nbsp;
-                                </th>
+                                <th>&nbsp;</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -60,6 +59,7 @@
                                 <tr data-entry-id="{{ $val->id }}">
                                     <td>{{ $val->id ?? '' }}</td>
                                     <td>{{ $val->po_no ?? '' }}</td>
+                                    <td>{{ $val->model == 1 ? 'Open' : 'Close' }}</td>
                                     <td>{{ $val->status == 0 ? 'PO repeat' : ($val->status == 1 ? 'Online' : 'Penunjukkan Langsung') }}</td>
                                     <td>{{ $val->leadtime_type == 0 ? 'Date' : 'Day Count' }}</td>
                                     <td>{{ $val->purchasing_leadtime ?? '' }}</td>

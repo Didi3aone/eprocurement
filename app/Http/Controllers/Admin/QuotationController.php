@@ -65,34 +65,38 @@ class QuotationController extends Controller
 
     public function saveOnline (Request $request)
     {
-        if (empty($request->get('vendor_id')))
-            return redirect()->route('admin.purchase-request-online', $request->get('id'))->with('status', 'No vendor chosen!');
+        if ($request->get('search-vendor') == '-- Select --')
+            return redirect()->route('admin.purchase-request-online', [$request->get('id'), $request->get('quantities')])->with('status', 'No vendor chosen!');
 
         if (empty($request->get('target_price')))
-            return redirect()->route('admin.purchase-request-online', $request->get('id'))->with('status', 'Target Price cannot be zero!');
+            return redirect()->route('admin.purchase-request-online', [$request->get('id'), $request->get('quantities')])->with('status', 'Target Price cannot be zero!');
+
+        $vendors = $request->get('vendor_id');
+
+        if (empty($vendors))
+            return redirect()->route('admin.purchase-request-online', [$request->get('id'), $request->get('quantities')])->with('status', 'No vendors selected!');
+
+        $price = str_replace('.', '', $request->get('target_price'));
 
         \DB::beginTransaction();
 
         try {
-            $vendors = $request->get('vendor_id');
-            if (!$vendors)
-                return redirect()->route('admin.purchase-request-online', $request->get('id'))->with('status', 'Vendor is required');
-
             $quotation = new Quotation;
             $quotation->po_no               = $request->get('PR_NO');
+            $quotation->model               = $request->get('model');
             $quotation->leadtime_type       = $request->get('leadtime_type');
             $quotation->purchasing_leadtime = $request->get('purchasing_leadtime');
-            $quotation->target_price        = str_replace('.', '', $request->get('target_price'));
+            $quotation->target_price        = $target_price;
+            $quotation->start_date          = $request->get('start_date');
             $quotation->expired_date        = $request->get('expired_date');
             $quotation->status              = 1;
             $quotation->save();
             
-            $price = str_replace('.', '', $request->get('target_price'));
-
             foreach ($vendors as $row) {
                 $quotationDetail = new QuotationDetail;
                 $quotationDetail->quotation_order_id = $quotation->id;
                 $quotationDetail->vendor_id = $row;
+                $quotationDetail->price = $target_price;
                 $quotationDetail->flag = 0;
                 $quotationDetail->save();
             }
@@ -174,11 +178,15 @@ class QuotationController extends Controller
 
         try {
             $quotation = new Quotation;
-            $quotation->po_no = $request->get('po_no');
-            $quotation->notes = $request->get('notes');
-            $quotation->doc_type = $request->get('doc_type');
-            $quotation->upload_file = $request->get('upload_files');
-            $quotation->status = 0;
+            $quotation->po_no           = $request->get('po_no');
+            $quotation->notes           = $request->get('notes');
+            $quotation->doc_type        = $request->get('doc_type');
+            $quotation->upload_file     = $request->get('upload_files');
+            $quotation->currency        = $request->get('currency');
+            $quotation->payment_term    = $request->get('payment_term');
+            $quotation->vendor_id       = $request->vendor_id;
+            $quotation->status          = 0;
+
             $quotation->save();
             foreach ($details as $detail) {
                 $quotationDetail = new QuotationDetail;
@@ -204,6 +212,7 @@ class QuotationController extends Controller
                 $quotationDetail->storage_location          = $detail['storage_location'];
                 $quotationDetail->material_group            = $detail['material_group'];
                 $quotationDetail->preq_item                 = $detail['preq_item'];
+                $quotationDetail->vendor_id                 = $request->vendor_id;
 
                 $quotationDetail->save();
             }
@@ -676,8 +685,9 @@ class QuotationController extends Controller
     public function show($id)
     {
         $quotation = Quotation::findOrFail($id);
+        $detail = QuotationDetail::where('quotation_order_id', $id)->get();
 
-        return view('admin.quotation.show', compact('quotation'));
+        return view('admin.quotation.show', compact('quotation', 'detail'));
     }
 
     /**

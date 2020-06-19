@@ -18,10 +18,6 @@
                     <table class="table table-bordered table-striped">
                         <tbody>
                             <tr>
-                                <td>{{ trans('cruds.quotation.fields.id') }}</td>
-                                <td>{{ $quotation->id }}</td>
-                            </tr>
-                            <tr>
                                 <td>{{ trans('cruds.quotation.fields.po_no') }}</td>
                                 <td>{{ $quotation->po_no }}</td>
                             </tr>
@@ -48,7 +44,7 @@
                                         <td>{{ $det->material }} - {{ $det->materialDetail->description }}</td>
                                         <td>{{ number_format($det->qty, 0, '', '.') }}</td>
                                         <td>{{ $det->unit }}</td>
-                                        <td>{{ number_format($det->vendor_price, 0, '', '.') }}</td>
+                                        <td>{{ $det->vendor_price == '' ? number_format($det->price, 0, '', '.') : number_format($det->vendor_price, 0, '', '.') }}</td>
                                     </tr>
                                 @endif
                             @endforeach

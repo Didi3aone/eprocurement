@@ -34,4 +34,9 @@ class Quotation extends Model
     {
         return $this->hasOne(\App\Models\Vendor::class, 'code', 'vendor_id');
     }
+
+    public function getVendor ()
+    {
+        return $this->hasOne(\App\Models\Vendor::class, 'code','vendor_id');
+    }
 }

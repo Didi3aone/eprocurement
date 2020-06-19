@@ -54,18 +54,20 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($quotation->detail as $det)
+                                    @foreach ($detail as $k => $val)
                                     <tr>
                                         <td>
-                                            <input type="checkbox" name="id[]" id="check_{{ $det->id }}" value="{{ $det->id }}">
-                                            <label for="check_{{ $det->id }}"></label>
+                                            <input type="checkbox" name="id[]" id="check_{{ $val->id }}" value="{{ $val->id }}">
+                                            <label for="check_{{ $val->id }}"></label>
                                         </td>
-                                        <td>{{ $det->vendor->name }}</td>
-                                        <td>{{ $det->vendor->email }}</td>
-                                        <td>{{ $det->vendor_leadtime }}</td>
-                                        <td>{{ number_format($det->vendor_price, 0, '', '.') }}</td>
+                                        <td>{{ isset($val->vendor->name) ? $val->vendor->name : '' }}</td>
+                                        <td>{{ isset($val->vendor->email) ? $val->vendor->email : '' }}</td>
+                                        <td>{{ $val->vendor_leadtime }}</td>
+                                        <td>{{ number_format($val->vendor_price, 0, '', '.') }}</td>
                                         <td>
-                                            <a href="{{ route('admin.quotation.remove-vendor', [$quotation->id, $det->vendor_id]) }}" class="btn btn-danger"><i class="fa fa-trash"></i> Remove</a>
+                                            <a href="{{ route('admin.quotation.remove-vendor', [$quotation->id, $val->vendor_id]) }}" class="btn btn-danger btn-xs">
+                                                <i class="fa fa-trash"></i> Remove
+                                            </a>
                                         </td>
                                     </tr>
                                     @endforeach

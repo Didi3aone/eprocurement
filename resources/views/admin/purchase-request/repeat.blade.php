@@ -24,7 +24,7 @@
                 <form class="form-rn m-t-40" action="{{ route("admin.quotation-save-repeat") }}" enctype="multipart/form-data" method="post">
                     @csrf
                     <div class="row">
-                        <div class="col-lg-4">
+                        <div class="col-lg-6">
                             <div class="form-group">
                                 <label>{{ trans('cruds.purchase-order.fields.po_no') }}</label>
                                 <input type="text" class="form-control form-control-line {{ $errors->has('po_no') ? 'is-invalid' : '' }}" name="po_no" value="{{ old('po_no', $po_no) }}" readonly> 
@@ -35,9 +35,7 @@
                                 @endif
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-4">
+                        <div class="col-lg-6">
                             <div class="form-group">
                                 <label>{{ trans('cruds.purchase-order.fields.doc_type') }}</label>
                                 <select class="form-control form-control-line select2 {{ $errors->has('doc_type') ? 'is-invalid' : '' }}" name="doc_type">
@@ -48,10 +46,10 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="">Vendor</label>
-                        <div class="row">
-                            <div class="col-lg-6">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="">Vendor</label>
                                 <select name="vendor_id" id="vendor_id" class="form-control select2" required>
                                     <option>-- Select --</option>
                                     @foreach ($vendor as $val)
@@ -69,10 +67,65 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="">Payment Term</label>
+                                <select name="payment_term" id="payment_term" class="form-control select2" required>
+                                    <option>-- Select --</option>
+                                    @foreach ($top as $val)
+                                    <option value="{{ $val->no_of_days }}">
+                                        {{ $val->payment_terms }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>{{ trans('cruds.purchase-order.fields.notes') }}</label>
+                        <textarea id="notes" class="form-control form-control-line {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes"></textarea>
+                        @if($errors->has('notes'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('notes') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label class="required" for="upload_file">{{ trans('cruds.purchase-order.fields.upload_file') }}</label>
+                        <input class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" type="file" name="upload_file[]" multiple id="upload_file">
+                        @if($errors->has('upload_file'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('upload_file') }}
+                            </div>
+                        @endif
+                        <span class="help-block"></span>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="">Currency</label>
+                                <select name="currency" id="currency" class="form-control select2" required>
+                                    <option>-- Select --</option>
+                                    <option value="IDR">
+                                        IDR
+                                    </option>
+                                    <option value="USD">
+                                        USD
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Exchange Rate</label>
+                                <input type="text" class="form-control form-control-line exchange_rate" name="exchange_rate" value="{{ old('exchange_rate', '') }}" disabled> 
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <div class="table-responsive">
-                            <table class="table table-striped">
+                            <table class="table table-striped" id="tabs">
                                 <thead>
                                     <tr>
                                         <th>Material ID</th>
@@ -113,7 +166,7 @@
                                             <td><input type="text" class="form-control" name="qty[]" readonly value="{{ empty($value->qty) ? 0 : $value->qty }}"></td>
                                             <td>
                                                 <select name="history[]" id="history" class="form-control select2 history" required>
-                                                    <option> Select </option>
+                                                    <option> -- Select --</option>
                                                     @foreach(getHistoryPo($value->material_id) as $key => $rows)
                                                         <option value="{{ $rows->price }}">{{ $rows->po['po_no']." - ".$rows->po->vendors['name'] }}</option>
                                                     @endforeach
@@ -126,34 +179,12 @@
                             </table>
                         </div>
                     </div>
-                   
-                    <div class="form-group">
-                        <label>{{ trans('cruds.purchase-order.fields.notes') }}</label>
-                        <input type="text" id="notes" class="form-control form-control-line {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" value="{{ old('notes', '') }}" required>
-                        @if($errors->has('notes'))
-                            <div class="invalid-feedback">
-                                {{ $errors->first('notes') }}
-                            </div>
-                        @endif
-                    </div>
-                    <div class="form-group">
-                        <label class="required" for="upload_file">{{ trans('cruds.purchase-order.fields.upload_file') }}</label>
-                        <input class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" type="file" name="upload_file[]" multiple id="upload_file">
-                        @if($errors->has('upload_file'))
-                            <div class="invalid-feedback">
-                                {{ $errors->first('upload_file') }}
-                            </div>
-                        @endif
-                        <span class="help-block"></span>
-                    </div>
-
                     <div class="form-actions">
-                        {{-- <input type="hidden" name="total" value="{{ $total }}"> --}}
                         <input type="hidden" name="quantities" value="{{ $uri['quantities'] }}">
                         <button type="submit" class="btn btn-success click" id="save"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
-                        {{-- <button type="submit" class="btn btn-success click"> <i class="fa fa-tv"></i> {{ trans('global.preview') }}</button> --}}
-                        <a href="{{ route('admin.purchase-request.index') }}" class="btn btn-inverse">Cancel</a>
+                        <a href="{{ route('admin.purchase-request.index') }}" class="btn btn-danger"><i class="fa fa-times"></i> Cancel</a>
                         <img id="image_loading" src="{{ asset('img/ajax-loader.gif') }}" alt="" style="display: none">
+                        <button type="button" class="btn btn-primary"> <i class="fa fa-eye"></i> {{ trans('global.preview') }}</button>
                     </div>
                 </form>
             </div>
@@ -165,7 +196,17 @@
 @section('scripts')
 @parent
 <script>
-    let index = 1
+
+    $("#currency").on('change',function(e) {
+        let id = $(this).val()
+        
+        if( id == 'USD' ) {
+            $(".exchange_rate").attr('disabled',false)
+        } else {
+            $(".exchange_rate").val(' ')
+            $(".exchange_rate").attr('disabled',true)
+        }
+    })
 
     function formatDate(date) {
         var d = new Date(date),
@@ -183,14 +224,20 @@
 
     $('.money').mask('#.##0', { reverse: true });
 
-    const loadRfq = function () {
-        $("#vendor_id").change(function() {
-            const vendorId = $(this).val()
-            getRq(vendorId)
+    const loadChangeRate = function () {
+        $("#currency").on('change',function(e) {
+            let id = $(this).val()
+            
+            if( id == 'USD' ) {
+                $(".exchange_rate").attr('disabled',false)
+            } else {
+                $(".exchange_rate").val(' ')
+                $(".exchange_rate").attr('disabled',true)
+            }
         }).trigger('change');
     }
 
-    function getRq(vendorId)
+    /*function getRq(vendorId)
     {
         $("#image_loading").show()
 
@@ -216,7 +263,7 @@
             }
         });
         $('.select2').select2()
-    }
+    }*/
 
     $('.rfq').on('change', function (e) {
         e.preventDefault()
@@ -247,12 +294,29 @@
         const net = row.find('.net_price')
 
         if( price ) {
-            net.val(price)
+            let fixPrice = 0
+            const rate = $(".exchange_rate").val()
+            if( $("#currency").val() == 'USD' ) {
+                fixPrice = price / rate
+            } else {
+                fixPrice = price
+            }
+            net.val(Math.round(fixPrice))
         } else {
             net.val(0)
         }
     })
+    loadChangeRate()
 
-    loadRfq()
+    /*$(document).on('keyup', '.exchange_rate', function(event) {
+        numberWithComma($(this).val())
+    });
+
+    function numberWithComma(number) {
+        let numbers         = number + ''
+        let components      = numbers.split(".");
+            components [0]  = components [0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return components.join(".");
+    }*/
 </script>
 @endsection

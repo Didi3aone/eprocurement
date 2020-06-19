@@ -159,7 +159,7 @@
             quantities.push($('.qty_' + id).val())
             // quantities.push($('.qty_open_' + id).val())
         }
-        console.log('quantities', quantities)
+        console.log('ids', ids, 'quantities', quantities)
 
         ids = btoa(ids)
         quantities = btoa(quantities)
