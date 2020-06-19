@@ -90,7 +90,10 @@ class QuotationController extends Controller
             ->where('quotation.id', $id)
             ->first();
 
-        return view('vendor.quotation.online-detail', compact('quotation'));
+        $data = QuotationDetail::where('quotation_order_id', $id)
+            ->get();
+
+        return view('vendor.quotation.online-detail', compact('quotation', 'data', 'id'));
     }
 
     public function repeat ()
@@ -110,6 +113,13 @@ class QuotationController extends Controller
             ->get();
 
         return view('vendor.quotation.repeat', compact('quotation'));
+    }
+
+    public function repeatDetail ($id)
+    {
+        $quotation = Quotation::find($id);
+
+        return view('vendor.quotation.repeat-detail', compact('quotation'));
     }
 
     public function approveRepeat (Request $request)
@@ -1746,13 +1756,6 @@ class QuotationController extends Controller
             ->get();
 
         return view('vendor.quotation.direct', compact('quotation'));
-    }
-
-    public function repeatDetail ($id)
-    {
-        $quotation = Quotation::find($id);
-
-        return view('vendor.quotation.repeat-detail', compact('quotation'));
     }
 
     public function directDetail ($id)
