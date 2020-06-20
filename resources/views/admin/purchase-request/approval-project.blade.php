@@ -18,22 +18,19 @@
                         <thead>
                             <tr>
                                 <th width="10">
-
+                                    #
                                 </th>
                                 <th>
-                                    {{ trans('cruds.profit_center.fields.id') }}
+                                    Request No
                                 </th>
                                 <th>
-                                    {{ trans('cruds.profit_center.fields.code') }}
+                                    Request Date
                                 </th>
                                 <th>
-                                    {{ trans('cruds.profit_center.fields.name') }}
+                                    Urgensi
                                 </th>
                                 <th>
-                                    {{ trans('cruds.profit_center.fields.small_description') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.profit_center.fields.description') }}
+                                    Notes
                                 </th>
                                 <th>
                                     &nbsp;
@@ -42,15 +39,19 @@
                         </thead>
                         <tbody>
                             @foreach($prProject as $key => $proj)
-                                <tr data-entry-id="{{ $proj->id }}">
+                                <tr>
                                     <td>
-
+                                        {{ $key + 1 }}
                                     </td>
-                                    <td>{{ $proj->id ?? '' }}</td>
-                                    <td>{{ $proj->code ?? '' }}</td>
-                                    <td>{{ $proj->name ?? '' }}</td>
-                                    <td>{{ $proj->small_description ?? '' }}</td>
-                                    <td>{{ $proj->description ?? '' }}</td>
+                                    <td>{{ $proj->request_no ?? '' }}</td>
+                                    <td>{{ $proj->request_date ?? '' }}</td>
+                                    <td>{!! \App\Models\PurchaseRequest::TypeUrgent[$proj->is_urgent] !!}</td>
+                                    <td>{{ $proj->notes ?? '' }}</td>
+                                    <td>
+                                        <a class="btn btn-primary" href="{{ route('admin.purchase-request.show', $proj->id) }}">
+                                            <i class="fa fa-eye"></i> Show
+                                        </a>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

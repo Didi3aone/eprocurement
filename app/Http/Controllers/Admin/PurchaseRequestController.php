@@ -73,8 +73,27 @@ class PurchaseRequestController extends Controller
      */
     public function approvalProject()
     {
-        $prProject = [];
+        $userMapping = UserMap::where('user_id', Auth::user()->user_id)->first();
+        $userMapping = explode(',', $userMapping->purchasing_group_code);
+
+        $prProject = PurchaseRequestsDetail::join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
+                    ->where('purchase_requests.status_approval', PurchaseRequest::ApprovedDept)
+                    ->whereIn('purchase_requests_details.purchasing_group_code',$userMapping)
+                    ->select(
+                        'purchase_requests.request_no',
+                        'purchase_requests.request_date',
+                        'purchase_requests.is_urgent',
+                        'purchase_requests.notes',
+                        'purchase_requests.id',
+                    )
+                    ->get();
         return view('admin.purchase-request.approval-project', compact('prProject'));
+    }
+
+    public function show($id)
+    {
+        $prProject = PurchaseRequest::find($id);
+        return view('admin.purchase-request.show', compact('prProject'));
     }
 
     /**
@@ -199,15 +218,16 @@ class PurchaseRequestController extends Controller
      * @param  array  $request
      * @return \Illuminate\Http\Response
      */
-    public function approvalPrStaffPurchasing()
+    public function approvalPrStaffPurchasing(Request $request)
     {
+        dd($request);
         DB::beginTransaction();
         try {
             $configEnv    = \configEmailNotification();
             $prHeader  = PurchaseRequest::find($request->pr_id);
 
             $isSendSap = false;
-            foreach( $request->pr_item_check as $key => $value ) {
+            foreach( $request->idDetail as $key => $value ) {
 
                 $prDetail = PurchaseRequestDetail::find($value);
                 $status = PurchaseRequestDetail::Approved;
@@ -340,6 +360,6 @@ class PurchaseRequestController extends Controller
         }
 
         // Return response
-        return \redirect()->route('admin.purchase-request-list-approval')->with('status','PR succesfully approved');
+        return \redirect()->route('admin.purchase-request-project')->with('status','PR Project has been approved');
     }
 }

@@ -135,6 +135,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::get('purchase-request-repeat/{ids}/{quantities}','PurchaseRequestController@repeat')->name('purchase-request-repeat');
     Route::get('purchase-request-direct/{ids}/{quantities}','PurchaseRequestController@direct')->name('purchase-request-direct');
     Route::get('purchase-request-project','PurchaseRequestController@approvalProject')->name('purchase-request-project');
+    Route::put('purchase-request-project-approval','PurchaseRequestController@approvalPrStaffPurchasing')->name('purchase-request-project-approval');
     Route::resource('purchase-request', 'PurchaseRequestController');
 
     // request note

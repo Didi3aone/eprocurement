@@ -14,7 +14,7 @@ class AlterUsersAddUserId extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('user_id',10)->nullable();
+            $table->string('user_id',30)->nullable();
         });
     }
 

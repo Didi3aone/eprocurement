@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 class PurchaseRequest extends Model
 {
     protected $connection = 'pgsql';
+    protected $primaryKey = 'id';
+    public $incrementing = false;
 
     protected $fillable = [
         'id',
@@ -21,6 +23,29 @@ class PurchaseRequest extends Model
         'status',
         'created_at',
         'updated_at'
+    ];
+
+    public const type_status = [
+        10 => 'Waiting For Approval',
+        11 => 'Waiting For Approval',
+        12 => 'Approved'
+    ];
+
+    public const TypeStatus = [
+        0   => '<span class="badge badge-primary">Waiting For Approval</span>',
+        1   => '<span class="badge badge-warning">Ready To PR</span>',
+        2   => '<span class="badge badge-success">Success</span>',
+        99  => '<span class="badge badge-danger">Rejected</span>'
+    ];
+
+    public const TypeProject = [
+        0 => 'Reguler',
+        1 => 'Project' 
+    ];
+
+    public const TypeUrgent = [
+        0 => '<span class="badge badge-info">Normal</span>',
+        1 => '<span class="badge badge-danger">Urgent</span>'
     ];
 
     public const finishApproval     = 12;
@@ -44,7 +69,7 @@ class PurchaseRequest extends Model
     
     public function purchaseDetail()
     {
-        return $this->hasMany(\App\Models\PurchaseRequestsDetail::class, 'id', 'purchase_id');
+        return $this->hasMany(\App\Models\PurchaseRequestsDetail::class,'request_id');
     }
 
     protected static function boot()
