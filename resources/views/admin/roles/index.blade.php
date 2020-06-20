@@ -26,17 +26,11 @@
                     <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                             <tr>
-                                <th width="10">
-
-                                </th>
                                 <th>
                                     {{ trans('cruds.role.fields.id') }}
                                 </th>
                                 <th>
                                     {{ trans('cruds.role.fields.title') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.role.fields.permissions') }}
                                 </th>
                                 <th>
                                     &nbsp;
@@ -47,18 +41,10 @@
                             @foreach($roles as $key => $role)
                                 <tr data-entry-id="{{ $role->id }}">
                                     <td>
-
-                                    </td>
-                                    <td>
                                         {{ $role->id ?? '' }}
                                     </td>
                                     <td>
                                         {{ $role->title ?? '' }}
-                                    </td>
-                                    <td>
-                                        @foreach($role->permissions as $key => $item)
-                                            <span class="badge badge-info">{{ $item->title }}</span>
-                                        @endforeach
                                     </td>
                                     <td>
                                         @can('role_show')

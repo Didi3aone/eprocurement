@@ -26,16 +26,25 @@
                             </a>
                         </li>
                         @endcan
+
+                        @can('purchase_request_approval_access')
+                        <li>
+                            <a href="{{ route('admin.purchase-request-project') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> 
+                                Approval PR Project
+                            </a>
+                        </li>
+                        @endcan
                         
                     </ul>
                 </li>
                 @endcan
+                @can('quotation_access')
                 <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-clipboard"></i>
                         <span class="hide-menu"> {{ trans('cruds.quotation.title') }} </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">
-                        @can('purchase_request_access')
                         <li>
                             <a href="{{ route('admin.quotation.online') }}">
                                 <i class="fa fas fa-caret-right"></i> 
@@ -48,9 +57,10 @@
                                 List PO
                             </a>
                         </li>
-                        @endcan                        
                     </ul>
                 </li>
+                @endcan 
+                @can('purchase_order_approval_access')
                 <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-file"></i>
                         <span class="hide-menu"> Approval PO </span>
@@ -77,6 +87,7 @@
                         </li>
                     </ul>
                 </li>
+                @endcan
                 @can('purchase_order_access')
                 <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-truck"></i>
@@ -92,6 +103,7 @@
                     </ul>
                 </li>
                 @endcan
+                @can('billing_access')
                 <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-clipboard"></i>
                         <span class="hide-menu"> {{ 'Billing' }} </span>
@@ -105,6 +117,7 @@
                         </li>
                     </ul>
                 </li>
+                @endcan
                 {{-- start master menu --}}
                 @can('master_access')
                 <li class=""> 
@@ -285,12 +298,12 @@
     </div>
     <!-- End Sidebar scroll-->
     <!-- Bottom points-->
-    <div class="sidebar-footer">
-        <a class="dropdown-item" href="{{ route('logout') }}"
+    {{-- <div class="sidebar-footer"> --}}
+        {{-- <a class="dropdown-item" href="{{ route('logout') }}"
             onclick="event.preventDefault();
             document.getElementById('logout-form').submit();">
             <i class="mdi mdi-power"></i>
-        </a>
+        </a> --}}
 
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
             @csrf

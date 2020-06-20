@@ -132,35 +132,6 @@
                     <!-- ============================================================== -->
                     <ul class="navbar-nav my-lg-0">
                         <!-- ============================================================== -->
-                        <!-- Messages -->
-                        <!-- ============================================================== -->
-                        {{-- <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="" id="2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="mdi mdi-email"></i>
-                                <div class="notify"> <span class="heartbit"></span> <span class="point"></span> </div>
-                            </a>
-                            <div class="dropdown-menu mailbox dropdown-menu-right scale-up" aria-labelledby="2">
-                                <ul>
-                                    <li>
-                                        <div class="drop-title">You have 4 new messages</div>
-                                    </li>
-                                    <li>
-                                        <div class="message-center">
-                                            <!-- Message -->
-                                            <a href="#">
-                                                <div class="user-img"> <img src="../assets/images/users/1.jpg" alt="user" class="img-circle"> <span class="profile-status online pull-right"></span> </div>
-                                                <div class="mail-contnet">
-                                                    <h5>Pavan kumar</h5> <span class="mail-desc">Just see the my admin!</span> <span class="time">9:30 AM</span> </div>
-                                            </a>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <a class="nav-link text-center" href="javascript:void(0);"> <strong>See all e-Mails</strong> <i class="fa fa-angle-right"></i> </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li> --}}
-                        <!-- ============================================================== -->
-                        <!-- End Messages -->
                         <!-- ============================================================== -->
                         <!-- ============================================================== -->
                         <!-- Profile -->
@@ -172,37 +143,13 @@
                             </a>
                             <div class="dropdown-menu dropdown-menu-right scale-up">
                                 <ul class="dropdown-user">
-                                    <li>
-                                        <div class="dw-user-box">
-                                            {{-- <div class="u-img"><img src="{{ asset('mages/users/1.jpg') }}" alt="user"></div> --}}
-                                            <div class="u-text">
-                                            <h4>{{ Auth::user()->nik }}</h4>
-                                        </div>
-                                    </li>
                                     <li role="separator" class="divider"></li>
-                                    <li><a href="#"><i class="ti-user"></i> My Profile</a></li>
-                                    <li><a href="#"><i class="fa fa-power-off"></i> Logout</a></li>
+                                    <li><a href="{{ route('logout') }}"
+                                        onclick="event.preventDefault();
+                                        document.getElementById('logout-form').submit();"><i class="fa fa-power-off"></i> Logout</a></li>
                                 </ul>
                             </div>
                         </li>
-                        <!-- ============================================================== -->
-                        <!-- Language -->
-                        <!-- ============================================================== -->
-                        {{-- <li class="nav-item dropdown">
-                            @if(count(config('panel.available_languages', [])) > 1)
-                                <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
-                                    {{ strtoupper(app()->getLocale()) }} --}}
-                                    {{-- <i class="flag-icon flag-icon-gb"></i> --}}
-                                {{-- </a>
-                                <div class="dropdown-menu dropdown-menu-right scale-up"> 
-                                    @foreach(config('panel.available_languages') as $langLocale => $langName)
-                                        <a class="dropdown-item" href="{{ url()->current() }}?change_language={{ $langLocale }}">
-                                                {{ strtoupper($langLocale) }} ({{ $langName }})
-                                        </a> 
-                                    @endforeach
-                                </div>
-                            @endif
-                        </li> --}}
                     </ul>
                 </div>
             </nav>

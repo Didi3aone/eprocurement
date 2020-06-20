@@ -67,6 +67,21 @@ class PurchaseRequestController extends Controller
         return view('admin.purchase-request.index', compact('materials'));
     }
 
+    /**
+     * Display a listing of the resource.
+     * approval pr project
+     * @return \Illuminate\Http\Response
+     */
+    public function approvalProject()
+    {
+        $prProject = [];
+        return view('admin.purchase-request.approval-project', compact('prProject'));
+    }
+
+    /**
+     * resource for create po
+     * @return array
+     */
     protected function createPrPo ($ids, $quantities = null)
     {
         $max = PurchaseRequest::select(\DB::raw('count(id) as id'))->first()->id;
@@ -103,6 +118,11 @@ class PurchaseRequestController extends Controller
         ];
     }
 
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function online (Request $request, $ids, $quantities)
     {
         $ids = base64_decode($ids);
@@ -121,6 +141,11 @@ class PurchaseRequestController extends Controller
         return view('admin.purchase-request.online', compact('data', 'po_no', 'vendor', 'uri'));
     }
 
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function repeat (Request $request, $ids, $quantities)
     {
         $ids = base64_decode($ids);
@@ -142,6 +167,11 @@ class PurchaseRequestController extends Controller
         return view('admin.purchase-request.repeat', compact('data', 'docTypes', 'po_no', 'vendor', 'uri','top'));
     }
 
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function direct (Request $request, $ids, $quantities)
     {
         $ids = base64_decode($ids);
@@ -160,21 +190,5 @@ class PurchaseRequestController extends Controller
         ];
         
         return view('admin.purchase-request.direct', compact('data', 'docTypes', 'po_no', 'vendor', 'uri'));
-    }
-
- 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function showDetail($id)
-    {
-        $prDetail = PurchaseRequestsDetail::where('request_id', $id)->get();
-        $pr       = PurchaseRequest::find($id);
-        $papproval = PurchaseRequestsApproval::where('purchase_request_id',$id)->orderBy('approval_position','asc')->get();
-
-        return view('admin.purchase-request.pr.show-detail', compact('pr','prDetail','papproval'));
     }
 }

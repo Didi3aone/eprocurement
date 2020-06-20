@@ -11,11 +11,11 @@
                     {{-- </h3> --}}
                     <div class="form-group ">
                         <div class="col-xs-12">
-                            <input class="form-control {{ $errors->has('nik') ? ' is-invalid' : '' }}" value="{{ old('nik', null) }}" name="nik" type="text" required="" placeholder="NIK"> 
+                            <input class="form-control {{ $errors->has('user_id') ? ' is-invalid' : '' }}" value="{{ old('user_id', null) }}" name="user_id" type="text" required="" placeholder="USER ID"> 
                         </div>
-                        @if($errors->has('nik'))
+                        @if($errors->has('user_id'))
                             <div class="invalid-feedback">
-                                {{ $errors->first('nik') }}
+                                {{ $errors->first('user_id') }}
                             </div>
                         @endif
                     </div>
@@ -29,24 +29,24 @@
                             @endif
                         </div>
                     </div>
-                    {{-- <div class="form-group">
+                    <div class="form-group">
                         <div class="col-md-12">
                             <div class="checkbox checkbox-primary pull-left p-t-0">
                                 <input id="checkbox-signup" type="checkbox">
                                 <label for="checkbox-signup"> Remember me </label>
                             </div> 
                         </div>
-                    </div> --}}
+                    </div>
                     <div class="form-group text-center m-t-20">
                         <div class="col-xs-12">
                             <button class="btn btn-success btn-lg btn-block text-uppercase waves-effect waves-light" type="submit">Log In</button>
                         </div>
                     </div>
-                    <div class="form-group m-b-0">
+                    {{-- <div class="form-group m-b-0">
                         <div class="col-sm-12 text-center">
                             <p>Don't have an account? <a href="{{ route('register') }}" class="text-info m-l-5"><b>Sign Up</b></a></p>
                         </div>
-                    </div>
+                    </div> --}}
                 </form>
             </div>
         </div>
