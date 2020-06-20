@@ -174,7 +174,8 @@ class QuotationController extends Controller
                 'profit_center_code'        => $request->get('profit_center_code')[$i],
                 'storage_location'          => $request->get('storage_location')[$i],
                 'material_group'            => $request->get('material_group')[$i],
-                'preq_item'                 => $request->get('preq_item')[$i]
+                'preq_item'                 => $request->get('preq_item')[$i],
+                'PR_NO'                     => $request->get('PR_NO')[$i]
             ];
 
             array_push($details, $data);
@@ -222,6 +223,7 @@ class QuotationController extends Controller
                 $quotationDetail->storage_location          = $detail['storage_location'];
                 $quotationDetail->material_group            = $detail['material_group'];
                 $quotationDetail->preq_item                 = $detail['preq_item'];
+                $quotationDetail->PR_NO                     = $detail['PR_NO'];
                 $quotationDetail->vendor_id                 = $request->vendor_id;
 
                 $quotationDetail->save();

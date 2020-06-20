@@ -160,6 +160,7 @@
                                             <input type="hidden" class="form-control" name="storage_location[]" readonly value="{{ $value->storage_location }}">
                                             <input type="hidden" class="form-control" name="material_group[]" readonly value="{{ $value->material_group }}">
                                             <input type="hidden" class="form-control" name="preq_item[]" readonly value="{{ $value->preq_item }}">
+                                            <input type="hidden" class="form-control" name="PR_NO[]" readonly value="{{ $value->PR_NO }}">
                                             <td><input type="text" class="form-control material_id" name="material_id[]"  id="material_id" readonly value="{{ $value->material_id }}"></td>
                                             <td><input type="text" class="form-control" name="description[]" readonly value="{{ $value->description }}"></td>
                                             <td><input type="text" class="form-control" name="unit[]" readonly value="{{ $value->unit }}"></td>
