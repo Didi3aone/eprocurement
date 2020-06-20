@@ -33,7 +33,7 @@ class MappingController extends Controller
     {
         $model = UserMap::create([
             'user_id' => $request->get('user_id'),
-            'purchasing_group_code' => implode(',',$request->get('plant')),
+            'purchasing_group_code' => implode(',',$request->get('purchasing_group_code')),
         ]);
 
         return redirect()->route('admin.mapping.index')->with('success', 'User map has been inserted successfully');

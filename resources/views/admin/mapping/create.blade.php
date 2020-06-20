@@ -29,7 +29,11 @@
                         @endif
                     </div>
                     <div class="form-group">
-                        <label class="required" for="plant">{{ trans('cruds.user-mapping.fields.plant') }}</label>
+                        <label class="required" for="plant">Purchasing Group</label>
+                        <div style="padding-bottom: 4px">
+                            <span class="btn btn-info btn-xs select-all" style="border-radius: 0">{{ trans('global.select_all') }}</span>
+                            <span class="btn btn-info btn-xs deselect-all" style="border-radius: 0">{{ trans('global.deselect_all') }}</span>
+                        </div>
                         <select class="form-control select2" name="purchasing_group_code[]" multiple id="purchasing_group_code">
                             @foreach ($prg as $prgs)
                                 <option value="{{ $prgs->code }}">{{ $prgs->code }} - {{ $prgs->description }}</option>

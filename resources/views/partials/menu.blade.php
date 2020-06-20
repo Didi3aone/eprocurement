@@ -78,17 +78,16 @@
                                 PO Repeat
                             </a>
                         </li>
-                        <li>
+                        {{-- <li>
                             <a href="{{ route('admin.acp-bidding') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
                                 List ACP Bidding
                             </a>
-                        </li>
-                        </li>
+                        </li> --}}
                         <li>
                             <a href="{{ route('admin.acp-direct') }}">
                                 <i class="fa fas fa-caret-right"></i> 
-                                List ACP Direct Order
+                                ACP Direct Order
                             </a>
                         </li>
                     </ul>

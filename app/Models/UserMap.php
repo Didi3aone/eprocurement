@@ -12,8 +12,8 @@ class UserMap extends Model
 
     protected $fillable = [
         'id',
-        'nik',
-        'plant',
+        'user_id',
+        'purchasing_group_code',
         'created_at',
         'updated_at'
     ];
