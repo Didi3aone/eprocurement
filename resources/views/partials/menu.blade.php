@@ -45,16 +45,22 @@
                         <span class="hide-menu"> {{ trans('cruds.quotation.title') }} </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">
-                        <li>
+                        {{-- <li>
                             <a href="{{ route('admin.quotation.online') }}">
                                 <i class="fa fas fa-caret-right"></i> 
                                 List Bidding
                             </a>
-                        </li>
+                        </li> --}}
                         <li>
                             <a href="{{ route('admin.quotation.index') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
                                 List PO
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.quotation.direct') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> 
+                                List PO Direct
                             </a>
                         </li>
                     </ul>
@@ -234,7 +240,7 @@
                             <ul aria-expanded="false" class="collapse">
                                 <li>
                                     <a href="{{ route('admin.rfq.index') }}">
-                                        <i class="fa fa-cubes"></i> 
+                                        <i class="fa fas fa-caret-right"></i>
                                         List RFQ
                                     </a>
                                 </li>
@@ -268,20 +274,20 @@
                                 <li>
                                     @can('user_access')
                                     <a href="{{ route("admin.users.index") }}" class="{{ request()->is('admin/users') || request()->is('admin/users/*') ? 'active' : '' }}">
-                                        <i class="fa fa-user"></i> {{ trans('cruds.user.title') }}
+                                        <i class="fa fas fa-caret-right"></i> {{ trans('cruds.user.title') }}
                                     </a>
                                     <a href="{{ route("admin.mapping.index") }}" class="{{ request()->is('admin/mapping') || request()->is('admin/mapping/*') ? 'active' : '' }}">
-                                        <i class="fa fa-user"></i> {{ trans('cruds.user.mapping') }}
+                                        <i class="fa fas fa-caret-right"></i> {{ trans('cruds.user.mapping') }}
                                     </a>
                                     @endcan
                                     @can('role_access')
                                     <a href="{{ route("admin.roles.index") }}" class="{{ request()->is('admin/roles') || request()->is('admin/roles/*') ? 'active' : '' }}">
-                                        <i class="fa fa-briefcase"></i> {{ trans('cruds.role.title') }}
+                                        <i class="fa fas fa-caret-right"></i> {{ trans('cruds.role.title') }}
                                     </a>
                                     @endcan
                                     @can('permission_access')
                                     <a href="{{ route("admin.permissions.index") }}" class="{{ request()->is('admin/permissions') || request()->is('admin/permissions/*') ? 'active' : '' }}">
-                                        <i class="fa fa-unlock-alt"></i> {{ trans('cruds.permission.title') }}
+                                        <i class="fa fas fa-caret-right"></i> {{ trans('cruds.permission.title') }}
                                     </a>
                                     @endcan
                                 </li>

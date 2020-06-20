@@ -1,0 +1,16 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class RekapLeadtime extends Model
+{
+    public static function getLeadTime($material, $plant, $pg)
+    {
+        return RekapLeadtime::where('material_id', $material)
+            ->where('plant_code', $plant)
+            ->where('purchasing_group', $pg)
+            ->first();
+    }
+}

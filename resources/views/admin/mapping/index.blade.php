@@ -36,25 +36,15 @@
                             @foreach($model as $key => $row)
                                 <tr data-entry-id="{{ $row->id }}">
                                     <td>{{ $row->id ?? '' }}</td>
-                                    <td>{{ $row->nik ?? '' }}</td>
-                                    <td>{{ $row->plant ?? '' }}</td>
+                                    <td>{{ $row->user_id ?? '' }}</td>
+                                    <td>{{ $row->purchasing_group_code ?? '' }}</td>
                                     <td>
                                         @can('user_edit')
                                             <a class="btn btn-xs btn-info" href="{{ route('admin.mapping.edit', $row->id) }}">
                                                 {{ trans('global.edit') }}
                                             </a>
                                         @endcan
-
-                                        {{-- @can('user_delete')
-                                            <form action="{{ route('admin.mapping.destroy', $row->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
-                                                <input type="hidden" name="_method" value="DELETE">
-                                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
-                                            </form>
-                                        @endcan --}}
-
                                     </td>
-
                                 </tr>
                             @endforeach
                         </tbody>

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\Plant;
+use App\Models\PurchasingGroup;
 use App\Models\UserMap;
 use Gate;
 use Illuminate\Http\Request;
@@ -24,16 +24,16 @@ class MappingController extends Controller
     public function create ()
     {
         $users = User::all();
-        $plants = Plant::get();
+        $prg = PurchasingGroup::all();
 
-        return view('admin.mapping.create', compact('users', 'plants'));
+        return view('admin.mapping.create', compact('users', 'prg'));
     }
 
     public function store (Request $request)
     {
         $model = UserMap::create([
-            'nik' => $request->get('nik'),
-            'plant' => $request->get('plant'),
+            'user_id' => $request->get('user_id'),
+            'purchasing_group_code' => implode(',',$request->get('plant')),
         ]);
 
         return redirect()->route('admin.mapping.index')->with('success', 'User map has been inserted successfully');

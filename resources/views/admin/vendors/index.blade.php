@@ -9,22 +9,6 @@
         </ol>
     </div>
 </div>
-@if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-        {{ session('success') }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-@endif
-@if(session('error'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert" id="danger-alert">
-        {{ session('error') }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-@endif
 @can('vendor_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-6">
@@ -63,9 +47,6 @@
                                     {{ trans('cruds.vendors.fields.address') }}
                                 </th>
                                 <th>
-                                    {{ trans('cruds.vendors.fields.status') }}
-                                </th>
-                                <th>
                                     &nbsp;
                                 </th>
                             </tr>
@@ -78,7 +59,6 @@
                                     <td>{{ $vendor->email ?? '' }}</td>
                                     <td>{{ $vendor->npwp ?? '' }}</td>
                                     <td>{{ $vendor->address ?? '' }}</td>
-                                    <td>{{ $vendor->status == 1 ? 'Active' : 'Inactive' }}</td>
                                     <td>
                                         <button class="show_modal btn btn-xs btn-success" data-id="{{ $vendor->id }}" data-toggle="modal" data-target="#modal_password">
                                             <i class="fa fa-key"></i> {{ trans('global.set_password') }}
