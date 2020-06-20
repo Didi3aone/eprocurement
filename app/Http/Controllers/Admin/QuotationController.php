@@ -26,11 +26,11 @@ class QuotationController extends Controller
      */
     public function index()
     {
-        // abort_if(Gate::denies('quotation_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('quotation_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $quotation = Quotation::orderBy('id', 'desc')
-            ->groupBy('id', 'request_id')
-            ->get();
+                    ->groupBy('id', 'request_id')
+                    ->get();
 
         return view('admin.quotation.index', compact('quotation'));
     }
@@ -56,9 +56,9 @@ class QuotationController extends Controller
 
     public function repeat ()
     {
-        $quotation = Quotation::where('status', 0)
-            ->orderBy('id', 'desc')
-            ->get();
+        $quotation = Quotation::where('status', Quotation::Waiting)
+                ->orderBy('id', 'desc')
+                ->get();
 
         return view('admin.quotation.repeat', compact('quotation'));
     }
