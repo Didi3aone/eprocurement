@@ -48,15 +48,19 @@ class PurchaseRequestController extends Controller
             'purchase_requests.request_date',
             'purchase_requests.total'
         )
-            ->leftJoin('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
-            ->where('purchase_requests_details.is_validate', 1)
+            ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
+            ->where('purchase_requests_details.is_validate', PurchaseRequestsDetail::YesValidate)
             ->where('purchase_requests_details.qty', '>', 0)
             ->whereIn('purchase_requests_details.purchasing_group_code', $userMapping)
             ->where(function ($query) {
-                $query->where('purchase_requests_details.status_approval', 704)
-                    ->orWhere('purchase_requests_details.status_approval', 705);
+                $query->where('purchase_requests_details.status_approval', PurchaseRequestsDetail::Approved)
+                    ->orWhere('purchase_requests_details.status_approval', PurchaseRequestsDetail::ApprovedPurchasing);
             })
-            ->orderBy('purchase_requests.created_at', 'desc')
+            ->where(function ($query) {
+                $query->where('purchase_requests.status_approval', PurchaseRequest::ApprovedDept)
+                    ->orWhere('purchase_requests.status_approval', PurchaseRequest::ApprovedProc);
+            })
+            ->orderBy('purchase_requests.created_at', 'asc')
             ->get();
 
         foreach ($materials as $row) {
