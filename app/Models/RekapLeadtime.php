@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RekapLeadtime extends Model
 {
+    protected $connection = 'pgsql';
     public static function getLeadTime($material, $plant, $pg)
     {
         return RekapLeadtime::where('material_id', $material)

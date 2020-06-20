@@ -25,7 +25,7 @@
 			<h3 style="font-size: 14px; margin: 0;">Dear {{ $name }}
 			</h3>
 
-            @if($pr->status ==  \App\Models\RN\PurchaseRequest::Rejected)
+            @if($pr->status ==  \App\Models\PurchaseRequest::Rejected)
 			<p style="font-size: 13px;">
                 Berikut ini adalah informasi purchase requesition telah ditolak
 			</p>
@@ -67,7 +67,7 @@
 					</tr>
 					</thead>
 					<tbody>
-					@foreach($pr->getPrDetail as $key => $value)
+					@foreach($pr->purchaseDetail as $key => $value)
 					<tr>
 						<td style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
                             <div>
