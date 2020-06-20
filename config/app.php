@@ -176,6 +176,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        App\Providers\SapProvider::class,
+
         /*
          * Excel Import Export
          */
@@ -237,6 +239,7 @@ return [
         'Validator'    => Illuminate\Support\Facades\Validator::class,
         'View'         => Illuminate\Support\Facades\View::class,
         'Bugsnag'      => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
+        'sapHelp'      => App\Helpers\SapHelper::class,
 
         /*
          * Excel Import Export

@@ -1,5 +1,16 @@
 <?php
     use Carbon\Carbon;
+    use App\Models\employeeApps\User as u;
+
+    function getEmailLocal($nik)
+    {
+        return u::where('nik',$nik)->first();
+    }
+
+    function getProfileLocal($nik)
+    {
+        return u::where('nik',$nik)->first();
+    }
 
     function getDepartmentByranking()
     {
@@ -85,5 +96,11 @@
     {
         $data = \App\Models\PurchaseOrdersDetail::where('material_id', $material_id)->get();
         return $data;
+    }
+
+    //ref https://stackoverflow.com/questions/2476789/how-to-get-the-first-word-of-a-sentence-in-php
+    function split_name($name) {
+        $arr = explode(' ',trim($name));
+        return $arr[0];
     }
 ?>

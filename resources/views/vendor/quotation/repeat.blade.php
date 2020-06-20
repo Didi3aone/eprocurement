@@ -28,7 +28,6 @@
                                 <th>{{ trans('cruds.quotation.fields.id') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.qty') }}</th>
-                                <th>{{ trans('cruds.quotation.fields.approval_status') }}</th>
                                 <th>{{ trans('cruds.quotation.fields.total_price') }}</th>
                                 <th>&nbsp;</th>
                             </tr>
@@ -39,7 +38,6 @@
                                     <td>{{ $val->id ?? '' }}</td>
                                     <td>{{ $val->po_no ?? '' }}</td>
                                     <td>{{ number_format($val->total_qty, 0, '', '.') }}</td>
-                                    <td>{{ $val->approval_status == 2 ? 'Approved' : 'Unapproved' }}</td>
                                     <td>{{ number_format($val->total_price, 0, '', '.') }}</td>
                                     <td>
                                         @if ($val->approval_status == 1)

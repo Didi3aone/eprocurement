@@ -4,7 +4,7 @@
         <!-- Sidebar navigation-->
         <nav class="sidebar-nav">
             <ul id="sidebarnav">
-                <li class="nav-small-cap">PERSONAL</li>
+                {{-- <li class="nav-small-cap">PERSONAL</li> --}}
                 {{-- <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-gauge"></i><span class="hide-menu">Dashboard </span></a>
                     <ul aria-expanded="false" class="collapse">
                     </ul>
@@ -26,31 +26,47 @@
                             </a>
                         </li>
                         @endcan
+
+                        @can('purchase_request_approval_access')
+                        <li>
+                            <a href="{{ route('admin.purchase-request-project') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> 
+                                Approval PR Project
+                            </a>
+                        </li>
+                        @endcan
                         
                     </ul>
                 </li>
                 @endcan
+                @can('quotation_access')
                 <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-clipboard"></i>
                         <span class="hide-menu"> {{ trans('cruds.quotation.title') }} </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">
-                        @can('purchase_request_access')
-                        <li>
+                        {{-- <li>
                             <a href="{{ route('admin.quotation.online') }}">
                                 <i class="fa fas fa-caret-right"></i> 
                                 List Bidding
                             </a>
-                        </li>
+                        </li> --}}
                         <li>
                             <a href="{{ route('admin.quotation.index') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
                                 List PO
                             </a>
                         </li>
-                        @endcan                        
+                        <li>
+                            <a href="{{ route('admin.quotation.direct') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> 
+                                List PO Direct
+                            </a>
+                        </li>
                     </ul>
                 </li>
+                @endcan 
+                @can('purchase_order_approval_access')
                 <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-file"></i>
                         <span class="hide-menu"> Approval PO </span>
@@ -62,21 +78,21 @@
                                 PO Repeat
                             </a>
                         </li>
-                        <li>
+                        {{-- <li>
                             <a href="{{ route('admin.acp-bidding') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
                                 List ACP Bidding
                             </a>
-                        </li>
-                        </li>
+                        </li> --}}
                         <li>
                             <a href="{{ route('admin.acp-direct') }}">
                                 <i class="fa fas fa-caret-right"></i> 
-                                List ACP Direct Order
+                                ACP Direct Order
                             </a>
                         </li>
                     </ul>
                 </li>
+                @endcan
                 @can('purchase_order_access')
                 <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-truck"></i>
@@ -92,6 +108,7 @@
                     </ul>
                 </li>
                 @endcan
+                @can('billing_access')
                 <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-clipboard"></i>
                         <span class="hide-menu"> {{ 'Billing' }} </span>
@@ -105,6 +122,7 @@
                         </li>
                     </ul>
                 </li>
+                @endcan
                 {{-- start master menu --}}
                 @can('master_access')
                 <li class=""> 
@@ -221,7 +239,7 @@
                             <ul aria-expanded="false" class="collapse">
                                 <li>
                                     <a href="{{ route('admin.rfq.index') }}">
-                                        <i class="fa fa-cubes"></i> 
+                                        <i class="fa fas fa-caret-right"></i>
                                         List RFQ
                                     </a>
                                 </li>
@@ -255,20 +273,20 @@
                                 <li>
                                     @can('user_access')
                                     <a href="{{ route("admin.users.index") }}" class="{{ request()->is('admin/users') || request()->is('admin/users/*') ? 'active' : '' }}">
-                                        <i class="fa fa-user"></i> {{ trans('cruds.user.title') }}
+                                        <i class="fa fas fa-caret-right"></i> {{ trans('cruds.user.title') }}
                                     </a>
                                     <a href="{{ route("admin.mapping.index") }}" class="{{ request()->is('admin/mapping') || request()->is('admin/mapping/*') ? 'active' : '' }}">
-                                        <i class="fa fa-user"></i> {{ trans('cruds.user.mapping') }}
+                                        <i class="fa fas fa-caret-right"></i> {{ trans('cruds.user.mapping') }}
                                     </a>
                                     @endcan
                                     @can('role_access')
                                     <a href="{{ route("admin.roles.index") }}" class="{{ request()->is('admin/roles') || request()->is('admin/roles/*') ? 'active' : '' }}">
-                                        <i class="fa fa-briefcase"></i> {{ trans('cruds.role.title') }}
+                                        <i class="fa fas fa-caret-right"></i> {{ trans('cruds.role.title') }}
                                     </a>
                                     @endcan
                                     @can('permission_access')
                                     <a href="{{ route("admin.permissions.index") }}" class="{{ request()->is('admin/permissions') || request()->is('admin/permissions/*') ? 'active' : '' }}">
-                                        <i class="fa fa-unlock-alt"></i> {{ trans('cruds.permission.title') }}
+                                        <i class="fa fas fa-caret-right"></i> {{ trans('cruds.permission.title') }}
                                     </a>
                                     @endcan
                                 </li>
@@ -285,12 +303,12 @@
     </div>
     <!-- End Sidebar scroll-->
     <!-- Bottom points-->
-    <div class="sidebar-footer">
-        <a class="dropdown-item" href="{{ route('logout') }}"
+    {{-- <div class="sidebar-footer"> --}}
+        {{-- <a class="dropdown-item" href="{{ route('logout') }}"
             onclick="event.preventDefault();
             document.getElementById('logout-form').submit();">
             <i class="mdi mdi-power"></i>
-        </a>
+        </a> --}}
 
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
             @csrf

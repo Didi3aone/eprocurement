@@ -87,13 +87,13 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-lg-4 text-center">
+                    {{-- <div class="col-lg-4 text-center">
                         <a href="#" class="bidding-online btn btn-primary btn-lg">Online</a>
-                    </div>
-                    <div class="col-lg-4 text-center">
+                    </div> --}}
+                    <div class="col-lg-6 text-center">
                         <a href="#" class="bidding-repeat btn btn-info btn-lg">Repeat Order</a>
                     </div>
-                    <div class="col-lg-4 text-center">
+                    <div class="col-lg-6 text-center">
                         <a href="#" class="bidding-direct btn btn-success btn-lg">Direct Order</a>
                     </div>
                 </div>

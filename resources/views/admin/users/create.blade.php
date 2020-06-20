@@ -26,6 +26,24 @@
                         @endif
                     </div>
                     <div class="form-group">
+                        <label>NIK</label>
+                        <input class="form-control {{ $errors->has('nik') ? 'is-invalid' : '' }}" type="text" name="nik" id="nik" value="{{ old('nik', '') }}">
+                        @if($errors->has('nik'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('nik') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>USER ID</label>
+                        <input class="form-control {{ $errors->has('nik') ? 'is-invalid' : '' }}" type="text" name="user_id" id="user_id" value="{{ old('user_id', '') }}">
+                        @if($errors->has('user_id'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('user_id') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
                         <label class="required" for="email">{{ trans('cruds.user.fields.email') }}</label>
                         <input class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" type="text" name="email" id="email" value="{{ old('email') }}" required>
                         @if($errors->has('email'))

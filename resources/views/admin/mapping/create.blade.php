@@ -16,23 +16,27 @@
                 <form method="POST" action="{{ route("admin.mapping.store") }}" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
-                        <label class="required" for="nik">{{ trans('cruds.user-mapping.fields.nik') }}</label>
-                        <select class="form-control select2" name="nik" id="nik">
-                            @foreach ($users as $user)
-                                <option value="{{ $user->nik }}">{{ $user->nik }} - {{ $user->name }}</option>
+                        <label class="required" for="nik">User ID</label>
+                        <select class="form-control select2" name="user_id" id="user_id">
+                            @foreach ($users as $prgs)
+                                <option value="{{ $prgs->user_id }}">{{ $prgs->user_id }} - {{ $prgs->name }}</option>
                             @endforeach
                         </select>
-                        @if($errors->has('nik'))
+                        @if($errors->has('user_id'))
                             <div class="invalid-feedback">
-                                {{ $errors->first('nik') }}
+                                {{ $errors->first('user_id') }}
                             </div>
                         @endif
                     </div>
                     <div class="form-group">
-                        <label class="required" for="plant">{{ trans('cruds.user-mapping.fields.plant') }}</label>
-                        <select class="form-control select2" name="plant" id="plant">
-                            @foreach ($plants as $plant)
-                                <option value="{{ $plant->code }}">{{ $plant->code }} - {{ $plant->description }}</option>
+                        <label class="required" for="plant">Purchasing Group</label>
+                        <div style="padding-bottom: 4px">
+                            <span class="btn btn-info btn-xs select-all" style="border-radius: 0">{{ trans('global.select_all') }}</span>
+                            <span class="btn btn-info btn-xs deselect-all" style="border-radius: 0">{{ trans('global.deselect_all') }}</span>
+                        </div>
+                        <select class="form-control select2" name="purchasing_group_code[]" multiple id="purchasing_group_code">
+                            @foreach ($prg as $prgs)
+                                <option value="{{ $prgs->code }}">{{ $prgs->code }} - {{ $prgs->description }}</option>
                             @endforeach
                         </select>
                         @if($errors->has('plant'))

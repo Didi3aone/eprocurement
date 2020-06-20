@@ -26,11 +26,11 @@ class QuotationController extends Controller
      */
     public function index()
     {
-        // abort_if(Gate::denies('quotation_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('quotation_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $quotation = Quotation::orderBy('id', 'desc')
-            ->groupBy('id', 'request_id')
-            ->get();
+                    ->groupBy('id', 'request_id')
+                    ->get();
 
         return view('admin.quotation.index', compact('quotation'));
     }
@@ -56,9 +56,9 @@ class QuotationController extends Controller
 
     public function repeat ()
     {
-        $quotation = Quotation::where('status', 0)
-            ->orderBy('id', 'desc')
-            ->get();
+        $quotation = Quotation::where('status', Quotation::Waiting)
+                ->orderBy('id', 'desc')
+                ->get();
 
         return view('admin.quotation.repeat', compact('quotation'));
     }
@@ -174,7 +174,8 @@ class QuotationController extends Controller
                 'profit_center_code'        => $request->get('profit_center_code')[$i],
                 'storage_location'          => $request->get('storage_location')[$i],
                 'material_group'            => $request->get('material_group')[$i],
-                'preq_item'                 => $request->get('preq_item')[$i]
+                'preq_item'                 => $request->get('preq_item')[$i],
+                'PR_NO'                     => $request->get('PR_NO')[$i]
             ];
 
             array_push($details, $data);
@@ -222,6 +223,7 @@ class QuotationController extends Controller
                 $quotationDetail->storage_location          = $detail['storage_location'];
                 $quotationDetail->material_group            = $detail['material_group'];
                 $quotationDetail->preq_item                 = $detail['preq_item'];
+                $quotationDetail->PR_NO                     = $detail['PR_NO'];
                 $quotationDetail->vendor_id                 = $request->vendor_id;
 
                 $quotationDetail->save();

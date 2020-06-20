@@ -41,7 +41,8 @@ class User extends Authenticatable
         'remember_token',
         'email_verified_at',
         'department_id',
-        'company_id'
+        'company_id',
+        'user_id'
     ];
 
     public function getEmailVerifiedAtAttribute($value)
