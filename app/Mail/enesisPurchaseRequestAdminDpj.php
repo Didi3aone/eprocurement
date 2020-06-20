@@ -32,6 +32,6 @@ class enesisPurchaseRequestAdminDpj extends Mailable
      */
     public function build()
     {
-        return $this->subject('Purchase Request')->view('email.purchaseRequestAdminDpj');
+        return $this->subject('Purchase Request')->view('emails.purchaseRequestAdminDpj');
     }
 }
