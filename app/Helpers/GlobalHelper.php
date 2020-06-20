@@ -1,6 +1,12 @@
 <?php
     use Carbon\Carbon;
     use App\Models\employeeApps\User as u;
+    use App\Models\employeeApps\ConfigurationApp;
+
+    function configEmailNotification()
+    {
+        return ConfigurationApp::where('name','notification_email')->first();
+    }
 
     function getEmailLocal($nik)
     {

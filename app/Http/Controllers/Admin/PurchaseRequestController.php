@@ -220,7 +220,6 @@ class PurchaseRequestController extends Controller
      */
     public function approvalPrStaffPurchasing(Request $request)
     {
-        dd($request);
         DB::beginTransaction();
         try {
             $configEnv    = \configEmailNotification();
