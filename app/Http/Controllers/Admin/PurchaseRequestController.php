@@ -50,7 +50,7 @@ class PurchaseRequestController extends Controller
         )
             ->leftJoin('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
             ->leftJoin('master_materials', 'master_materials.code', '=', 'purchase_requests_details.material_id')
-            ->where('master_materials.plant_code', $userMapping->plant)
+            // ->where('master_materials.plant_code', $userMapping->plant)
             ->where('purchase_requests_details.is_validate', 1)
             ->where('purchase_requests_details.qty', '>', 0)
             ->where(function ($query) {
