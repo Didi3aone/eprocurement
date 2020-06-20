@@ -228,10 +228,10 @@ class PurchaseRequestController extends Controller
             $isSendSap = false;
             foreach( $request->idDetail as $key => $value ) {
 
-                $prDetail = PurchaseRequestDetail::find($value);
-                $status = PurchaseRequestDetail::Approved;
-                if( $prDetail->type_approval == PurchaseRequestDetail::ApprovalPurchasing ) {
-                    $status = PurchaseRequestDetail::ApprovedPurchasing;
+                $prDetail = PurchaseRequestsDetail::find($value);
+                $status = PurchaseRequestsDetail::Approved;
+                if( $prDetail->type_approval == PurchaseRequestsDetail::ApprovalPurchasing ) {
+                    $status = PurchaseRequestsDetail::ApprovedPurchasing;
                 }
 
                 $leadTime = \App\Models\RekapLeadtime::getLeadTime(
@@ -249,7 +249,7 @@ class PurchaseRequestController extends Controller
                 }
                 $prDetail->status_approval     = $status;
                 $assetNo = "";
-                if( $prDetail->is_assets == PurchaseRequestDetail::Assets ) {
+                if( $prDetail->is_assets == PurchaseRequestsDetail::Assets ) {
                     $assetNo = $prDetail->assets_no;
                 } 
 
@@ -264,8 +264,8 @@ class PurchaseRequestController extends Controller
                     $TRACKINGNO = $trackNo1.$trackNo2;
                 }
 
-                if( $prDetail->is_validate == PurchaseRequestDetail::YesValidate 
-                    && $prHeader->is_validate == PurchaseRequestDetail::YesValidate ) {
+                if( $prDetail->is_validate == PurchaseRequestsDetail::YesValidate 
+                    && $prHeader->is_validate == PurchaseRequestsDetail::YesValidate ) {
                     $isSendSap = true;
                     
                     //for sap

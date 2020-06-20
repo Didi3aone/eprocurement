@@ -3,12 +3,9 @@ namespace App\Helpers;
 
 use Illuminate\Support\Facades\DB;
 use SoapClient;
-use App\Models\RN\PurchaseRequest;
-use App\Models\RN\PurchaseRequestDetail;
-use App\Models\RN\RequestNote;
-use App\Models\RN\RequestNoteDetail;
-use App\Models\RN\LogGiTransaction;
-use App\Models\RN\Materials;
+use App\Models\PurchaseRequest;
+use App\Models\PurchaseRequestDetail;
+use App\Models\Materials;
 
 /**
  * Sap Helper
