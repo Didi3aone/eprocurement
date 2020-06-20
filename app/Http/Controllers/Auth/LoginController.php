@@ -27,6 +27,13 @@ class LoginController extends Controller
      */
     protected $redirectTo = '/home';
 
+     /**
+     * Login username to be used by the controller.
+     *
+     * @var string
+     */
+    protected $username;
+
     /**
      * Create a new controller instance.
      *
@@ -35,10 +42,35 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+        $this->username = $this->findUsername();
     }
 
+    /**
+     * Get the login username to be used by the controller.
+     *
+     * @return string
+     */
+    public function findUsername()
+    {
+        $login = request()->input('login');
+        
+        $fieldType ='user_id';
+        if( is_numeric($login) ){ 
+            $fieldType = 'nik' ; 
+        }
+ 
+        request()->merge([$fieldType => $login]);
+ 
+        return $fieldType;
+    }
+
+    /**
+     * Get username property.
+     *
+     * @return string
+     */
     public function username()
     {
-        return 'user_id';
+        return $this->username;
     }
 }

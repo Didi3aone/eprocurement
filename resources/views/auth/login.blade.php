@@ -11,11 +11,11 @@
                     {{-- </h3> --}}
                     <div class="form-group ">
                         <div class="col-xs-12">
-                            <input class="form-control {{ $errors->has('user_id') ? ' is-invalid' : '' }}" value="{{ old('user_id', null) }}" name="user_id" type="text" required="" placeholder="USER ID"> 
+                            <input class="form-control {{ $errors->has('login') ? ' is-invalid' : '' }}" value="{{ old('login', null) }}" name="login" type="text" required="" placeholder="USER ID OR EMPLOYEE ID"> 
                         </div>
-                        @if($errors->has('user_id'))
+                        @if($errors->has('login'))
                             <div class="invalid-feedback">
-                                {{ $errors->first('user_id') }}
+                                {{ $errors->first('login') }}
                             </div>
                         @endif
                     </div>
