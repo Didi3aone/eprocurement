@@ -201,19 +201,24 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::get('rfq-get-net-price','RfqController@getRfqNetPrice')->name('rfq-get-net-price');
     Route::resource('rfq', 'RfqController');
 
-    // billings 
+    // Billings 
     Route::get('billing','BillingController@index')->name('billing');
     Route::get('billing-show/{id}','BillingController@show')->name('billing-show');
     Route::put('billing-post-approved','BillingController@storeApproved')->name('billing-post-approved');
     Route::put('billing-post-rejected','BillingController@storeRejected')->name('billing-post-rejected');
     
-    //ACP 
+    // ACP 
     Route::get('acp-direct','AcpController@directAcp')->name('acp-direct');
     Route::get('acp-bidding','AcpController@biddingAcp')->name('acp-bidding');
     Route::get('show-acp-direct/{id}','AcpController@showDirect')->name('show-acp-direct');
     Route::get('show-acp-bidding/{id}','AcpController@showBidding')->name('show-acp-bidding');
     Route::post('post-acp-direct','AcpController@approvalDirectAcp')->name('post-acp-direct');
-    // soap
+
+    // Master ACP
+    Route::get('master-acp-material', 'MasterAcpController@getMaterial')->name('master-acp-material');
+    Route::resource('master-acp', 'MasterAcpController');
+
+    // SOAP
     // Route::get('soap', 'SoapController@show')->name('soap');
 });
 

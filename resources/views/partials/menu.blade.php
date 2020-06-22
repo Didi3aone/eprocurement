@@ -93,6 +93,20 @@
                     </ul>
                 </li>
                 @endcan
+                @can('master_acp')
+                <li class="">
+                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-file"></i>
+                        <span class="hide-menu"> Master ACP </span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse">
+                        <li>
+                            <a href="{{ route('admin.master-acp.index') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> List ACP
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                @endcan
                 @can('purchase_order_access')
                 <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-truck"></i>
@@ -117,7 +131,7 @@
                         <li>
                             <a href="{{ route('admin.billing') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
-                                List billing
+                                List Billing
                             </a>
                         </li>
                     </ul>

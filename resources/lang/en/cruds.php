@@ -746,8 +746,30 @@ return [
             'status' => 'Status',
             'status_active'    => 'Active',
             'status_inactive'    => 'Inactive',
-            'created_at' => 'Created at'
+            'created_at' => 'Created at',
         ]
+    ],
+    'master-acp'    => [
+        'title'          => 'Master ACP',
+        'title_singular' => 'Master ACP',
+        'alert_success_insert' => 'Master ACP successfully saved',
+        'alert_success_update' => 'Master ACP successfully updated',
+        'alert_success_delete' => 'Master ACP successfully deleted',
+        'alert_success'        => 'Master ACP successfully saved',
+        'alert_error_price'    => 'Vendor price must be lower than target price',
+        'invite_vendor' => 'Invite Vendor',
+        'add_material' => 'Add Material',
+        'fields'        => [
+            'id' => 'ID',
+            'acp_no' => 'ACP No',
+            'is_project' => 'Is Project',
+            'is_approval' => 'Is Approval',
+            'created_at' => 'Created at',
+            'created_by' => 'Created by',
+            'updated_at' => 'Updated at',
+            'updated_by' => 'Updated by',
+            'deleted_at' => 'Deleted at',
+        ],
     ],
     'quotation'    => [
         'title'          => 'Quotation',
