@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Gate, Artisan;
+use Gate, Artisan, Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Vendor\Quotation;
@@ -715,10 +715,10 @@ class QuotationController extends Controller
                     throw new Exception("Invalid Request");
             }
             \DB::commit();
-            return redirect()->route('admin.quotation.repeat')->with('status', trans('cruds.quotation.alert_success_quotation'));
+            return redirect()->route('admin.quotation.repeat')->with('status', 'Success processing');
         } catch (Exception $e) {
             \DB::rollBack();
-            return redirect()->route('admin.quotation.repeat')->with('status', trans('cruds.quotation.alert_error_insert'));
+            return redirect()->route('admin.quotation.repeat')->with('error', 'Somethig error proccessing :(');
         }
     }
 
