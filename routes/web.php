@@ -163,6 +163,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     
     // repeat
     Route::get('quotation/repeat', 'QuotationController@repeat')->name('quotation.repeat');
+    Route::get('quotation/repeat/approve/{ids}', 'QuotationController@repeat_approve')->name('quotation.repeat.approve');
     Route::get('quotation-show-repeat/{id}', 'QuotationController@showRepeat')->name('quotation-show-repeat');
     Route::post('quotation-preview-repeat', 'QuotationController@previewRepeat')->name('quotation-preview-repeat');
     Route::post('quotation-approve-repeat', 'QuotationController@approveRepeat')->name('quotation-approve-repeat');

@@ -21,12 +21,20 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <div class="row">
+                <a 
+                    class="open_modal_bidding btn btn-success" 
+                    id="open_modal"
+                    href="javascript:;"
+                >
+                    <i class="fa fa-check"></i> Approval PO
+                </a>
+                <div class="row" style="margin-bottom: 20px">
                     <div class="col-lg-12">
                         <div class="table-responsive m-t-40">
                             <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                 <thead>
                                     <tr>
+                                        <th>&nbsp;</th>
                                         <th>{{ trans('cruds.quotation.fields.id') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
                                         <th>Notes</th>
@@ -37,6 +45,12 @@
                                 <tbody>
                                     @foreach($quotation as $key => $val)
                                         <tr data-entry-id="{{ $val->id }}">
+                                            <td>
+                                                @if( $val->approval_status == 0)
+                                                <input type="checkbox" name="id[]" id="check_{{ $val->id }}" class="check_po" value="{{ $val->id }}" _valold="{{ $val->id }}">
+                                                <label for="check_{{ $val->id }}">&nbsp;</label>
+                                                @endif
+                                            </td>
                                             <td>{{ $val->id ?? '' }}</td>
                                             <td>{{ $val->po_no ?? '' }}</td>
                                             <td>{{ $val->notes ?? '' }}</td>
@@ -69,17 +83,65 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="modal_approval_po" tabindex="-1" role="dialog" aria-labelledby="modalCreatePO" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalImport">{{ 'COnfirm Approval' }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h4>Are you sure approval that's PO your selected?</h4>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="approval_po_repeat btn btn-primary">Yes</a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
 @parent
 <script>
-$('#datatables-run').DataTable({
-    dom: 'Bfrtip',
-    order: [[0, 'desc']],
-    buttons: [
-        'copy', 'csv', 'excel', 'pdf', 'print'
-    ]
-});
+    $('#datatables-run').DataTable({
+        dom: 'Bfrtip',
+        order: [[0, 'desc']],
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    });
+
+    $(document).on('click', '#open_modal', function (e) {
+        e.preventDefault()
+
+        const id = $(this).data('id')
+        const check_po = $('.check_po:checked')
+
+        let ids = []
+        
+        for (let i = 0; i < check_po.length; i++) {
+            let id = check_po[i].value
+            ids.push(id)
+        }
+
+        ids = btoa(ids)
+
+        $('.approval_po_repeat').attr('href', '#')
+
+        if (check_po.length > 0) {
+            $('#modal_approval_po').modal('show')
+            $('.approval_po_repeat').attr('href', '{{ url("admin/quotation/repeat/approve") }}/' + ids)
+        } else {
+            alert('Please check your PO!')
+            $('#modal_approval_po').modal('hide')
+            
+            return false
+        }
+    })
 </script>
 @endsection
