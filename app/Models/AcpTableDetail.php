@@ -9,6 +9,7 @@ class AcpTableDetail extends Model
     protected $connection = 'pgsql';
 
     public $table = 'master_acp_vendors';
+    public $timestamps = false;
 
     protected $fillable = [
         'id',
