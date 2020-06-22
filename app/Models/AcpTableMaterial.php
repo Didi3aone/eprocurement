@@ -9,7 +9,8 @@ class AcpTableMaterial extends Model
     protected $connection = 'pgsql';
 
     public $table = 'master_acp_materials';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'id',
         'master_acp_id',
