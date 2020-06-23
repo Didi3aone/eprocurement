@@ -670,7 +670,7 @@ class QuotationController extends Controller
         foreach ($quotation_detail as $det) {
             if (!empty($det->vendor_price)) {
                 $data_po_detail = [
-                    'purchase_order_id'         => $po->id,
+                    'purchase_order_id'         => $po_insert->id,
                     'description'               => $det->notes ?? '-',
                     'qty'                       => $det->qty,
                     'unit'                      => $det->unit,
