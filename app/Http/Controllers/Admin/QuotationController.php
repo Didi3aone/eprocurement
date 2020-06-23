@@ -68,7 +68,7 @@ class QuotationController extends Controller
         $quotation = Quotation::find($id);
         $quotation_detail = QuotationDetail::where('quotation_order_id', $id)->get();
         $vendor_id = @$quotation->vendor_id;
-        $vendor = Vendor::find($vendor_id);
+        // $vendor = Vendor::find($vendor_id);
 
         // soap call
         // Testing Alvin, start::
@@ -98,7 +98,7 @@ class QuotationController extends Controller
             'CREAT_DATE' => '',
             'CREATED_BY' => '',
             'ITEM_INTVL' => '',
-            'VENDOR' => $vendor ? sprintf('%010d', $vendor->code) : '0003000046',
+            'VENDOR' => '0003000046', // $vendor_id ? sprintf('%010d', $vendor_id) : '0003000046',
             'LANGU' => '',
             'LANGU_ISO' => '',
             'PMNTTRMS' => '',
@@ -113,7 +113,7 @@ class QuotationController extends Controller
             'CURRENCY_ISO' => '',
             'EXCH_RATE' => '',
             'EX_RATE_FX' => '',
-            'DOC_DATE' => '',//'2020-06-12',
+            'DOC_DATE' => '', //'2020-06-12',
             'VPER_START' => '',
             'VPER_END' => '',
             'WARRANTY' => '',
@@ -229,6 +229,8 @@ class QuotationController extends Controller
         $params[0]['POHEADERX'] = $POHEADERX;
         $count_ = count($quotation_detail);
         $is_array = ((int)$count_) > 1 ? true : false;
+        // temp
+        $pr_no = '1000004218';
         for ($i=0; $i < $count_; $i++) { 
             $po_index = sprintf('%05d', (10+$i));
             $POITEM = [
@@ -249,7 +251,7 @@ class QuotationController extends Controller
                 'MATL_GROUP' => '',
                 'INFO_REC' => '',
                 'VEND_MAT' => '',
-                'QUANTITY' => '',
+                'QUANTITY' => $quotation_detail[$i]->qty,
                 'PO_UNIT' => '',
                 'PO_UNIT_ISO' => '',
                 'ORDERPR_UN' => '',
@@ -330,7 +332,7 @@ class QuotationController extends Controller
                 'MINREMLIFE' => '',
                 'RFQ_NO' => '',
                 'RFQ_ITEM' => '',
-                'PREQ_NO' => $quotation_detail[$i]->PR_NO ?? 0, // '1000019608',
+                'PREQ_NO' => $pr_no, // $quotation_detail[$i]->PR_NO ?? 0, // '1000019608',
                 'PREQ_ITEM' => $po_index,
                 'REF_DOC' => '',
                 'REF_ITEM' => '',
@@ -439,7 +441,7 @@ class QuotationController extends Controller
                 'MATL_GROUP' => '',
                 'INFO_REC' => '',
                 'VEND_MAT' => '',
-                'QUANTITY' => '',
+                'QUANTITY' => 'X',
                 'PO_UNIT' => '',
                 'PO_UNIT_ISO' => '',
                 'ORDERPR_UN' => '',
