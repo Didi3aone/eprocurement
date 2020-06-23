@@ -229,10 +229,11 @@ class QuotationController extends Controller
         $params[0]['POHEADERX'] = $POHEADERX;
         $count_ = count($quotation_detail);
         $is_array = ((int)$count_) > 1 ? true : false;
-        // temp
-        $pr_no = '1000004218';
+        $pr_no = '1000004218'; // temp
         for ($i=0; $i < $count_; $i++) { 
-            $po_index = sprintf('%05d', (10+$i));
+            // $po_index = sprintf('%05d', (10+$i));
+            $indexes = $i+1;
+            $po_index = sprintf('%05d', (10*$indexes));
             $POITEM = [
                 'PO_ITEM' => $po_index, //LINE
                 'DELETE_IND' => '',
@@ -251,7 +252,7 @@ class QuotationController extends Controller
                 'MATL_GROUP' => '',
                 'INFO_REC' => '',
                 'VEND_MAT' => '',
-                'QUANTITY' => $quotation_detail[$i]->qty,
+                'QUANTITY' => '',
                 'PO_UNIT' => '',
                 'PO_UNIT_ISO' => '',
                 'ORDERPR_UN' => '',
@@ -441,7 +442,7 @@ class QuotationController extends Controller
                 'MATL_GROUP' => '',
                 'INFO_REC' => '',
                 'VEND_MAT' => '',
-                'QUANTITY' => 'X',
+                'QUANTITY' => '',
                 'PO_UNIT' => '',
                 'PO_UNIT_ISO' => '',
                 'ORDERPR_UN' => '',
@@ -614,8 +615,8 @@ class QuotationController extends Controller
                 $params[0]['POITEM']['item'][$i] = $POITEM;
                 $params[0]['POITEMX']['item'][$i] = $POITEMX;
             } else {
-                $params[0]['POITEM']['item'][$i] = $POITEM;
-                $params[0]['POITEMX']['item'][$i] = $POITEMX;
+                $params[0]['POITEM']['item'] = $POITEM;
+                $params[0]['POITEMX']['item'] = $POITEMX;
             }
         }
         $RETURN = [
