@@ -66,6 +66,7 @@ class PurchaseRequest extends Model
     public const Reguler            = 0;
     public const Urgent             = 1;
     public const Normal             = 0;
+    public const MaterialText       = 99;
     
     public function purchaseDetail()
     {

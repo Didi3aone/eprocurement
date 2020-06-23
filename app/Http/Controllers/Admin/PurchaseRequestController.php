@@ -50,8 +50,8 @@ class PurchaseRequestController extends Controller
         )
             ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
             ->where('purchase_requests_details.is_validate', PurchaseRequestsDetail::YesValidate)
-            ->where('purchase_requests_details.qty', '>', 0)
             ->whereIn('purchase_requests_details.purchasing_group_code', $userMapping)
+            ->where('purchase_requests_details.qty', '>', 0)
             ->where(function ($query) {
                 $query->where('purchase_requests_details.status_approval', PurchaseRequestsDetail::Approved)
                     ->orWhere('purchase_requests_details.status_approval', PurchaseRequestsDetail::ApprovedPurchasing);
@@ -83,6 +83,7 @@ class PurchaseRequestController extends Controller
         $prProject = PurchaseRequestsDetail::join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
                     ->where('purchase_requests.status_approval', PurchaseRequest::ApprovedDept)
                     ->whereIn('purchase_requests_details.purchasing_group_code',$userMapping)
+                    ->where('purchase_requests.doc_type','like','Z%')
                     ->select(
                         'purchase_requests.request_no',
                         'purchase_requests.request_date',

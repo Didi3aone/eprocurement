@@ -83,8 +83,14 @@ class SapHelper {
         
         $is_array = (count($data)>1)?true:false;
         for ($i=0; $i < count($data); $i++) {
+            if($data[$i]['CATEGORY'] == PurchaseRequest::STANDART
+            OR $data[$i]['CATEGORY'] == PurchaseRequest::MaterialText) {
+                $category = PurchaseRequest::STANDART;
+            }
+            
             //check category
-            if( $data[$i]['CATEGORY'] == PurchaseRequest::STANDART ) {
+            if( $data[$i]['CATEGORY'] == PurchaseRequest::STANDART 
+                OR $data[$i]['CATEGORY'] == PurchaseRequest::MaterialText) {
                 $REQUISITION_ITEMS_item = [
                     'PREQ_NO'           => '',
                     'PREQ_ITEM'         => $data[$i]['PREQ_ITEM'],
@@ -171,7 +177,7 @@ class SapHelper {
                     'BUDGET_PERIOD'     => '',
                     'MATERIAL_LONG'     => '',
                     'PUR_MAT_LONG'      => '',
-                    'ITEM_CAT'          => $data[$i]['CATEGORY']
+                    'ITEM_CAT'          => $category
                 ];
 
                 $REQUISITION_ITEM_TEXT_item = [
