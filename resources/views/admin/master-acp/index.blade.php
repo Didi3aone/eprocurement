@@ -56,7 +56,7 @@
                                     <td>{{ $approval }}</td>
                                     <td>{{ $acp->is_project == 1 ? 'Is Project' : 'Non Project' }}</td>
                                     <td>
-                                        @can('master_acp_show')
+                                        {{-- @can('master_acp_show')
                                             <a class="btn btn-xs btn-primary" href="{{ route('admin.master-acp.show', $acp->id) }}">
                                                 {{ trans('global.view') }}
                                             </a>
@@ -74,7 +74,7 @@
                                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                 <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
                                             </form>
-                                        @endcan
+                                        @endcan --}}
                                     </td>
                                 </tr>
                             @endforeach
