@@ -39,7 +39,7 @@
                                             <td>{{ $val->id ?? '' }}</td>
                                             <td>{{ $val->quotation['po_no'] ?? '' }}</td>
                                             <td>
-                                                @if($val->status == 0)
+                                                @if($val->approval_status == 0)
                                                     <span class="badge badge-primary">Waiting For Approval</span>
                                                 @else 
                                                     <span class="badge badge-primary">Approved</span>

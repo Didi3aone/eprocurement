@@ -38,8 +38,8 @@
                                     </tr>
                                     <tr>
                                         <th>{{ trans('cruds.quotation.fields.vendor') }}</th>
-                                        <td>{{ $model->getVendor->code." - ".$model->getVendor->name  }}</td>
-                                        <input type="hidden" name="vendor_code" value="{{ $model->getVendor->code }}">
+                                        <td>{{ $model->getVendor ? $model->getVendor->code." - ".$model->getVendor->name : ''  }}</td>
+                                        <input type="hidden" name="vendor_code" value="{{ $model->getVendor ? $model->getVendor->code : '' }}">
                                     </tr>
                                 </tbody>
                             </table>

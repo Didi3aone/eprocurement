@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Gate, Artisan;
+use Gate, Artisan, Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Vendor\Quotation;
@@ -35,15 +35,7 @@ class QuotationController extends Controller
         return view('admin.quotation.index', compact('quotation'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        return view('admin.quotation.create');
-    }
+    public function show(){}
 
     public function online ()
     {
@@ -63,12 +55,21 @@ class QuotationController extends Controller
         return view('admin.quotation.repeat', compact('quotation'));
     }
 
+    public function direct ()
+    {
+        $quotation = Quotation::where('status', 2)
+                ->orderBy('id', 'desc')
+                ->get();
+
+        return view('admin.quotation.index', compact('quotation'));
+    }
+
     private function _send_sap_po_repeat($id) 
     {
         $quotation = Quotation::find($id);
         $quotation_detail = QuotationDetail::where('quotation_order_id', $id)->get();
         $vendor_id = @$quotation->vendor_id;
-        $vendor = Vendor::find($vendor_id);
+        // $vendor = Vendor::find($vendor_id);
 
         // soap call
         // Testing Alvin, start::
@@ -98,7 +99,7 @@ class QuotationController extends Controller
             'CREAT_DATE' => '',
             'CREATED_BY' => '',
             'ITEM_INTVL' => '',
-            'VENDOR' => $vendor ? sprintf('%010d', $vendor->code) : '0003000046',
+            'VENDOR' => '0003000046', // $vendor_id ? sprintf('%010d', $vendor_id) : '0003000046',
             'LANGU' => '',
             'LANGU_ISO' => '',
             'PMNTTRMS' => '',
@@ -113,7 +114,7 @@ class QuotationController extends Controller
             'CURRENCY_ISO' => '',
             'EXCH_RATE' => '',
             'EX_RATE_FX' => '',
-            'DOC_DATE' => '',//'2020-06-12',
+            'DOC_DATE' => '', //'2020-06-12',
             'VPER_START' => '',
             'VPER_END' => '',
             'WARRANTY' => '',
@@ -229,8 +230,13 @@ class QuotationController extends Controller
         $params[0]['POHEADERX'] = $POHEADERX;
         $count_ = count($quotation_detail);
         $is_array = ((int)$count_) > 1 ? true : false;
+        $pr_no = '1000004218'; // temp
+        // $count_ = 1; // temp
+        // $is_array = false; // temp
         for ($i=0; $i < $count_; $i++) { 
-            $po_index = sprintf('%05d', (10+$i));
+            // $po_index = sprintf('%05d', (10+$i));
+            $indexes = $i+1;
+            $po_index = sprintf('%05d', (10*$indexes));
             $POITEM = [
                 'PO_ITEM' => $po_index, //LINE
                 'DELETE_IND' => '',
@@ -330,7 +336,7 @@ class QuotationController extends Controller
                 'MINREMLIFE' => '',
                 'RFQ_NO' => '',
                 'RFQ_ITEM' => '',
-                'PREQ_NO' => $quotation_detail[$i]->PR_NO ?? 0, // '1000019608',
+                'PREQ_NO' => $pr_no, // $quotation_detail[$i]->PR_NO ?? 0, // '1000019608',
                 'PREQ_ITEM' => $po_index,
                 'REF_DOC' => '',
                 'REF_ITEM' => '',
@@ -366,59 +372,59 @@ class QuotationController extends Controller
                 'RES_ITEM' => '',
                 'ORIG_ACCEPT' => '',
                 'ALLOC_TBL' => '',
-                'ALLOC_TBL_ITEM' => '',
-                'SRC_STOCK_TYPE' => '',
-                'REASON_REJ' => '',
-                'CRM_SALES_ORDER_NO' => '',
-                'CRM_SALES_ORDER_ITEM_NO' => '',
-                'CRM_REF_SALES_ORDER_NO' => '',
-                'CRM_REF_SO_ITEM_NO' => '',
-                'PRIO_URGENCY' => '',
-                'PRIO_REQUIREMENT' => '',
-                'REASON_CODE' => '',
-                'FUND_LONG' => '',
-                'LONG_ITEM_NUMBER' => '',
-                'EXTERNAL_SORT_NUMBER' => '',
-                'EXTERNAL_HIERARCHY_TYPE' => '',
-                'RETENTION_PERCENTAGE' => '',
-                'DOWNPAY_TYPE' => '',
-                'DOWNPAY_AMOUNT' => '',
-                'DOWNPAY_PERCENT' => '',
-                'DOWNPAY_DUEDATE' => '',
-                'EXT_RFX_NUMBER' => '',
-                'EXT_RFX_ITEM' => '',
-                'EXT_RFX_SYSTEM' => '',
-                'SRM_CONTRACT_ID' => '',
-                'SRM_CONTRACT_ITM' => '',
-                'BUDGET_PERIOD' => '',
-                'BLOCK_REASON_ID' => '',
-                'BLOCK_REASON_TEXT' => '',
-                'SPE_CRM_FKREL' => '',
-                'DATE_QTY_FIXED' => '',
-                'GI_BASED_GR' => '',
-                'SHIPTYPE' => '',
-                'HANDOVERLOC' => '',
-                'TC_AUT_DET' => '',
-                'MANUAL_TC_REASON' => '',
-                'FISCAL_INCENTIVE' => '',
-                'FISCAL_INCENTIVE_ID' => '',
-                'TAX_SUBJECT_ST' => '',
-                'REQ_SEGMENT' => '',
-                'STK_SEGMENT' => '',
-                'SF_TXJCD' => '',
-                'INCOTERMS2L' => '',
-                'INCOTERMS3L' => '',
-                'MATERIAL_LONG' => '',
-                'EMATERIAL_LONG' => '',
-                'SERVICEPERFORMER' => '',
-                'PRODUCTTYPE' => '',
-                'STARTDATE' => '',
-                'ENDDATE' => '',
-                'REQ_SEG_LONG' => '',
-                'STK_SEG_LONG' => '',
-                'EXPECTED_VALUE' => '',
-                'LIMIT_AMOUNT' => '',
-                'EXT_REF' => '',
+                // 'ALLOC_TBL_ITEM' => '',
+                // 'SRC_STOCK_TYPE' => '',
+                // 'REASON_REJ' => '',
+                // 'CRM_SALES_ORDER_NO' => '',
+                // 'CRM_SALES_ORDER_ITEM_NO' => '',
+                // 'CRM_REF_SALES_ORDER_NO' => '',
+                // 'CRM_REF_SO_ITEM_NO' => '',
+                // 'PRIO_URGENCY' => '',
+                // 'PRIO_REQUIREMENT' => '',
+                // 'REASON_CODE' => '',
+                // 'FUND_LONG' => '',
+                // 'LONG_ITEM_NUMBER' => '',
+                // 'EXTERNAL_SORT_NUMBER' => '',
+                // 'EXTERNAL_HIERARCHY_TYPE' => '',
+                // 'RETENTION_PERCENTAGE' => '',
+                // 'DOWNPAY_TYPE' => '',
+                // 'DOWNPAY_AMOUNT' => '',
+                // 'DOWNPAY_PERCENT' => '',
+                // 'DOWNPAY_DUEDATE' => '',
+                // 'EXT_RFX_NUMBER' => '',
+                // 'EXT_RFX_ITEM' => '',
+                // 'EXT_RFX_SYSTEM' => '',
+                // 'SRM_CONTRACT_ID' => '',
+                // 'SRM_CONTRACT_ITM' => '',
+                // 'BUDGET_PERIOD' => '',
+                // 'BLOCK_REASON_ID' => '',
+                // 'BLOCK_REASON_TEXT' => '',
+                // 'SPE_CRM_FKREL' => '',
+                // 'DATE_QTY_FIXED' => '',
+                // 'GI_BASED_GR' => '',
+                // 'SHIPTYPE' => '',
+                // 'HANDOVERLOC' => '',
+                // 'TC_AUT_DET' => '',
+                // 'MANUAL_TC_REASON' => '',
+                // 'FISCAL_INCENTIVE' => '',
+                // 'FISCAL_INCENTIVE_ID' => '',
+                // 'TAX_SUBJECT_ST' => '',
+                // 'REQ_SEGMENT' => '',
+                // 'STK_SEGMENT' => '',
+                // 'SF_TXJCD' => '',
+                // 'INCOTERMS2L' => '',
+                // 'INCOTERMS3L' => '',
+                // 'MATERIAL_LONG' => '',
+                // 'EMATERIAL_LONG' => '',
+                // 'SERVICEPERFORMER' => '',
+                // 'PRODUCTTYPE' => '',
+                // 'STARTDATE' => '',
+                // 'ENDDATE' => '',
+                // 'REQ_SEG_LONG' => '',
+                // 'STK_SEG_LONG' => '',
+                // 'EXPECTED_VALUE' => '',
+                // 'LIMIT_AMOUNT' => '',
+                // 'EXT_REF' => '',
             ];
             $POITEMX = [
                 'PO_ITEM' => $po_index,
@@ -591,29 +597,29 @@ class QuotationController extends Controller
                 'FISCAL_INCENTIVE' => '',
                 'FISCAL_INCENTIVE_ID' => '',
                 'TAX_SUBJECT_ST' => '',
-                'REQ_SEGMENT' => '',
-                'STK_SEGMENT' => '',
-                'SF_TXJCD' => '',
-                'INCOTERMS2L' => '',
-                'INCOTERMS3L' => '',
-                'MATERIAL_LONG' => '',
-                'EMATERIAL_LONG' => '',
-                'SERVICEPERFORMER' => '',
-                'PRODUCTTYPE' => '',
-                'STARTDATE' => '',
-                'ENDDATE' => '',
-                'REQ_SEG_LONG' => '',
-                'STK_SEG_LONG' => '',
-                'EXPECTED_VALUE' => '',
-                'LIMIT_AMOUNT' => '',
-                'EXT_REF' => '',
+                // 'REQ_SEGMENT' => '',
+                // 'STK_SEGMENT' => '',
+                // 'SF_TXJCD' => '',
+                // 'INCOTERMS2L' => '',
+                // 'INCOTERMS3L' => '',
+                // 'MATERIAL_LONG' => '',
+                // 'EMATERIAL_LONG' => '',
+                // 'SERVICEPERFORMER' => '',
+                // 'PRODUCTTYPE' => '',
+                // 'STARTDATE' => '',
+                // 'ENDDATE' => '',
+                // 'REQ_SEG_LONG' => '',
+                // 'STK_SEG_LONG' => '',
+                // 'EXPECTED_VALUE' => '',
+                // 'LIMIT_AMOUNT' => '',
+                // 'EXT_REF' => '',
             ];
             if ($is_array) {
                 $params[0]['POITEM']['item'][$i] = $POITEM;
                 $params[0]['POITEMX']['item'][$i] = $POITEMX;
             } else {
-                $params[0]['POITEM']['item'][$i] = $POITEM;
-                $params[0]['POITEMX']['item'][$i] = $POITEMX;
+                $params[0]['POITEM']['item'] = $POITEM;
+                $params[0]['POITEMX']['item'] = $POITEMX;
             }
         }
         $RETURN = [
@@ -668,7 +674,7 @@ class QuotationController extends Controller
         foreach ($quotation_detail as $det) {
             if (!empty($det->vendor_price)) {
                 $data_po_detail = [
-                    'purchase_order_id'         => $po->id,
+                    'purchase_order_id'         => $po_insert->id,
                     'description'               => $det->notes ?? '-',
                     'qty'                       => $det->qty,
                     'unit'                      => $det->unit,
@@ -715,10 +721,10 @@ class QuotationController extends Controller
                     throw new Exception("Invalid Request");
             }
             \DB::commit();
-            return redirect()->route('admin.quotation.repeat')->with('status', trans('cruds.quotation.alert_success_quotation'));
+            return redirect()->route('admin.quotation.repeat')->with('status', 'Success processing');
         } catch (Exception $e) {
             \DB::rollBack();
-            return redirect()->route('admin.quotation.repeat')->with('status', trans('cruds.quotation.alert_error_insert'));
+            return redirect()->route('admin.quotation.repeat')->with('error', 'Somethig error proccessing :(');
         }
     }
 
@@ -793,7 +799,6 @@ class QuotationController extends Controller
             return redirect()->route('admin.quotation.online')->with('error', trans('cruds.purchase-order.alert_error_insert'));
         }
     }
-
 
     public function saveRepeat (Request $request)
     {
@@ -902,6 +907,7 @@ class QuotationController extends Controller
         $qty = 0;
         $price = 0;
         $details = [];
+        // dd($request);
 
         for ($i = 0; $i < count($request->get('qty')); $i++) {
             $qy = str_replace('.', '', $request->get('qty')[$i]);
@@ -911,16 +917,32 @@ class QuotationController extends Controller
 
             // insert to pr history
             $data = [
-                'request_no'        => $request->get('rn_no')[$i],
-                'pr_id'             => $request->get('pr_no')[$i],
-                'material_id'       => $request->get('material_id')[$i],
-                'rn_no'             => $request->get('rn_no')[$i],
-                'unit'              => $request->get('unit')[$i],
-                'vendor_id'         => $request->get('vendor_id'),
-                'plant_code'        => $request->get('plant_code')[$i],
-                'price'             => $request->get('price')[$i],
-                'qty'               => $request->get('qty')[$i],
-                'qty_pr'            => $material->qty,
+                'request_no'                => $request->get('rn_no')[$i],
+                'pr_id'                     => $request->get('pr_no')[$i],
+                'rn_no'                     => $request->get('rn_no')[$i],
+                'material_id'               => $request->get('material_id')[$i],
+                'unit'                      => $request->get('unit')[$i],
+                'vendor_id'                 => $request->get('vendor_id'),
+                'plant_code'                => $request->get('plant_code')[$i],
+                'price'                     => $request->get('price')[$i],
+                'qty'                       => $request->get('qty')[$i],
+                'qty_pr'                    => $material->qty,
+                'is_assets'                 => $request->get('is_assets')[$i],
+                'assets_no'                 => $request->get('assets_no')[$i],
+                'text_id'                   => $request->get('text_id')[$i],
+                'text_form'                 => $request->get('text_form')[$i],
+                'text_line'                 => $request->get('text_line')[$i],
+                'delivery_date_category'    => $request->get('delivery_date_category')[$i],
+                'account_assignment'        => $request->get('account_assignment')[$i],
+                'purchasing_group_code'     => $request->get('purchasing_group_code')[$i],
+                'preq_name'                 => $request->get('preq_name')[$i],
+                'gl_acct_code'              => $request->get('gl_acct_code')[$i],
+                'cost_center_code'          => $request->get('cost_center_code')[$i],
+                'profit_center_code'        => $request->get('profit_center_code')[$i],
+                'storage_location'          => $request->get('storage_location')[$i],
+                'material_group'            => $request->get('material_group')[$i],
+                'preq_item'                 => $request->get('preq_item')[$i],
+                'PR_NO'                     => $request->get('PR_NO')[$i]
             ];
 
             array_push($details, $data);
@@ -935,11 +957,15 @@ class QuotationController extends Controller
 
         try {
             $quotation = new Quotation;
-            $quotation->po_no = $request->get('po_no');
-            $quotation->notes = $request->get('notes');
-            $quotation->doc_type = $request->get('doc_type');
+            $quotation->po_no       = $request->get('po_no');
+            $quotation->notes       = $request->get('notes');
+            $quotation->doc_type    = $request->get('doc_type');
             $quotation->upload_file = $request->get('upload_files');
-            $quotation->status = 2;
+            $quotation->status      = 2;
+            $quotation->currency     = $request->get('currency');
+            $quotation->payment_term = $request->get('payment_term');
+            $quotation->vendor_id    = $request->vendor_id;
+            $quotation->acp_id       = $request->acp_id;
             $quotation->save();
 
             $price = 0;
@@ -947,13 +973,30 @@ class QuotationController extends Controller
                 $price += $detail['price'];
 
                 $quotationDetail = new QuotationDetail;
-                $quotationDetail->quotation_order_id = $quotation->id;
-                $quotationDetail->qty = $detail['qty'];
-                $quotationDetail->unit = $detail['unit'];
-                $quotationDetail->material = $detail['material_id'];
-                $quotationDetail->plant_code = $detail['plant_code'];
-                $quotationDetail->vendor_price = $detail['price'];
-                $quotationDetail->vendor_id = $detail['vendor_id'];
+                $quotationDetail->quotation_order_id        = $quotation->id;
+                $quotationDetail->qty                       = $detail['qty'];
+                $quotationDetail->unit                      = $detail['unit'];
+                $quotationDetail->material                  = $detail['material_id'];
+                $quotationDetail->plant_code                = $detail['plant_code'];
+                $quotationDetail->vendor_price              = $detail['price'];
+                $quotationDetail->vendor_id                 = $detail['vendor_id'];
+                $quotationDetail->is_assets                 = $detail['is_assets'];
+                $quotationDetail->assets_no                 = $detail['assets_no'];
+                $quotationDetail->text_id                   = $detail['text_id'];
+                $quotationDetail->text_form                 = $detail['text_form'];
+                $quotationDetail->text_line                 = $detail['text_line'];
+                $quotationDetail->delivery_date_category    = $detail['delivery_date_category'];
+                $quotationDetail->account_assignment        = $detail['account_assignment'];
+                $quotationDetail->purchasing_group_code     = $detail['purchasing_group_code'];
+                $quotationDetail->preq_name                 = $detail['preq_name'];
+                $quotationDetail->gl_acct_code              = $detail['gl_acct_code'];
+                $quotationDetail->cost_center_code          = $detail['cost_center_code'];
+                $quotationDetail->profit_center_code        = $detail['profit_center_code'];
+                $quotationDetail->storage_location          = $detail['storage_location'];
+                $quotationDetail->material_group            = $detail['material_group'];
+                $quotationDetail->preq_item                 = $detail['preq_item'];
+                $quotationDetail->PR_NO                     = $detail['PR_NO'];
+                $quotationDetail->vendor_id                 = $request->vendor_id;
                 $quotationDetail->save();
             }
 
@@ -1062,135 +1105,6 @@ class QuotationController extends Controller
             $quotation[$id] = QuotationDetail::find($id);
 
         return view('admin.quotation.winner', compact('quotation'));
-    }
-
-    private function saveApprovals($quotation_id, $tingkat,$type)
-    {
-
-        if( $tingkat == 'STAFF' ) {
-            QuotationApproval::create([
-                'nik'                   => 190256,
-                'approval_position'     => 1,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 1,
-                'acp_type'              => $type
-            ]);
-
-            QuotationApproval::create([
-                'nik'                   => 190089,
-                'approval_position'     => 2,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type
-            ]);
-        } else if ($tingkat == 'CMO') {
-            QuotationApproval::create([
-                'nik'                   => 190256,
-                'approval_position'     => 1,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 1,
-                'acp_type'              => $type
-            ]);
-
-            QuotationApproval::create([
-                'nik'                   => 190089,
-                'approval_position'     => 2,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type
-            ]);
-
-            QuotationApproval::create([
-                'nik'                   => 180095,
-                'approval_position'     => 3,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type
-            ]);
-        } else if ($tingkat == 'CMO') {
-            QuotationApproval::create([
-                'nik'                   => 190256,
-                'approval_position'     => 1,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 1,
-                'acp_type'              => $type
-            ]);
-
-            QuotationApproval::create([
-                'nik'                   => 190089,
-                'approval_position'     => 2,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type
-            ]);
-            
-            QuotationApproval::create([
-                'nik'                   => 180095,
-                'approval_position'     => 3,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type
-            ]);
-            QuotationApproval::create([
-                'nik'                   => 180178,
-                'approval_position'     => 4,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type
-            ]);
-        } else if ($tingkat == 'COO') {
-            QuotationApproval::create([
-                'nik'                   => 190256,
-                'approval_position'     => 1,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 1,
-                'acp_type'              => $type
-            ]);
-
-            QuotationApproval::create([
-                'nik'                   => 190089,
-                'approval_position'     => 2,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type
-            ]);
-            
-            QuotationApproval::create([
-                'nik'                   => 180095,
-                'approval_position'     => 3,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type
-            ]);
-            QuotationApproval::create([
-                'nik'                   => 180178,
-                'approval_position'     => 4,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type
-            ]);
-            QuotationApproval::create([
-                'nik'                   => 180178,
-                'approval_position'     => 5,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type
-            ]);
-        }
     }
 
     public function toWinner (Request $request)
@@ -1320,125 +1234,6 @@ class QuotationController extends Controller
         return view('admin.quotation.edit-online', compact('quotation'));
     }
 
-    public function editRepeat (Request $request, $id)
-    {
-        $quotation = Quotation::find($id);
-
-        return view('admin.quotation.edit-repeat', compact('quotation'));
-    }
-
-    public function editDirect (Request $request, $id)
-    {
-        $quotation = Quotation::find($id);
-
-        return view('admin.quotation.edit-direct', compact('quotation'));
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        $quotation = Quotation::create($request->all());
-
-        return redirect()->route('admin.quotation.index')->with('status', trans('cruds.quotation.alert_success_insert'));
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $quotation = Quotation::findOrFail($id);
-        $detail = QuotationDetail::where('quotation_order_id', $id)->get();
-
-        return view('admin.quotation.show', compact('quotation', 'detail'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $quotation = Quotation::findOrFail($id);
-
-        return view('admin.quotation.edit', compact('quotation'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        $quotation = Quotation::find($id);
-        
-        if ($request->get('status') == 0) {
-            $quotation->qty = $request->get('qty');
-
-            $route = 'repeat';
-        } else if ($request->get('status') == 2) {
-            $quotation->notes = $request->get('notes');
-
-            $filename = '';
-            
-            if ($request->file('upload_file')) {
-                $path = 'quotation/';
-                $file = $request->file('upload_file');
-                
-                $filename = $file->getClientOriginalName();
-        
-                $file->move($path, $filename);
-        
-                $real_filename = public_path($path . $filename);
-            }
-            
-            $quotation->upload_file = $filename;
-
-            $route = 'direct';
-        } else {
-            $quotation->vendor_leadtime = $request->input('vendor_leadtime');
-            $quotation->vendor_price = $request->input('vendor_price');
-
-            $route = 'online';
-        }
-    
-        $quotation->save();
-        
-        return redirect()->route('admin.quotation.' . $route)->with('status', trans('cruds.quotation.alert_success_update'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function updateFromVendor(Request $request, $id)
-    {
-        $quotation = Quotation::find($id);
-        $quotation->notes = $request->input('notes');
-        $quotation->upload_file = $request->input('upload_file');
-        $quotation->vendor_leadtime = $request->input('vendor_leadtime');
-        $quotation->vendor_price = $request->input('vendor_price');
-        $quotation->save();
-        
-        return redirect()->route('admin.quotation.index')->with('status', trans('cruds.quotation.alert_success_update'));
-    }
-
     /**
      * Remove the specified resource from storage.
      *
@@ -1495,5 +1290,134 @@ class QuotationController extends Controller
         Artisan::call('import:quotation', ['filename' => $real_filename]);
 
         return redirect('admin/quotation')->with('success', 'Quotation has been successfully imported');
+    }
+
+    private function saveApprovals($quotation_id, $tingkat,$type)
+    {
+
+        if( $tingkat == 'STAFF' ) {
+            QuotationApproval::create([
+                'nik'                   => 190256,
+                'approval_position'     => 1,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 1,
+                'acp_type'              => $type
+            ]);
+
+            QuotationApproval::create([
+                'nik'                   => 190089,
+                'approval_position'     => 2,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 0,
+                'acp_type'              => $type
+            ]);
+        } else if ($tingkat == 'CMO') {
+            QuotationApproval::create([
+                'nik'                   => 190256,
+                'approval_position'     => 1,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 1,
+                'acp_type'              => $type
+            ]);
+
+            QuotationApproval::create([
+                'nik'                   => 190089,
+                'approval_position'     => 2,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 0,
+                'acp_type'              => $type
+            ]);
+
+            QuotationApproval::create([
+                'nik'                   => 180095,
+                'approval_position'     => 3,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 0,
+                'acp_type'              => $type
+            ]);
+        } else if ($tingkat == 'CFO') {
+            QuotationApproval::create([
+                'nik'                   => 190256,
+                'approval_position'     => 1,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 1,
+                'acp_type'              => $type
+            ]);
+
+            QuotationApproval::create([
+                'nik'                   => 190089,
+                'approval_position'     => 2,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 0,
+                'acp_type'              => $type
+            ]);
+            
+            QuotationApproval::create([
+                'nik'                   => 180095,
+                'approval_position'     => 3,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 0,
+                'acp_type'              => $type
+            ]);
+            QuotationApproval::create([
+                'nik'                   => 180178,
+                'approval_position'     => 4,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 0,
+                'acp_type'              => $type
+            ]);
+        } else if ($tingkat == 'COO') {
+            QuotationApproval::create([
+                'nik'                   => 190256,
+                'approval_position'     => 1,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 1,
+                'acp_type'              => $type
+            ]);
+
+            QuotationApproval::create([
+                'nik'                   => 190089,
+                'approval_position'     => 2,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 0,
+                'acp_type'              => $type
+            ]);
+            
+            QuotationApproval::create([
+                'nik'                   => 180095,
+                'approval_position'     => 3,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 0,
+                'acp_type'              => $type
+            ]);
+            QuotationApproval::create([
+                'nik'                   => 180178,
+                'approval_position'     => 4,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 0,
+                'acp_type'              => $type
+            ]);
+            QuotationApproval::create([
+                'nik'                   => 180178,
+                'approval_position'     => 5,
+                'status'                => QuotationApproval::waitingApproval,
+                'quotation_id'          => $quotation_id,
+                'flag'                  => 0,
+                'acp_type'              => $type
+            ]);
+        }
     }
 }

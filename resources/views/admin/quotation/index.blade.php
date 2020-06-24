@@ -23,9 +23,6 @@
                                         <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
                                         <th>PO Type</th>
                                         <th>Approval Status</th>
-                                        <th>
-                                            &nbsp;
-                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -47,7 +44,6 @@
                                                     <span class="badge badge-danger"> Vendor Rejected </span>
                                                 @endif
                                             </td>
-                                            <td></td>
                                         </tr>
                                     @endforeach
                                 </tbody>

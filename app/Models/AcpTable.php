@@ -29,6 +29,11 @@ class AcpTable extends Model
 
     public function detail ()
     {
-        return $this->hasMany(AcpDetail::class, 'master_acp_id');
+        return $this->hasMany(AcpTableDetail::class, 'master_acp_id');
+    }
+
+    public function material ()
+    {
+        return $this->hasMany(AcpTableMaterial::class, 'master_acp_id');
     }
 }

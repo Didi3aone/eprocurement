@@ -9,14 +9,6 @@
         </ol>
     </div>
 </div>
-@if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-        {{ session('success') }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-@endif
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -27,8 +19,7 @@
                             <tr>
                                 <th>{{ trans('cruds.purchase-order.fields.id') }}</th>
                                 <th>PO NO</th>
-                                <th>{{ trans('cruds.purchase-order.fields.po_date') }}</th>
-                                <th>{{ trans('cruds.purchase-order.fields.request_date') }}</th>
+                                <th>PO Date</th>
                                 <th>Vendor</th>
                                 <th>
                                     &nbsp;
@@ -41,7 +32,6 @@
                                     <td>{{ $q->id ?? '' }}</td>
                                     <td>{{ $q->po_no }}</td>
                                     <td>{{ $q->po_date }}</td>
-                                    <td>{{ $q->created_at ?? '' }}</td>
                                     <td>{{ $q->vendor['name'] ?? '' }}</td>
                                     <td>
                                         <a class="btn btn-xs btn-primary" href="{{ route('admin.purchase-order.show', $q->id) }}">

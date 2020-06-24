@@ -190,8 +190,16 @@ class RfqController extends Controller
 
     public function getRfq(Request $request)
     {
-        $data = MasterRfq::where('master_rfqs.vendor', $request->get('vendor_id'))
-                ->take(20)->skip(2)
+        dd($request->material_id);
+        $data = MasterRfq::join('master_acp_materials','master_acp_materials.master_acp_vendor_id','=','master_rfqs.vendor')
+                ->join('vendors','vendors.code','=','master_rfqs.vendor')
+                ->select(
+                    'vendors.name',
+                    'master_rfqs.purchasing_document',
+                )
+                ->where('material_id', $request->material_id)
+                ->take(20)
+                ->skip(2)
                 ->get();
 
         return response()->json($data, 200);
@@ -199,8 +207,9 @@ class RfqController extends Controller
 
     public function getRfqNetPrice(Request $request)
     {
+        // $getRfq = \App\Models\AcpTableDetail::where('vendor_code',)
         $data = MasterRfqDetail::where('purchasing_document', $request->purchasing_document)
-                ->where('plant', $request->plant)
+                // ->where('plant', $request->plant)
                 ->first();
 
         return response()->json($data, 200);
