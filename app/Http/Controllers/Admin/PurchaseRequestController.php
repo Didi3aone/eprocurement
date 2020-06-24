@@ -205,15 +205,16 @@ class PurchaseRequestController extends Controller
         $data = $return['data'];
         $po_no = $return['po_no'];
         $vendor = $return['vendor'];
+        $top = $return['top'];
 
-        $docTypes = DocumentType::get();
+        $docTypes = DocumentType::where('type','2')->get();
 
         $uri = [
             'ids' => base64_encode($ids),
             'quantities' => base64_encode($quantities)
         ];
         
-        return view('admin.purchase-request.direct', compact('data', 'docTypes', 'po_no', 'vendor', 'uri'));
+        return view('admin.purchase-request.direct', compact('data', 'docTypes', 'po_no', 'vendor', 'uri','top'));
     }
 
     /**

@@ -28,59 +28,93 @@
                                         <th>{{ trans('cruds.quotation.fields.doc_type') }}</th>
                                         <td>{{ $model->doc_type }}</td>
                                     </tr>
-                                    <tr>
-                                        <th>{{ trans('cruds.quotation.fields.vendor') }}</th>
-                                        <td>{{ isset($model->detail[0]) ? $model->detail[0]->vendor->code . ' - ' . $model->detail[0]->vendor->name : '' }}</td>
-                                    </tr>
                                 </tbody>
                             </table>
 
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
-                                        @if ($model->approval_status != 1)
+                                        <th>Vendor</th>
+                                        <th>Email</th>
+                                        <th>Address</th>
+                                        <th>Winner</th>
                                         <th>&nbsp;</th>
-                                        @endif
-                                        <th>Material Code</th>
-                                        <th>Qty</th>
-                                        <th>Unit</th>
-                                        <th>Price</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($model->detail as $det)
-                                        @if ($det->material)
-                                            <tr>
-                                                @if ($model->approval_status != 1)
-                                                <td>
-                                                    <input type="checkbox" name="id[]" id="check_{{ $det->id }}" value="{{ $det->id }}">
-                                                    <label for="check_{{ $det->id }}"></label>
-                                                </td>
-                                                @endif
-                                                <td>{{ $det->material }} - {{ $det->materialDetail->description }}</td>
-                                                <td>{{ number_format($det->qty, 0, '', '.') }}</td>
-                                                <td>{{ $det->unit }}</td>
-                                                <td>{{ number_format($det->vendor_price, 0, '', '.') }}</td>
-                                            </tr>
-                                        @endif
+                                    @foreach ($acp->detail as $rows)
+                                        @php
+                                            $winner = 'No';
+                                            if( $rows->vendor_code == $model->vendor_id ) {
+                                                $winner = 'Yes';
+                                            }
+                                        @endphp
+                                        <tr>
+                                            <td>{{ $rows->vendor_code ." - ". $rows->vendor['name'] }}</td>
+                                            <td>{{ $rows->vendor['email'] }}</td>
+                                            <td>{{ $rows->vendor['street'] }}</td>
+                                            <td>{{ $winner }}</td>
+                                            <td>
+                                                <a 
+                                                    class="open_modal_bidding btn btn-success" 
+                                                    id="open_modal" 
+                                                    data-toggle="modal" 
+                                                    data-target="#modal_create_po_{{ $rows->vendor_code }}" 
+                                                    href="javascript:;"
+                                                >
+                                                    <i class="fa fa-cubes"></i> 
+                                                    Show Detail
+                                                </a>
+                                                <div class="modal fade" id="modal_create_po_{{ $rows->vendor_code }}" tabindex="-1" role="dialog" aria-labelledby="modalCreatePO" aria-hidden="true">
+                                                    <div class="modal-dialog modal-lg" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="modalImport">{{ 'ACP VIEW' }}</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <table class="table table-striped">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Material ID</th>
+                                                                            <th>Descriptiom</th>
+                                                                            <th>Price</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @foreach (\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id) as $row)
+                                                                            <tr>
+                                                                                <td>{{ $row->material_id }}</td>
+                                                                                <td>{{ $row->description }}</td>
+                                                                                <td>{{ number_format($row->price,2) }}</td>
+                                                                            </tr>
+                                                                        @endforeach
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
-                    @if ($model->approval_status != 1)
                     <div class="row" style="margin-top: 20px">
                         <div class="col-lg-12">
                             <div class="form-actions">
-                                {{-- <input type="hidden" name="total" value="{{ $total }}"> --}}
                                 <button type="submit" class="btn btn-success click"> <i class="fa fa-check"></i> Approve</button>
-                                {{-- <button type="button" class="btn btn-inverse">Cancel</button> --}}
-                                <img id="image_loading" src="{{ asset('img/ajax-loader.gif') }}" alt="" style="display: none">
                             </div>
                         </div>
                     </div>
-                    @endif
                 </form>
             </div>
         </div>

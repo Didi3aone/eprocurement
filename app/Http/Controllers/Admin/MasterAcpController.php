@@ -35,12 +35,12 @@ class MasterAcpController extends Controller
     public function getMaterial (Request $request)
     {
         $model = MasterMaterial::where(function ($query) use ($request) {
-            $query->where('code', 'like', '%' . $request->query('term') . '%')
-                ->orWhere('description', 'like', '%' . $request->query('term') . '%');
-        })
-            ->orderBy('description', 'asc')
-            ->limit(50)
-            ->get();
+                $query->where('code', 'like', '%' . $request->query('term') . '%')
+                    ->orWhere('description', 'like', '%' . $request->query('term') . '%');
+                })
+                ->orderBy('description', 'asc')
+                ->limit(50)
+                ->get();
 
         $data = [];
         foreach ($model as $row) {
@@ -49,9 +49,6 @@ class MasterAcpController extends Controller
                 'text' => '
                     <div>
                         Code: <strong>' . $row->code . '</strong><br>
-                        Plant: ' . $row->plant_code . '<br>
-                        PG Code: ' . $row->purchasing_group_code . '<br>
-                        Storeloc: ' . $row->storage_location_code . '<br>
                         Desc: ' . $row->description . '
                     </div>
                 ',
@@ -73,7 +70,7 @@ class MasterAcpController extends Controller
             $acp->is_approval = $request->get('is_approval') ?? 0;
             $acp->created_by = \Auth::user()->name;
             $acp->updated_by = \Auth::user()->name;
-            $acp->deleted_by = \Auth::user()->name;
+            $acp->deleted_by = 'NULLS';
             $acp->save();
 
             $result = [];
@@ -131,7 +128,7 @@ class MasterAcpController extends Controller
 
             \DB::commit();
 
-            return redirect()->route('admin.master-acp.index')->with('success', trans('cruds.master-acp.alert_success_insert'));
+            return redirect()->route('admin.master-acp.index')->with('status', trans('cruds.master-acp.alert_success_insert'));
         } catch (Exception $e) {
             \DB::rollBack();
             dd($e);

@@ -17,6 +17,7 @@ class QuotationApproval extends Model
         'flag',
         'quotation_id',
         'approve_date',
+        'acp_type'
     ];
 
     public const waitingApproval = 0;

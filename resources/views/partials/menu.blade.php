@@ -69,15 +69,9 @@
                 @can('purchase_order_approval_access')
                 <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-file"></i>
-                        <span class="hide-menu"> Approval PO </span>
+                        <span class="hide-menu"> Approval ACP PO </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">
-                        <li>
-                            <a href="{{ route('admin.quotation.repeat') }}">
-                                <i class="fa fas fa-caret-right"></i> 
-                                PO Repeat
-                            </a>
-                        </li>
                         {{-- <li>
                             <a href="{{ route('admin.acp-bidding') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
@@ -92,6 +86,27 @@
                         </li>
                     </ul>
                 </li>
+                @endcan
+                @can('purchase_order_approval_access')
+                {{-- <li class=""> 
+                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-file"></i>
+                        <span class="hide-menu">  </span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse">
+                        <li>
+                            <a href="{{ route('admin.quotation.repeat') }}">
+                                <i class="fa fas fa-caret-right"></i> 
+                                PO Repeat
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.quotation.repeat') }}">
+                                <i class="fa fas fa-caret-right"></i> 
+                                PO Direct
+                            </a>
+                        </li>
+                    </ul>
+                </li> --}}
                 @endcan
                 @can('master_acp')
                 <li class="">

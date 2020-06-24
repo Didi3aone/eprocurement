@@ -170,4 +170,16 @@ class VendorController extends Controller
             'message' => $message,
         ]);
     }
+
+    public function getVendor(Request $request)
+    {
+        $vendor = Vendor::where('code', $request->code)->get();
+
+        $data = [];
+        foreach( $vendor as $row ) {
+            $data[$row->code] = $row->code." - ".$row->name;
+        }
+
+        return \response()->json($data, 200);
+    }
 }

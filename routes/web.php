@@ -26,6 +26,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::delete('vendors/destroy', 'VendorController@massDestroy')->name('vendors.massDestroy');
     Route::post('vendors/import', 'VendorController@import')->name('vendors.import');
     Route::post('vendors/set-password', 'VendorController@setPassword')->name('vendors.set-password');
+    Route::get('get-vendors','VendorController@getVendor')->name('get-vendors');
     Route::resource('vendors', 'VendorController');
 
     // GLs
@@ -199,6 +200,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::get('rfq-show/{code}', 'RfqController@show')->name('rfq-show');
     Route::get('rfq-add-detail/{code}', 'RfqController@addDetail')->name('rfq-add-detail');
     Route::get('rfq-get-by-vendor','RfqController@getRfq')->name('rfq-get-by-vendor');
+    Route::get('rfq-get','RfqController@getRfq')->name('rfq-get');
     Route::get('rfq-get-net-price','RfqController@getRfqNetPrice')->name('rfq-get-net-price');
     Route::resource('rfq', 'RfqController');
 

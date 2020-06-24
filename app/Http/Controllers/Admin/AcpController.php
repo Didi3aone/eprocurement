@@ -7,15 +7,18 @@ use Illuminate\Http\Request;
 use App\Models\Vendor\Quotation;
 use App\Models\Vendor\QuotationDetail;
 use App\Models\Vendor\QuotationApproval;
+use App\Models\AcpTable;
+use App\Models\AcpTableDetail;
+use App\Models\AcpTableMaterials;
 
 class AcpController extends Controller
 {
     public function directAcp()
     {
         $quotation = QuotationApproval::where('nik', \Auth::user()->nik)
-                ->where('flag', QuotationApproval::NotYetApproval)
-                ->where('acp_type', 'DIRECT')
-                ->get();
+                    ->where('flag', QuotationApproval::NotYetApproval)
+                    ->where('acp_type', 'DIRECT')
+                    ->get();
 
         return view('admin.acp.direct', compact('quotation'));
     }
@@ -33,8 +36,9 @@ class AcpController extends Controller
     public function showDirect (Request $request, $id)
     {
         $model = Quotation::find($id);
+        $acp   = AcpTable::find($model->acp_id);
 
-        return view('admin.acp.show-direct', compact('model'));
+        return view('admin.acp.show-direct', compact('model','acp'));
     }
 
     public function showBidding (Request $request, $id)
@@ -62,21 +66,26 @@ class AcpController extends Controller
             //check posisi approval
             if( (int) $posisi->approval_position == (int) $total ) {
                 $quotation->approval_status = Quotation::Approved;
-                $quotaion->update();
-
+                $quotation->update();
+                //current approval update
+                QuotationApproval::where('quotation_id',$request->quotation_id)->where('nik',\Auth::user()->nik)->update([
+                    'status'        => QuotationApproval::Approved,
+                    'flag'          => QuotationApproval::alreadyApproval,
+                    'approve_date'  => \Carbon\Carbon::now(),
+                ]);
                 //to SAP
             } else if( $posisi->approval_position < $total ) {
                 $posisi = $posisi->approval_position + 1;
 
                 //current approval update
-                QuotationApproval::where('quotation_id',$request->pr_id)->where('nik',Auth::user()->nik)->update([
+                QuotationApproval::where('quotation_id',$request->quotation_id)->where('nik',\Auth::user()->nik)->update([
                     'status'        => QuotationApproval::Approved,
                     'flag'          => QuotationApproval::alreadyApproval,
                     'approve_date'  => \Carbon\Carbon::now(),
                 ]);
 
                 //next approval 
-                QuotationApproval::where('quotation_id',$request->pr_id)->where('approval_position', $posisi)->update([
+                QuotationApproval::where('quotation_id',$request->quotation_id)->where('approval_position', $posisi)->update([
                     'status' => QuotationApproval::waitingApproval,
                     'flag'   => QuotationApproval::NotYetApproval,
                 ]);
@@ -95,6 +104,6 @@ class AcpController extends Controller
         }
 
         // Return response
-        return \redirect()->route('admin.acp.direct')->with('status','PO successfully approved');
+        return \redirect()->route('admin.acp-direct')->with('status','PO successfully approved');
     }
 }

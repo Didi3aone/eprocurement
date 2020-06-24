@@ -24,7 +24,7 @@
                 <form class="form-rn m-t-40" action="{{ route("admin.quotation-save-direct") }}" enctype="multipart/form-data" method="post">
                     @csrf
                     <div class="row">
-                        <div class="col-lg-4">
+                        <div class="col-lg-6">
                             <div class="form-group">
                                 <label>{{ trans('cruds.purchase-order.fields.po_no') }}</label>
                                 <input type="text" class="form-control form-control-line {{ $errors->has('po_no') ? 'is-invalid' : '' }}" name="po_no" value="{{ old('po_no', $po_no) }}" readonly> 
@@ -35,9 +35,7 @@
                                 @endif
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-4">
+                        <div class="col-lg-6">
                             <div class="form-group">
                                 <label>{{ trans('cruds.purchase-order.fields.doc_type') }}</label>
                                 <select class="form-control form-control-line select2 {{ $errors->has('doc_type') ? 'is-invalid' : '' }}" name="doc_type">
@@ -48,26 +46,40 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="form-group">
-                        <label for="">Vendor</label>
-                        <div class="row">
-                            <div class="col-lg-9">
-                                <select name="vendor_id" id="vendor_id" class="form-control select2">
-                                     <option>-- Select --</option>
-                                    @foreach ($vendor as $val)
-                                    <option 
-                                        value="{{ $val->code }}"
-                                        data-id="{{ $val->id }}"
-                                        data-name="{{ $val->name }}"
-                                        data-email="{{ $val->email }}"
-                                        data-address="{{ $val->address }}"
-                                        data-npwp="{{ $val->npwp }}"
-                                    >
-                                        {{ $val->code }} - {{ $val->name }}
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="">Payment Term</label>
+                                <select name="payment_term" id="payment_term" class="form-control select2" required>
+                                    <option>-- Select --</option>
+                                    @foreach ($top as $val)
+                                    <option value="{{ $val->no_of_days }}">
+                                        {{ $val->payment_terms." - ".$val->no_of_days }}
                                     </option>
                                     @endforeach
                                 </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="">Currency</label>
+                                <select name="currency" id="currency" class="form-control select2" required>
+                                    <option>-- Select --</option>
+                                    <option value="IDR">
+                                        IDR
+                                    </option>
+                                    <option value="USD">
+                                        USD
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Exchange Rate</label>
+                                <input type="text" class="form-control form-control-line exchange_rate" name="exchange_rate" value="{{ old('exchange_rate', '') }}" disabled> 
                             </div>
                         </div>
                     </div>
@@ -107,13 +119,18 @@
                                             <input type="hidden" class="form-control" name="material_group[]" readonly value="{{ $value->material_group }}">
                                             <input type="hidden" class="form-control" name="preq_item[]" readonly value="{{ $value->preq_item }}">
                                             <input type="hidden" class="form-control" name="id[]" readonly value="{{ $value->id }}">
-                                            <td><input type="text" class="form-control" name="material_id[]" readonly value="{{ $value->material_id }}"></td>
+                                            <input type="hidden" class="form-control" name="PR_NO[]" readonly value="{{ $value->PR_NO }}">
+                                            <td><input type="text" class="form-control material_id" name="material_id[]" readonly value="{{ $value->material_id }}"></td>
                                             <td><input type="text" class="form-control" name="description[]" readonly value="{{ $value->description }}"></td>
                                             <td><input type="text" class="form-control" name="unit[]" readonly value="{{ $value->unit }}"></td>
                                             <td><input type="text" class="form-control" name="qty[]" readonly value="{{ empty($value->qty) ? 0 : $value->qty }}"></td>
                                             <td>
-                                                <select name="rfq[]" id="rfq" class="form-control select2 rfq">
-                                                    <option></option>
+                                                <input type="hidden" class="form-control acp_id" name="acp_id" id="acp_id" value="0">
+                                                <select name="rfq[]" id="rfq" class="form-control select2 rfq" required>
+                                                    <option value="0"> Select </option>
+                                                    @foreach(\App\Models\Rfq::getRFQ($value->material_id) as $key => $valus)
+                                                    <option value="{{ $valus->purchasing_document }}" data-code="{{ $valus->code }}" data-acp="{{ $valus->acp_id }}">{{ $valus->purchasing_document." - ". $valus->name }}</option>
+                                                    @endforeach
                                                 </select>
                                             </td>
                                             <td><input type="text" class="form-control net_price" name="price[]" id="net_price" value="" readonly></td>
@@ -121,6 +138,15 @@
                                     @endforeach
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Vendor</label>
+                        <div class="row">
+                            <div class="col-lg-9">
+                                <select name="vendor_id" id="vendor_id" class="form-control select2" required>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
@@ -144,7 +170,6 @@
                     </div>
 
                     <div class="form-actions">
-                        {{-- <input type="hidden" name="total" value="{{ $total }}"> --}}
                         {{-- <input type="hidden" name="id" value="{{ $uri['ids'] }}"> --}}
                         <button type="submit" class="btn btn-success click" id="save"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
                         {{-- <button type="submit" class="btn btn-success click"> <i class="fa fa-tv"></i> {{ trans('global.preview') }}</button> --}}
@@ -162,6 +187,31 @@
 @parent
 <script>
     let index = 1
+    $("#currency").on('change',function(e) {
+        let id = $(this).val()
+        
+        if( id == 'USD' ) {
+            $(".exchange_rate").attr('disabled',false)
+        } else {
+            $(".exchange_rate").val(' ')
+            $(".exchange_rate").attr('disabled',true)
+        }
+    })
+
+    const loadChangeRate = function () {
+        $("#currency").on('change',function(e) {
+            let id = $(this).val()
+            
+            if( id == 'USD' ) {
+                $(".exchange_rate").attr('disabled',false)
+            } else {
+                $(".exchange_rate").val(' ')
+                $(".exchange_rate").attr('disabled',true)
+            }
+        }).trigger('change');
+    }
+
+    loadChangeRate()
 
     function formatDate(date) {
         var d = new Date(date),
@@ -182,36 +232,8 @@
     const loadRfq = function () {
         $("#vendor_id").change(function() {
             const vendorId = $(this).val()
-            getRq(vendorId)
+            //getRq(vendorId)
         }).trigger('change');
-    }
-
-    function getRq(vendorId)
-    {
-        $("#image_loading").show()
-
-        const url = '{{ route('admin.rfq-get-by-vendor') }}'
-        const row = $(this).closest('tr')
-
-        $rfq = $(".rfq");
-        $.ajax({
-            url: url,
-            data: {
-                vendor_id : vendorId
-            },
-            success: function (data) {
-                $("#image_loading").hide()
-                $rfq.empty()
-                $rfq.append('<option value="">-- Select --</option>')
-
-                for (var i = 0; i < data.length; i++) {
-                    $rfq.append('<option value=' + data[i].purchasing_document + '>'+ data[i].purchasing_document +' </option>');
-                }
-
-                $rfq.change()
-            }
-        });
-        $('.select2').select2()
     }
 
     $('.rfq').on('change', function (e) {
@@ -223,18 +245,45 @@
         const url = '{{ route('admin.rfq-get-net-price') }}'
         const materialId = row.find('.material_id')
         const plant_code = $("#plant_code").val()
+        const code = row.find('.rfq option:selected').data('code')
+        const acp_id = row.find('.rfq option:selected').data('acp')
+        row.find(".acp_id").val(acp_id)
 
-        $.getJSON(url,{'purchasing_document': purchasing_document,'plant' : plant_code }, function (items) {
+        getVendor(code)
+
+        $.getJSON(url,{'purchasing_document': purchasing_document }, function (items) {
             $("#image_loading").hide()
             if(items.purchasing_document) {
-                let nets = items.net_order_price ? items.net_order_price : 'Not found RFQ price'
-                net.val(nets)
+                let nets = items.net_order_price ? items.net_order_price : '0'
+                const rate = $(".exchange_rate").val()
+                let fixPrice = 0
+                if( $("#currency").val() == 'USD' ) {
+                    fixPrice = nets / rate
+                } else {
+                    fixPrice = nets
+                }
+                net.val(Math.round(fixPrice))
             } else {
-                net.val('Not found RFQ price')
+                net.val('0')
             }
         })
     })
 
-    loadRfq()
+    function getVendor(code)
+    {
+        const url = '{{ route('admin.get-vendors') }}'
+        const $vendor = $("#vendor_id");
+        $.getJSON(url, {'code' : code}, function (items) {
+            let newOptions = ''
+
+            for (var id in items) {
+                newOptions += '<option value="'+ id +'">'+ items[id] +'</option>'
+            }
+            $vendor.html(newOptions)
+            $('.select2').select2()
+        })
+    }
+
+    //loadRfq()//
 </script>
 @endsection
