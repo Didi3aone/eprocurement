@@ -56,19 +56,19 @@
                                     <td>{{ $approval }}</td>
                                     <td>{{ $acp->is_project == 1 ? 'Is Project' : 'Non Project' }}</td>
                                     <td>
-                                        {{-- @can('master_acp_show')
+                                        @can('master_acp_show')
                                             <a class="btn btn-xs btn-primary" href="{{ route('admin.master-acp.show', $acp->id) }}">
-                                                {{ trans('global.view') }}
+                                                <i class="fa fa-tv"></i> {{ trans('global.view') }}
                                             </a>
                                         @endcan
 
                                         @can('master_acp_edit')
                                             <a class="btn btn-xs btn-info" href="{{ route('admin.master-acp.edit', $acp->id) }}">
-                                                {{ trans('global.edit') }}
+                                                <i class="fa fa-edit"></i> {{ trans('global.edit') }}
                                             </a>
                                         @endcan
 
-                                        @can('master_acp_delete')
+                                        {{-- @can('master_acp_delete')
                                             <form action="{{ route('admin.master-acp.destroy', $acp->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                                 <input type="hidden" name="_method" value="DELETE">
                                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">

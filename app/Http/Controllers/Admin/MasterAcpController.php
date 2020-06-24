@@ -137,4 +137,26 @@ class MasterAcpController extends Controller
             dd($e);
         }
     }
+
+    public function edit ($id)
+    {
+        $model = AcpTable::find($id);
+        $vendor = Vendor::join('master_acp_vendors', 'master_acp_vendors.vendor_code', '=', 'vendors.code')
+            ->where('master_acp_vendors.master_acp_id', $id)
+            ->first();
+
+        $material = MasterMaterial::join('master_acp_materials', 'master_materials.code', '=', 'master_acp_materials.material_id')
+            ->where('master_acp_materials.master_acp_id', $id)
+            ->first();
+
+        $vendors = Vendor::orderBy('name')->get();
+        $materials = MasterMaterial::orderBy('description')->get();
+        
+        return view('admin.master-acp.edit', compact('model', 'vendor', 'material', 'vendors', 'materials'));
+    }
+
+    public function update (Request $request, $id)
+    {
+
+    }
 }

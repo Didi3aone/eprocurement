@@ -32,6 +32,31 @@
                         <input type="checkbox" name="is_approval" id="is_approval" value="">
                         <label for="is_approval">{{ trans('cruds.master-acp.fields.is_approval') }}</label>
                     </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.master-acp.fields.currency') }}</label>
+                        <select class="form-control form-control-line {{ $errors->has('currency') ? 'is-invalid' : '' }}" name="currency" required> 
+                            <option value="IDR" selected="selected">IDR - Indonesian Rupiah</option>
+                            <option value="USD">USD - American Dollar</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.master-acp.fields.start_date') }}</label>
+                        <input type="text" class="datetimepicker form-control form-control-line {{ $errors->has('start_date') ? 'is-invalid' : '' }}" name="start_date" value="" required> 
+                        @if($errors->has('start_date'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('start_date') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.master-acp.fields.end_date') }}</label>
+                        <input type="text" class="datetimepicker form-control form-control-line {{ $errors->has('end_date') ? 'is-invalid' : '' }}" name="end_date" value="" required> 
+                        @if($errors->has('end_date'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('end_date') }}
+                            </div>
+                        @endif
+                    </div>
                     <hr style="margin: 30px 0">
                     <div class="form-group">
                         <label for="">{{ trans('cruds.master-acp.invite_vendor') }}</label>
@@ -203,6 +228,13 @@
             allowClear: true
         })
     })
+
+    $(function() {
+        $('.datetimepicker').datetimepicker({
+            format: 'Y-m-d H:i',
+            // mask: true
+        }).trigger('change');
+    });
 
     $('.money').mask('#.##0', { reverse: true })
 </script>
