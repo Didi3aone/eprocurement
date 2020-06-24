@@ -88,9 +88,9 @@
                 </li>
                 @endcan
                 @can('purchase_order_approval_access')
-                {{-- <li class=""> 
+                <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-file"></i>
-                        <span class="hide-menu">  </span>
+                        <span class="hide-menu"> Approval PO </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">
                         <li>
@@ -106,7 +106,7 @@
                             </a>
                         </li>
                     </ul>
-                </li> --}}
+                </li>
                 @endcan
                 @can('master_acp')
                 <li class="">
