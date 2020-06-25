@@ -61,28 +61,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <label for="">Currency</label>
-                                <select name="currency" id="currency" class="form-control select2" required>
-                                    <option>-- Select --</option>
-                                    <option value="IDR">
-                                        IDR
-                                    </option>
-                                    <option value="USD">
-                                        USD
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <label>Exchange Rate</label>
-                                <input type="text" class="form-control form-control-line exchange_rate" name="exchange_rate" value="{{ old('exchange_rate', '') }}" disabled> 
-                            </div>
-                        </div>
-                    </div>
                     <div class="form-group">
                         <div class="table-responsive">
                             <table class="table table-striped">
@@ -255,14 +233,7 @@
             $("#image_loading").hide()
             if(items.purchasing_document) {
                 let nets = items.net_order_price ? items.net_order_price : '0'
-                const rate = $(".exchange_rate").val()
-                let fixPrice = 0
-                if( $("#currency").val() == 'USD' ) {
-                    fixPrice = nets / rate
-                } else {
-                    fixPrice = nets
-                }
-                net.val(Math.round(fixPrice))
+                net.val(Math.round(nets))
             } else {
                 net.val('0')
             }

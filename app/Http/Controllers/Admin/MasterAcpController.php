@@ -62,22 +62,30 @@ class MasterAcpController extends Controller
     public function store (Request $request)
     {
         \DB::beginTransaction();
-
         try {
             $acp = new AcpTable;
-            $acp->acp_no = $request->get('acp_no');
-            $acp->is_project = $request->get('is_project') ?? 0;
+            $acp->acp_no      = $request->get('acp_no');
+            $acp->is_project  = $request->get('is_project') ?? 0;
             $acp->is_approval = $request->get('is_approval') ?? 0;
-            $acp->created_by = \Auth::user()->name;
-            $acp->updated_by = \Auth::user()->name;
-            $acp->deleted_by = 'NULLS';
+            $acp->start_date  = $request->get('start_date');
+            $acp->end_date    = $request->get('end_date');
+            $acp->created_by  = \Auth::user()->name;
+            $acp->updated_by  = \Auth::user()->name;
+            $acp->deleted_by  = 'FALSE';
             $acp->save();
 
             $result = [];
             foreach ($request['vendor_id'] as $value) {
                 $vendor = new AcpTableDetail;
+
+                $isWinner = 0;
+                if( $request['winner_' . $value])  {
+                    $isWinner = 1;
+                }
+
                 $vendor->master_acp_id = $acp->id;
-                $vendor->vendor_code = $value;
+                $vendor->vendor_code   = $value;
+                $vendor->is_winner     = $isWinner;
                 $vendor->save();
 
                 if ($request['winner_' . $value]) {
@@ -92,6 +100,7 @@ class MasterAcpController extends Controller
                     $rfq->company_code = '1200';
                     $rfq->vendor = $value;
                     $rfq->language_key = 'EN';
+                    $rfq->acp_id = $acp->id ;
                     $rfq->save();                
                 }
 
@@ -100,10 +109,11 @@ class MasterAcpController extends Controller
                     if ($request['winner_' . $value])
                         $temp['winner'] = 1;
 
-                    $temp['purchasing_document'] = $rfq->purchasing_document;
+                    $temp['purchasing_document'] = $rfq->purchasing_document ?? 0;
                     $temp['vendor'] = $value;
                     $temp['material'] = $row;
                     $temp['price'] = $request['price_' . $value][$i];
+                    $temp['qty'] = $request['qty_' . $value][$i];
                     $result[] = $temp;
                 }
             }
@@ -114,6 +124,7 @@ class MasterAcpController extends Controller
                 $material->master_acp_vendor_id = $val['vendor'];
                 $material->material_id = $val['material'];
                 $material->price = $val['price'];
+                $material->qty = $val['qty'];
                 $material->save();
 
                 if ($val['winner'] == 1) {

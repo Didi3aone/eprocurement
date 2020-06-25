@@ -36,25 +36,18 @@
                             <tr>
                                 <th>{{ trans('cruds.master-acp.fields.id') }}</th>
                                 <th>{{ trans('cruds.master-acp.fields.acp_no') }}</th>
-                                <th>{{ trans('cruds.master-acp.fields.is_approval') }}</th>
-                                <th>{{ trans('cruds.master-acp.fields.is_project') }}</th>
+                                <th>Approval</th>
+                                <th>Project</th>
                                 <th>&nbsp;</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($model as $key => $acp)
                                 <tr data-entry-id="{{ $acp->id }}">
-                                    @php
-                                        $approval = 'Pending';
-                                        if ($acp->is_approval == 1)
-                                            $approval = 'Approved';
-                                        elseif ($acp->is_approval == 2)
-                                            $approval = 'Rejected';
-                                    @endphp
                                     <td>{{ $acp->id ?? '' }}</td>
                                     <td>{{ $acp->acp_no ?? '' }}</td>
-                                    <td>{{ $approval }}</td>
-                                    <td>{{ $acp->is_project == 1 ? 'Is Project' : 'Non Project' }}</td>
+                                    <td>{{ $acp->is_approval == 1 ? 'Yes' : 'No' }}</td>
+                                    <td>{{ $acp->is_project == 1 ? 'Yes' : 'No' }}</td>
                                     <td>
                                         @can('master_acp_show')
                                             <a class="btn btn-xs btn-primary" href="{{ route('admin.master-acp.show', $acp->id) }}">

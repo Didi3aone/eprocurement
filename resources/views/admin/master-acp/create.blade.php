@@ -24,19 +24,33 @@
                             </div>
                         @endif
                     </div>
+                    <label>Project</label>
                     <div class="form-group">
-                        <input type="checkbox" name="is_project" id="is_project" value="">
-                        <label for="is_project">{{ trans('cruds.master-acp.fields.is_project') }}</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input material-inputs" type="checkbox" id="inlineCheckbox11" name="is_project" value="1">
+                            <label class="form-check-label" for="inlineCheckbox11">Yes</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input material-inputs" type="checkbox" id="inlineCheckbox22" name="is_project" value="0">
+                            <label class="form-check-label" for="inlineCheckbox22">No</label>
+                        </div>
                     </div>
+                    <label>Approval</label>
                     <div class="form-group">
-                        <input type="checkbox" name="is_approval" id="is_approval" value="">
-                        <label for="is_approval">{{ trans('cruds.master-acp.fields.is_approval') }}</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input material-inputs" type="checkbox" id="inlineCheckbox1" name="is_approval" value="1">
+                            <label class="form-check-label" for="inlineCheckbox1">Yes</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input material-inputs" type="checkbox" id="inlineCheckbox2" name="is_approval" value="0">
+                            <label class="form-check-label" for="inlineCheckbox2">No</label>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.master-acp.fields.currency') }}</label>
                         <select class="form-control form-control-line {{ $errors->has('currency') ? 'is-invalid' : '' }}" name="currency" required> 
-                            <option value="IDR" selected="selected">IDR - Indonesian Rupiah</option>
-                            <option value="USD">USD - American Dollar</option>
+                            <option value="IDR" selected="selected">IDR</option>
+                            <option value="USD">USD</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -123,6 +137,9 @@
                 <td class="price">
                     <input type="text" name="price_${vendor}[]" class="money form-control"/>
                 </td>
+                <td class="qty">
+                    <input type="text" name="qty_${vendor}[]" class="form-control"/>
+                </td>
                 <td>
                     <button 
                         class="remove-material btn btn-xs btn-danger" 
@@ -153,7 +170,7 @@
                     <td>${email_vendor}</td>
                     <td class="text-right">
                         <input type="hidden" name="vendor_id[]" class="vendor_id" value="${input_vendor}">
-                        <input type="checkbox" name="winner_${input_vendor}" id="winner_${input_vendor}"/>
+                        <input type="checkbox" name="winner_${input_vendor}" id="winner_${input_vendor}" value="1"/>
                         <label for="winner_${input_vendor}">Winner</label>
                         <button class="add_material btn btn-success btn-xs" data-vendor="${input_vendor}">
                             <i class="fa fa-plus-square"></i> Add Material
@@ -173,6 +190,7 @@
                                 <tr>
                                     <th style="width: 50%">Material Code</th>
                                     <th style="width: 30%">Price</th>
+                                    <th style="width: 30%">Qty</th>
                                     <th class="text-right" style="width: 20%">&nbsp;</th>
                                 </tr>
                             </thead>
@@ -231,7 +249,7 @@
 
     $(function() {
         $('.datetimepicker').datetimepicker({
-            format: 'Y-m-d H:i',
+            format: 'Y-m-d',
             // mask: true
         }).trigger('change');
     });

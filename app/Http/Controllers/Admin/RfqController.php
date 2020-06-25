@@ -190,7 +190,7 @@ class RfqController extends Controller
 
     public function getRfq(Request $request)
     {
-        dd($request->material_id);
+        // dd($request->material_id);
         $data = MasterRfq::join('master_acp_materials','master_acp_materials.master_acp_vendor_id','=','master_rfqs.vendor')
                 ->join('vendors','vendors.code','=','master_rfqs.vendor')
                 ->select(

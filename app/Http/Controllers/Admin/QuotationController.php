@@ -957,11 +957,11 @@ class QuotationController extends Controller
 
         try {
             $quotation = new Quotation;
-            $quotation->po_no       = $request->get('po_no');
-            $quotation->notes       = $request->get('notes');
-            $quotation->doc_type    = $request->get('doc_type');
-            $quotation->upload_file = $request->get('upload_files');
-            $quotation->status      = 2;
+            $quotation->po_no        = $request->get('po_no');
+            $quotation->notes        = $request->get('notes');
+            $quotation->doc_type     = $request->get('doc_type');
+            $quotation->upload_file  = $request->get('upload_files');
+            $quotation->status       = 2;
             $quotation->currency     = $request->get('currency');
             $quotation->payment_term = $request->get('payment_term');
             $quotation->vendor_id    = $request->vendor_id;
@@ -1013,6 +1013,7 @@ class QuotationController extends Controller
                 $tingkat = 'COO';
                 $this->saveApprovals($quotation->id,$tingkat,'DIRECT');
             }
+            
             \DB::commit();
         } catch (Exception $e) {
             \DB::rollBack();
