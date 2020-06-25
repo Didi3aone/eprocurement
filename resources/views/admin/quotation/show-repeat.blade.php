@@ -86,18 +86,19 @@
                         </div>
                     </div>
 
-                    @if ($model->approval_status != 1)
+                    {{-- @if ($model->approval_status != 1) --}}
                     <div class="row" style="margin-top: 20px">
                         <div class="col-lg-12">
                             <div class="form-actions">
                                 {{-- <input type="hidden" name="total" value="{{ $total }}"> --}}
-                                <button type="submit" class="btn btn-success click"> <i class="fa fa-check"></i> Approve</button>
+                                {{-- <button type="submit" class="btn btn-success click"> <i class="fa fa-check"></i> Approve</button> --}}
+                                <a href="{{ route('admin.quotation.repeat') }}" class="btn btn-info">Back</a>
                                 {{-- <button type="button" class="btn btn-inverse">Cancel</button> --}}
                                 <img id="image_loading" src="{{ asset('img/ajax-loader.gif') }}" alt="" style="display: none">
                             </div>
                         </div>
                     </div>
-                    @endif
+                    {{-- @endif --}}
                 </form>
             </div>
         </div>

@@ -17,7 +17,9 @@ class Quotation extends Model
         'po_date',
         'notes',
         'request_id',
-        'status'
+        'status',
+        'approved_head',
+        'approved_asspro'
     ];
 
     public const Approved = 1;
