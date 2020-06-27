@@ -45,6 +45,7 @@ class LoginController extends Controller
      */
 
     const bp_group_code_local = ['Z001','Z003'];
+    
     public function __construct()
     {
         $this->middleware('guest:vendor')->except('logout');
@@ -173,6 +174,7 @@ class LoginController extends Controller
         $email = $request->input('email');
         $email_2 = $request->input('email_2');
         $password = $request->input('password');
+        $status = 1;
 
         $post = [];
         $post['code'] = $vendor_code_;
@@ -199,6 +201,7 @@ class LoginController extends Controller
         $post['email'] = $email;
         $post['email_2'] = $email_2;
         $post['password'] = bcrypt($password);
+        $post['status'] = $status;
         $do_insert = UserVendors::create($post);
         if (!$do_insert) throw new Exception('Failed at insert_user_vendor');
 
@@ -341,6 +344,7 @@ class LoginController extends Controller
         return true;
     }
 
+    // not used
     public function register_old (Request $request)
     {
         $model = new Vendor;
