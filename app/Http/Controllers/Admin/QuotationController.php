@@ -942,7 +942,7 @@ class QuotationController extends Controller
                 'storage_location'          => $request->get('storage_location')[$i],
                 'material_group'            => $request->get('material_group')[$i],
                 'preq_item'                 => $request->get('preq_item')[$i],
-                'PR_NO'                     => $request->get('PR_NO')[$i]
+                'PR_NO'                     => $request->get('PR_NO')[$i] 
             ];
 
             array_push($details, $data);
@@ -965,7 +965,7 @@ class QuotationController extends Controller
             $quotation->currency     = 'IDR';
             $quotation->payment_term = $request->get('payment_term');
             $quotation->vendor_id    = $request->vendor_id;
-            $quotation->acp_id       = $request->acp_id;
+            $quotation->acp_id       = $request->acp_id ?? 0;
             $quotation->save();
 
             $price = 0;
