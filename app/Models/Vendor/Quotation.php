@@ -30,6 +30,7 @@ class Quotation extends Model
     public const Waiting = 0;
 
     public const QuotationDirect = 2;
+    public const QuotationRepeat = 2;
     
     public const ApprovalAss  = 10;
     public const ApprovalHead = 20;

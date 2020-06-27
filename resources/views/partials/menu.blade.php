@@ -52,7 +52,7 @@
                             </a>
                         </li> --}}
                         <li>
-                            <a href="{{ route('admin.quotation.index') }}" class="">
+                            <a href="{{ route('admin.quotation-repeat.index') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
                                 List PO Repeat
                             </a>
@@ -95,13 +95,13 @@
                             </a>
                             <ul aria-expanded="false" class="collapse">
                                 <li>
-                                    <a href="{{ route('admin.quotation.repeat') }}">
+                                    <a href="{{ route('admin.quotation-repeat-approval-ass') }}">
                                         <i class="fa fas fa-caret-right"></i> 
                                         Approval Ass Proc
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('admin.quotation.repeat') }}">
+                                    <a href="{{ route('admin.quotation-repeat-approval-head') }}">
                                         <i class="fa fas fa-caret-right"></i> 
                                         Approval Head Proc
                                     </a>

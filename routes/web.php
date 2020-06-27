@@ -164,30 +164,30 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::get('quotation/online', 'QuotationController@online')->name('quotation.online');
     
     // repeat
-    Route::get('quotation/repeat', 'QuotationController@repeat')->name('quotation.repeat');
-    Route::get('quotation/repeat/approve/{ids}', 'QuotationController@repeat_approve')->name('quotation.repeat.approve');
-    Route::get('quotation-show-repeat/{id}', 'QuotationController@showRepeat')->name('quotation-show-repeat');
-    Route::post('quotation-preview-repeat', 'QuotationController@previewRepeat')->name('quotation-preview-repeat');
-    Route::post('quotation-approve-repeat', 'QuotationController@approveRepeat')->name('quotation-approve-repeat');
-    Route::post('quotation-save-repeat', 'QuotationController@saveRepeat')->name('quotation-save-repeat');
-    Route::get('quotation-edit-repeat/{id}', 'QuotationController@editRepeat')->name('quotation-edit-repeat');
+    // Route::get('quotation/repeat', 'QuotationController@repeat')->name('quotation.repeat');
+    // Route::get('quotation/repeat/approve/{ids}', 'QuotationController@repeat_approve')->name('quotation.repeat.approve');
+    // Route::get('quotation-show-repeat/{id}', 'QuotationController@showRepeat')->name('quotation-show-repeat');
+    // Route::post('quotation-preview-repeat', 'QuotationController@previewRepeat')->name('quotation-preview-repeat');
+    // Route::post('quotation-approve-repeat', 'QuotationController@approveRepeat')->name('quotation-approve-repeat');
+    // Route::post('quotation-save-repeat', 'QuotationController@saveRepeat')->name('quotation-save-repeat');
+    // Route::get('quotation-edit-repeat/{id}', 'QuotationController@editRepeat')->name('quotation-edit-repeat');
     
     // direct
-    Route::get('quotation/direct', 'QuotationController@direct')->name('quotation.direct');
-    Route::get('quotation-show-direct/{id}', 'QuotationController@showDirect')->name('quotation-show-direct');
-    Route::post('quotation-preview-direct', 'QuotationController@previewDirect')->name('quotation-preview-direct');
-    Route::post('quotation-approve-direct', 'QuotationController@approveDirect')->name('quotation-approve-direct');
+    // Route::get('quotation/direct', 'QuotationController@direct')->name('quotation.direct');
+    // Route::get('quotation-show-direct/{id}', 'QuotationController@showDirect')->name('quotation-show-direct');
+    // Route::post('quotation-preview-direct', 'QuotationController@previewDirect')->name('quotation-preview-direct');
+    // Route::post('quotation-approve-direct', 'QuotationController@approveDirect')->name('quotation-approve-direct');
    // Route::post('quotation-save-direct', 'QuotationController@saveDirect')->name('quotation-save-direct');
-    Route::get('quotation-edit-direct/{id}', 'QuotationController@editDirect')->name('quotation-edit-direct');
+    // Route::get('quotation-edit-direct/{id}', 'QuotationController@editDirect')->name('quotation-edit-direct');
 
     // bidding
-    Route::get('quotation-show-online/{id}', 'QuotationController@showOnline')->name('quotation-show-online');
+    // Route::get('quotation-show-online/{id}', 'QuotationController@showOnline')->name('quotation-show-online');
     Route::post('quotation-save-online', 'QuotationController@saveOnline')->name('quotation-save-online');
-    Route::get('quotation-edit-online/{id}', 'QuotationController@editOnline')->name('quotation-edit-online');
-    Route::post('quotation/winner', 'QuotationController@winner')->name('quotation.winner');
-    Route::post('quotation/to-winner', 'QuotationController@toWinner')->name('quotation.to-winner');
-    Route::get('quotation/list-winner', 'QuotationController@listWinner')->name('quotation.list-winner');
-    Route::get('quotation/show-winner/{id}', 'QuotationController@showWinner')->name('quotation.show-winner');
+    // Route::get('quotation-edit-online/{id}', 'QuotationController@editOnline')->name('quotation-edit-online');
+    // Route::post('quotation/winner', 'QuotationController@winner')->name('quotation.winner');
+    // Route::post('quotation/to-winner', 'QuotationController@toWinner')->name('quotation.to-winner');
+    // Route::get('quotation/list-winner', 'QuotationController@listWinner')->name('quotation.list-winner');
+    // Route::get('quotation/show-winner/{id}', 'QuotationController@showWinner')->name('quotation.show-winner');
     Route::get('quotation/approve/{id}', 'QuotationController@approve')->name('quotation.approve');
     Route::post('quotation/approve-winner', 'QuotationController@approveWinner')->name('quotation.approve-winner');
     Route::put('quotation/remove-vendor/{quotation_id}/{vendor_id}', 'QuotationController@removeVendor')->name('quotation.remove-vendor');
@@ -198,6 +198,12 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::get('quotation/direct/approve/ass/{ids}', 'QuotationDirectController@directApproveAss')->name('quotation.direct.approve.ass');
     Route::get('quotation/direct/approve/head/{ids}', 'QuotationDirectController@directApproveHead')->name('quotation.direct.approve.head');
     Route::resource('quotation-direct', 'QuotationDirectController');
+
+    Route::get('quotation-repeat-approval-head','QuotationRepeatController@approvalListHead')->name('quotation-repeat-approval-head');
+    Route::get('quotation-repeat-approval-ass','QuotationRepeatController@approvalListAss')->name('quotation-repeat-approval-ass');
+    Route::get('quotation/repeat/approve/ass/{ids}', 'QuotationRepeatController@repeatpproveAss')->name('quotation.repeat.approve.ass');
+    Route::get('quotation/repeat/approve/head/{ids}', 'QuotationRepeatController@repeatApproveHead')->name('quotation.repeat.approve.head');
+    Route::resource('quotation-repeat', 'QuotationRepeatController');
 
     // rfq
     Route::post('rfq/import', 'RfqController@import')->name('rfq.import');

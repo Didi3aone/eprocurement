@@ -21,7 +21,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form class="form-rn m-t-40" action="{{ route("admin.quotation-save-repeat") }}" enctype="multipart/form-data" method="post">
+                <form class="form-rn m-t-40" action="{{ route("admin.quotation-repeat.store") }}" enctype="multipart/form-data" method="post">
                     @csrf
                     <div class="row">
                         <div class="col-lg-6">
@@ -128,12 +128,13 @@
                             <table class="table table-striped" id="tabs">
                                 <thead>
                                     <tr>
-                                        <th>Material ID</th>
-                                        <th>Material Desc</th>
-                                        <th>Unit</th>
+                                        <th style="width: 10%">Material</th>
+                                        <th style="width: 10%">Unit</th>
                                         <th style="width: 10%">Qty</th>
                                         <th style="width: 20%">History PO</th>
                                         <th style="width: 20%">Net Price</th>
+                                        <th style="width: 14%">Delivery Date</th>
+                                        <th style="width: 34%">Delivery Date</th>
                                     </tr>
                                 </thead>
                                 {{-- get from rfq,  net_order_price untuk pricenya --}}
@@ -161,8 +162,10 @@
                                             <input type="hidden" class="form-control" name="material_group[]" readonly value="{{ $value->material_group }}">
                                             <input type="hidden" class="form-control" name="preq_item[]" readonly value="{{ $value->preq_item }}">
                                             <input type="hidden" class="form-control" name="PR_NO[]" readonly value="{{ $value->PR_NO }}">
-                                            <td><input type="text" class="form-control material_id" name="material_id[]"  id="material_id" readonly value="{{ $value->material_id }}"></td>
-                                            <td><input type="text" class="form-control" name="description[]" readonly value="{{ $value->description }}"></td>
+                                            <input type="hidden" class="form-control material_id" name="material_id[]"  id="material_id" readonly value="{{ $value->material_id }}">
+                                            <input type="hidden" class="form-control" name="description[]" readonly value="{{ $value->description }}">
+                                            <input type="hidden" class="form-control" name="delivery_date[]" readonly value="{{ $value->delivery_date }}">
+                                            <td>{!! $value->material_id .'<br>'.$value->description !!}</td>
                                             <td><input type="text" class="form-control" name="unit[]" readonly value="{{ $value->unit }}"></td>
                                             <td><input type="text" class="form-control" name="qty[]" readonly value="{{ empty($value->qty) ? 0 : $value->qty }}"></td>
                                             <td>
@@ -174,6 +177,8 @@
                                                 </select>
                                             </td>
                                             <td><input type="text" class="form-control net_price" name="price[]" id="net_price" value="" readonly></td>
+                                            <td>{{ $value->delivery_date }}</td>
+                                            <td><input type="text" class="form-control mdate" name="delivery_date_new[]" id="delivery_date_new" value=""></td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -185,7 +190,7 @@
                         <button type="submit" class="btn btn-success click" id="save"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
                         <a href="{{ route('admin.purchase-request.index') }}" class="btn btn-danger"><i class="fa fa-times"></i> Cancel</a>
                         <img id="image_loading" src="{{ asset('img/ajax-loader.gif') }}" alt="" style="display: none">
-                        <button type="button" class="btn btn-primary"> <i class="fa fa-eye"></i> {{ trans('global.preview') }}</button>
+                        {{-- <button type="button" class="btn btn-primary"> <i class="fa fa-eye"></i> {{ trans('global.preview') }}</button> --}}
                     </div>
                 </form>
             </div>
