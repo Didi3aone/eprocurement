@@ -9,13 +9,14 @@
         </ol>
     </div>
 </div>
-<form class="form-material m-t-40" action="{{ route("admin.master-acp.store") }}" enctype="multipart/form-data" method="post">
+<form action="{{ route("admin.master-acp.store") }}" enctype="multipart/form-data" method="post">
     @csrf
+    @method('post')
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <label>{{ trans('cruds.master-acp.fields.acp_no') }}</label>
                         <input type="text" class="form-control form-control-line {{ $errors->has('acp_no') ? 'is-invalid' : '' }}" name="acp_no" value="{{ $acp_no ?? old('acp_no', '') }}" required> 
                         @if($errors->has('acp_no'))
@@ -23,26 +24,26 @@
                                 {{ $errors->first('acp_no') }}
                             </div>
                         @endif
+                    </div> --}}
+                    <label>Material From PR</label>
+                    <div class="form-group">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="inlineCheckbox11" name="is_from_pr" value="1">
+                            <label class="form-check-label" for="inlineCheckbox11">Yes</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="inlineCheckbox22" name="is_from_pr" value="0" checked>
+                            <label class="form-check-label" for="inlineCheckbox22">No</label>
+                        </div>
                     </div>
                     <label>Project</label>
                     <div class="form-group">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input material-inputs" type="checkbox" id="inlineCheckbox11" name="is_project" value="1">
-                            <label class="form-check-label" for="inlineCheckbox11">Yes</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input material-inputs" type="checkbox" id="inlineCheckbox22" name="is_project" value="0">
-                            <label class="form-check-label" for="inlineCheckbox22">No</label>
-                        </div>
-                    </div>
-                    <label>Approval</label>
-                    <div class="form-group">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input material-inputs" type="checkbox" id="inlineCheckbox1" name="is_approval" value="1">
+                            <input class="form-check-input material-inputs" type="radio" id="inlineCheckbox1" name="is_project" value="1">
                             <label class="form-check-label" for="inlineCheckbox1">Yes</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input material-inputs" type="checkbox" id="inlineCheckbox2" name="is_approval" value="0">
+                            <input class="form-check-input material-inputs" type="radio" id="inlineCheckbox2" name="is_project" value="0" checked>
                             <label class="form-check-label" for="inlineCheckbox2">No</label>
                         </div>
                     </div>
@@ -55,7 +56,7 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.master-acp.fields.start_date') }}</label>
-                        <input type="text" class="datetimepicker form-control form-control-line {{ $errors->has('start_date') ? 'is-invalid' : '' }}" name="start_date" value="" required> 
+                        <input type="text" class="mdate form-control form-control-line {{ $errors->has('start_date') ? 'is-invalid' : '' }}" name="start_date" value="{{ date('Y-m-d') }}" required> 
                         @if($errors->has('start_date'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('start_date') }}
@@ -64,7 +65,7 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.master-acp.fields.end_date') }}</label>
-                        <input type="text" class="datetimepicker form-control form-control-line {{ $errors->has('end_date') ? 'is-invalid' : '' }}" name="end_date" value="" required> 
+                        <input type="text" class="mdate form-control form-control-line {{ $errors->has('end_date') ? 'is-invalid' : '' }}" name="end_date" value="{{ date('Y-m-d') }}" required> 
                         @if($errors->has('end_date'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('end_date') }}
@@ -128,6 +129,9 @@
 <script>
     const base_url = '{{ url('/') }}'
 
+    /**<td class="file_attachment">
+        <input type="file" name="file_attachment_${vendor}[]" class="form-control"/>
+    </td>**/
     function rowMaterial (vendor) {
         return `
             <tr>
@@ -184,14 +188,15 @@
                     </td>
                 </tr>
                 <tr class="material-${input_vendor}">
-                    <td colspan="4">
-                        <table class="table table-striped">
+                    <td colspan="4" style="overflow-x:auto">
+                        <table class="table table-striped" style="overflow-x:auto">
                             <thead>
                                 <tr>
-                                    <th style="width: 50%">Material Code</th>
-                                    <th style="width: 30%">Price</th>
-                                    <th style="width: 30%">Qty</th>
-                                    <th class="text-right" style="width: 20%">&nbsp;</th>
+                                    <th style="width: 30%">Material Code</th>
+                                    <th style="width: 25%">Price</th>
+                                    <th style="width: 20%">Qty</th>
+                                <!--    <th style="width: 40%">File</th> -->
+                                    <th class="text-right" style="width: 10%">&nbsp;</th>
                                 </tr>
                             </thead>
                             <tbody class="list-material-${input_vendor}"></tbody>
@@ -230,6 +235,9 @@
                 url: base_url + '/admin/master-acp-material',
                 dataType: 'json',
                 delay: 300,
+                data : {
+                    fromPr : $("input[name='is_from_pr']:checked").val()
+                },
                 processResults: function (response) {
                     return {
                         results: response

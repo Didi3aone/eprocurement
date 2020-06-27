@@ -37,16 +37,16 @@
                                     @foreach($quotation as $key => $val)
                                         <tr data-entry-id="{{ $val->id }}">
                                             <td>{{ $val->id ?? '' }}</td>
-                                            <td>{{ $val->quotation['po_no'] ?? '' }}</td>
+                                            <td>{{ $val->acp['acp_no'] ?? '' }}</td>
                                             <td>
-                                                @if($val->approval_status == 0)
+                                                @if($val->status_approval == 0)
                                                     <span class="badge badge-primary">Waiting For Approval</span>
                                                 @else 
                                                     <span class="badge badge-primary">Approved</span>
                                                 @endif
                                             </td>
                                             <td>
-                                                <a class="btn btn-xs btn-warning" href="{{ route('admin.show-acp-direct', $val->quotation['id']) }}">
+                                                <a class="btn btn-xs btn-warning" href="{{ route('admin.show-acp-approval', $val->acp['id']) }}">
                                                     <i class="fa fa-eye"></i> Show
                                                 </a>
                                             </td>

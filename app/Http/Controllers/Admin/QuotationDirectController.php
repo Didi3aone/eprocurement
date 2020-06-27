@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Models\Vendor\Quotation;
 use App\Models\Vendor\QuotationDetail;
 use App\Models\Vendor\QuotationApproval;
+use App\Models\Vendor\QuotationDelivery;
 use App\Models\PurchaseRequestsDetail;
 use App\Models\PurchaseRequestHistory;
 use App\Models\PurchaseOrder;
@@ -26,17 +27,72 @@ class QuotationDirectController extends Controller
      */
     public function index()
     {
-        return view('admin.quotation.direct.index');
+        $userMapping = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first();
+        $userMapping = explode(',', $userMapping->purchasing_group_code);
+        $quotation = QuotationDetail::join('quotation','quotation.id','=','quotation_details.quotation_order_id')
+                    ->join('vendors','vendors.code','=','quotation.vendor_id')
+                    ->where('quotation.status',2)
+                    ->whereIn('quotation_details.purchasing_group_code', $userMapping)
+                    ->select(
+                        'quotation.id',
+                        'quotation.po_no',
+                        'quotation.approval_status',
+                        'vendors.name'
+                    )
+                    ->orderBy('id', 'desc')
+                    ->get();
+
+        return view('admin.quotation.direct.index', compact('quotation'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function approvalListAss()
     {
-        //
+        $userMapping = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first();
+
+        $userMapping = explode(',', $userMapping->purchasing_group_code);
+        $quotation = QuotationDetail::join('quotation','quotation.id','=','quotation_details.quotation_order_id')
+                    ->join('vendors','vendors.code','=','quotation.vendor_id')
+                    ->where('quotation.status',Quotation::QuotationDirect)
+                    ->where('quotation.approval_status',Quotation::Waiting)
+                    ->whereIn('quotation_details.purchasing_group_code', $userMapping)
+                    ->select(
+                        'quotation.id',
+                        'quotation.po_no',
+                        'quotation.approval_status',
+                        'vendors.name'
+                    )
+                    ->orderBy('id', 'desc')
+                    ->get();
+
+        return view('admin.quotation.direct.index-approval', compact('quotation'));
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function approvalListHead()
+    {
+        $quotation = QuotationDetail::join('quotation','quotation.id','=','quotation_details.quotation_order_id')
+                    ->join('vendors','vendors.code','=','quotation.vendor_id')
+                    ->where('quotation.status',Quotation::QuotationDirect)
+                    ->where('quotation.approval_status',Quotation::ApprovalAss)
+                    ->select(
+                        'quotation.id',
+                        'quotation.po_no',
+                        'quotation.approval_status',
+                        'vendors.name'
+                    )
+                    ->orderBy('id', 'desc')
+                    ->get();
+
+        return view('admin.quotation.direct.index-approval-head', compact('quotation'));
     }
 
     /**
@@ -84,13 +140,16 @@ class QuotationDirectController extends Controller
                 'storage_location'          => $request->get('storage_location')[$i],
                 'material_group'            => $request->get('material_group')[$i],
                 'preq_item'                 => $request->get('preq_item')[$i],
-                'PR_NO'                     => $request->get('PR_NO')[$i]
+                'PR_NO'                     => $request->get('PR_NO')[$i],
+                'delivery_date'             => $request->get('delivery_date')[$i],
+                'delivery_date_new'         => $request->get('delivery_date_new')[$i],
+                'rfq'                       => $request->get('rfq')[$i],
+                'vendor_id'                 => $request->vendor_id
             ];
 
             array_push($details, $data);
 
-            $this->savePRHistory($data);
-
+            PurchaseRequestHistory::insertHistory($data);
             $material->qty -= $request->get('qty')[$i];
             $material->save();
         }
@@ -99,86 +158,26 @@ class QuotationDirectController extends Controller
 
         try {
             $quotation = new Quotation;
-            $quotation->po_no       = $request->get('po_no');
-            $quotation->notes       = $request->get('notes');
-            $quotation->doc_type    = $request->get('doc_type');
-            $quotation->upload_file = $request->get('upload_files');
-            $quotation->status       = 2;
-            $quotation->currency     = $request->get('currency');
-            $quotation->payment_term = $request->get('payment_term');
-            $quotation->vendor_id    = $request->vendor_id;
-            $quotation->acp_id       = $request->acp_id;
+            $quotation->po_no           = $request->get('po_no');
+            $quotation->notes           = $request->get('notes');
+            $quotation->doc_type        = $request->get('doc_type');
+            $quotation->upload_file     = $request->get('upload_files');
+            $quotation->status          = Quotation::QuotationDirect;
+            $quotation->currency        = 'IDR';
+            $quotation->payment_term    = $request->get('payment_term');
+            $quotation->vendor_id       = $request->vendor_id;
+            $quotation->acp_id          = $request->acp_id;
+            $quotation->approval_status = Quotation::Waiting;
             $quotation->save();
 
-            $price = 0;
-            foreach ($details as $detail) {
-                $price += $detail['price'];
-
-                $quotationDetail = new QuotationDetail;
-                $quotationDetail->quotation_order_id        = $quotation->id;
-                $quotationDetail->qty                       = $detail['qty'];
-                $quotationDetail->unit                      = $detail['unit'];
-                $quotationDetail->material                  = $detail['material_id'];
-                $quotationDetail->plant_code                = $detail['plant_code'];
-                $quotationDetail->vendor_price              = $detail['price'];
-                $quotationDetail->vendor_id                 = $detail['vendor_id'];
-                $quotationDetail->is_assets                 = $detail['is_assets'];
-                $quotationDetail->assets_no                 = $detail['assets_no'];
-                $quotationDetail->text_id                   = $detail['text_id'];
-                $quotationDetail->text_form                 = $detail['text_form'];
-                $quotationDetail->text_line                 = $detail['text_line'];
-                $quotationDetail->delivery_date_category    = $detail['delivery_date_category'];
-                $quotationDetail->account_assignment        = $detail['account_assignment'];
-                $quotationDetail->purchasing_group_code     = $detail['purchasing_group_code'];
-                $quotationDetail->preq_name                 = $detail['preq_name'];
-                $quotationDetail->gl_acct_code              = $detail['gl_acct_code'];
-                $quotationDetail->cost_center_code          = $detail['cost_center_code'];
-                $quotationDetail->profit_center_code        = $detail['profit_center_code'];
-                $quotationDetail->storage_location          = $detail['storage_location'];
-                $quotationDetail->material_group            = $detail['material_group'];
-                $quotationDetail->preq_item                 = $detail['preq_item'];
-                $quotationDetail->PR_NO                     = $detail['PR_NO'];
-                $quotationDetail->vendor_id                 = $request->vendor_id;
-                $quotationDetail->save();
-            }
-
-            if( $price <= 25000000 ) {
-                $tingkat = 'STAFF';
-                $this->saveApprovals($quotation->id,$tingkat,'DIRECT');
-            } else if( $price > 25000000 && $price < 100000000) {
-                $tingkat = 'CMO';
-                $this->saveApprovals($quotation->id,$tingkat,'DIRECT');
-            } else if( $price > 100000000 && $price <= 250000000) {
-                $tingkat = 'CFO';
-                $this->saveApprovals($quotation->id,$tingkat,'DIRECT');
-            } else if( $price > 250000000) {
-                $tingkat = 'COO';
-                $this->saveApprovals($quotation->id,$tingkat,'DIRECT');
-            }
+            $this->_insert_details($details, $quotation->id);
             \DB::commit();
         } catch (Exception $e) {
             \DB::rollBack();
-            dd($e);
+            throw $e;
         }
 
-        // send email
-        $vendor = Vendor::where('code', $request->get('vendor'))->first();
-        $files = explode(', ', $request->get('upload_files'));
-        $attachments = [];
-        $data = [
-            'vendor' => $vendor,
-            'request_no' => $request->get('po_no'),
-            'attachments' => $attachments,
-            'subject' => 'PO Repeat ' . $request->get('po_no')
-        ];
-
-        $mail_sent = '';
-        if (!empty($vendor->email))
-            \Mail::to($vendor->email)->send(new PurchaseOrderMail($data));
-        else
-            $mail_sent = '<br>But Email cannot be send, because vendor doesnot have an email address';
-
-        return redirect()->route('admin.quotation-direct')->with('status', 'Direct Order has been successfully ordered!' . $mail_sent);
+        return redirect()->route('admin.quotation-direct')->with('status', 'Direct Order has been successfully ordered!');
     }
 
     /**
@@ -226,146 +225,106 @@ class QuotationDirectController extends Controller
         //
     }
 
-    private function saveApprovals($quotation_id, $tingkat,$type)
+    /**
+     * multiple approve po.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function directApproveAss($ids)
     {
+        try {
+            $ids = base64_decode($ids);
+            $ids = explode(',', $ids);
 
-        if( $tingkat == 'STAFF' ) {
-            QuotationApproval::create([
-                'nik'                   => 190256,
-                'approval_position'     => 1,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 1,
-                'acp_type'              => $type
-            ]);
+            foreach( $ids as $id ) {
+                $quotation = Quotation::find($id);
+                $quotation->approval_status = Quotation::ApprovalAss;
+                $quotation->approved_asspro = \Auth::user()->user_id;
+                $quotation->save();
+            }
 
-            QuotationApproval::create([
-                'nik'                   => 190089,
-                'approval_position'     => 2,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type
-            ]);
-        } else if ($tingkat == 'CMO') {
-            QuotationApproval::create([
-                'nik'                   => 190256,
-                'approval_position'     => 1,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 1,
-                'acp_type'              => $type
-            ]);
-
-            QuotationApproval::create([
-                'nik'                   => 190089,
-                'approval_position'     => 2,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type
-            ]);
-
-            QuotationApproval::create([
-                'nik'                   => 180095,
-                'approval_position'     => 3,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type
-            ]);
-        } else if ($tingkat == 'CFO') {
-            QuotationApproval::create([
-                'nik'                   => 190256,
-                'approval_position'     => 1,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 1,
-                'acp_type'              => $type
-            ]);
-
-            QuotationApproval::create([
-                'nik'                   => 190089,
-                'approval_position'     => 2,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type
-            ]);
-            
-            QuotationApproval::create([
-                'nik'                   => 180095,
-                'approval_position'     => 3,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type
-            ]);
-            QuotationApproval::create([
-                'nik'                   => 180178,
-                'approval_position'     => 4,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type
-            ]);
-        } else if ($tingkat == 'COO') {
-            QuotationApproval::create([
-                'nik'                   => 190256,
-                'approval_position'     => 1,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 1,
-                'acp_type'              => $type
-            ]);
-
-            QuotationApproval::create([
-                'nik'                   => 190089,
-                'approval_position'     => 2,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type
-            ]);
-            
-            QuotationApproval::create([
-                'nik'                   => 180095,
-                'approval_position'     => 3,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type
-            ]);
-            QuotationApproval::create([
-                'nik'                   => 180178,
-                'approval_position'     => 4,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type
-            ]);
-            QuotationApproval::create([
-                'nik'                   => 180178,
-                'approval_position'     => 5,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type
-            ]);
+            return redirect()->route('admin.quotation-direct-approval-ass')->with('status', 'Direct Order has been approved!');
+        } catch (\Throwable $th) {
+            throw $th;
         }
     }
 
-    protected function savePRHistory ($data)
+    /**
+     * multiple approve po.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function directApproveHead($ids)
     {
-        // insert to purchase_request_history
-        $prHistory = new PurchaseRequestHistory;
-        $prHistory->pr_id       = $data['pr_id'];
-        $prHistory->request_no  = $data['rn_no'];
-        $prHistory->material_id = $data['material_id'];
-        $prHistory->vendor_id   = $data['vendor_id'];
-        $prHistory->qty         = $data['qty_pr'];
-        $prHistory->qty_po          = $data['qty'] ?? 0;
-        $prHistory->qty_outstanding = $data['qty_pr'] - $data['qty'];
-        $prHistory->save();
+        try {
+            $ids = base64_decode($ids);
+            $ids = explode(',', $ids);
+
+            foreach( $ids as $id ) {
+                $quotation = Quotation::find($id);
+                $quotation->approval_status = Quotation::ApprovalHead;
+                $quotation->approved_head   = \Auth::user()->user_id;
+                $quotation->save();
+
+                $quotationDetail = QuotationDetail::where('quotation_order_id', $id)->get();
+                $quotationDeliveryDate = QuotationDelivery::where('quotation_id', $id)->get();
+
+                \sapHelp::sendPoToSap($quotation, $quotationDetail,$quotationDeliveryDate);
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    private function _insert_details($details, $id)
+    {
+        $i = 0;
+        foreach ($details as $detail) {
+            $schedLine  = sprintf('%05d', (10+$i));
+            $indexes    = $i+1;
+            $poItem     = sprintf('%05d', (10*$indexes));;
+
+            $quotationDetail = new QuotationDetail;
+            $quotationDetail->quotation_order_id        = $id;
+            $quotationDetail->qty                       = $detail['qty'];
+            $quotationDetail->unit                      = $detail['unit'];
+            $quotationDetail->material                  = $detail['material_id'];
+            $quotationDetail->plant_code                = $detail['plant_code'];
+            $quotationDetail->price                     = $detail['price'];
+            $quotationDetail->is_assets                 = $detail['is_assets'];
+            $quotationDetail->assets_no                 = $detail['assets_no'];
+            $quotationDetail->text_id                   = $detail['text_id'];
+            $quotationDetail->text_form                 = $detail['text_form'];
+            $quotationDetail->text_line                 = $detail['text_line'];
+            $quotationDetail->delivery_date_category    = $detail['delivery_date_category'];
+            $quotationDetail->account_assignment        = $detail['account_assignment'];
+            $quotationDetail->purchasing_group_code     = $detail['purchasing_group_code'];
+            $quotationDetail->preq_name                 = $detail['preq_name'];
+            $quotationDetail->gl_acct_code              = $detail['gl_acct_code'];
+            $quotationDetail->cost_center_code          = $detail['cost_center_code'];
+            $quotationDetail->profit_center_code        = $detail['profit_center_code'];
+            $quotationDetail->storage_location          = $detail['storage_location'];
+            $quotationDetail->material_group            = $detail['material_group'];
+            $quotationDetail->PREQ_ITEM                 = $detail['preq_item'];
+            $quotationDetail->PR_NO                     = $detail['PR_NO'];
+            $quotationDetail->PO_ITEM                   = $poItem;
+            $quotationDetail->purchasing_document       = $detail['rfq'];
+            $quotationDetail->delivery_date             = $detail['delivery_date'];
+            $quotationDetail->save();
+
+            QuotationDelivery::create([
+                'quotation_id'  => $id,
+                'SCHED_LINE'    => $schedLine,
+                'PO_ITEM'       => $poItem,
+                'DELIVERY_DATE' => $detail['delivery_date_new'] ?? $detail['delivery_date'] ,
+                'PREQ_NO'       => $detail['PR_NO'],
+                'PREQ_ITEM'     => $detail['preq_item'],
+                'QUANTITY'      => $detail['qty']
+            ]);
+
+            $i++;
+        }
     }
 }

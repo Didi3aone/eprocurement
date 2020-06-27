@@ -30,17 +30,21 @@ class Rfq extends Model
 
     public static function getRFQ($material_id)
     {
-        return MasterRfq::join('master_acp_materials','master_acp_materials.master_acp_vendor_id','=','master_rfqs.vendor')
-                ->join('vendors','vendors.code','=','master_rfqs.vendor')
+        return MasterRfq::join('vendors','vendors.code','=','master_rfqs.vendor')
+                ->join('master_acps','master_acps.id','=','master_rfqs.acp_id')
+                ->join('master_acp_materials','master_acp_materials.master_acp_id','=','master_acps.id')
                 ->select(
                     'vendors.name',
                     'master_rfqs.purchasing_document',
                     'vendors.code',
-                    'master_rfqs.acp_id'
+                    'master_rfqs.acp_id',
+                    'master_acps.acp_no',
                 )
-                ->where('material_id', $material_id)
-                ->take(20)
-                ->skip(2)
+                ->where('master_acps.start_date','>=',date('Y-m-d'))
+                ->where('master_acps.end_date','<=',date('Y-m-d'))
+                ->where('master_acp_materials.material_id', $material_id)
+                ->where('master_acps.status_approval',2)
+                ->distinct()
                 ->get();
     }
 }

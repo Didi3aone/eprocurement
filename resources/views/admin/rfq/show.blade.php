@@ -29,8 +29,8 @@
                                 <th>Disc Percent 2</th>
                                 <th>Currency</th>
                                 <th>Exchange Rate</th>
-                                <th>Last Changed</th>
-                                <th>&nbsp;</th>
+                                {{-- <th>Last Changed</th> --}}
+                                {{-- <th>&nbsp;</th> --}}
                             </tr>
                         </thead>
                         <tbody>
@@ -48,12 +48,12 @@
                                 <td>{{ $row->disc_percent2 }}</td>
                                 <td>{{ $row->currency }}</td>
                                 <td>{{ $row->exchange_rate }}</td>
-                                <td>{{ $row->last_changed }}</td>
-                                <td>
+                                {{-- <td>{{ $row->last_changed }}</td> --}}
+                                {{-- <td>
                                     <a class="btn btn-xs btn-primary" href="{{ url('admin/rfq-add-detail/' . $row->purchasing_document) }}">
                                         <i class="fa fa-plus"></i> {{ trans('global.add') }} Detail
                                     </a>
-                                </td>
+                                </td> --}}
                             </tr>
                             @endforeach
                         </tbody>

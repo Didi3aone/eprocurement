@@ -19,6 +19,8 @@ class AcpTableDetail extends Model
         'win_rate',
     ];
 
+    public const Winner = 1;
+
     public static function boot()
     {
         parent::boot();

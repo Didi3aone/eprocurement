@@ -22,9 +22,29 @@ class AcpTable extends Model
         'deleted_at',
     ];
 
+    public const Type_Status = [
+        0 => 'Waiting For Approval',
+        2 => 'Approved',
+        3 => 'Rejected'
+    ];
+
+    public const WaitingApproval = 0;
+    public const Approved        = 2;
+    public const Rejected        = 2;
+    public const MaterialPr      = 1;
+
     public static function boot()
     {
         parent::boot();
+        static::creating(function ($model) {
+            try {
+                $user              = \Auth::user();
+                $model->created_by = $user->nik;
+                $model->updated_by = $user->nik;
+            } catch (UnsatisfiedDependencyException $e) {
+                abort(500, $e->getMessage());
+            }
+        });
     }
 
     public function detail ()
