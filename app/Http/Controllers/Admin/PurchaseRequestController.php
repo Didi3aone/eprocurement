@@ -334,7 +334,7 @@ class PurchaseRequestController extends Controller
                         'status'              => 'FAILED'
                     ]);
 
-                    return \redirect()->route('admin.purchase-request-show-approval', $prHeader->id)->with('error','Internal server error');
+                    return \redirect()->route('admin.purchase-request.show', $prHeader->id)->with('error','Internal server error');
                 }
             }
 
