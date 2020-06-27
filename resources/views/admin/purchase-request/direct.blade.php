@@ -9,19 +9,11 @@
         </ol>
     </div>
 </div>
-@if(session('status'))
-    <div class="alert alert-info alert-dismissible fade show" role="alert" id="info-alert">
-        {{ session('status') }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-@endif
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form class="form-rn m-t-40" action="{{ route("admin.quotation-save-direct") }}" enctype="multipart/form-data" method="post">
+                <form class="form-rn m-t-40" action="{{ route("admin.quotation-direct.store") }}" enctype="multipart/form-data" method="post">
                     @csrf
                     <div class="row">
                         <div class="col-lg-6">
@@ -62,16 +54,17 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="table-responsive">
-                            <table class="table table-striped">
+                        <div class="table-responsive" style="overflow-x:scroll;">
+                            <table class="table table-striped table-responsive">
                                 <thead>
                                     <tr>
-                                        <th>Material ID</th>
-                                        <th>Material Desc</th>
-                                        <th>Unit</th>
-                                        <th style="width: 10%">Qty</th>
+                                        <th style="width: 15%;padding-right:15px;">Material</th>
+                                        <th style="width: 10%;padding-right:15px;">Unit</th>
+                                        <th style="width: 10%;">Qty</th>
                                         <th style="width: 20%">RFQ</th>
-                                        <th style="width: 20%">Net Price</th>
+                                        <th style="width: 16%">Net Price</th>
+                                        <th style="width: 14%">Delivery Date</th>
+                                        <th style="width: 34%">Delivery Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -98,10 +91,12 @@
                                             <input type="hidden" class="form-control" name="preq_item[]" readonly value="{{ $value->preq_item }}">
                                             <input type="hidden" class="form-control" name="id[]" readonly value="{{ $value->id }}">
                                             <input type="hidden" class="form-control" name="PR_NO[]" readonly value="{{ $value->PR_NO }}">
-                                            <td><input type="text" class="form-control material_id" name="material_id[]" readonly value="{{ $value->material_id }}"></td>
-                                            <td><input type="text" class="form-control" name="description[]" readonly value="{{ $value->description }}"></td>
+                                            <input type="hidden" class="form-control material_id" name="material_id[]" readonly value="{{ $value->material_id }}">
+                                            <input type="hidden" class="form-control" name="description[]" readonly value="{{ $value->description }}">
+                                            <input type="hidden" class="form-control" name="delivery_date[]" readonly value="{{ $value->delivery_date }}">
+                                            <td>{!! $value->material_id .'<br>'.$value->description !!}</td>
                                             <td><input type="text" class="form-control" name="unit[]" readonly value="{{ $value->unit }}"></td>
-                                            <td><input type="text" class="form-control" name="qty[]" readonly value="{{ empty($value->qty) ? 0 : $value->qty }}"></td>
+                                            <td><input type="text" class="form-control qty" name="qty[]" readonly value="{{ empty($value->qty) ? 0 : $value->qty }}"></td>
                                             <td>
                                                 <input type="hidden" class="form-control acp_id" name="acp_id" id="acp_id" value="0">
                                                 <select name="rfq[]" id="rfq" class="form-control select2 rfq" required>
@@ -112,6 +107,8 @@
                                                 </select>
                                             </td>
                                             <td><input type="text" class="form-control net_price" name="price[]" id="net_price" value="" readonly></td>
+                                            <td>{{ $value->delivery_date }}</td>
+                                            <td><input type="text" class="form-control mdate" name="delivery_date_new[]" id="delivery_date_new" value=""></td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -222,6 +219,7 @@
         const net = row.find('.net_price')
         const url = '{{ route('admin.rfq-get-net-price') }}'
         const materialId = row.find('.material_id')
+        const qty  = row.find('.qty')
         const plant_code = $("#plant_code").val()
         const code = row.find('.rfq option:selected').data('code')
         const acp_id = row.find('.rfq option:selected').data('acp')
@@ -233,7 +231,8 @@
             $("#image_loading").hide()
             if(items.purchasing_document) {
                 let nets = items.net_order_price ? items.net_order_price : '0'
-                net.val(Math.round(nets))
+                let price = qty.val() * nets
+                net.val(parseFloat(price).toFixed(2))
             } else {
                 net.val('0')
             }

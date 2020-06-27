@@ -54,11 +54,11 @@
                         <li>
                             <a href="{{ route('admin.quotation.index') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
-                                List PO
+                                List PO Repeat
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('admin.quotation.direct') }}" class="">
+                            <a href="{{ route('admin.quotation-direct.index') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
                                 List PO Direct
                             </a>
@@ -66,59 +66,71 @@
                     </ul>
                 </li>
                 @endcan 
-                @can('purchase_order_approval_access')
+                @can('approval_acp_access')
                 <li class=""> 
-                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-file"></i>
-                        <span class="hide-menu"> Approval ACP PO </span>
+                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-money"></i>
+                        <span class="hide-menu"> Approval ACP </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">
-                        {{-- <li>
-                            <a href="{{ route('admin.acp-bidding') }}" class="">
-                                <i class="fa fas fa-caret-right"></i> 
-                                List ACP Bidding
-                            </a>
-                        </li> --}}
                         <li>
-                            <a href="{{ route('admin.acp-direct') }}">
+                            <a href="{{ route('admin.acp-approval') }}">
                                 <i class="fa fas fa-caret-right"></i> 
-                                ACP Direct Order
+                                List Acp
                             </a>
                         </li>
                     </ul>
                 </li>
                 @endcan
-                @can('purchase_order_approval_access')
+                @can('approval_po_access')
                 <li class=""> 
-                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-file"></i>
+                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-book"></i>
                         <span class="hide-menu"> Approval PO </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">
+                        @can('approval_po_repeat')
                         <li>
-                            <a href="{{ route('admin.quotation.repeat') }}">
-                                <i class="fa fas fa-caret-right"></i> 
-                                PO Repeat
+                            <a href="#" class="has-arrow">
+                                <i class="fa fa-caret-right">
+                                </i> PO Repeat
                             </a>
+                            <ul aria-expanded="false" class="collapse">
+                                <li>
+                                    <a href="{{ route('admin.quotation.repeat') }}">
+                                        <i class="fa fas fa-caret-right"></i> 
+                                        Approval Ass Proc
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('admin.quotation.repeat') }}">
+                                        <i class="fa fas fa-caret-right"></i> 
+                                        Approval Head Proc
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
+                        @endcan
+                        @can('approval_po_direct')
                         <li>
-                            <a href="{{ route('admin.quotation.repeat') }}">
-                                <i class="fa fas fa-caret-right"></i> 
-                                PO Direct
+                            <a href="#" class="has-arrow">
+                                <i class="fa fa-caret-right">
+                                </i> PO Direct
                             </a>
+                            <ul aria-expanded="false" class="collapse">
+                                <li>
+                                    <a href="{{ route('admin.quotation-direct-approval-ass') }}">
+                                        <i class="fa fas fa-caret-right"></i> 
+                                        Approval Ass Proc
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('admin.quotation-direct-approval-head') }}">
+                                        <i class="fa fas fa-caret-right"></i> 
+                                        Approval Head Proc
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
-                    </ul>
-                </li>
-                @endcan
-                @can('master_acp')
-                <li class="">
-                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-file"></i>
-                        <span class="hide-menu"> Master ACP </span>
-                    </a>
-                    <ul aria-expanded="false" class="collapse">
-                        <li>
-                            <a href="{{ route('admin.master-acp.index') }}" class="">
-                                <i class="fa fas fa-caret-right"></i> List ACP
-                            </a>
-                        </li>
+                        @endcan
                     </ul>
                 </li>
                 @endcan
@@ -156,10 +168,24 @@
                 @can('master_access')
                 <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false">
-                        <i class="fa fa-users"></i>
+                        <i class="fa fa-server"></i>
                         <span class="hide-menu"> {{ trans('cruds.masterManagement.title') }} </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">
+                        @can('master_acp')
+                            <li class="">
+                                <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-money"></i>
+                                    <span class="hide-menu"> Master ACP </span>
+                                </a>
+                                <ul aria-expanded="false" class="collapse">
+                                    <li>
+                                        <a href="{{ route('admin.master-acp.index') }}" class="">
+                                            <i class="fa fas fa-caret-right"></i> List ACP
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        @endcan
                         @can('material_management_access')
                         <li>
                             <a href="#" class="has-arrow">

@@ -193,13 +193,15 @@ class RfqController extends Controller
         // dd($request->material_id);
         $data = MasterRfq::join('master_acp_materials','master_acp_materials.master_acp_vendor_id','=','master_rfqs.vendor')
                 ->join('vendors','vendors.code','=','master_rfqs.vendor')
+                ->join('master_acps','master_acps.id','=','master_rfqs.acp_id')
                 ->select(
                     'vendors.name',
                     'master_rfqs.purchasing_document',
                 )
                 ->where('material_id', $request->material_id)
-                ->take(20)
-                ->skip(2)
+                ->where('master_acps.start_date','>=',\Carbon\Carbon::now())
+                ->where('master_acps.end_date','<=',\Carbon\Carbon::now())
+                ->where('master_acps.status_approval',)
                 ->get();
 
         return response()->json($data, 200);

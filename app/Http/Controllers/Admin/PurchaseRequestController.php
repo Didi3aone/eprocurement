@@ -91,6 +91,7 @@ class PurchaseRequestController extends Controller
                         'purchase_requests.notes',
                         'purchase_requests.id',
                     )
+                    ->groupBy('purchase_requests.id')
                     ->get();
         return view('admin.purchase-request.approval-project', compact('prProject'));
     }
@@ -366,5 +367,54 @@ class PurchaseRequestController extends Controller
 
         // Return response
         return \redirect()->route('admin.purchase-request-project')->with('status','PR Project has been approved');
+    }
+
+    /**
+     * rejected pr proccess
+     * @author didi
+     * @param  array  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function rejectedPr(Request $request)
+    {
+        $message['is_error'] = true;
+        $message['error_msg'] = "";
+
+        if( $request ) {
+            $prUpdate                       = PurchaseRequest::find($request->id);
+            $prUpdate->status               = PurchaseRequest::Rejected;
+            $prUpdate->status_approval      = PurchaseRequest::Rejected;
+            $prUpdate->reject_reason        = $request->reason;
+            $prUpdate->update();
+
+            PurchaseRequestsDetail::where('request_id', $request->id)->update([
+                'status_approval' => PurchaseRequestsDetail::Rejected
+            ]);
+
+            \Session::flash('status','Purchase request has been rejected');
+            $configEnv    = \configEmailNotification();
+            if( $configEnv->type == \App\Models\BaseModel::Development ) {
+                $email    = $configEnv->value;
+                $name     = \getEmailLocal($prUpdate->created_by)->name;
+            } else {
+                $email    = \getEmailLocal($prUpdate->created_by)->email;
+                $name     = \getEmailLocal($prUpdate->created_by)->name;
+            }
+            
+            $pr = $prUpdate;
+            Mail::to($email)->send(new enesisPurchaseRequestAdminDpj($pr, $name));
+            PurchaseRequestApprovalHistory::create([
+                'nik'           => \Auth::user()->nik,
+                'action'        => 'Rejected',
+                'request_id'    => $request->id,
+                'reason'        => '-'
+            ]);
+            $message['is_error'] = false;
+        } else {
+            $message['is_error'] = true;
+            $message['error_msg'] = "Failed update database";
+        }
+
+        return response()->json($message);
     }
 }

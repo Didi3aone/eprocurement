@@ -18,7 +18,7 @@
                 <div class="card-body">
                     <a class="btn btn-primary btn-xs" href="{{ route('admin.purchase-request-project') }}"><i class="fa fa-arrow-left"></i> Back To list</a>
                     <button class="btn btn-success btn-xs approve" type="submit"><i class="fa fa-check"></i> Approve</button>
-                    <a class="btn btn-danger btn-xs reject" href="#"><i class="fa fa-times"></i> Reject</a>
+                    <a class="btn btn-danger btn-xs reject" href="#" data-id="{{ $prProject->id }}"><i class="fa fa-times"></i> Reject</a>
                     <br/><br>
                     <table class="table table-bordered table-striped">
                         <input type="hidden" name="pr_id" value="{{ $prProject->id }}">
@@ -41,6 +41,22 @@
                             </tr>
                             <tr>
                                 <th>
+                                    Notes
+                                </th>
+                                <td>
+                                    {{ $prProject->notes }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Project
+                                </th>
+                                <td>
+                                    {{ \App\Models\PurchaseRequest::TypeProject[$prProject->is_project] }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
                                     Urgensi
                                 </th>
                                 <td>
@@ -49,10 +65,12 @@
                             </tr>
                             <tr>
                                 <th>
-                                    Notes
+                                    Attachment URS
                                 </th>
                                 <td>
-                                    {{ $prProject->notes }}
+                                   <a href="{{ 'https://employee.enesis.com/public/uploads/'.$prProject->upload_file }}" download target="_blank">
+                                        {{ $prProject->upload_file }}
+                                   </a>
                                 </td>
                             </tr>
                         </tbody>
@@ -68,7 +86,6 @@
                     <table class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>Category</th>
                                 <th>Material ID</th>
                                 <th>Material Description</th>
                                 <th>Qty</th>
@@ -80,15 +97,6 @@
                             @foreach($prProject->purchaseDetail as $key => $value)
                             <tr>
                                 <input type="hidden" name="idDetail[]" value="{{ $value->id }}">
-                                <td>
-                                    @if($value->material_id != '')
-                                        {{ 'Material Item' }}
-                                    @elseif($value->material_id == '' && $value->category == \App\Models\PurchaseRequest::STANDART)
-                                        {{ 'Material Text' }}
-                                    @else 
-                                        {{ 'Service' }}
-                                    @endif
-                                </td>
                                 <td>{{ $value->material_id }}</td>
                                 <td>{{ $value->description }}</td>
                                 <td>{{ $value->qty }}</td>
@@ -102,4 +110,39 @@
         </div>
     </div>
 </form>
+@endsection
+@section('scripts')
+@parent 
+<script>
+    $('.reject').click(function(e){
+        e.preventDefault();
+        let id = $(this).data('id');
+
+        swal("Input reason rejected !!!", {
+            content: "input",
+        })
+        .then((value) => {
+            $.ajax({
+                type: "PUT",
+                url: "{{ route('admin.purchase-request-project-rejected') }}",
+                headers: {
+                    'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    id : id,
+                    reason : value
+                },
+                dataType:'json',
+                success: function (data) {
+                
+                }
+            });
+
+            setTimeout(function() {
+                location.href = '{{ route('admin.purchase-request-project') }}'
+            },500)
+        });
+    });
+</script>
 @endsection

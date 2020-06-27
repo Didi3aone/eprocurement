@@ -12,14 +12,15 @@ class Quotation extends Model
     public $table = 'quotation';
 
     protected $fillable = [
-        'vendor_id',
+        'id',
         'po_no',
-        'po_date',
         'notes',
-        'request_id',
         'status',
-        'approved_head',
-        'approved_asspro'
+        'doc_type',
+        'created_at',
+        'updated_at',
+        'upload_file',
+        
     ];
 
     public const Approved = 1;
@@ -27,6 +28,12 @@ class Quotation extends Model
     public const Repeat = 0;
     public const Direct = 0;
     public const Waiting = 0;
+
+    public const QuotationDirect = 2;
+    
+    public const ApprovalAss  = 10;
+    public const ApprovalHead = 20;
+    public const Rejected     = 30;
 
     public function detail ()
     {

@@ -10,7 +10,7 @@
     <meta name="author" content="">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Favicon icon -->
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/logos.png') }}">
     <title>{{ trans('panel.site_title') }}</title>
     <!-- Bootstrap Core CSS -->
     <link href="{{ asset('plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
@@ -283,9 +283,17 @@
             });
         });
         $('#mdate').bootstrapMaterialDatePicker({ weekStart : 0, time: false });
+        $('.mdate').bootstrapMaterialDatePicker({ weekStart : 0, time: false });
+        
         jQuery('#datepicker-autoclose').datepicker({
             autoclose: true,
             todayHighlight: true
+        });
+
+        jQuery('.datepicker-autoclose').datepicker({
+            autoclose: true,
+            todayHighlight: true,
+            dateFormat : 'dd-mm-yy'
         });
         @if(session('status')) 
             $.toast({

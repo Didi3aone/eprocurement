@@ -46,7 +46,7 @@
                                 <tr data-entry-id="{{ $acp->id }}">
                                     <td>{{ $acp->id ?? '' }}</td>
                                     <td>{{ $acp->acp_no ?? '' }}</td>
-                                    <td>{{ $acp->is_approval == 1 ? 'Yes' : 'No' }}</td>
+                                    <td>{{ \App\Models\AcpTable::Type_Status[$acp->status_approval] }}</td>
                                     <td>{{ $acp->is_project == 1 ? 'Yes' : 'No' }}</td>
                                     <td>
                                         @can('master_acp_show')
@@ -55,11 +55,11 @@
                                             </a>
                                         @endcan
 
-                                        @can('master_acp_edit')
+                                        {{-- @can('master_acp_edit')
                                             <a class="btn btn-xs btn-info" href="{{ route('admin.master-acp.edit', $acp->id) }}">
                                                 <i class="fa fa-edit"></i> {{ trans('global.edit') }}
                                             </a>
-                                        @endcan
+                                        @endcan --}}
 
                                         {{-- @can('master_acp_delete')
                                             <form action="{{ route('admin.master-acp.destroy', $acp->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">

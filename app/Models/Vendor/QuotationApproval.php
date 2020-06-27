@@ -17,7 +17,8 @@ class QuotationApproval extends Model
         'flag',
         'quotation_id',
         'approve_date',
-        'acp_type'
+        'acp_type',
+        'acp_id'
     ];
 
     public const waitingApproval = 0;
@@ -29,6 +30,11 @@ class QuotationApproval extends Model
 
     public function quotation ()
     {
-        return $this->hasOne(Quotation::class, 'id', 'quotation_id');
+        return $this->belongsTo(Quotation::class, 'id', 'quotation_id');
+    }
+
+    public function acp ()
+    {
+        return $this->belongsTo(\App\Models\AcpTable::class);
     }
 }

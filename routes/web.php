@@ -137,6 +137,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::get('purchase-request-direct/{ids}/{quantities}','PurchaseRequestController@direct')->name('purchase-request-direct');
     Route::get('purchase-request-project','PurchaseRequestController@approvalProject')->name('purchase-request-project');
     Route::put('purchase-request-project-approval','PurchaseRequestController@approvalPrStaffPurchasing')->name('purchase-request-project-approval');
+    Route::put('purchase-request-project-rejected','PurchaseRequestController@rejectedPr')->name('purchase-request-project-rejected');
     Route::resource('purchase-request', 'PurchaseRequestController');
 
     // request note
@@ -176,7 +177,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::get('quotation-show-direct/{id}', 'QuotationController@showDirect')->name('quotation-show-direct');
     Route::post('quotation-preview-direct', 'QuotationController@previewDirect')->name('quotation-preview-direct');
     Route::post('quotation-approve-direct', 'QuotationController@approveDirect')->name('quotation-approve-direct');
-    Route::post('quotation-save-direct', 'QuotationController@saveDirect')->name('quotation-save-direct');
+   // Route::post('quotation-save-direct', 'QuotationController@saveDirect')->name('quotation-save-direct');
     Route::get('quotation-edit-direct/{id}', 'QuotationController@editDirect')->name('quotation-edit-direct');
 
     // bidding
@@ -191,6 +192,12 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::post('quotation/approve-winner', 'QuotationController@approveWinner')->name('quotation.approve-winner');
     Route::put('quotation/remove-vendor/{quotation_id}/{vendor_id}', 'QuotationController@removeVendor')->name('quotation.remove-vendor');
     Route::resource('quotation', 'QuotationController');
+
+    Route::get('quotation-direct-approval-head','QuotationDirectController@approvalListHead')->name('quotation-direct-approval-head');
+    Route::get('quotation-direct-approval-ass','QuotationDirectController@approvalListAss')->name('quotation-direct-approval-ass');
+    Route::get('quotation/direct/approve/ass/{ids}', 'QuotationDirectController@directApproveAss')->name('quotation.direct.approve.ass');
+    Route::get('quotation/direct/approve/head/{ids}', 'QuotationDirectController@directApproveHead')->name('quotation.direct.approve.head');
+    Route::resource('quotation-direct', 'QuotationDirectController');
 
     // rfq
     Route::post('rfq/import', 'RfqController@import')->name('rfq.import');
@@ -213,9 +220,12 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     // ACP 
     Route::get('acp-direct','AcpController@directAcp')->name('acp-direct');
     Route::get('acp-bidding','AcpController@biddingAcp')->name('acp-bidding');
+    Route::get('acp-approval','AcpController@acpApproval')->name('acp-approval');
     Route::get('show-acp-direct/{id}','AcpController@showDirect')->name('show-acp-direct');
+    Route::get('show-acp-approval/{id}','AcpController@showAcpApproval')->name('show-acp-approval');
     Route::get('show-acp-bidding/{id}','AcpController@showBidding')->name('show-acp-bidding');
     Route::post('post-acp-direct','AcpController@approvalDirectAcp')->name('post-acp-direct');
+    Route::post('post-acp-approval','AcpController@approvalAcp')->name('post-acp-approval');
 
     // Master ACP
     Route::get('master-acp-material', 'MasterAcpController@getMaterial')->name('master-acp-material');
