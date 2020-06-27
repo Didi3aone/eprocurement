@@ -681,6 +681,8 @@ class SapHelper {
         $client->__setSoapHeaders($header);
 
         $params = [];
+        $params[0]['POHEADER'] = [];
+        $params[0]['POHEADERX'] = [];
         $params[0]['POITEM'] = [];
         $params[0]['POITEMX'] = [];
         $params[0]['POSCHEDULE'] = [];
@@ -692,13 +694,13 @@ class SapHelper {
         $POHEADER = [
             'PO_NUMBER' => '',
             'COMP_CODE' => '',
-            'DOC_TYPE' => 'Z301',
+            'DOC_TYPE' => $quotation->doc_type,
             'DELETE_IND' => '',
             'STATUS' => '',
             'CREAT_DATE' => '',
             'CREATED_BY' => '',
             'ITEM_INTVL' => '',
-            'VENDOR' => '0003000046',
+            'VENDOR' => '000'.$quotation->vendor_id ?? '0003000046',
             'LANGU' => '',
             'LANGU_ISO' => '',
             'PMNTTRMS' => '',
@@ -709,7 +711,7 @@ class SapHelper {
             'DSCT_PCT2' => '',
             'PURCH_ORG' => '',
             'PUR_GROUP' => '',
-            'CURRENCY' => 'IDR',
+            'CURRENCY' => $quotation->currency ?? 'IDR',
             'CURRENCY_ISO' => '',
             'EXCH_RATE' => '',
             'EX_RATE_FX' => '',
@@ -757,7 +759,6 @@ class SapHelper {
             'EXT_SYS' => '',
             'EXT_REF' => ''
         ];
-        $params[0]['POHEADER'] = $POHEADER;
         $POHEADERX = [
             'PO_NUMBER' => '',
             'COMP_CODE' => '',
@@ -826,10 +827,12 @@ class SapHelper {
             'EXT_SYS' => '',
             'EXT_REF' => ''
         ];
+
+        $params[0]['POHEADER'] = $POHEADER;
         $params[0]['POHEADERX'] = $POHEADERX;
+
         $count_ = count($quotationDetail);
         $is_array = ((int)$count_) > 1 ? true : false;
-        $pr_no = '1000004218'; // temp
         for ($i=0; $i < $count_; $i++) { 
             $indexes = $i+1;
             $poItem = ('000'.(10+($i*10)));
@@ -932,7 +935,7 @@ class SapHelper {
                 'MINREMLIFE' => '',
                 'RFQ_NO' => '',
                 'RFQ_ITEM' => '',
-                'PREQ_NO' => $quotationDetail[$i]->PR_NO,
+                'PREQ_NO' => (string) $quotationDetail[0]->PR_NO,
                 'PREQ_ITEM' => $quotationDetail[$i]->PREQ_ITEM,
                 'REF_DOC' => '',
                 'REF_ITEM' => '',
@@ -1214,13 +1217,13 @@ class SapHelper {
         
             $POSCHEDULE = [
                 "PO_ITEM" => $poItem, //line
-                "SCHED_LINE" => $quotationDeliveryDate[$i]->SCHED_LINE, // 0001 ++
+                "SCHED_LINE" => '000'.$quotationDeliveryDate[$i]->SCHED_LINE, // 0001 ++
                 "DEL_DATCAT_EXT" => "",
                 "DELIVERY_DATE" => $quotationDeliveryDate[$i]->DELIVERY_DATE,//delivery date
-                "QUANTITY" => $quotationDeliveryDate[$i]->QUANTITY,// qty
+                "QUANTITY" =>  (string) $quotationDeliveryDate[$i]->QUANTITY,// qty
                 "DELIV_TIME" => "", 
                 "STAT_DATE" => "",
-                "PREQ_NO" => $quotationDetail[$i]->PR_NO, // kedua no pr di insert
+                "PREQ_NO" =>  (string) $quotationDetail[$i]->PR_NO, // kedua no pr di insert
                 "PREQ_ITEM" => $quotationDetail[$i]->PREQ_ITEM, // line 
                 "PO_DATE" => "",
                 "ROUTESCHED" => "",
@@ -1246,6 +1249,8 @@ class SapHelper {
             $POSCHEDULEX = [
                 "PO_ITEM" => $poItem,
                 "SCHED_LINE" => "X",
+                "PO_ITEMX" => "",
+                "SCHED_LINEX" => "",
                 "DEL_DATCAT_EXT" => "",
                 "DELIVERY_DATE" => "X",
                 "QUANTITY" => "X",
@@ -1280,12 +1285,14 @@ class SapHelper {
                 $params[0]['POSCHEDULE']['item'][$i] = $POSCHEDULE;
                 $params[0]['POSCHEDULEX']['item'][$i] = $POSCHEDULEX;
             } else {
-                $params[0]['POSCHEDULE']['item'] = $POSCHEDULE;
-                // $params[0]['POSCHEDULEX']['item'] = $POSCHEDULEX;
                 $params[0]['POITEM']['item'] = $POITEM;
                 $params[0]['POITEMX']['item'] = $POITEMX;
+                $params[0]['POSCHEDULE']['item'] = $POSCHEDULE;
+                $params[0]['POSCHEDULEX']['item'] = $POSCHEDULEX;
             }
+        
         }
+        
         $RETURN = [
             "TYPE" => "",
             "ID" => "",
