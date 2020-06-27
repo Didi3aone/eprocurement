@@ -15,6 +15,7 @@ use App\Models\PurchaseRequestHistory;
 use App\Models\PurchaseOrder;
 use App\Models\MasterRfq;
 use App\Models\Vendor;
+use App\Models\RoleUser;
 use App\Mail\PurchaseOrderMail;
 
 class QuotationController extends Controller
@@ -48,11 +49,34 @@ class QuotationController extends Controller
 
     public function repeat ()
     {
-        $quotation = Quotation::where('status', Quotation::Waiting)
-                ->orderBy('id', 'desc')
+        $procure = false; // Head
+        $asspro = false; // Assistent
+        $user_id = \Auth::user()->id;
+        $role = RoleUser::where('user_id', $user_id)->get()->first();
+        if ($role) {
+            if ($role->role_id==1) $procure = true;
+            if ($role->role_id==5) $asspro = true;
+        }
+        $quotation = Quotation::where('status', Quotation::Waiting);
+        // if ($procure) {
+        //     $quotation = $quotation->where('approved_asspro', 1)
+        //                     ->where('approved_head', 0);
+        // } else 
+        // if ($asspro) {
+        //     $quotation = $quotation->where('approved_asspro', 0);
+        // }
+        $quotation = $quotation->orderBy('id', 'desc')
                 ->get();
+        foreach ($quotation as $val) {
+            $is_check = false;
+            if ($procure and $val->approved_head==0 and $val->approved_asspro==1)
+                $is_check = true;
+            if ($asspro and $val->approved_asspro==0 and $val->approval_status!=1)
+                $is_check = true;
+            $val->is_check = $is_check;
+        }
 
-        return view('admin.quotation.repeat', compact('quotation'));
+        return view('admin.quotation.repeat', compact('quotation','role'));
     }
 
     public function direct ()
@@ -654,7 +678,8 @@ class QuotationController extends Controller
     private function _approval_po_repeat($quotation, $quotation_detail, $PO_NUMBER)
     {
         // quotation approve
-        $q_update = Quotation::where('id', $quotation->id)->update(['approval_status' => 2]);
+        $q_update = Quotation::where('id', $quotation->id)
+                    ->update(['approved_head' => 1, 'approval_status' => 2]);
         if (!$q_update)
             return false;
 
@@ -715,11 +740,23 @@ class QuotationController extends Controller
         $ids = explode(',', $ids);
         \DB::beginTransaction();
         try {
-            foreach ($ids as $i => $id) {
-                $approve = $this->_send_sap_po_repeat($id);
-                if ($approve===false)
-                    throw new Exception("Invalid Request");
-            }
+            $user_id = \Auth::user()->id;
+            $role = RoleUser::where('user_id', $user_id)->get()->first();
+            if ($role) {
+                if ($role->role_id==1) {
+                    foreach ($ids as $id) {
+                        $approve = $this->_send_sap_po_repeat($id);
+                        if ($approve===false)
+                            throw new Exception("Invalid Request");
+                    }
+                } else
+                if ($role->role_id==5) {
+                    foreach ($ids as $id) {
+                        $quotation = Quotation::where('id', $id)
+                                    ->update(['approved_asspro' => 1]);
+                    }
+                }
+            }   
             \DB::commit();
             return redirect()->route('admin.quotation.repeat')->with('status', 'Success processing');
         } catch (Exception $e) {

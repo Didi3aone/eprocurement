@@ -9,7 +9,13 @@
         </ol>
     </div>
 </div>
-
+{{-- <div style="margin-bottom: 10px;" class="row">
+    <div class="col-lg-6">
+        <a class="btn btn-success" href="{{ route("admin.billing-create") }}">
+            <i class='fa fa-plus'></i> {{ trans('global.add') }} {{ trans('cruds.billing.title_singular') }}
+        </a>
+    </div>
+</div> --}}
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -36,6 +42,7 @@
                                     <td>{{ App\Models\Vendor\Billing::TypeStatus[$rows->status] }}</td>
                                     <td>
                                         <a href="{{ route('admin.billing-show',$rows->id) }}" class="btn btn-info btn-xs"><i class="fa fa-eye"></i> Show</a>
+                                        <a href="{{ route('admin.billing-edit',$rows->id) }}" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> Edit</a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -47,6 +54,7 @@
     </div>
 </div>
 @endsection
+
 @section('scripts')
 @parent
 <script>

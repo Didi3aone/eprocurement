@@ -38,7 +38,8 @@
                                         <th>{{ trans('cruds.quotation.fields.id') }}</th>
                                         <th>{{ trans('cruds.quotation.fields.po_no') }}</th>
                                         <th>Notes</th>
-                                        <th>{{ trans('cruds.quotation.fields.status') }}</th>
+                                        <th>{{ trans('cruds.quotation.fields.status') }} Head</th>
+                                        <th>{{ trans('cruds.quotation.fields.status') }} Assistant</th>
                                         <th>&nbsp;</th>
                                     </tr>
                                 </thead>
@@ -46,9 +47,9 @@
                                     @foreach($quotation as $key => $val)
                                         <tr data-entry-id="{{ $val->id }}">
                                             <td>
-                                                @if( $val->approval_status == 0)
-                                                <input type="checkbox" name="id[]" id="check_{{ $val->id }}" class="check_po" value="{{ $val->id }}" _valold="{{ $val->id }}">
-                                                <label for="check_{{ $val->id }}">&nbsp;</label>
+                                                @if($val->approval_status == 0 and $val->is_check)
+                                                    <input type="checkbox" name="id[]" id="check_{{ $val->id }}" class="check_po" value="{{ $val->id }}" _valold="{{ $val->id }}">
+                                                    <label for="check_{{ $val->id }}">&nbsp;</label>
                                                 @endif
                                             </td>
                                             <td>{{ $val->id ?? '' }}</td>
@@ -65,6 +66,13 @@
                                                     <span class="badge badge-danger"> Rejected </span>
                                                 @elseif( $val->approval_status == 4)
                                                     <span class="badge badge-danger"> Vendor Rejected </span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($val->approved_asspro == 0)
+                                                    <span class="badge badge-primary"> Waiting For Approval </span>
+                                                @else
+                                                    <span class="badge badge-success"> Approved </span>
                                                 @endif
                                             </td>
                                             <td>
@@ -85,10 +93,10 @@
 </div>
 
 <div class="modal fade" id="modal_approval_po" tabindex="-1" role="dialog" aria-labelledby="modalCreatePO" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalImport">{{ 'COnfirm Approval' }}</h5>
+                <h5 class="modal-title" id="modalImport">{{ 'Confirm Approval' }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
