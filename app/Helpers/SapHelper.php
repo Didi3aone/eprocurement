@@ -681,17 +681,24 @@ class SapHelper {
         $client->__setSoapHeaders($header);
 
         $params = [];
+        $params[0]['POITEM'] = [];
+        $params[0]['POITEMX'] = [];
+        $params[0]['POSCHEDULE'] = [];
+        $params[0]['POSCHEDULEX'] = [];
+        $params[0]['RETURN'] = [];
+        $POITEM = [];
+        $POITEMX = [];
 
         $POHEADER = [
             'PO_NUMBER' => '',
             'COMP_CODE' => '',
-            'DOC_TYPE' => $quotation->doc_type, // Z301
+            'DOC_TYPE' => 'Z301',
             'DELETE_IND' => '',
             'STATUS' => '',
             'CREAT_DATE' => '',
             'CREATED_BY' => '',
             'ITEM_INTVL' => '',
-            'VENDOR' =>  '000'.$quotation->vendor_id ?? '0003000046',
+            'VENDOR' => '0003000046',
             'LANGU' => '',
             'LANGU_ISO' => '',
             'PMNTTRMS' => '',
@@ -702,11 +709,11 @@ class SapHelper {
             'DSCT_PCT2' => '',
             'PURCH_ORG' => '',
             'PUR_GROUP' => '',
-            'CURRENCY' => $quotation->currency ?? 'IDR',
+            'CURRENCY' => 'IDR',
             'CURRENCY_ISO' => '',
             'EXCH_RATE' => '',
             'EX_RATE_FX' => '',
-            'DOC_DATE' => '', //'2020-06-12',
+            'DOC_DATE' => '',//'2020-06-12',
             'VPER_START' => '',
             'VPER_END' => '',
             'WARRANTY' => '',
@@ -824,71 +831,10 @@ class SapHelper {
         $is_array = ((int)$count_) > 1 ? true : false;
         $pr_no = '1000004218'; // temp
         for ($i=0; $i < $count_; $i++) { 
-            // $po_index = sprintf('%05d', (10+$i));
             $indexes = $i+1;
             $poItem = ('000'.(10+($i*10)));
-            $POSCHEDULE = [
-                "PO_ITEM" => $poItem, //line
-                "SCHED_LINE" => $quotationDeliveryDate[$i]->SCHED_LINE, // 0001 ++
-                "DEL_DATCAT_EXT" => "",
-                "DELIVERY_DATE" => $quotationDeliveryDate[$i]->DELIVERY_DATE,//delivery date
-                "QUANTITY" => $quotationDeliveryDate[$i]->QUANTITY,// qty
-                "DELIV_TIME" => "", 
-                "STAT_DATE" => "",
-                "PREQ_NO" => $quotationDetail[$i]->PR_NO, // kedua no pr di insert
-                "PREQ_ITEM" => $quotationDetail[$i]->PREQ_ITEM, // line 
-                "PO_DATE" => "",
-                "ROUTESCHED" => "",
-                "MS_DATE" => "",
-                "MS_TIME" => "",
-                "LOAD_DATE" => "",
-                "LOAD_TIME" => "",
-                "TP_DATE" => "",
-                "TP_TIME" => "",
-                "GI_DATE" => "",
-                "GI_TIME" => "",
-                "DELETE_IND" => "",
-                "REQ_CLOSED" => "",
-                "GR_END_DATE" => "",
-                "GR_END_TIME" => "",
-                "COM_QTY" => "",
-                "COM_DATE" => "",
-                "GEO_ROUTE" => "",
-                "HANDOVERDATE" => "",
-                "HANDOVERTIME" => "",
-            ];
-            $POSCHEDULEX = [
-                "PO_ITEM" => $poItem,
-                "SCHED_LINE" => "X",
-                "DEL_DATCAT_EXT" => "",
-                "DELIVERY_DATE" => "X",
-                "QUANTITY" => "X",
-                "DELIV_TIME" => "",
-                "STAT_DATE" => "",
-                "PREQ_NO" => "X",
-                "PREQ_ITEM" => "X",
-                "PO_DATE" => "",
-                "ROUTESCHED" => "",
-                "MS_DATE" => "",
-                "MS_TIME" => "",
-                "LOAD_DATE" => "",
-                "LOAD_TIME" => "",
-                "TP_DATE" => "",
-                "TP_TIME" => "",
-                "GI_DATE" => "",
-                "GI_TIME" => "",
-                "DELETE_IND" => "",
-                "REQ_CLOSED" => "",
-                "GR_END_DATE" => "",
-                "GR_END_TIME" => "",
-                "COM_QTY" => "",
-                "COM_DATE" => "",
-                "GEO_ROUTE" => "",
-                "HANDOVERDATE" => "",
-                "HANDOVERTIME" => "",
-            ];
             $POITEM = [
-                'PO_ITEM' => '00010',//LINE
+                'PO_ITEM' => $poItem,//LINE
                 'DELETE_IND' => '',
                 'SHORT_TEXT' => '',
                 'MATERIAL' => '',
@@ -986,7 +932,7 @@ class SapHelper {
                 'MINREMLIFE' => '',
                 'RFQ_NO' => '',
                 'RFQ_ITEM' => '',
-                'PREQ_NO' => $quotationDetail[$i]->PR_NO, 
+                'PREQ_NO' => $quotationDetail[$i]->PR_NO,
                 'PREQ_ITEM' => $quotationDetail[$i]->PREQ_ITEM,
                 'REF_DOC' => '',
                 'REF_ITEM' => '',
@@ -1076,6 +1022,7 @@ class SapHelper {
                 'LIMIT_AMOUNT' => '',
                 'EXT_REF' => '',
             ];
+
             $POITEMX = [
                 'PO_ITEM' => $poItem,
                 'PO_ITEMX' => 'X',
@@ -1264,16 +1211,79 @@ class SapHelper {
                 'LIMIT_AMOUNT' => '',
                 'EXT_REF' => '',
             ];
+        
+            $POSCHEDULE = [
+                "PO_ITEM" => $poItem, //line
+                "SCHED_LINE" => $quotationDeliveryDate[$i]->SCHED_LINE, // 0001 ++
+                "DEL_DATCAT_EXT" => "",
+                "DELIVERY_DATE" => $quotationDeliveryDate[$i]->DELIVERY_DATE,//delivery date
+                "QUANTITY" => $quotationDeliveryDate[$i]->QUANTITY,// qty
+                "DELIV_TIME" => "", 
+                "STAT_DATE" => "",
+                "PREQ_NO" => $quotationDetail[$i]->PR_NO, // kedua no pr di insert
+                "PREQ_ITEM" => $quotationDetail[$i]->PREQ_ITEM, // line 
+                "PO_DATE" => "",
+                "ROUTESCHED" => "",
+                "MS_DATE" => "",
+                "MS_TIME" => "",
+                "LOAD_DATE" => "",
+                "LOAD_TIME" => "",
+                "TP_DATE" => "",
+                "TP_TIME" => "",
+                "GI_DATE" => "",
+                "GI_TIME" => "",
+                "DELETE_IND" => "",
+                "REQ_CLOSED" => "",
+                "GR_END_DATE" => "",
+                "GR_END_TIME" => "",
+                "COM_QTY" => "",
+                "COM_DATE" => "",
+                "GEO_ROUTE" => "",
+                "HANDOVERDATE" => "",
+                "HANDOVERTIME" => "",
+            ];
+
+            $POSCHEDULEX = [
+                "PO_ITEM" => $poItem,
+                "SCHED_LINE" => "X",
+                "DEL_DATCAT_EXT" => "",
+                "DELIVERY_DATE" => "X",
+                "QUANTITY" => "X",
+                "DELIV_TIME" => "",
+                "STAT_DATE" => "",
+                "PREQ_NO" => "X",
+                "PREQ_ITEM" => "X",
+                "PO_DATE" => "",
+                "ROUTESCHED" => "",
+                "MS_DATE" => "",
+                "MS_TIME" => "",
+                "LOAD_DATE" => "",
+                "LOAD_TIME" => "",
+                "TP_DATE" => "",
+                "TP_TIME" => "",
+                "GI_DATE" => "",
+                "GI_TIME" => "",
+                "DELETE_IND" => "",
+                "REQ_CLOSED" => "",
+                "GR_END_DATE" => "",
+                "GR_END_TIME" => "",
+                "COM_QTY" => "",
+                "COM_DATE" => "",
+                "GEO_ROUTE" => "",
+                "HANDOVERDATE" => "",
+                "HANDOVERTIME" => "",
+            ];
+
             if ($is_array) {
                 $params[0]['POITEM']['item'][$i] = $POITEM;
                 $params[0]['POITEMX']['item'][$i] = $POITEMX;
                 $params[0]['POSCHEDULE']['item'][$i] = $POSCHEDULE;
                 $params[0]['POSCHEDULEX']['item'][$i] = $POSCHEDULEX;
             } else {
+                $params[0]['POSCHEDULE']['item'] = $POSCHEDULE;
+                // $params[0]['POSCHEDULEX']['item'] = $POSCHEDULEX;
                 $params[0]['POITEM']['item'] = $POITEM;
                 $params[0]['POITEMX']['item'] = $POITEMX;
-                $params[0]['POSCHEDULE']['item'] = $POSCHEDULE;
-                $params[0]['POSCHEDULEX']['item'] = $POSCHEDULEX;
             }
         }
         $RETURN = [
