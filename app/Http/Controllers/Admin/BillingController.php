@@ -34,6 +34,18 @@ class BillingController extends Controller
         return view('admin.billing.show', compact('billing'));
     }
 
+    public function edit ($id)
+    {
+        $billing = Billing::find($id);
+
+        return view('admin.billing.edit', compact('billing'));
+    }
+
+    public function store (Request $request)
+    {
+        dd($request->all());
+    }
+
     public function storeApproved(Request $request)
     {
         $billing = Billing::find($request->id);

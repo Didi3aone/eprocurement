@@ -75,6 +75,7 @@
     <!-- Style switcher -->
     <!-- ============================================================== -->
     <script src="{{ asset('plugins/styleswitcher/jQuery.style.switcher.js') }}"></script>
+    @yield('scripts')
 </body>
 
 </html>
