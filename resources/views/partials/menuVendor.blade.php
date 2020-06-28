@@ -6,7 +6,7 @@
             <ul id="sidebarnav">
                 <li class="nav-small-cap">PERSONAL</li>
                 <li><a href="{{ route('vendor.home') }}">Dashboard</a></li>
-                <li class=""> 
+                {{-- <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-truck"></i>
                         <span class="hide-menu"> {{ 'Bidding' }} </span>
                     </a>
@@ -18,7 +18,7 @@
                             </a>
                         </li>
                     </ul>
-                </li>
+                </li> --}}
                 <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-truck"></i>
                         <span class="hide-menu"> Repeat Order </span>

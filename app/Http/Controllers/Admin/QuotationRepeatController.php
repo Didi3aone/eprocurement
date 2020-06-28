@@ -276,10 +276,52 @@ class QuotationRepeatController extends Controller
                 $quotationDetail = QuotationDetail::where('quotation_order_id', $id)->get();
                 $quotationDeliveryDate = QuotationDelivery::where('quotation_id', $id)->get();
 
-                \sapHelp::sendPoToSap($quotation, $quotationDetail,$quotationDeliveryDate);
+                // \sapHelp::sendPoToSap($quotation, $quotationDetail,$quotationDeliveryDate);
+                $sendSap = true;
+                if( $sendSap ) {
+                    $this->_clone_purchase_orders($quotation, $quotationDetail);
+                }
             }
         } catch (\Throwable $th) {
             throw $th;
+        }
+    }
+
+     /**
+     * clone resource from quotation to table po
+     *
+     * @param  array $header
+     * @param  array $detail
+     * @return \Illuminate\Http\Response
+     */
+    private function _clone_purchase_orders($header, $detail)
+    {
+        $poId = PurchaseOrder::create([
+                'quotation_id' => $header->id,
+                'notes'        => $header->notes,
+                'po_date'      => \Carbon\Carbon::now(),
+                'vendor_id'    => $header->vendor_id,
+                'status'       => 1,
+                'payment_term' => $header->payment_term,
+                'currency'     => $header->currency,
+                'PO_NUMBER'    => 3010002705,
+            ]);
+
+        for ($i = 0; $i < count($detail); $i++) { 
+            PurchaseOrdersDetail::create([
+                'purchase_order_id'     => $poId->id,
+                'description'           => $detail[$i]['description'],
+                'qty'                   => $detail[$i]['qty'],
+                'unit'                  => $detail[$i]['unit'],
+                'notes'                 => $detail[$i]['notes'],
+                'price'                 => $detail[$i]['price'],
+                'material_id'           => $detail[$i]['material_id'],
+                'assets_no'             => $detail[$i]['assets_no'],
+                'material_group'        => $datail[$i]['material_group'],
+                'preq_item'             => $detail[$i]['preq_item'],
+                'purchasing_document'   => $detail[$i]['purchasing_document'],
+                'PR_NO'                 => $detail[$i]['PR_NO']
+            ]);
         }
     }
 

@@ -21,6 +21,25 @@ class PurchaseOrderController extends Controller
         return view('vendor.purchase-order.index', compact('purchaseOrders'));
     }
 
+    public function repeat ()
+    {
+        $quotation = Quotation::select(
+            'quotation.id',
+            'quotation.po_no',
+            'quotation.approval_status',
+            \DB::raw('sum(quotation_details.qty) as total_qty'),
+            \DB::raw('sum(quotation_details.vendor_price) as total_price')
+        )
+            ->join('quotation_details', 'quotation_details.quotation_order_id', '=', 'quotation.id')
+            // ->where('quotation_details.vendor_id', Auth::user()->code)
+            ->where('quotation.status', 0)
+            ->orderBy('quotation.id', 'desc')
+            ->groupBy('quotation.id')
+            ->get();
+
+        return view('vendor.quotation.repeat', compact('quotation'));
+    }
+
     public function create ()
     {
         return view('vendor.purchase-order.create');

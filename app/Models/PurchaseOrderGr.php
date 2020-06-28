@@ -36,7 +36,8 @@ class PurchaseOrderGr extends Model
         'gl_account',
         'profit_center',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'purchase_order_detail_id'
     ];
 
     public static function boot()

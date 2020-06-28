@@ -10,16 +10,43 @@ class PurchaseOrder extends Model
 
     protected $fillable = [
         'id',
-        'request_id',
-        'bidding',
-        'vendor_id',
+        'quotation_id',
         'notes',
         'po_date',
+        'vendor_id',
         'status',
-        'po_no',
+        'payment_term',
+        'currency',
+        'PO_NUMBER',
+        'created_by',
+        'updated_by',
         'created_at',
         'updated_at'
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            try {
+                $user              = \Auth::user();
+                $model->created_by = $user->nik;
+                $model->updated_by = $user->nik;
+            } catch (UnsatisfiedDependencyException $e) {
+                abort(500, $e->getMessage());
+            }
+        });
+
+        static::updating(function ($model) {
+            try {
+                $user              = \Auth::user();
+                $model->created_by = $user->nik;
+                $model->updated_by = $user->nik;
+            } catch (UnsatisfiedDependencyException $e) {
+                abort(500, $e->getMessage());
+            }
+        });
+    }
 
     public function purchaseRequest ()
     {
