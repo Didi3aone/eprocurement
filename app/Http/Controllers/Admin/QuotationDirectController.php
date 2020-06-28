@@ -120,6 +120,7 @@ class QuotationDirectController extends Controller
                 'pr_id'                     => $request->get('pr_no')[$i],
                 'rn_no'                     => $request->get('rn_no')[$i],
                 'material_id'               => $request->get('material_id')[$i],
+                'description'               => $request->get('description')[$i],
                 'unit'                      => $request->get('unit')[$i],
                 'vendor_id'                 => $request->get('vendor_id'),
                 'plant_code'                => $request->get('plant_code')[$i],
@@ -280,6 +281,7 @@ class QuotationDirectController extends Controller
                 }
 
             }
+            return redirect()->route('admin.quotation-direct-approval-head')->with('status', 'Direct Order has been approved!');
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -336,6 +338,7 @@ class QuotationDirectController extends Controller
             $quotationDetail->qty                       = $detail['qty'];
             $quotationDetail->unit                      = $detail['unit'];
             $quotationDetail->material                  = $detail['material_id'];
+            $quotationDetail->description               = $detail['description'];
             $quotationDetail->plant_code                = $detail['plant_code'];
             $quotationDetail->price                     = $detail['price'];
             $quotationDetail->is_assets                 = $detail['is_assets'];

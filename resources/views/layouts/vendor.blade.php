@@ -10,7 +10,7 @@
     <meta name="author" content="">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Favicon icon -->
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/logos.png') }}">
     <title>{{ trans('panel.site_title') }}</title>
     <!-- Bootstrap Core CSS -->
     <link href="{{ asset('plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
@@ -170,16 +170,10 @@
                             </a>
                             <div class="dropdown-menu dropdown-menu-right scale-up">
                                 <ul class="dropdown-user">
-                                    <li>
-                                        <div class="dw-user-box">
-                                            {{-- <div class="u-img"><img src="{{ asset('mages/users/1.jpg') }}" alt="user"></div> --}}
-                                            <div class="u-text">
-                                            <h4>{{ Auth::user()->email }}</h4>
-                                        </div>
-                                    </li>
                                     <li role="separator" class="divider"></li>
-                                    <li><a href="#"><i class="ti-user"></i> My Profile</a></li>
-                                    <li><a href="#"><i class="fa fa-power-off"></i> Logout</a></li>
+                                    <li><a href="{{ route('logout') }}"
+                                        onclick="event.preventDefault();
+                                        document.getElementById('logout-form').submit();"><i class="fa fa-power-off"></i> Logout</a></li>
                                 </ul>
                             </div>
                         </li>
@@ -244,7 +238,7 @@
             <!-- End footer -->
             <!-- ============================================================== -->
         </div>
-        <div class="right-sidebar">
+        {{-- <div class="right-sidebar">
             <div class="slimscrollright">
                 <div class="rpanel-title"> Service Panel <span><i class="ti-close right-side-toggle"></i></span> </div>
                 <div class="r-panel-body">
@@ -254,7 +248,7 @@
                     </ul>
                 </div>
             </div>
-        </div>
+        </div> --}}
         <!-- ============================================================== -->
         <!-- End Page wrapper  -->
         <!-- ============================================================== -->

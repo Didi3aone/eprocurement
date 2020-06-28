@@ -24,6 +24,10 @@ class PurchaseOrder extends Model
         'updated_at'
     ];
 
+    public const POrepeat  = 0;
+    public const POdirect  = 1;
+    public const PObidding = 2;
+
     public static function boot()
     {
         parent::boot();
@@ -61,5 +65,10 @@ class PurchaseOrder extends Model
     public function vendors()
     {
         return $this->belongsTo(\App\Models\Vendor::class,'vendor_id','code');
+    }
+
+    public function orderDetail()
+    {
+        return $this->hasMany(\App\Models\PurchaseOrdersDetail::class,'purchase_order_id','id');
     }
 }

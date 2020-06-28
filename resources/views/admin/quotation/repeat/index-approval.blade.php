@@ -108,7 +108,7 @@ $(document).on('click', '#open_modal', function (e) {
 
     if (check_po.length > 0) {
         $('#modal_approval_po').modal('show')
-        $('.approval_po_repeat').attr('href', '{{ url("admin/quotation/direct/approve/ass/") }}/' + ids)
+        $('.approval_po_repeat').attr('href', '{{ url("admin/quotation/repeat/approve/ass/") }}/' + ids)
     } else {
         alert('Please check your PO!')
         $('#modal_approval_po').modal('hide')

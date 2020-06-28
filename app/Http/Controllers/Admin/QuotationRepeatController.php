@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\PurchaseRequest;
 use App\Models\PurchaseRequestsDetail;
+use App\Models\PurchaseOrder;
+use App\Models\PurchaseOrdersDetail;
 use App\Models\PurchaseRequestHistory;
 use Gate, Artisan, Exception;
 use App\Models\Vendor\Quotation;
@@ -63,7 +66,7 @@ class QuotationRepeatController extends Controller
                     ->orderBy('id', 'desc')
                     ->get();
 
-        return view('admin.quotation.direct.index-approval', compact('quotation'));
+        return view('admin.quotation.repeat.index-approval', compact('quotation'));
     }
 
     /**
@@ -85,8 +88,8 @@ class QuotationRepeatController extends Controller
                     )
                     ->orderBy('id', 'desc')
                     ->get();
-
-        return view('admin.quotation.direct.index-approval-head', compact('quotation'));
+        // dd($quotation);
+        return view('admin.quotation.repeat.index-approval-head', compact('quotation'));
     }
 
     /**
@@ -146,6 +149,7 @@ class QuotationRepeatController extends Controller
                 'PR_NO'                     => $request->get('PR_NO')[$i],
                 'delivery_date'             => $request->get('delivery_date')[$i],
                 'delivery_date_new'         => $request->get('delivery_date_new')[$i],
+                'description'               => $request->get('description')[$i],
                 'vendor_id'                 => $request->vendor_id
             ];
 
@@ -168,7 +172,7 @@ class QuotationRepeatController extends Controller
             $quotation->payment_term    = $request->get('payment_term');
             $quotation->vendor_id       = $request->vendor_id;
             $quotation->status          = Quotation::QuotationRepeat;
-            $quotation->status_approval = Quotation::Waiting;
+            $quotation->approval_status = Quotation::Waiting;
 
             $quotation->save();
 
@@ -236,7 +240,7 @@ class QuotationRepeatController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function directApproveAss($ids)
+    public function repeatpproveAss($ids)
     {
         try {
             $ids = base64_decode($ids);
@@ -261,7 +265,7 @@ class QuotationRepeatController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function directApproveHead($ids)
+    public function repeatApproveHead($ids)
     {
         try {
             $ids = base64_decode($ids);
@@ -282,6 +286,7 @@ class QuotationRepeatController extends Controller
                     $this->_clone_purchase_orders($quotation, $quotationDetail);
                 }
             }
+            return redirect()->route('admin.quotation-repeat-approval-head')->with('status', 'Direct Order has been approved!');
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -306,21 +311,20 @@ class QuotationRepeatController extends Controller
                 'currency'     => $header->currency,
                 'PO_NUMBER'    => 3010002705,
             ]);
-
-        for ($i = 0; $i < count($detail); $i++) { 
+        foreach ($detail as $rows) {
             PurchaseOrdersDetail::create([
                 'purchase_order_id'     => $poId->id,
-                'description'           => $detail[$i]['description'],
-                'qty'                   => $detail[$i]['qty'],
-                'unit'                  => $detail[$i]['unit'],
-                'notes'                 => $detail[$i]['notes'],
-                'price'                 => $detail[$i]['price'],
-                'material_id'           => $detail[$i]['material_id'],
-                'assets_no'             => $detail[$i]['assets_no'],
-                'material_group'        => $datail[$i]['material_group'],
-                'preq_item'             => $detail[$i]['preq_item'],
-                'purchasing_document'   => $detail[$i]['purchasing_document'],
-                'PR_NO'                 => $detail[$i]['PR_NO']
+                'description'           => $rows->description ?? '-',
+                'qty'                   => $rows->qty,
+                'unit'                  => $rows->unit,
+                'notes'                 => $rows->notes ?? '-',
+                'price'                 => $rows->price ?? 0,
+                'material_id'           => $rows->material,
+                'assets_no'             => $rows->assets_no,
+                'material_group'        => $rows->material_group,
+                'preq_item'             => $rows->preq_item,
+                'purchasing_document'   => $rows->purchasing_document,
+                'PR_NO'                 => $rows->PR_NO
             ]);
         }
     }
@@ -338,6 +342,7 @@ class QuotationRepeatController extends Controller
             $quotationDetail->qty                       = $detail['qty'];
             $quotationDetail->unit                      = $detail['unit'];
             $quotationDetail->material                  = $detail['material_id'];
+            $quotationDetail->description               = $detail['description'];
             $quotationDetail->plant_code                = $detail['plant_code'];
             $quotationDetail->price                     = $detail['price'];
             $quotationDetail->is_assets                 = $detail['is_assets'];

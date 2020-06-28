@@ -9,57 +9,46 @@ use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrdersDetail;
 use App\Models\Vendor\Quotation;
 use App\Models\Vendor\QuotationDetail;
-// use Gate;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Crypt;
 
 class PurchaseOrderController extends Controller
 {
-    public function index ()
-    {
-        $purchaseOrders = PurchaseOrder::all();
-
-        return view('vendor.purchase-order.index', compact('purchaseOrders'));
-    }
-
+ 
     public function repeat ()
     {
-        $quotation = Quotation::select(
-            'quotation.id',
-            'quotation.po_no',
-            'quotation.approval_status',
-            \DB::raw('sum(quotation_details.qty) as total_qty'),
-            \DB::raw('sum(quotation_details.vendor_price) as total_price')
-        )
-            ->join('quotation_details', 'quotation_details.quotation_order_id', '=', 'quotation.id')
-            // ->where('quotation_details.vendor_id', Auth::user()->code)
-            ->where('quotation.status', 0)
-            ->orderBy('quotation.id', 'desc')
-            ->groupBy('quotation.id')
-            ->get();
+        $poRepeat = PurchaseOrder::where('status',PurchaseOrder::POrepeat)
+                    ->where('vendor_id',\Auth::user()->code)
+                    ->get();
 
-        return view('vendor.quotation.repeat', compact('quotation'));
+        return view('vendor.purchase-order.repeat', compact('poRepeat'));
     }
 
-    public function create ()
+    public function direct ()
     {
-        return view('vendor.purchase-order.create');
+        $poDirect = PurchaseOrder::where('status',PurchaseOrder::POdirect)
+                    ->where('vendor_id',\Auth::user()->code)
+                    ->get();
+
+        return view('vendor.purchase-order.direct', compact('poDirect'));
     }
 
-    public function makeQuotation ($id)
+    public function repeatDetail($id) 
     {
-        $purchaseOrder = PurchaseOrder::find($id);
-        $purchaseOrderDetails = PurchaseOrdersDetail::where('purchase_order_id', $id)->get();
+        $id = Crypt::decryptString($id);
 
-        return view('vendor.purchase-order.make-quotation', compact('purchaseOrder', 'purchaseOrderDetails'));
+        $poRepeat = PurchaseOrder::find($id);
+
+        return view('vendor.purchase-order.show-repeat', compact('poRepeat'));
     }
 
-    public Function createBidding ($id, $vendor_id)
+    public function directDetail($id) 
     {
-        $po = PurchaseOrder::find($id);
-        $po->bidding = 1;
-        $po->vendor_id = $vendor_id;
-        $po->save();
+        $id = Crypt::decryptString($id);
 
-        return redirect()->route('vendor.purchase-order')->with('status', trans('cruds.purchase-order.alert_success_bidding'));
+        $poDirect = PurchaseOrder::find($id);
+
+        return view('vendor.purchase-order.show-direct', compact('poDirect'));
     }
+
 }

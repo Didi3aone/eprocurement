@@ -275,14 +275,17 @@ Route::group([ 'prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor',
     Route::get('quotation-online-detail/{id}', 'QuotationController@onlineDetail')->name('quotation-online-detail');
 
     // repeat
-    Route::get('quotation-repeat', 'QuotationController@repeat')->name('quotation-repeat');
-    Route::get('quotation-repeat-detail/{id}', 'QuotationController@repeatDetail')->name('quotation-repeat-detail');
-    Route::post('quotation-approve-repeat', 'QuotationController@approveRepeat')->name('quotation-approve-repeat');
+    Route::get('purchase-order-repeat', 'PurchaseOrderController@repeat')->name('purchase-order-repeat');
+    Route::get('purchase-order-repeat-detail/{id}', 'PurchaseOrderController@repeatDetail')->name('purchase-order-repeat-detail');
+    // Route::get('quotation-repeat', 'QuotationController@repeat')->name('quotation-repeat');
+    // Route::get('quotation-repeat-detail/{id}', 'QuotationController@repeatDetail')->name('quotation-repeat-detail');
+    // Route::post('quotation-approve-repeat', 'QuotationController@approveRepeat')->name('quotation-approve-repeat');
 
-    // direct
-    Route::get('quotation-direct', 'QuotationController@direct')->name('quotation-direct');
-    Route::get('quotation-direct-detail/{id}', 'QuotationController@directDetail')->name('quotation-direct-detail');
-    Route::post('quotation-approve-direct', 'QuotationController@approveDirect')->name('quotation-approve-direct');
+    // // direct
+    Route::get('purchase-order-direct', 'PurchaseOrderController@direct')->name('purchase-order-direct');
+    Route::get('purchase-order-direct-detail/{id}', 'PurchaseOrderController@directDetail')->name('purchase-order-direct-detail');
+    // Route::get('quotation-direct', 'QuotationController@direct')->name('quotation-direct');
+    // Route::post('quotation-approve-direct', 'QuotationController@approveDirect')->name('quotation-approve-direct');
     
     // billing
     Route::get('billing-create','BillingController@create')->name('billing-create');

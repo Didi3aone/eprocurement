@@ -21,24 +21,17 @@
                 </li> --}}
                 <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-truck"></i>
-                        <span class="hide-menu"> Repeat Order </span>
+                        <span class="hide-menu"> Purchase Order </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">
                         <li>
-                            <a href="{{ route('vendor.quotation-repeat') }}" class="">
+                            <a href="{{ route('vendor.purchase-order-repeat') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
                                 List Repeat Order
-                            </a>
+                            </a> 
                         </li>
-                    </ul>
-                </li>
-                <li class=""> 
-                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-truck"></i>
-                        <span class="hide-menu"> Direct Order </span>
-                    </a>
-                    <ul aria-expanded="false" class="collapse">
                         <li>
-                            <a href="{{ route('vendor.quotation-direct') }}" class="">
+                            <a href="{{ route('vendor.purchase-order-direct') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
                                 List Direct Order
                             </a>
@@ -66,11 +59,11 @@
     <!-- End Sidebar scroll-->
     <!-- Bottom points-->
     <div class="sidebar-footer">
-        <a class="dropdown-item" href="{{ route('vendor.logout') }}"
+        {{-- <a class="dropdown-item" href="{{ route('vendor.logout') }}"
             onclick="event.preventDefault();
             document.getElementById('logout-form').submit();">
             <i class="mdi mdi-power"></i>
-        </a>
+        </a> --}}
 
         <form id="logout-form" action="{{ route('vendor.logout') }}" method="POST" style="display: none;">
             @csrf
