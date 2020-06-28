@@ -273,8 +273,8 @@ class QuotationDirectController extends Controller
                 $quotationDetail = QuotationDetail::where('quotation_order_id', $id)->get();
                 $quotationDeliveryDate = QuotationDelivery::where('quotation_id', $id)->get();
 
-                // /$sendSap = \sapHelp::sendPoToSap($quotation, $quotationDetail,$quotationDeliveryDate);
-                $sendSap = true;
+                $sendSap = \sapHelp::sendPoToSap($quotation, $quotationDetail,$quotationDeliveryDate);
+                // $sendSap = true;
 
                 if( $sendSap ) {
                     $this->_clone_purchase_orders($quotation, $quotationDetail);

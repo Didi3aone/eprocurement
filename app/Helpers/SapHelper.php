@@ -836,6 +836,7 @@ class SapHelper {
         for ($i=0; $i < $count_; $i++) { 
             $indexes = $i+1;
             $poItem = ('000'.(10+($i*10)));
+            $schedLine = ('000'.($i+1));
             $POITEM = [
                 'PO_ITEM' => $poItem,//LINE
                 'DELETE_IND' => '',
@@ -1217,7 +1218,7 @@ class SapHelper {
         
             $POSCHEDULE = [
                 "PO_ITEM" => $poItem, //line
-                "SCHED_LINE" => '000'.$quotationDeliveryDate[$i]->SCHED_LINE, // 0001 ++
+                "SCHED_LINE" => $schedLine, // 0001 ++
                 "DEL_DATCAT_EXT" => "",
                 "DELIVERY_DATE" => $quotationDeliveryDate[$i]->DELIVERY_DATE,//delivery date
                 "QUANTITY" =>  (string) $quotationDeliveryDate[$i]->QUANTITY,// qty
@@ -1248,9 +1249,9 @@ class SapHelper {
 
             $POSCHEDULEX = [
                 "PO_ITEM" => $poItem,
-                "SCHED_LINE" => "X",
-                "PO_ITEMX" => "",
-                "SCHED_LINEX" => "",
+                "SCHED_LINE" => $schedLine,
+                "PO_ITEMX" => "X",
+                "SCHED_LINEX" => "X",
                 "DEL_DATCAT_EXT" => "",
                 "DELIVERY_DATE" => "X",
                 "QUANTITY" => "X",
@@ -1310,7 +1311,7 @@ class SapHelper {
             "SYSTEM" => "0"
         ];
         $params[0]['RETURN'] = $RETURN;
-        // dd($params);
+        dd($params);
         $result = $client->__soapCall('ZFM_WS_PO', $params, NULL, $header);
         dd($result);
         // ::end

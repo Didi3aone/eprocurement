@@ -280,8 +280,7 @@ class QuotationRepeatController extends Controller
                 $quotationDetail = QuotationDetail::where('quotation_order_id', $id)->get();
                 $quotationDeliveryDate = QuotationDelivery::where('quotation_id', $id)->get();
 
-                // \sapHelp::sendPoToSap($quotation, $quotationDetail,$quotationDeliveryDate);
-                $sendSap = true;
+                \sapHelp::sendPoToSap($quotation, $quotationDetail,$quotationDeliveryDate);
                 if( $sendSap ) {
                     $this->_clone_purchase_orders($quotation, $quotationDetail);
                 }
