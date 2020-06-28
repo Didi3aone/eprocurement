@@ -277,7 +277,7 @@ class QuotationDirectController extends Controller
                 // $sendSap = true;
 
                 if( $sendSap ) {
-                    $this->_clone_purchase_orders($quotation, $quotationDetail);
+                    $this->_clone_purchase_orders($quotation, $quotationDetail,$sendSap);
                 }
 
             }
@@ -294,7 +294,7 @@ class QuotationDirectController extends Controller
      * @param  array $detail
      * @return \Illuminate\Http\Response
      */
-    private function _clone_purchase_orders($header, $detail)
+    private function _clone_purchase_orders($header, $detail, $poNumber)
     {
         $poId = PurchaseOrder::create([
                     'quotation_id' => $header->id,
@@ -304,7 +304,7 @@ class QuotationDirectController extends Controller
                     'status'       => 1,
                     'payment_term' => $header->payment_term,
                     'currency'     => $header->currency,
-                    'PO_NUMBER'    => 3010002705,
+                    'PO_NUMBER'    => $poNumber ?? 0,
                 ]);
 
         for ($i = 0; $i < count($detail); $i++) { 

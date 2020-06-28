@@ -280,9 +280,9 @@ class QuotationRepeatController extends Controller
                 $quotationDetail = QuotationDetail::where('quotation_order_id', $id)->get();
                 $quotationDeliveryDate = QuotationDelivery::where('quotation_id', $id)->get();
 
-                \sapHelp::sendPoToSap($quotation, $quotationDetail,$quotationDeliveryDate);
+                $sendSap = \sapHelp::sendPoToSap($quotation, $quotationDetail,$quotationDeliveryDate);
                 if( $sendSap ) {
-                    $this->_clone_purchase_orders($quotation, $quotationDetail);
+                    $this->_clone_purchase_orders($quotation, $quotationDetail, $sendSap);
                 }
             }
             return redirect()->route('admin.quotation-repeat-approval-head')->with('status', 'Direct Order has been approved!');
@@ -298,7 +298,7 @@ class QuotationRepeatController extends Controller
      * @param  array $detail
      * @return \Illuminate\Http\Response
      */
-    private function _clone_purchase_orders($header, $detail)
+    private function _clone_purchase_orders($header, $detail, $poNumber)
     {
         $poId = PurchaseOrder::create([
                 'quotation_id' => $header->id,
@@ -308,7 +308,7 @@ class QuotationRepeatController extends Controller
                 'status'       => 1,
                 'payment_term' => $header->payment_term,
                 'currency'     => $header->currency,
-                'PO_NUMBER'    => 3010002705,
+                'PO_NUMBER'    => $poNumber ?? 0,
             ]);
         foreach ($detail as $rows) {
             PurchaseOrdersDetail::create([
