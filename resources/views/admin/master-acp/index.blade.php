@@ -41,33 +41,19 @@
                                 <th>&nbsp;</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody> 
                             @foreach($model as $key => $acp)
                                 <tr data-entry-id="{{ $acp->id }}">
                                     <td>{{ $acp->id ?? '' }}</td>
                                     <td>{{ $acp->acp_no ?? '' }}</td>
                                     <td>{{ \App\Models\AcpTable::Type_Status[$acp->status_approval] }}</td>
-                                    <td>{{ $acp->is_project == 1 ? 'Yes' : 'No' }}</td>
+                                    <td>{{ \App\Models\AcpTable::Type_Project[$acp->is_project] }}</td>
                                     <td>
                                         @can('master_acp_show')
                                             <a class="btn btn-primary" href="{{ route('admin.master-acp.show', $acp->id) }}">
                                                 <i class="fa fa-eye"></i> {{ trans('global.view') }}
                                             </a>
                                         @endcan
-
-                                        {{-- @can('master_acp_edit')
-                                            <a class="btn btn-xs btn-info" href="{{ route('admin.master-acp.edit', $acp->id) }}">
-                                                <i class="fa fa-edit"></i> {{ trans('global.edit') }}
-                                            </a>
-                                        @endcan --}}
-
-                                        {{-- @can('master_acp_delete')
-                                            <form action="{{ route('admin.master-acp.destroy', $acp->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
-                                                <input type="hidden" name="_method" value="DELETE">
-                                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
-                                            </form>
-                                        @endcan --}}
                                     </td>
                                 </tr>
                             @endforeach

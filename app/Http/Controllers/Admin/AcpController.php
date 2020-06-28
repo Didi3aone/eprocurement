@@ -133,11 +133,10 @@ class AcpController extends Controller
             $posisi     = QuotationApproval::where('quotation_id',$request->quotation_id)->where('nik',\Auth::user()->nik)->first();
             $total      = QuotationApproval::where('quotation_id',$request->quotation_id)->count();
             $acp        = AcpTable::find($request->quotation_id);
- 
             //check posisi approval
             if( (int) $posisi->approval_position == (int) $total ) {
-                $quotation->status_approval = AcpTable::Approved;
-                $quotation->update();
+                $acp->status_approval = AcpTable::Approved;
+                $acp->update();
                 //current approval update
                 QuotationApproval::where('quotation_id',$request->quotation_id)->where('nik',\Auth::user()->nik)->update([
                     'status'        => QuotationApproval::Approved,

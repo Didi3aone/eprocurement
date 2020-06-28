@@ -28,6 +28,11 @@ class AcpTable extends Model
         3 => 'Rejected'
     ];
 
+    public const Type_Project = [
+        0 => 'No',
+        1 => 'Yes'
+    ];
+
     public const WaitingApproval = 0;
     public const Approved        = 2;
     public const Rejected        = 2;

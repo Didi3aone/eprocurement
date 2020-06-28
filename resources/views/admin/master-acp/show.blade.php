@@ -140,7 +140,7 @@
                                     Rejected
                                 @endif
                             </td>
-                            <td>{{ $value->approved_date ?? '-' }}</td>
+                            <td>{{ $value->approve_date ?? '-' }}</td>
                         </tr>
                         @endforeach
                     </tbody>
