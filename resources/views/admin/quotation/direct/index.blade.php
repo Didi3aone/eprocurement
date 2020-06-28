@@ -32,7 +32,7 @@
                                             <td>{{ $val->id ?? '' }}</td>
                                             <td>{{ $val->po_no ?? '' }}</td>
                                             <td>{{ $val->name }}</td>
-                                            <td></td>
+                                            <td>{{ \App\Models\Vendor\Quotation::TypeStatusApproval[$val->approval_status] }}</td>
                                             <td>
                                             
                                             </td>

@@ -23,6 +23,12 @@ class Quotation extends Model
         
     ];
 
+    public const TypeStatusApproval = [
+        0 => 'Waiting For Approval',
+        10 => 'Waitinr Approval Proc Head',
+        20 => 'Approved'
+    ];
+
     public const Approved = 1;
     public const Bidding = 1;
     public const Repeat = 0;
@@ -30,7 +36,7 @@ class Quotation extends Model
     public const Waiting = 0;
 
     public const QuotationDirect = 2;
-    public const QuotationRepeat = 2;
+    public const QuotationRepeat = 0;
     
     public const ApprovalAss  = 10;
     public const ApprovalHead = 20;

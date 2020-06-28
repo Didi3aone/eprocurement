@@ -168,6 +168,7 @@ class QuotationRepeatController extends Controller
             $quotation->payment_term    = $request->get('payment_term');
             $quotation->vendor_id       = $request->vendor_id;
             $quotation->status          = Quotation::QuotationRepeat;
+            $quotation->status_approval = Quotation::Waiting;
 
             $quotation->save();
 
@@ -190,7 +191,9 @@ class QuotationRepeatController extends Controller
      */
     public function show($id)
     {
-        //
+        $quotation = Quotation::find($id);
+
+        return view('admin.quotation.repeat.show',compact('quotation'));
     }
 
     /**
@@ -246,7 +249,7 @@ class QuotationRepeatController extends Controller
                 $quotation->save();
             }
 
-            return redirect()->route('admin.quotation-direct-approval-ass')->with('status', 'Direct Order has been approved!');
+            return redirect()->route('admin.quotation-repeat-approval-ass')->with('status', 'Direct Order has been approved!');
         } catch (\Throwable $th) {
             throw $th;
         }
