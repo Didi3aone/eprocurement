@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Gate;
 use Symfony\Component\HttpFoundation\Response;
-
 use App\Models\PurchaseRequest;
 use App\Models\PurchaseRequestsDetail;
 use App\Models\Vendor;
@@ -32,89 +31,9 @@ class PurchaseOrderController extends Controller
     {
         abort_if(Gate::denies('purchase_order_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        // $quotation = Quotation::where('approval_status', 12)->get();
         $po = PurchaseOrder::orderBy('created_at', 'desc')->get();
 
         return view('admin.purchase-order.index', compact('po'));
-    }
-
-    /**
-     * Display a listing of the quotation resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function quotation ($id)
-    {
-        $quotations = Quotation::where('request_id', $id)->get();
-        $is_expired = '#67757c';
-
-        return view('admin.purchase-order.quotation', compact('quotations', 'is_expired'));
-    }
-
-    public function viewQuotation ($id)
-    {
-        $quotation = Quotation::find($id);
-        $quotationDetail = QuotationDetail::where('quotation_order_id', $id)->get();
-
-        return view('admin.purchase-order.view-quotation', compact('quotation', 'quotationDetail'));
-    }
-
-    public function approveQuotation (Request $request, $id)
-    {
-        \DB::beginTransaction();
-
-        try {
-            $quotation = Quotation::find($id);
-            $quotation->status = 1;
-            $quotation->save();
-
-            // approval each items
-            if ($request->has('description')) {
-                foreach ($request->get('description') as $key => $value) {
-                    $quotationDetail = QuotationDetail::find($key);
-
-                    if ($value->flag == 1)
-                        $quotationDetail->flag = 1;
-
-                    $quotationDetail->save();
-                }
-            }
-
-            \DB::commit();
-        } catch (Exception $e) {
-            \DB::rollBack();
-        }
-
-        return redirect()->route('admin.purchase-order.quotation')->with('success', trans('cruds.purchase-order.alert_quotation_approval'));
-    }
-
-    /**
-     * Approval Purchase Order
-     */
-    public function approvalPo ($id)
-    {
-        $po = PurchaseOrder::find($id);
-        $po->status = 1;
-
-        if ($po->save()) {
-            // send to WSDL
-        }
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function createPo($id)
-    {
-        // abort_if(Gate::denies('purchase_order_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-        $pr         = PurchaseRequest::find($id);
-        $prDetail   = PurchaseRequestsDetail::where('request_id', $id)->get();
-        $plant      = Plant::get();
-        $vendor     = Vendor::where('status', 1)->orderBy('name')->get();
-
-        return view('admin.purchase-order.create', compact('id', 'pr', 'prDetail', 'plant', 'vendor'));
     }
 
     /**
@@ -283,68 +202,62 @@ class PurchaseOrderController extends Controller
         }
     }
 
+    public function show($id)
+    {
+        $purchaseOrder = PurchaseOrder::find($id);
+
+        return view('admin.purchase-order.show',compact('purchaseOrder'));   
+    }
     /**
      * Display the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        $po = PurchaseOrder::find($id);
-        $quotation = Quotation::where('po_no', $po->po_no)->get();
-        $poinvoice = PurchaseOrderInvoice::where('purchase_order_id', $po->id)->get()->first();
-        $pr = PurchaseRequestsDetail::select(
-            'purchase_requests_details.request_id',
-            'purchase_requests_details.description',
-            'purchase_requests_details.qty',
-            'purchase_requests_details.unit',
-            'purchase_requests_details.price',
-            'purchase_requests_details.material_id',
-            'purchase_requests_details.assets_no',
-            'purchase_requests_details.short_text',
-            'purchase_requests_details.delivery_date',
-            'purchase_requests_details.account_assignment',
-            'purchase_requests_details.gr_ind',
-            'purchase_requests_details.ir_ind',
-            'purchase_requests_details.purchasing_group_code',
-            'purchase_requests_details.preq_name',
-            'purchase_requests_details.plant_code',
-            'purchase_requests_details.gl_acct_code',
-            'purchase_requests_details.cost_center_code',
-            'purchase_requests_details.co_area',
-            'purchase_requests_details.profit_center_code',
-            'purchase_requests_details.storage_location',
-            \DB::raw('materials.description as m_description'),
-            \DB::raw('material_groups.code as mg_code'),
-            \DB::raw('material_groups.description as mg_description'),
-            \DB::raw('plants.code as p_code'),
-            \DB::raw('plants.description as p_description')
-        )
-            ->join('materials', 'materials.code', '=', 'purchase_requests_details.material_id')
-            ->join('material_groups', 'material_groups.id', '=', 'materials.m_group_id')
-            ->join('plants', 'plants.id', '=', 'materials.m_plant_id')
-            ->where('purchase_requests_details.request_id', $id)
-            ->get();
+    // public function show($id)
+    // {
+    //     $po = PurchaseOrder::find($id);
+    //     $quotation = Quotation::where('po_no', $po->po_no)->get();
+    //     $poinvoice = PurchaseOrderInvoice::where('purchase_order_id', $po->id)->get()->first();
+    //     $pr = PurchaseRequestsDetail::select(
+    //         'purchase_requests_details.request_id',
+    //         'purchase_requests_details.description',
+    //         'purchase_requests_details.qty',
+    //         'purchase_requests_details.unit',
+    //         'purchase_requests_details.price',
+    //         'purchase_requests_details.material_id',
+    //         'purchase_requests_details.assets_no',
+    //         'purchase_requests_details.short_text',
+    //         'purchase_requests_details.delivery_date',
+    //         'purchase_requests_details.account_assignment',
+    //         'purchase_requests_details.gr_ind',
+    //         'purchase_requests_details.ir_ind',
+    //         'purchase_requests_details.purchasing_group_code',
+    //         'purchase_requests_details.preq_name',
+    //         'purchase_requests_details.plant_code',
+    //         'purchase_requests_details.gl_acct_code',
+    //         'purchase_requests_details.cost_center_code',
+    //         'purchase_requests_details.co_area',
+    //         'purchase_requests_details.profit_center_code',
+    //         'purchase_requests_details.storage_location',
+    //         \DB::raw('materials.description as m_description'),
+    //         \DB::raw('material_groups.code as mg_code'),
+    //         \DB::raw('material_groups.description as mg_description'),
+    //         \DB::raw('plants.code as p_code'),
+    //         \DB::raw('plants.description as p_description')
+    //     )
+    //         ->join('materials', 'materials.code', '=', 'purchase_requests_details.material_id')
+    //         ->join('material_groups', 'material_groups.id', '=', 'materials.m_group_id')
+    //         ->join('plants', 'plants.id', '=', 'materials.m_plant_id')
+    //         ->where('purchase_requests_details.request_id', $id)
+    //         ->get();
 
-        $types = DocumentType::get();
+    //     $types = DocumentType::get();
 
-        // get po_no from SAP
+    //     // get po_no from SAP
 
-        return view('admin.purchase-order.form', compact('quotation', 'po', 'pr', 'types', 'poinvoice'));
-    }
-
-    public function release ()
-    {
-        return view('admin.release-strategy.index');
-    }
-
-    public function direct ()
-    {
-        $pr = PurchaseOrder::get();
-
-        return view('admin.purchase-order.direct', compact('pr'));
-    }
+    //     return view('admin.purchase-order.form', compact('quotation', 'po', 'pr', 'types', 'poinvoice'));
+    // }
 
     /**
      * Show the form for editing the specified resource.
@@ -406,29 +319,5 @@ class PurchaseOrderController extends Controller
             'success' => $success,
             'message' => $message,
         ]);
-    }
-
-    public function makeQuotation (Request $request)
-    {
-        $purchaseRequest = PurchaseRequest::find($request->input('request_id'));
-        $vendors = Vendor::where([
-            'status' => 1,
-            'bidding' => 0
-        ])->get();
-
-        return view('admin.purchase-order.quotation', compact('purchaseRequest', 'vendors'));
-    }
-
-    public function makeBidding (Request $request)
-    {
-        $order = new PurchaseOrder;
-        $order->request_id = $request->input('request_id');
-        $order->bidding = 1;
-        $order->notes = 'make bidding';
-        $order->request_date = date('Y-m-d');
-        $order->status = 1;
-        $order->save();
-
-        return redirect()->route('admin.purchase-order.index')->with('status', trans('cruds.purchase_order.alert_success_update'));
     }
 }

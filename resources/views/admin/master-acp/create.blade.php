@@ -9,13 +9,12 @@
         </ol>
     </div>
 </div>
-<form action="{{ route("admin.master-acp.store") }}" enctype="multipart/form-data" method="post">
-    @csrf
-    @method('post')
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form action="{{ route("admin.master-acp.store") }}" enctype="multipart/form-data" method="POST">
+                    @csrf
                     {{-- <div class="form-group">
                         <label>{{ trans('cruds.master-acp.fields.acp_no') }}</label>
                         <input type="text" class="form-control form-control-line {{ $errors->has('acp_no') ? 'is-invalid' : '' }}" name="acp_no" value="{{ $acp_no ?? old('acp_no', '') }}" required> 
@@ -48,6 +47,15 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label>Reference Acp No</label>
+                        <select class="form-control form-control-line {{ $errors->has('currency') ? 'is-invalid' : '' }}" name="currency" required> 
+                            <option value="">-- Select --</option>
+                            @foreach($acpNo ?? '' as $key => $value)
+                                <option value="{{ $value->acp_no }}">{{ $value->acp_no }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label>{{ trans('cruds.master-acp.fields.currency') }}</label>
                         <select class="form-control form-control-line {{ $errors->has('currency') ? 'is-invalid' : '' }}" name="currency" required> 
                             <option value="IDR" selected="selected">IDR</option>
@@ -71,6 +79,10 @@
                                 {{ $errors->first('end_date') }}
                             </div>
                         @endif
+                    </div>
+                    <div class="form-group">
+                        <label>Upload File</label>
+                        <input type="file" class="mdate form-control form-control-line {{ $errors->has('upload_file') ? 'is-invalid' : '' }}" multiple name="upload_file[]" value=""> 
                     </div>
                     <hr style="margin: 30px 0">
                     <div class="form-group">
@@ -115,14 +127,14 @@
                         </div>
                     </div>
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.save') }}</button>
+                        <button type="submit" class="btn btn-success" id="save"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
                         <a href="{{ route('admin.master-acp.index') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i> Cancel</a>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
-</form>
+</div>
 @endsection
 
 @section('scripts')

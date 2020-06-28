@@ -18,7 +18,7 @@
                         <thead>
                             <tr>
                                 <th>{{ trans('cruds.purchase-order.fields.id') }}</th>
-                                <th>PO NO</th>
+                                <th>PO Number</th>
                                 <th>PO Date</th>
                                 <th>Vendor</th>
                                 <th>
@@ -30,12 +30,12 @@
                             @foreach($po as $key => $q)
                                 <tr>
                                     <td>{{ $q->id ?? '' }}</td>
-                                    <td>{{ $q->po_no }}</td>
+                                    <td>{{ $q->PO_NUMBER }}</td>
                                     <td>{{ $q->po_date }}</td>
-                                    <td>{{ $q->vendor['name'] ?? '' }}</td>
+                                    <td>{{ $q->vendors['name'] ?? '' }}</td>
                                     <td>
                                         <a class="btn btn-xs btn-primary" href="{{ route('admin.purchase-order.show', $q->id) }}">
-                                            {{ trans('global.view') }}
+                                            <i class="fa fa-eye"></i> {{ trans('global.view') }}
                                         </a>
                                     </td>
                                 </tr>

@@ -37,4 +37,9 @@ class QuotationApproval extends Model
     {
         return $this->belongsTo(\App\Models\AcpTable::class);
     }
+
+    public function getUser()
+    {
+        return $this->hasOne(\App\Models\User::class,'nik','nik');
+    }
 }

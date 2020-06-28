@@ -50,8 +50,8 @@
                                     <td>{{ $acp->is_project == 1 ? 'Yes' : 'No' }}</td>
                                     <td>
                                         @can('master_acp_show')
-                                            <a class="btn btn-xs btn-primary" href="{{ route('admin.master-acp.show', $acp->id) }}">
-                                                <i class="fa fa-tv"></i> {{ trans('global.view') }}
+                                            <a class="btn btn-primary" href="{{ route('admin.master-acp.show', $acp->id) }}">
+                                                <i class="fa fa-eye"></i> {{ trans('global.view') }}
                                             </a>
                                         @endcan
 

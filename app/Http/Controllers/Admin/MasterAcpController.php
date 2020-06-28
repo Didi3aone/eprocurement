@@ -24,13 +24,11 @@ class MasterAcpController extends Controller
 
     public function create ()
     {
-        $max = AcpTable::select(\DB::raw('count(id) as id'))->first()->id;
-        $acp_no = 'ACP/' . date('m') . '/' . date('Y') . '/' . sprintf('%07d', ++$max);
-
         $vendor = Vendor::orderBy('name')->get();
         $material = MasterMaterial::orderBy('description')->get();
+        $acpNo   = AcpTable::get();
 
-        return view('admin.master-acp.create', compact('acp_no', 'vendor', 'material'));
+        return view('admin.master-acp.create', compact('vendor', 'material','acpNo'));
     }
 
     public function getMaterial (Request $request)
@@ -76,17 +74,23 @@ class MasterAcpController extends Controller
 
     public function store (Request $request)
     {
-        // dd($request);
         \DB::beginTransaction();
         $max = AcpTable::select(\DB::raw('count(id) as id'))->first()->id;
         $acp_no = 'ACP/' . date('m') . '/' . date('Y') . '/' . sprintf('%07d', ++$max);
         try {
+            $file_upload = "";
+            if ($request->upload_file) {
+                $file_upload = $this->fileUpload($request);
+            }
+
             $acp = new AcpTable;
-            $acp->acp_no      = $acp_no;
-            $acp->is_project  = $request->get('is_project') ?? 0;
-            $acp->is_from_pr  = $request->get('is_from_pr') ?? 0;
-            $acp->start_date  = $request->get('start_date');
-            $acp->end_date    = $request->get('end_date');
+            $acp->acp_no              = $acp_no;
+            $acp->is_project          = $request->get('is_project') ?? 0;
+            $acp->is_from_pr          = $request->get('is_from_pr') ?? 0;
+            $acp->start_date          = $request->get('start_date');
+            $acp->end_date            = $request->get('end_date');
+            $acp->reference_acp_no    = $request->get('reference_acp_no') ?? '';
+            $acp->upload_file         = $file_upload;
             $acp->save();
 
             $result = [];
@@ -192,6 +196,15 @@ class MasterAcpController extends Controller
             \DB::rollBack();
             dd($e);
         }
+    }
+
+    public function show($id)
+    {
+        $acp = AcpTable::find($id);
+        $approval = QuotationApproval::where('acp_id', $id)
+                    ->orderBy('approval_position','asc')->get();
+
+        return view('admin.master-acp.show',compact('acp','approval'));
     }
 
     public function edit ($id)
@@ -356,5 +369,19 @@ class MasterAcpController extends Controller
                 'acp_id'                =>  $quotation_id
             ]);
         }
+    }
+
+    public function fileUpload($request)
+    {
+        $data = [];
+        if ($request->hasfile('upload_file')) {
+            foreach ($request->file('upload_file') as $file) {
+                $name = time() . $file->getClientOriginalName();
+                $file->move(public_path() . '/files/uploads/', $name);
+                $data[] = $name;
+            }
+        }
+
+        return serialize($data);
     }
 }
