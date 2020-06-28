@@ -100,7 +100,12 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-xs-12">
-                                    <input class="form-control" type="text" name="country" required="" placeholder="Country">
+                                    <select class="form-control" name="country" required="">
+                                        <option value="" selected="" disabled="">Select Country</option>
+                                        @foreach($vendor_country as $row)
+                                        <option value="{{ $row->code }}">{{ $row->name }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -137,6 +142,16 @@
                             <div class="form-group">
                                 <div class="col-xs-12">
                                     <input class="form-control" type="text" name="fax_2" placeholder="Fax 2">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    <select class="form-control" name="bank_country_id" required="">
+                                        <option value="" selected="" disabled="">Select Bank Country</option>
+                                        @foreach($vendor_bank_country as $row)
+                                        <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group">

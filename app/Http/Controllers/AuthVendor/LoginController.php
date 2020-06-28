@@ -22,6 +22,7 @@ use App\Models\Vendor\VendorPartnerFunctions;
 use App\Models\Vendor\VendorBankDetails;
 use App\Models\Vendor\VendorTaxNumbers;
 use App\Models\Vendor\VendorIdentificationNumbers;
+use App\Models\Vendor\MasterVendorCountry;
 
 use Exception;
 
@@ -91,8 +92,9 @@ class LoginController extends Controller
         $vendor_bp_group = MasterVendorBPGroup::get();
         $vendor_account_gl = MasterVendorAccountGL::get();
         $vendor_planning_group = MasterVendorPlanningGroup::get();
+        $vendor_country = MasterVendorCountry::get();
 
-        return view('authVendor.register', compact('vendor_title', 'vendor_bank_keys', 'vendor_bank_keys', 'vendor_bp_group', 'vendor_account_gl', 'vendor_planning_group'));
+        return view('authVendor.register', compact('vendor_title', 'vendor_bank_keys', 'vendor_bank_country', 'vendor_bp_group', 'vendor_account_gl', 'vendor_planning_group', 'vendor_country'));
     }
 
     public function register (Request $request)
@@ -285,9 +287,16 @@ class LoginController extends Controller
 
     private function insert_vendor_bank_details($request, $vendor_id, $is_local)
     {
+        $bank_country_id = $request->input('bank_country_id');
         $bank_keys_id = $request->input('bank_keys_id');
         $bank_account_no = $request->input('bank_account_no');
         $bank_account_holder_name = $request->input('bank_account_holder_name');
+
+        $bank_country_code = 'ID';
+        $bank_country = MasterVendorBankCountry::($bank_country_id);
+        if ($bank_country) {
+            $bank_country_code = $bank_country->code;
+        }
 
         $bank_keys_ = 0;
         $bank_details = '';
@@ -299,7 +308,7 @@ class LoginController extends Controller
 
         $post = [];
         $post['vendor_id'] = $vendor_id;
-        $post['bank_country_key'] = 'ID';
+        $post['bank_country_key'] = $bank_country_code;
         $post['bank_keys'] = $bank_keys_;
         $post['account_no'] = $bank_account_no;
         if (!$is_local)
