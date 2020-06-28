@@ -41,6 +41,15 @@
                         </tr>
                         <tr>
                             <th>
+                                terms_of_payment
+                            </th>
+                            <td>
+                                {{ $vendors->terms_of_payment }}
+                            </td>
+                        </tr>
+                        {{--
+                        <tr>
+                            <th>
                                 {{ trans('cruds.vendors.fields.npwp') }}
                             </th>
                             <td>
@@ -79,6 +88,7 @@
                                 {{ $vendors->status == 1 ? 'Active' : 'Inactive' }}
                             </td>
                         </tr>
+                        --}}
                         <tr>
                             <th>
                                 {{ trans('cruds.vendors.fields.created_at') }}

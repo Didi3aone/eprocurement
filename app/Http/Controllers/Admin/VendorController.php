@@ -7,6 +7,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Vendor;
+use App\Models\Vendor\UserVendors;
+use App\Models\Vendor\MasterVendorTermsOfPayment;
+use App\Models\Vendor\VendorCompanyData;
+use App\Models\Vendor\VendorPurchasingOrganization;
 use App\Imports\VendorsImport;
 use Gate;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +26,14 @@ class VendorController extends Controller
     {
         abort_if(Gate::denies('vendor_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $vendors = Vendor::all();
+        // $vendors = Vendor::all();
+        $vendors = UserVendors::select(
+                        'user_vendors.*',
+                        'master_vendor_bp_group.code as vendor_bp_group_code',
+                        'master_vendor_bp_group.name as vendor_bp_group_name'
+                    )
+                    ->join('master_vendor_bp_group', 'master_vendor_bp_group.id', 'user_vendors.vendor_bp_group_id')
+                    ->get();
 
         return view('admin.vendors.index',compact('vendors'));
     }
@@ -99,7 +110,9 @@ class VendorController extends Controller
     {
         abort_if(Gate::denies('vendor_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $vendors = Vendor::findOrFail($id);
+        // $vendors = Vendor::findOrFail($id);
+        $vendors = UserVendors::findOrFail($id);
+        $vendors->terms_of_payment = MasterVendorTermsOfPayment::find($vendors->terms_of_payment_key_id)->description;
 
         return view('admin.vendors.show', compact('vendors'));
     }
@@ -114,9 +127,11 @@ class VendorController extends Controller
     {
         abort_if(Gate::denies('vendor_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $vendors = Vendor::findOrFail($id);
+        // $vendors = Vendor::findOrFail($id);
+        $vendors = UserVendors::findOrFail($id);
+        $terms_of_payment = MasterVendorTermsOfPayment::get();
 
-        return view('admin.vendors.edit', compact('vendors'));
+        return view('admin.vendors.edit', compact('vendors','terms_of_payment'));
     }
 
     /**
@@ -128,17 +143,22 @@ class VendorController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $vendors = Vendor::findOrFail($id);
-        
-        $vendors->name = $request->get('name');
-        $vendors->email = $request->get('email');
-        $vendors->npwp = $request->get('npwp');
-        $vendors->address = $request->get('address');
-        $vendors->company_type = $request->get('company_type');
-        $vendors->company_from = $request->get('company_from');
-        $vendors->status = $request->get('status');
+        $terms_of_payment_id = $request->input('terms_of_payment_id');
+        $terms_of_payment = MasterVendorTermsOfPayment::find($terms_of_payment_id);
 
-        $vendors->save();
+        // $vendors = Vendor::findOrFail($id);
+        // $vendors->name = $request->get('name');
+        // $vendors->email = $request->get('email');
+        // $vendors->npwp = $request->get('npwp');
+        // $vendors->address = $request->get('address');
+        // $vendors->company_type = $request->get('company_type');
+        // $vendors->company_from = $request->get('company_from');
+        // $vendors->status = $request->get('status');
+        // $vendors->save();
+
+        UserVendors::where('id', $id)->update(['terms_of_payment_key_id' => $terms_of_payment_id]);
+        VendorCompanyData::where('vendor_id', $id)->update(['payment_terms' => $terms_of_payment->code]);
+        VendorPurchasingOrganization::where('vendor_id', $id)->update(['term_of_payment_key' => $terms_of_payment->code]);
         
         return redirect()->route('admin.vendors.index')->with('status', trans('cruds.vendors.alert_success_update'));
     }

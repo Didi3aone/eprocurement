@@ -18,7 +18,7 @@
                     @csrf
                     <div class="form-group">
                         <label>{{ trans('cruds.vendors.fields.name') }}</label>
-                        <input type="text" class="form-control form-control-line {{ $errors->has('name') ? 'is-invalid' : '' }}" name="name" value="{{ $vendors->name ?? old('name', '') }}"> 
+                        <input type="text" class="form-control form-control-line {{ $errors->has('name') ? 'is-invalid' : '' }}" name="name" value="{{ $vendors->name ?? old('name', '') }}" disabled=""> 
                         @if($errors->has('name'))
                         <div class="invalid-feedback">
                             {{ $errors->first('name') }}
@@ -27,13 +27,24 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.vendors.fields.email') }}</label>
-                        <input type="text" class="form-control form-control-line {{ $errors->has('email') ? 'is-invalid' : '' }}" name="email" value="{{ $vendors->email ?? old('email', '') }}"> 
+                        <input type="text" class="form-control form-control-line {{ $errors->has('email') ? 'is-invalid' : '' }}" name="email" value="{{ $vendors->email ?? old('email', '') }}" disabled=""> 
                         @if($errors->has('email'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('email') }}
                             </div>
                         @endif
                     </div>
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <select class="form-control" name="terms_of_payment_id" required="">
+                                <option value="" selected="" disabled="">Select Term Of Payment</option>
+                                @foreach($terms_of_payment as $row)
+                                <option value="{{ $row->id }}" {{ $vendors->terms_of_payment_key_id==$row->id?'selected=""':'' }} >{{ $row->description }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    {{--
                     <div class="form-group">
                         <label>{{ trans('cruds.vendors.fields.company_type') }}</label>
                         <input type="text" class="form-control form-control-line {{ $errors->has('company_type') ? 'is-invalid' : '' }}" name="company_type" value="{{ $vendors->company_type ?? old('company_type', '') }}"> 
@@ -85,6 +96,7 @@
                             </div>
                         </div>
                     </div>
+                    --}}
                     <div class="form-actions">
                         <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.save') }}</button>
                         <a href="{{ route('admin.vendors.index') }}" type="button" class="btn btn-inverse">Cancel</a>

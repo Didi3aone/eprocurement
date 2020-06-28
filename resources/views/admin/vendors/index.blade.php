@@ -41,7 +41,10 @@
                                     {{ trans('cruds.vendors.fields.email') }}
                                 </th>
                                 <th>
-                                    {{ trans('cruds.vendors.fields.npwp') }}
+                                    BP Grouping
+                                </th>
+                                <th>
+                                    Supplier Account Group
                                 </th>
                                 <th>
                                     {{ trans('cruds.vendors.fields.address') }}
@@ -57,8 +60,9 @@
                                     <td>{{ $vendor->id ?? '' }}</td>
                                     <td>{{ $vendor->name ?? '' }}</td>
                                     <td>{{ $vendor->email ?? '' }}</td>
-                                    <td>{{ $vendor->npwp ?? '' }}</td>
-                                    <td>{{ $vendor->address ?? '' }}</td>
+                                    <td>{{ $vendor->vendor_bp_group_code }}</td>
+                                    <td>{{ $vendor->specialize }}</td>
+                                    <td>{{ $vendor->street ?? '' }}</td>
                                     <td>
                                         <button class="show_modal btn btn-xs btn-success" data-id="{{ $vendor->id }}" data-toggle="modal" data-target="#modal_password">
                                             <i class="fa fa-key"></i> {{ trans('global.set_password') }}
