@@ -163,6 +163,7 @@ class LoginController extends Controller
         $different_city = $request->input('different_city');
         $city = $request->input('city');
         $country = $request->input('country');
+        $postalCode = $request->input('postal_code');
         $street = $request->input('street'); // address
         $street_2 = $request->input('street_2');
         $street_3 = $request->input('street_3');
@@ -189,6 +190,7 @@ class LoginController extends Controller
         $post['street'] = $street;
         $post['different_city'] = $different_city;
         $post['city'] = $city;
+        $post['postal_code'] = $postalCode;
         $post['country'] = $country;
         $post['street'] = $street;
         $post['street_2'] = $street_2;
@@ -198,7 +200,7 @@ class LoginController extends Controller
         $post['language'] = $language;
         $post['office_telephone'] = $office_telephone;
         $post['telephone_2'] = $telephone_2;
-        $post['telephone_3'] = $telephone_3;
+        $post['telephone_3'] = $telephone_3; 
         $post['office_fax'] = $office_fax;
         $post['fax_2'] = $fax_2;
         $post['name'] = $name;

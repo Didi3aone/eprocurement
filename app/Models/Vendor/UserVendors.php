@@ -15,9 +15,10 @@ class UserVendors extends Model
         'vendor_title_id',
         'vendor_bp_group_id',
         'specialize',
-        'company_name',
+        'company_name', 
         'different_city',
         'city',
+        'postal_code',
         'country',
         'street',
         'street_2',
@@ -35,4 +36,34 @@ class UserVendors extends Model
         'email_2',
         'password'
     ];
+
+    public function getBpGroup()
+    {
+        return $this->hasOne(\App\Models\Vendor\MasterVendorBPGroup::class,'id','vendor_bp_group_id');
+    }
+
+    public function getTitle()
+    {
+        return $this->hasOne(\App\Models\Vendor\MasterVendorTitle::class,'id','vendor_title_id');
+    }
+
+    public function getTerm()
+    {
+        return $this->hasOne(\App\Models\Vendor\MasterVendorTermsOfPayment::class,'terms_of_payment_key_id');
+    }
+
+    public function getBankDetails()
+    {
+        return $this->hasOne(\App\Models\Vendor\VendorBankDetails::class,'vendor_id');
+    }
+
+    public function getTaxNumber()
+    {
+        return $this->hasOne(\App\Models\Vendor\VendorTaxNumbers::class,'vendor_id');
+    }
+
+    public function getCompanyData()
+    {
+        return $this->hasMany(\App\Models\Vendor\VendorCompanyData::class,'vendor_id','id');
+    }
 }
