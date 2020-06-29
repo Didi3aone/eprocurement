@@ -102,7 +102,7 @@
                                                 <select name="rfq[]" id="rfq" class="form-control select2 rfq" required>
                                                     <option value="0"> Select </option>
                                                     @foreach(\App\Models\Rfq::getRFQ($value->material_id) as $key => $valus)
-                                                    <option value="{{ $valus->purchasing_document }}" data-code="{{ $valus->code }}" data-acp="{{ $valus->acp_id }}">{{ $valus->purchasing_document." - ". $valus->name }}</option>
+                                                    <option value="{{ $valus->purchasing_document }}" data-code="{{ $valus->code }}" data-acp="{{ $valus->acp_id }}">{{ $valus->acp_no ." - ".$valus->purchasing_document." - ". $valus->name }}</option>
                                                     @endforeach
                                                 </select>
                                             </td>
