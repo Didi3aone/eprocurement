@@ -125,7 +125,9 @@ class LoginController extends Controller
         $vendor_bp_group = MasterVendorBPGroup::find($vendor_bp_group_id);
         if ($vendor_bp_group) {
             $vendor_code = $vendor_bp_group->code;
-            $vendor_code_ = sprintf('%07d', substr($vendor_code,-1));
+            $count_id = UserVendors::count();
+            $vendor_code_ = sprintf('%06d', $count_id+1);
+            $vendor_code_ = substr($vendor_code,-1).$vendor_code_;
         }
         $is_local = in_array($vendor_code, self::bp_group_code_local);
 
