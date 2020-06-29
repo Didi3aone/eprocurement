@@ -172,7 +172,7 @@
                                                 <select name="history[]" id="history" class="form-control select2 history" required>
                                                     <option> -- Select --</option>
                                                     @foreach(getHistoryPo($value->material_id) as $key => $rows)
-                                                        <option value="{{ $rows->price }}">{{ $rows->po['po_no']." - ".$rows->po->vendors['name'] }}</option>
+                                                        <option value="{{ $rows->price }}">{{ $rows->po['PO_NUMBER'] }}</option>
                                                     @endforeach
                                                 </select>
                                             </td>
