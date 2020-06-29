@@ -2,7 +2,7 @@
 @section('content')
 <div class="row page-titles">
     <div class="col-md-5 col-8 align-self-center">
-        <h3 class="text-themecolor">Master</h3>
+        <h3 class="text-themecolor">Quotation</h3>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="javascript:void(0)">Quotation</a></li>
             <li class="breadcrumb-item active">Index</li>
@@ -34,7 +34,9 @@
                                             <td>{{ $val->name }}</td>
                                             <td>{{ \App\Models\Vendor\Quotation::TypeStatusApproval[$val->approval_status] }}</td>
                                             <td>
-                                            
+                                                <a class="btn btn-primary" href="{{ route('admin.quotation-repeat.show', $val->id) }}">
+                                                    <i class="fa fa-eye"></i> {{ trans('global.view') }}
+                                                </a>
                                             </td>
                                         </tr>
                                     @endforeach

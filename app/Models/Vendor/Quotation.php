@@ -42,6 +42,20 @@ class Quotation extends Model
     public const ApprovalHead = 20;
     public const Rejected     = 30;
 
+    public static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            try {
+                $user              = \Auth::user();
+                $model->created_by = $user->nik;
+                $model->updated_by = $user->nik;
+            } catch (UnsatisfiedDependencyException $e) {
+                abort(500, $e->getMessage());
+            }
+        });
+    }
+
     public function detail ()
     {
         return $this->hasMany(QuotationDetail::class, 'quotation_order_id', 'id');
