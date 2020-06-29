@@ -12,6 +12,7 @@ use App\Models\Plant;
 use App\Models\DocumentType;
 use App\Models\UserMap;
 use App\Models\Vendor;
+use App\Models\Currency;
 use DB,Gate;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
@@ -41,11 +42,18 @@ class PurchaseRequestController extends Controller
             'purchase_requests_details.unit',
             'purchase_requests_details.notes',
             'purchase_requests_details.price',
+            'purchase_requests_details.preq_item',
+            'purchase_requests_details.plant_code',
+            'purchase_requests_details.short_text',
+            'purchase_requests_details.storage_location',
+            'purchase_requests_details.material_group',
+            'purchase_requests_details.purchasing_group_code',
             'purchase_requests_details.material_id',
             \DB::raw('purchase_requests_details.request_no as rn_no'),
             'purchase_requests_details.release_date',
             \DB::raw('purchase_requests.request_no as pr_no'),
             'purchase_requests.request_date',
+            'purchase_requests.PR_NO',
             'purchase_requests.total'
         )
             ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
@@ -184,13 +192,22 @@ class PurchaseRequestController extends Controller
         $top = $return['top'];
 
         $docTypes = DocumentType::where('type','2')->get();
+        $currency = Currency::all();
 
         $uri = [
             'ids' => base64_encode($ids),
             'quantities' => base64_encode($quantities)
         ];
         
-        return view('admin.purchase-request.repeat', compact('data', 'docTypes', 'po_no', 'vendor', 'uri','top'));
+        return view('admin.purchase-request.repeat', compact(
+            'data',
+            'docTypes', 
+            'po_no', 
+            'vendor', 
+            'uri',
+            'top',
+            'currency'
+        ));
     }
 
     /**
@@ -210,13 +227,22 @@ class PurchaseRequestController extends Controller
         $top = $return['top'];
 
         $docTypes = DocumentType::where('type','2')->get();
+        $currency = Currency::all();
 
         $uri = [
             'ids' => base64_encode($ids),
             'quantities' => base64_encode($quantities)
         ];
         
-        return view('admin.purchase-request.direct', compact('data', 'docTypes', 'po_no', 'vendor', 'uri','top'));
+        return view('admin.purchase-request.direct', compact(
+            'data', 
+            'docTypes', 
+            'po_no', 
+            'vendor', 
+            'uri',
+            'top',
+            'currency'
+        ));
     }
 
     /**

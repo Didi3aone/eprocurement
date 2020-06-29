@@ -23,7 +23,8 @@ class PurchaseRequestsDetail extends Model
         'notes',
         'price',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'qty_order'
     ];
 
     public const leaderApprove          = 1001;

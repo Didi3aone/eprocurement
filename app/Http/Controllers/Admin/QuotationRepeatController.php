@@ -159,7 +159,8 @@ class QuotationRepeatController extends Controller
             array_push($details, $data);
             PurchaseRequestHistory::insertHistory($data);
 
-            $material->qty -= $request->get('qty')[$i];
+            $material->qty      -= $request->get('qty')[$i];
+            $material->qty_order = $request->get('qty')[$i];
             $material->save();
         }
 

@@ -37,14 +37,24 @@
                                 <thead>
                                     <tr>
                                         <th>&nbsp;</th>
-                                        <th>PR No</th>
-                                        <th>Request Date</th>
-                                        <th>Material ID</th>
+                                        <th>Purchase Requisition</th>
+                                        <th>Item Of Requisition</th>
+                                        <th>Release Date</th>
+                                        <th>Release Indicator</th>
+                                        <th>Material</th>
+                                        <th>Short Text</th>
+                                        <th>Qty Requested</th>
                                         <th>Unit</th>
-                                        <th>Description</th>
-                                        <th>Qty PR</th>
-                                        <th>Qty PO</th>
+                                        <th>Plant</th>
+                                        <th>Storage Location</th>
+                                        <th>Qty Ordered</th>
                                         <th>Qty Open</th>
+                                        <th>Deliv. Date Category</th>
+                                        <th>Material Group</th>
+                                        <th>Purchasing Group</th>
+                                        <th>Requisitioner</th>
+                                        <th>Req Tracking Number</th>
+                                        <th>Purch. Organization</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -56,14 +66,24 @@
                                                 <input type="checkbox" name="id[]" id="check_{{ $value->id }}" class="check_pr" value="{{ $value->uuid }}" _valold="{{ $value->id . ':' . $value->pr_no . ':' . $value->rn_no . ':' . $value->material_id }}">
                                                 <label for="check_{{ $value->id }}">&nbsp;</label>
                                             </td>
-                                            <td>{{ $value->pr_no }}</td>
-                                            <td>{{ $value->request_date }}</td>
+                                            <td>{{ $value->PR_NO }}</td>
+                                            <td>{{ $value->preq_item }}</td>
+                                            <td>{{ $value->release_date }}</td>
+                                            <td>{{ 'i' }}</td>
                                             <td>{{ $value->material_id }}</td>
-                                            <td>{{ $value->unit }}</td>
-                                            <td>{{ $value->description }}</td>
+                                            <td>{{ $value->short_text }}</td>
                                             <td style="text-align: right;">{{ $value->qty }}</td>
+                                            <td>{{ $value->unit }}</td>
+                                            <td>{{ $value->plant_code }}</td>
+                                            <td>{{ $value->storage_location }}</td>
                                             <td><input type="text" class="money form-control qty qty_{{ $value->uuid }}" name="qty[]" value="{{ $value->qty }}" style="width: 70%;"></td>
-                                            <td class="qty_open_text" style="text-align: right;"><span>0</span></td>
+                                            <td class="qty_open_text" style="text-align: right;"><span>{{ $value->qty_order }}</span></td>
+                                            <td>{{ 'D' }}</td>
+                                            <td>{{ $value->material_group }}</td>
+                                            <td>{{ $value->purchasing_group_code }}</td>
+                                            <td>{{ $value->preq_name }}</td>
+                                            <td>{{ $value->request_no ?? $value->pr_no }}</td>
+                                            <td>{{ '0000' }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
