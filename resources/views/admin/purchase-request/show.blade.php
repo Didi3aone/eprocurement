@@ -68,14 +68,19 @@
                                     Attachment URS
                                 </th>
                                 @if(isset($prProject->upload_file))
-                                    <td>
-                                        @foreach( unserialize((string)$prProject->upload_file) as $fileUpload)
-                                            <a href="{{ 'https://employee.enesis.com/public/uploads/'.$fileUpload }}" target="_blank" download>
-                                                {{ $fileUpload ??'' }}
-                                            </a>
-                                            <br>
-                                        @endforeach
-                                    </td>
+                                    @php
+                                        $files = @unserialize($prProject->upload_file);
+                                    @endphp
+                                    @if( $files !== false )
+                                        <td>
+                                            @foreach( unserialize((string)$prProject->upload_file) as $fileUpload)
+                                                <a href="{{ 'https://employee.enesis.com/public/uploads/'.$fileUpload }}" target="_blank" download>
+                                                    {{ $fileUpload ??'' }}
+                                                </a>
+                                                <br>
+                                            @endforeach
+                                        </td>
+                                    @endif
                                 @endif
                             </tr>
                         </tbody>
