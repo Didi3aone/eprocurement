@@ -40,6 +40,7 @@ class QuotationDirectController extends Controller
                         'quotation.approval_status',
                         'vendors.name'
                     )
+                    ->groupBy('quotation.id','vendors.name')
                     ->orderBy('id', 'desc')
                     ->get();
 
@@ -67,6 +68,7 @@ class QuotationDirectController extends Controller
                         'quotation.approval_status',
                         'vendors.name'
                     )
+                    ->groupBy('quotation.id','vendors.name')
                     ->orderBy('id', 'desc')
                     ->get();
 
@@ -90,6 +92,7 @@ class QuotationDirectController extends Controller
                         'quotation.approval_status',
                         'vendors.name'
                     )
+                    ->groupBy('quotation.id','vendors.name')
                     ->orderBy('id', 'desc')
                     ->get();
 
