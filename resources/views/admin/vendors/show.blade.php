@@ -76,7 +76,7 @@
                 </ul>
 
                 <div class="tab-content">
-                    <div class="tab-pane" id="general-data">
+                    <div class="tab-pane show active" id="general-data">
                         <table class="table table-bordered table-striped">
                             <tbody>
                                 <tr>
@@ -250,7 +250,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="tab-pane show active" id="company-data">
+                    <div class="tab-pane" id="company-data">
                         <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
