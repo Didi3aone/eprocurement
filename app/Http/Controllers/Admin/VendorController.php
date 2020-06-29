@@ -12,7 +12,7 @@ use App\Models\Vendor\MasterVendorTermsOfPayment;
 use App\Models\Vendor\VendorCompanyData;
 use App\Models\Vendor\VendorPurchasingOrganization;
 use App\Imports\VendorsImport;
-use Gate;
+use Gate, Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 class VendorController extends Controller
@@ -30,10 +30,22 @@ class VendorController extends Controller
         $vendors = UserVendors::select(
                         'user_vendors.*',
                         'master_vendor_bp_group.code as vendor_bp_group_code',
-                        'master_vendor_bp_group.name as vendor_bp_group_name'
+                        'master_vendor_bp_group.name as vendor_bp_group_name',
+                        \DB::raw('CASE WHEN user_vendors.status = 0 THEN 0 ELSE 1 END AS status_')
                     )
                     ->join('master_vendor_bp_group', 'master_vendor_bp_group.id', 'user_vendors.vendor_bp_group_id')
+                    ->orderBy('status_', 'asc')
+                    ->orderBy('updated_at', 'desc')
                     ->get();
+        foreach ($vendors as $row) {
+            $row->created_date = date('d M Y, H:i', strtotime($row->created_at));
+            $row->updated_date = date('d M Y, H:i', strtotime($row->updated_at));
+            $row->status_str = '<span class="badge badge-primary">Waiting For Approval</span>';
+            if ($row->status==1)
+                $row->status_str = '<span class="badge badge-success">Approved</span>';
+            else if ($row->status==2)
+                $row->status_str = '<span class="badge badge-danger">Rejected</span>';
+        }
 
         return view('admin.vendors.index',compact('vendors'));
     }
@@ -143,24 +155,36 @@ class VendorController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $status = $request->input('status');
         $terms_of_payment_id = $request->input('terms_of_payment_id');
-        $terms_of_payment = MasterVendorTermsOfPayment::find($terms_of_payment_id);
+        $terms_of_payment = MasterVendorTermsOfPayment::findOrFail($terms_of_payment_id);
+        $user_vendors = UserVendors::findOrFail($id);
 
-        // $vendors = Vendor::findOrFail($id);
-        // $vendors->name = $request->get('name');
-        // $vendors->email = $request->get('email');
-        // $vendors->npwp = $request->get('npwp');
-        // $vendors->address = $request->get('address');
-        // $vendors->company_type = $request->get('company_type');
-        // $vendors->company_from = $request->get('company_from');
-        // $vendors->status = $request->get('status');
-        // $vendors->save();
+        try {
+            \DB::beginTransaction();
 
-        UserVendors::where('id', $id)->update(['terms_of_payment_key_id' => $terms_of_payment_id]);
-        VendorCompanyData::where('vendor_id', $id)->update(['payment_terms' => $terms_of_payment->code]);
-        VendorPurchasingOrganization::where('vendor_id', $id)->update(['term_of_payment_key' => $terms_of_payment->code]);
-        
-        return redirect()->route('admin.vendors.index')->with('status', trans('cruds.vendors.alert_success_update'));
+            $do_update = true;
+            $do_update = $do_update && UserVendors::where('id', $id)
+                                        ->update([
+                                            'terms_of_payment_key_id' => $terms_of_payment_id,
+                                            'status' => $status
+                                        ]);
+            $do_update = $do_update && VendorCompanyData::where('vendor_id', $id)
+                                        ->update([
+                                            'payment_terms' => $terms_of_payment->code
+                                        ]);
+            $do_update = $do_update && VendorPurchasingOrganization::where('vendor_id', $id)
+                                        ->update([
+                                            'term_of_payment_key' => $terms_of_payment->code
+                                        ]);
+            if (!$do_update) throw new Exception('Invalid request');
+            
+            \DB::commit();
+            return redirect()->route('admin.vendors.index')->with('status', trans('cruds.vendors.alert_success_update'));
+        } catch (Exception $e) {
+            \DB::rollback();
+            return redirect()->route('admin.vendors.index')->with('error', trans('cruds.vendors.alert_error_update'));
+        }
     }
 
     /**

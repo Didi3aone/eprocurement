@@ -31,8 +31,14 @@
                     <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                             <tr>
+                                <th style="display: none;">
+                                    &nbsp;
+                                </th>
                                 <th>
                                     {{ trans('cruds.vendors.fields.id') }}
+                                </th>
+                                <th>
+                                    Status
                                 </th>
                                 <th>
                                     {{ trans('cruds.vendors.fields.name') }}
@@ -50,6 +56,12 @@
                                     {{ trans('cruds.vendors.fields.address') }}
                                 </th>
                                 <th>
+                                    Created at
+                                </th>
+                                <th>
+                                    Updated at
+                                </th>
+                                <th>
                                     &nbsp;
                                 </th>
                             </tr>
@@ -57,12 +69,16 @@
                         <tbody>
                             @foreach($vendors as $key => $vendor)
                                 <tr data-entry-id="{{ $vendor->id }}">
-                                    <td>{{ $vendor->id ?? '' }}</td>
-                                    <td>{{ $vendor->name ?? '' }}</td>
-                                    <td>{{ $vendor->email ?? '' }}</td>
+                                    <td style="display: none;">{{ $vendor->status_ }}</td>
+                                    <td>{{ $vendor->id }}</td>
+                                    <td>{!! $vendor->status_str !!}</td>
+                                    <td>{{ $vendor->name }}</td>
+                                    <td>{{ $vendor->email }}</td>
                                     <td>{{ $vendor->vendor_bp_group_code }}</td>
                                     <td>{{ $vendor->specialize }}</td>
-                                    <td>{{ $vendor->street ?? '' }}</td>
+                                    <td>{{ $vendor->street }}</td>
+                                    <td>{{ $vendor->created_date }}</td>
+                                    <td>{{ $vendor->updated_date }}</td>
                                     <td>
                                         <button class="show_modal btn btn-xs btn-success" data-id="{{ $vendor->id }}" data-toggle="modal" data-target="#modal_password">
                                             <i class="fa fa-key"></i> {{ trans('global.set_password') }}
@@ -166,7 +182,7 @@
 <script>
 $('#datatables-run').DataTable({
     dom: 'Bfrtip',
-    order: [[0, 'desc']],
+    order: [[0, 'asc']],
     buttons: [
         'copy', 'csv', 'excel', 'pdf', 'print'
     ]

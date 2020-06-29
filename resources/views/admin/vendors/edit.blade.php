@@ -13,35 +13,61 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
+                <table class="table table-bordered table-striped">
+                    <tbody>
+                        <tr>
+                            <th>
+                                {{ trans('cruds.vendors.fields.code') }}
+                            </th>
+                            <td>
+                                {{ $vendors->code }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                {{ trans('cruds.vendors.fields.name') }}
+                            </th>
+                            <td>
+                                {{ $vendors->name }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                {{ trans('cruds.vendors.fields.email') }}
+                            </th>
+                            <td>
+                                {{ $vendors->email }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
                 <form class="form-material m-t-40" method="POST" action="{{ route("admin.vendors.update", [$vendors->id]) }}" enctype="multipart/form-data">
                     @method('PUT')
                     @csrf
                     <div class="form-group">
-                        <label>{{ trans('cruds.vendors.fields.name') }}</label>
-                        <input type="text" class="form-control form-control-line {{ $errors->has('name') ? 'is-invalid' : '' }}" name="name" value="{{ $vendors->name ?? old('name', '') }}" disabled=""> 
-                        @if($errors->has('name'))
-                        <div class="invalid-feedback">
-                            {{ $errors->first('name') }}
-                        </div>
-                        @endif
-                    </div>
-                    <div class="form-group">
-                        <label>{{ trans('cruds.vendors.fields.email') }}</label>
-                        <input type="text" class="form-control form-control-line {{ $errors->has('email') ? 'is-invalid' : '' }}" name="email" value="{{ $vendors->email ?? old('email', '') }}" disabled=""> 
-                        @if($errors->has('email'))
-                            <div class="invalid-feedback">
-                                {{ $errors->first('email') }}
-                            </div>
-                        @endif
-                    </div>
-                    <div class="form-group">
                         <div class="col-xs-12">
+                            <label>Terms of payment</label>
                             <select class="form-control" name="terms_of_payment_id" required="">
                                 <option value="" selected="" disabled="">Select Term Of Payment</option>
                                 @foreach($terms_of_payment as $row)
                                 <option value="{{ $row->id }}" {{ $vendors->terms_of_payment_key_id==$row->id?'selected=""':'' }} >{{ $row->description }}</option>
                                 @endforeach
                             </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('cruds.vendors.fields.status') }}</label>
+                        <div class="">
+                            <div class="form-check form-check-inline mr-1">
+                                <input class="form-check-input" id="inline-radio-active" type="radio" value="1"
+                                    name="status" {{ $vendors->status == 1 ? 'checked' : '' }}>
+                                <label class="form-check-label" for="inline-radio-active">Approve</label>
+                            </div>
+                            <div class="form-check form-check-inline mr-1">
+                                <input class="form-check-input" id="inline-radio-non-active" type="radio" value="2"
+                                    name="status" {{ $vendors->status == 2 ? 'checked' : '' }}>
+                                <label class="form-check-label" for="inline-radio-non-active">Reject</label>
+                            </div>
                         </div>
                     </div>
                     {{--
@@ -80,21 +106,6 @@
                                 {{ $errors->first('npwp') }}
                             </div>
                         @endif
-                    </div>
-                    <div class="form-group">
-                        <label>{{ trans('cruds.vendors.fields.status') }}</label>
-                        <div class="">
-                            <div class="form-check form-check-inline mr-1">
-                                <input class="form-check-input" id="inline-radio-active" type="radio" value="1"
-                                    name="status" {{ $vendors->status == 1 ? 'checked' : '' }}>
-                                <label class="form-check-label" for="inline-radio-active">{{ trans('cruds.vendors.fields.status_active') }}</label>
-                            </div>
-                            <div class="form-check form-check-inline mr-1">
-                                <input class="form-check-input" id="inline-radio-non-active" type="radio" value="0"
-                                    name="status" {{ $vendors->status == 0 ? 'checked' : '' }}>
-                                <label class="form-check-label" for="inline-radio-non-active">{{ trans('cruds.vendors.fields.status_inactive') }}</label>
-                            </div>
-                        </div>
                     </div>
                     --}}
                     <div class="form-actions">
