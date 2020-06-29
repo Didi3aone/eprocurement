@@ -43,6 +43,7 @@ class PurchaseRequestController extends Controller
             'purchase_requests_details.notes',
             'purchase_requests_details.price',
             'purchase_requests_details.preq_item',
+            'purchase_requests_details.preq_name',
             'purchase_requests_details.plant_code',
             'purchase_requests_details.short_text',
             'purchase_requests_details.storage_location',

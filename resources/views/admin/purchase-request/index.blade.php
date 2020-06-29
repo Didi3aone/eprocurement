@@ -40,7 +40,7 @@
                                         <th>Purchase Requisition</th>
                                         <th>Item Of Requisition</th>
                                         <th>Release Date</th>
-                                        <th>Release Indicator</th>
+                                        {{-- <th>Release Indicator</th> --}}
                                         <th>Material</th>
                                         <th>Short Text</th>
                                         <th>Qty Requested</th>
@@ -66,10 +66,55 @@
                                                 <input type="checkbox" name="id[]" id="check_{{ $value->id }}" class="check_pr" value="{{ $value->uuid }}" _valold="{{ $value->id . ':' . $value->pr_no . ':' . $value->rn_no . ':' . $value->material_id }}">
                                                 <label for="check_{{ $value->id }}">&nbsp;</label>
                                             </td>
-                                            <td>{{ $value->PR_NO }}</td>
+                                            <td>
+                                                <a 
+                                                    class="" 
+                                                    id="open_modals" 
+                                                    data-toggle="modal" 
+                                                    data-target="#modal_create_po_{{ $key }}" 
+                                                    href="javascript:;"
+                                                >
+                                                    {{ $value->PR_NO }}
+                                                </a>
+                                                <div class="modal fade" id="modal_create_po_{{ $key }}" tabindex="-1" role="dialog" aria-labelledby="modalCreatePO" aria-hidden="true">
+                                                    <div class="modal-dialog modal-lg" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="modalImport">{{ 'History Approval' }}</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <table class="table table-striped">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Employee ID</th>
+                                                                            <th>Status</th>
+                                                                            <th>Approved Date</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @foreach (\App\Models\PurchaseRequestApprovalHistory::getHistoryApproval($value->uuid) as $row)
+                                                                            <tr>
+                                                                                <td>{{ $row->nik." - ".\App\Models\employeeApps\User::getUser($row->nik)->name }}</td>
+                                                                                <td>{{ $row->action }}</td>
+                                                                                <td>{{ \Carbon\Carbon::parse($row->created_at)->format('d-m-Y') }}</td>
+                                                                            </tr>
+                                                                        @endforeach
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
                                             <td>{{ $value->preq_item }}</td>
                                             <td>{{ $value->release_date }}</td>
-                                            <td>{{ 'i' }}</td>
+                                            {{-- <td>{{ 'i' }}</td> --}}
                                             <td>{{ $value->material_id }}</td>
                                             <td>{{ $value->short_text }}</td>
                                             <td style="text-align: right;">{{ $value->qty }}</td>
@@ -77,7 +122,7 @@
                                             <td>{{ $value->plant_code }}</td>
                                             <td>{{ $value->storage_location }}</td>
                                             <td><input type="text" class="money form-control qty qty_{{ $value->uuid }}" name="qty[]" value="{{ $value->qty }}" style="width: 70%;"></td>
-                                            <td class="qty_open_text" style="text-align: right;"><span>{{ $value->qty_order }}</span></td>
+                                            <td class="qty_open_text" style="text-align: right;"><span>{{ $value->qty - $value->qty_order }}</span></td>
                                             <td>{{ 'D' }}</td>
                                             <td>{{ $value->material_group }}</td>
                                             <td>{{ $value->purchasing_group_code }}</td>

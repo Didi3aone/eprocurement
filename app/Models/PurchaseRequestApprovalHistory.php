@@ -38,4 +38,9 @@ class PurchaseRequestApprovalHistory extends Model
             }
         });
     }
+
+    public static function getHistoryApproval($req_id)
+    {
+        return PurchaseRequestApprovalHistory::where('request_id', $req_id)->get();
+    }
 }
