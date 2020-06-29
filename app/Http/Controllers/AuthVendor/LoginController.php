@@ -293,7 +293,8 @@ class LoginController extends Controller
         $bank_account_holder_name = $request->input('bank_account_holder_name');
 
         $bank_country_code = 'ID';
-        $bank_country = MasterVendorBankCountry::($bank_country_id);
+        $bank_country = '';
+        $bank_country = MasterVendorBankCountry::where('code',$bank_country_id)->first();
         if ($bank_country) {
             $bank_country_code = $bank_country->code;
         }
