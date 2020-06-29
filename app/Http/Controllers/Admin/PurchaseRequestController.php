@@ -82,6 +82,7 @@ class PurchaseRequestController extends Controller
 
         $prProject = PurchaseRequestsDetail::join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
                     ->where('purchase_requests.status_approval', PurchaseRequest::ApprovedDept)
+                    ->where('purchase_requests.is_approve_procurement', PurchaseRequest::ApprovalProc)
                     ->whereIn('purchase_requests_details.purchasing_group_code',$userMapping)
                     ->where('purchase_requests.doc_type','like','Z%')
                     ->select(

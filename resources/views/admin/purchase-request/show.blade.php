@@ -67,11 +67,16 @@
                                 <th>
                                     Attachment URS
                                 </th>
-                                <td>
-                                   <a href="{{ 'https://employee.enesis.com/public/uploads/'.$prProject->upload_file }}" download target="_blank">
-                                        {{ $prProject->upload_file }}
-                                   </a>
-                                </td>
+                                @if(isset($prProject->upload_file))
+                                    <td>
+                                        @foreach( unserialize((string)$prProject->upload_file) as $fileUpload)
+                                            <a href="{{ 'https://employee.enesis.com/public/uploads/'.$fileUpload }}" target="_blank" download>
+                                                {{ $fileUpload ??'' }}
+                                            </a>
+                                            <br>
+                                        @endforeach
+                                    </td>
+                                @endif
                             </tr>
                         </tbody>
                     </table>
