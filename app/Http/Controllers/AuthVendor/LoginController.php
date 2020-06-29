@@ -145,7 +145,7 @@ class LoginController extends Controller
             $this->insert_vendor_identification_numbers($user_vendor->id, $is_local);
 
             \DB::commit();
-            return redirect()->route('vendor.login')->with('success', 'Register success');;
+            return redirect()->route('vendor.login')->with('success', 'Register success');
         } catch (Exception $e) {
             \DB::rollback();
             \Log::error($e->getMessage());
@@ -179,7 +179,7 @@ class LoginController extends Controller
         $email = $request->input('email');
         $email_2 = $request->input('email_2');
         $password = $request->input('password');
-        $status = 1;
+        $status = 0;
 
         $post = [];
         $post['code'] = $vendor_code_;
