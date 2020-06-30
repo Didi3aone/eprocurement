@@ -37,12 +37,17 @@
                                         <th>File</th>
                                         @if(isset($acp->upload_file))
                                             <td>
-                                                @foreach( unserialize((string)$acp->upload_file) as $fileUpload)
-                                                    <a href="{{ asset('/files/uploads/'.$fileUpload) ??''}}" target="_blank" download>
-                                                        {{ $fileUpload ??'' }}
-                                                    </a>
-                                                    <br>
-                                                @endforeach
+                                                @php
+                                                    $files = @unserialize($acp->upload_file);
+                                                @endphp
+                                                @if( is_array($files))
+                                                    @foreach( unserialize((string)$acp->upload_file) as $fileUpload)
+                                                        <a href="{{ asset('/files/uploads/'.$fileUpload) ??''}}" target="_blank" download>
+                                                            {{ $fileUpload ??'' }}
+                                                        </a>
+                                                        <br>
+                                                    @endforeach
+                                                @endif
                                             </td>
                                         @endif
                                     </tr>

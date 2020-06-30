@@ -132,11 +132,13 @@ class QuotationRepeatController extends Controller
                 'vendor_id'                 => $request->get('vendor_id'),
                 'plant_code'                => $request->get('plant_code')[$i],
                 'price'                     => $request->get('price')[$i],
+                'original_price'            => $request->get('original_price')[$i],
                 'qty'                       => $request->get('qty')[$i],
                 'qty_pr'                    => $material->qty,
                 'is_assets'                 => $request->get('is_assets')[$i],
                 'assets_no'                 => $request->get('assets_no')[$i],
                 'text_id'                   => $request->get('text_id')[$i],
+                'short_text'                => $request->get('short_text')[$i],
                 'text_form'                 => $request->get('text_form')[$i],
                 'text_line'                 => $request->get('text_line')[$i],
                 'delivery_date_category'    => $request->get('delivery_date_category')[$i],
@@ -153,6 +155,7 @@ class QuotationRepeatController extends Controller
                 'delivery_date'             => $request->get('delivery_date')[$i],
                 'delivery_date_new'         => $request->get('delivery_date_new')[$i],
                 'description'               => $request->get('description')[$i],
+                'tax_code'                  => $request->get('tax_code')[$i],
                 'vendor_id'                 => $request->vendor_id
             ];
 
@@ -316,18 +319,35 @@ class QuotationRepeatController extends Controller
             ]);
         foreach ($detail as $rows) {
             PurchaseOrdersDetail::create([
-                'purchase_order_id'     => $poId->id,
-                'description'           => $rows->description ?? '-',
-                'qty'                   => $rows->qty,
-                'unit'                  => $rows->unit,
-                'notes'                 => $rows->notes ?? '-',
-                'price'                 => $rows->price ?? 0,
-                'material_id'           => $rows->material,
-                'assets_no'             => $rows->assets_no,
-                'material_group'        => $rows->material_group,
-                'preq_item'             => $rows->preq_item,
-                'purchasing_document'   => $rows->purchasing_document,
-                'PR_NO'                 => $rows->PR_NO
+                'purchase_order_id'         => $poId->id,
+                'description'               => $rows->description ?? '-',
+                'qty'                       => $rows->qty,
+                'unit'                      => $rows->unit,
+                'notes'                     => $rows->notes ?? '-',
+                'price'                     => $rows->price ?? 0,
+                'material_id'               => $rows->material,
+                'assets_no'                 => $rows->assets_no,
+                'material_group'            => $rows->material_group,
+                'preq_item'                 => $rows->preq_item,
+                'purchasing_document'       => $rows->purchasing_document,
+                'PR_NO'                     => $rows->PR_NO,
+                'assets_no'                 => $rows->assets_no,
+                'acp_id'                    => $rows->acp_id,
+                'short_text'                => $rows->short_text,
+                'text_id'                   => $rows->text_id,
+                'text_form'                 => $rows->text_form,
+                'text_line'                 => $rows->text_line,
+                'delivery_date_category'    => $rows->delivery_date_category,
+                'account_assignment'        => $rows->account_assignment,
+                'purchasing_group_code'     => $rows->purchasing_group_code,
+                'gl_acct_code'              => $rows->gl_acct_code,
+                'cost_center_code'          => $rows->cost_center_code,
+                'profit_center_code'        => $rows->profit_center_code,
+                'storage_location'          => $rows->storage_location,
+                'request_no'                => $rows->request_no,
+                'taxt_code'                 => $rows->taxt_code,
+                'original_price'            => $rows->original_price,
+                'currency'                  => $rows->currency,
             ]);
         }
     }
@@ -340,7 +360,7 @@ class QuotationRepeatController extends Controller
             $indexes    = $i+1;
             $poItem     = sprintf('%05d', (10*$indexes));;
 
-            $quotationDetail = new QuotationDetail;
+            $quotationDetail = new QuotationDetail; 
             $quotationDetail->quotation_order_id        = $id;
             $quotationDetail->qty                       = $detail['qty'];
             $quotationDetail->unit                      = $detail['unit'];
@@ -348,8 +368,10 @@ class QuotationRepeatController extends Controller
             $quotationDetail->description               = $detail['description'];
             $quotationDetail->plant_code                = $detail['plant_code'];
             $quotationDetail->price                     = $detail['price'];
+            $quotationDetail->original_price            = $detail['original_price'];
             $quotationDetail->is_assets                 = $detail['is_assets'];
             $quotationDetail->assets_no                 = $detail['assets_no'];
+            $quotationDetail->short_text                = $detail['short_text'];
             $quotationDetail->text_id                   = $detail['text_id'];
             $quotationDetail->text_form                 = $detail['text_form'];
             $quotationDetail->text_line                 = $detail['text_line'];
@@ -367,6 +389,7 @@ class QuotationRepeatController extends Controller
             $quotationDetail->PO_ITEM                   = $poItem;
             $quotationDetail->purchasing_document       = $detail['rfq'] ?? 0;
             $quotationDetail->delivery_date             = $detail['delivery_date'];
+            $quotationDetail->tax_code                  = $detail['tax_code'] == 1 ? "V1" : "V0";
 
             $quotationDetail->save();
 

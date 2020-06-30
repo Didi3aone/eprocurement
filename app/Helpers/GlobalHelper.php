@@ -109,4 +109,21 @@
         $arr = explode(' ',trim($name));
         return $arr[0];
     }
+
+    // If they did not pass the 2nd func argument, then we will use an arbitrary value in the $arr.
+    // By using func_num_args() to test for this, we can properly support testing for an array filled with nulls, if desired.
+    // ie isHomogenous([null, null], null) === true
+    // ref https://stackoverflow.com/questions/10560658/check-if-all-values-in-array-are-the-same
+    //author : didi
+    function checkArraySame(array $arr, $testValue = null) 
+    {
+        
+        $testValue = func_num_args() > 1 ? $testValue : current($arr);
+        foreach ($arr as $val) {
+            if ($testValue !== $val) {
+                return false;
+            }
+        }
+        return true;
+    }
 ?>

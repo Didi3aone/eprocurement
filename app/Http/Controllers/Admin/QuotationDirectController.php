@@ -110,7 +110,6 @@ class QuotationDirectController extends Controller
         $qty = 0;
         $price = 0;
         $details = [];
-
         for ($i = 0; $i < count($request->get('qty')); $i++) {
             $qy = str_replace('.', '', $request->get('qty')[$i]);
             $qty += $qy;
@@ -118,6 +117,13 @@ class QuotationDirectController extends Controller
             $material = PurchaseRequestsDetail::where('id', $request->id[$i])->first();
 
             // insert to pr history
+            $requestNo = '';
+            if( $request->get('rn_no')[$i] == 'DIRECT') {
+                $requestNo = $request->get('pr_no')[$i];
+            } else {
+                $requestNo = $request->get('rn_no')[$i];
+            }
+
             $data = [
                 'request_no'                => $request->get('rn_no')[$i],
                 'pr_id'                     => $request->get('pr_no')[$i],
@@ -128,10 +134,13 @@ class QuotationDirectController extends Controller
                 'vendor_id'                 => $request->get('vendor_id'),
                 'plant_code'                => $request->get('plant_code')[$i],
                 'price'                     => $request->get('price')[$i],
+                'original_price'            => $request->get('original_price')[$i],
+                'original_currency'         => $request->get('original_currency')[$i],
                 'qty'                       => $request->get('qty')[$i],
                 'qty_pr'                    => $material->qty,
                 'is_assets'                 => $request->get('is_assets')[$i],
                 'assets_no'                 => $request->get('assets_no')[$i],
+                'short_text'                => $request->get('short_text')[$i],
                 'text_id'                   => $request->get('text_id')[$i],
                 'text_form'                 => $request->get('text_form')[$i],
                 'text_line'                 => $request->get('text_line')[$i],
@@ -149,7 +158,10 @@ class QuotationDirectController extends Controller
                 'delivery_date'             => $request->get('delivery_date')[$i],
                 'delivery_date_new'         => $request->get('delivery_date_new')[$i],
                 'rfq'                       => $request->get('rfq')[$i],
-                'vendor_id'                 => $request->vendor_id
+                'tax_code'                  => $request->get('tax_code')[$i],
+                'vendor_id'                 => $request->vendor_id,
+                'request_no'                => $requestNo,
+                'acp_id'                    => $request->get('acp_id')[$i]
             ];
 
             array_push($details, $data);
@@ -163,16 +175,22 @@ class QuotationDirectController extends Controller
         \DB::beginTransaction();
 
         try {
+            $file_upload = "";
+            if ($request->upload_file) {
+                $file_upload = $this->fileUpload($request);
+            }
+            $max  = Quotation::select(\DB::raw('count(id) as id'))->first()->id;
+            $poNo = 'PO/' . date('m') . '/' . date('Y') . '/' . sprintf('%07d', ++$max);
             $quotation = new Quotation;
-            $quotation->po_no           = $request->get('po_no');
+            $quotation->po_no           = $poNo;
             $quotation->notes           = $request->get('notes');
             $quotation->doc_type        = $request->get('doc_type');
-            $quotation->upload_file     = $request->get('upload_files');
+            $quotation->upload_file     = $file_upload;
             $quotation->status          = Quotation::QuotationDirect;
-            $quotation->currency        = 'IDR';
+            $quotation->currency        = $request->get('currency');
             $quotation->payment_term    = $request->get('payment_term');
             $quotation->vendor_id       = $request->vendor_id;
-            $quotation->acp_id          = $request->acp_id;
+            $quotation->acp_id          = $request->acp_id[0];
             $quotation->approval_status = Quotation::Waiting;
             $quotation->save();
 
@@ -183,7 +201,7 @@ class QuotationDirectController extends Controller
             throw $e;
         }
 
-        return redirect()->route('admin.quotation-direct')->with('status', 'Direct Order has been successfully ordered!');
+        return redirect()->route('admin.quotation-direct.index')->with('status', 'Direct Order has been successfully ordered!');
     }
 
     /**
@@ -345,8 +363,10 @@ class QuotationDirectController extends Controller
             $quotationDetail->description               = $detail['description'];
             $quotationDetail->plant_code                = $detail['plant_code'];
             $quotationDetail->price                     = $detail['price'];
+            $quotationDetail->orginal_price             = $detail['original_price'];
             $quotationDetail->is_assets                 = $detail['is_assets'];
             $quotationDetail->assets_no                 = $detail['assets_no'];
+            $quotationDetail->short_text                = $detail['short_text'];
             $quotationDetail->text_id                   = $detail['text_id'];
             $quotationDetail->text_form                 = $detail['text_form'];
             $quotationDetail->text_line                 = $detail['text_line'];
@@ -363,7 +383,11 @@ class QuotationDirectController extends Controller
             $quotationDetail->PR_NO                     = $detail['PR_NO'];
             $quotationDetail->PO_ITEM                   = $poItem;
             $quotationDetail->purchasing_document       = $detail['rfq'];
+            $quotationDetail->acp_id                    = $detail['acp_id'];
             $quotationDetail->delivery_date             = $detail['delivery_date'];
+            $quotationDetail->currency                  = $detail['original_currency'];
+            $quotationDetail->request_no                = $detail['request_no'];
+            $quotationDetail->tax_code                  = $detail['tax_code'] == 1 ? 'V1' : 'V0';
             $quotationDetail->save();
 
             QuotationDelivery::create([
@@ -378,5 +402,19 @@ class QuotationDirectController extends Controller
 
             $i++;
         }
+    }
+
+    public function fileUpload($request)
+    {
+        $data = [];
+        if ($request->hasfile('upload_file')) {
+            foreach ($request->file('upload_file') as $file) {
+                $name = time() . $file->getClientOriginalName();
+                $file->move(public_path() . '/files/uploads/', $name);
+                $data[] = $name;
+            }
+        }
+
+        return serialize($data);
     }
 }

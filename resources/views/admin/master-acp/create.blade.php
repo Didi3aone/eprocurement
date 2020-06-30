@@ -48,7 +48,7 @@
                     </div>
                     <div class="form-group">
                         <label>Reference Acp No</label>
-                        <select class="form-control form-control-line {{ $errors->has('currency') ? 'is-invalid' : '' }}" name="currency" required> 
+                        <select class="form-control select2 form-control-line" name="reference_acp_no"> 
                             <option value="">-- Select --</option>
                             @foreach($acpNo ?? '' as $key => $value)
                                 <option value="{{ $value->acp_no }}">{{ $value->acp_no }}</option>
@@ -57,9 +57,12 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.master-acp.fields.currency') }}</label>
-                        <select class="form-control form-control-line {{ $errors->has('currency') ? 'is-invalid' : '' }}" name="currency" required> 
-                            <option value="IDR" selected="selected">IDR</option>
-                            <option value="USD">USD</option>
+                        <select name="currency" id="currency" class="form-control select2" required>
+                            @foreach($currency as $key => $value)
+                                <option value="{{ $value->currency }}" @if($value->currency == 'IDR') selected @endif>
+                                    {{ $value->currency }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="form-group">
@@ -247,8 +250,12 @@
                 url: base_url + '/admin/master-acp-material',
                 dataType: 'json',
                 delay: 300,
-                data : {
-                    fromPr : $("input[name='is_from_pr']:checked").val()
+                data: function(params) {
+                    return {
+                        q: params.term, // search term
+                        page: params.page,
+                        fromPr : $("input[name='is_from_pr']:checked").val()
+                    };
                 },
                 processResults: function (response) {
                     return {

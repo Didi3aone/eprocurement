@@ -39,6 +39,7 @@ class Rfq extends Model
                     'vendors.code',
                     'master_rfqs.acp_id',
                     'master_acps.acp_no',
+                    'master_acps.currency',
                 )
                 ->where('master_acps.start_date','>=',date('Y-m-d'))
                 ->where('master_acps.end_date','<=',date('Y-m-d'))
