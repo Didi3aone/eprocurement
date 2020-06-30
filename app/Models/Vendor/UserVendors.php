@@ -34,7 +34,8 @@ class UserVendors extends Model
         'name',
         'email',
         'email_2',
-        'password'
+        'password',
+        'status'
     ];
 
     public function getBpGroup()

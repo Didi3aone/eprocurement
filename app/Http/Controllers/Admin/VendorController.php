@@ -8,9 +8,23 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Vendor;
 use App\Models\Vendor\UserVendors;
-use App\Models\Vendor\MasterVendorTermsOfPayment;
+use App\Models\Vendor\UserVendorsImport;
+use App\Models\Vendor\MasterVendorAccountGL;
+use App\Models\Vendor\MasterVendorBankCountry;
+use App\Models\Vendor\MasterVendorBankKeys;
+use App\Models\Vendor\MasterVendorBPGroup;
+use App\Models\Vendor\MasterVendorPlanningGroup;
+use App\Models\Vendor\MasterVendorTitle;
+use App\Models\Vendor\MasterVendorCountry;
+use App\Models\Vendor\VendorBPRoles;
 use App\Models\Vendor\VendorCompanyData;
+use App\Models\Vendor\VendorWithholdingTaxType;
 use App\Models\Vendor\VendorPurchasingOrganization;
+use App\Models\Vendor\VendorPartnerFunctions;
+use App\Models\Vendor\VendorBankDetails;
+use App\Models\Vendor\VendorTaxNumbers;
+use App\Models\Vendor\VendorIdentificationNumbers;
+use App\Models\Vendor\VendorEmail;
 use App\Imports\VendorsImport;
 use Gate, Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,6 +36,9 @@ class VendorController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    const bp_group_code_local = ['Z001','Z003'];
+
     public function index()
     {
         abort_if(Gate::denies('vendor_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
@@ -71,6 +88,228 @@ class VendorController extends Controller
         } else {
             return redirect('admin/vendors')->with('success', 'Vendors has been successfully imported');
         }
+    }
+
+    public function migrate()
+    {
+        ini_set('max_execution_time', 0);
+
+        try {
+            \DB::beginTransaction();
+
+            $user_vendors_import = UserVendorsImport::select('*')
+                                    ->where('has_migrate', 0)
+                                    ->whereIn('account_group', ['Z001', 'Z002', 'Z003', 'Z004'])
+                                    ->limit(1000)
+                                    ->get();
+                                    // ->count();
+            // echo json_encode($user_vendors_import); die();
+            foreach ($user_vendors_import as $row) {
+                $user_vendors = UserVendors::where('code', $row->vendor)->get()->first();
+                if (!$user_vendors) {
+                    $is_local = in_array($row->account_group, self::bp_group_code_local);
+
+                    $user_vendor = $this->insert_user_vendor($row);
+                    $this->insert_vendor_bp_roles($user_vendor->id);
+                    $this->insert_vendor_company_data($user_vendor->id, $is_local);
+                    $this->insert_vendor_withholding_tax_type($user_vendor->id);
+                    $this->insert_vendor_purchasing_organization($user_vendor->id);
+                    $this->insert_vendor_partner_functions($user_vendor->id);
+                    // $this->insert_vendor_bank_details($request, $user_vendor->id, $is_local);
+                    $this->insert_vendor_tax_number($user_vendor->id, $row->tax_number_1);
+                    $this->insert_vendor_identification_numbers($user_vendor->id, $is_local);
+                    $vendor_id = $user_vendor->id;
+                } else {
+                    UserVendors::where('id', $user_vendors->id)->update(['email' => $row->email]);
+                    $vendor_id = $user_vendors->id;
+                }
+                VendorEmail::create(['vendor_id' => $vendor_id, 'email' => $row->email]);
+                UserVendorsImport::where('id', $row->id)->update(['has_migrate' => 1]);
+            }
+
+            \DB::commit();
+            echo 'Success';
+        } catch (Exception $e) {
+            \DB::rollback();
+            \Log::error($e->getMessage());
+            echo $e->getMessage();
+        }
+    }
+
+    private function insert_user_vendor($row)
+    {
+        $vendor_title = MasterVendorTitle::where('name', $row->title)->get()->first();
+        $vendor_title_id = $vendor_title->id ?? null;
+        $vendor_bp_group = MasterVendorBPGroup::where('code', $row->account_group)->get()->first();
+        $vendor_bp_group_id = $vendor_bp_group->id ?? null;
+
+        $post = [];
+        $post['code'] = $row->vendor;
+        $post['vendor_title_id'] = $vendor_title_id;
+        $post['vendor_bp_group_id'] = $vendor_bp_group_id;
+        $post['specialize'] = $row->search_term;
+        $post['company_name'] = $row->name;
+        $post['city'] = $row->city;
+        $post['postal_code'] = $row->postal_code;
+        $post['country'] = $row->country;
+        $post['street'] = $row->street;
+        $post['street_2'] = $row->street_2;
+        $post['street_3'] = $row->street_3;
+        $post['street_4'] = $row->street_4;
+        $post['street_5'] = $row->street_5;
+        $post['language'] = 'EN';
+        $post['office_telephone'] = $row->telephone_1;
+        $post['telephone_2'] = $row->telephone_2;
+        $post['office_fax'] = $row->fax_number;
+        $post['name'] = $row->name;
+        $post['email'] = $row->email;
+        $post['payment_terms'] = $row->payment_terms;
+        $post['status'] = 1;
+        $do_insert = UserVendors::create($post);
+        if (!$do_insert) throw new Exception('Failed at insert_user_vendor');
+
+        return $do_insert;
+    }
+
+    private function insert_vendor_bp_roles($vendor_id)
+    {
+        $bp_roles = ['FLVN01', 'FLVN00'];
+        foreach ($bp_roles as $value) {
+            $post = [];
+            $post['vendor_id'] = $vendor_id;
+            $post['bp_role'] = $value;
+            $do_insert = VendorBPRoles::create($post);
+            if (!$do_insert) throw new Exception('Failed at insert_vendor_bp_roles');
+        }
+
+        return true;
+    }
+
+    private function insert_vendor_company_data($vendor_id, $is_local)
+    {
+        $company_data = ['1100', '1200', '2100'];
+        foreach ($company_data as $value) {
+            $post = [];
+            $post['vendor_id'] = $vendor_id;
+            $post['company_code'] = $value;
+            $post['account_gl'] = $is_local ? '2111011001' : '2111021001';
+            $post['planning_group'] = $is_local ? 'A1' : 'A2';
+            $do_insert = VendorCompanyData::create($post);
+            if (!$do_insert) throw new Exception('Failed at insert_vendor_company_data');
+        }
+
+        return true;
+    }
+
+    private function insert_vendor_withholding_tax_type($vendor_id)
+    {
+        $company_code = ['1100','1200'];
+        foreach ($company_code as $value) {
+            $withholding_tax_type = ['I1','I2','I3','I4','I5','I6','I8'];
+            foreach ($withholding_tax_type as $value2) {
+                $post = [];
+                $post['vendor_id'] = $vendor_id;
+                $post['company_code'] = $value;
+                $post['withholding_tax_type'] = $value2;
+                $do_insert = VendorWithholdingTaxType::create($post);
+                if (!$do_insert) throw new Exception('Failed at insert_vendor_withholding_tax_type');
+            }
+        }
+
+        return true;
+    }
+
+    private function insert_vendor_purchasing_organization($vendor_id)
+    {
+        $post = [];
+        $post['vendor_id'] = $vendor_id;
+        $post['purchasing_organization'] = '0000';
+        $post['order_currency'] = 'IDR';
+        $do_insert = VendorPurchasingOrganization::create($post);
+        if (!$do_insert) throw new Exception('Failed at insert_vendor_purchasing_organization');
+
+        return true;
+    }
+
+    private function insert_vendor_partner_functions($vendor_id)
+    {
+        $partner_functions = ['RS','BA', 'LF'];
+        foreach ($partner_functions as $value) {
+            $post = [];
+            $post['vendor_id'] = $vendor_id;
+            $post['purchasing_organization'] = '0000';
+            $post['partner_functions'] = $value;
+            $do_insert = VendorPartnerFunctions::create($post);
+            if (!$do_insert) throw new Exception('Failed at insert_vendor_partner_functions');
+        }
+
+        return true;
+    }
+
+    private function insert_vendor_bank_details($request, $vendor_id, $is_local)
+    {
+        $bank_country_id = $request->input('bank_country_id');
+        $bank_keys_id = $request->input('bank_keys_id');
+        $bank_account_no = $request->input('bank_account_no');
+        $bank_account_holder_name = $request->input('bank_account_holder_name');
+
+        $bank_country_code = 'ID';
+        $bank_country = MasterVendorBankCountry::find($bank_country_id);
+        if ($bank_country) {
+            $bank_country_code = $bank_country->code;
+        }
+
+        $bank_keys_ = 0;
+        $bank_details = '';
+        $bank_keys = MasterVendorBankKeys::find($bank_keys_id);
+        if ($bank_keys) {
+            $bank_keys_ = $bank_keys->key;
+            $bank_details = $bank_keys->name;
+        }
+
+        $post = [];
+        $post['vendor_id'] = $vendor_id;
+        $post['bank_country_key'] = $bank_country_code;
+        $post['bank_keys'] = $bank_keys_;
+        $post['account_no'] = $bank_account_no;
+        if (!$is_local)
+            $post['iban'] = '';
+        $post['bank_details'] = $bank_details;
+        $post['account_holder_name'] = $bank_account_holder_name;
+        $do_insert = VendorBankDetails::create($post);
+        if (!$do_insert) throw new Exception('Failed at insert_vendor_bank_details');
+
+        return true;
+    }
+
+    private function insert_vendor_tax_number($vendor_id, $tax_numbers)
+    {
+        $post = [];
+        $post['vendor_id'] = $vendor_id;
+        $post['tax_numbers_category'] = 'ID';
+        $post['tax_numbers'] = $tax_numbers;
+        $do_insert = VendorTaxNumbers::create($post);
+        if (!$do_insert) throw new Exception('Failed at insert_vendor_tax_number');
+
+        return true;
+    }
+
+    private function insert_vendor_identification_numbers($vendor_id, $is_local)
+    {
+        $identification_type = ['ZBENST', 'ZBENTY', 'ZCHARG', 'ZRGTYP'];
+        $identification_numbers = ['1', '2', 'CRED', 'E0N'];
+        $identification_count = count($identification_type);
+        if ($is_local) $identification_count--;
+        for ($i=0; $i < $identification_count; $i++) {
+            $post = [];
+            $post['vendor_id'] = $vendor_id;
+            $post['identification_type'] = $identification_type[$i];
+            $post['identification_numbers'] = $identification_numbers[$i];
+            $do_insert = VendorIdentificationNumbers::create($post);
+            if (!$do_insert) throw new Exception('Failed at insert_vendor_identification_numbers');
+        }
+
+        return true;
     }
 
     /**
@@ -167,6 +406,7 @@ class VendorController extends Controller
             $do_update = $do_update && UserVendors::where('id', $id)
                                         ->update([
                                             'terms_of_payment_key_id' => $terms_of_payment_id,
+                                            'payment_terms' => $terms_of_payment->description,
                                             'status' => $status
                                         ]);
             $do_update = $do_update && VendorCompanyData::where('vendor_id', $id)

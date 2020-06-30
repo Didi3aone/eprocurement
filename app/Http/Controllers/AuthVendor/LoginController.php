@@ -187,7 +187,6 @@ class LoginController extends Controller
         $post['vendor_bp_group_id'] = $vendor_bp_group_id;
         $post['specialize'] = $specialize;
         $post['company_name'] = $company_name;
-        $post['street'] = $street;
         $post['different_city'] = $different_city;
         $post['city'] = $city;
         $post['postal_code'] = $postalCode;

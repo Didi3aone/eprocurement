@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\Vendor;
+use App\Models\Vendor\UserVendorsImport;
 use Maatwebsite\Excel\Concerns\ToModel;
 
 class VendorsImport implements ToModel
@@ -14,6 +15,28 @@ class VendorsImport implements ToModel
     */
     public function model(array $row)
     {
+        return new UserVendorsImport([
+            'vendor' => $row[0],
+            'country' => $row[1],
+            'name' => $row[2],
+            'city' => $row[3],
+            'postal_code' => $row[4],
+            'search_term' => $row[5],
+            'street' => $row[6],
+            'street_2' => $row[7],
+            'street_3' => $row[8],
+            'street_4' => $row[9],
+            'street_5' => $row[10],
+            'title' => $row[11],
+            'account_group' => $row[12],
+            'tax_number_1' => $row[13],
+            'telephone_1' => $row[14],
+            'telephone_2' => $row[15],
+            'fax_number' => $row[16],
+            'payment_terms' => $row[17],
+            'email' => $row[18]
+        ]);
+        /*
         return new Vendor([
             'code' => $row[0],
             'name' => $row[2],
@@ -64,5 +87,6 @@ class VendorsImport implements ToModel
             'cae_code' => $row[173],
             'staging_time' => $row[176]
         ]);
+        */
     }
 }

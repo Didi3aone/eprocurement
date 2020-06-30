@@ -25,6 +25,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     // Vendors
     Route::delete('vendors/destroy', 'VendorController@massDestroy')->name('vendors.massDestroy');
     Route::post('vendors/import', 'VendorController@import')->name('vendors.import');
+    Route::get('vendors/migrate', 'VendorController@migrate')->name('vendors.migrate');
     Route::post('vendors/set-password', 'VendorController@setPassword')->name('vendors.set-password');
     Route::get('get-vendors','VendorController@getVendor')->name('get-vendors');
     Route::resource('vendors', 'VendorController');
