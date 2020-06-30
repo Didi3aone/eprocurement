@@ -262,6 +262,7 @@
                                         </thead>
                                         <tbody id="billing-detail">
                                             <tr>
+                                                <input type="hidden" name="qty_old[]" class="qty-old" value="">
                                                 <td><input type="number" class="qty form-control" name="qty[]" required/></td>
                                                 <td><input type="text" class="material form-control" name="material[]" required readonly></select></td>
                                                 <td><input type="text" class="description form-control" name="description[]" required readonly/></td>
@@ -300,6 +301,7 @@
 
         const template = `
             <tr>
+                <input type="hidden" name="qty_old[]" class="qty-old" value="">
                 <td><input type="number" class="qty form-control" name="qty[]" required/></td>
                 <td><input type="text" class="material form-control" name="material[]" required readonly></select></td>
                 <td><input type="text" class="description form-control" name="description[]" required readonly/></td>
@@ -366,11 +368,25 @@
 
         $tr.find('.material').val(material)
         $tr.find('.qty').val(qty)
+        $tr.find('.qty-old').val(qty)
         $tr.find('.doc_gr').val(doc_gr)
         $tr.find('.item_gr').val(item_gr)
         $tr.find('.tahun_gr').val(tahun_gr)
         $tr.find('.reference_document').val(reference_document)
         $tr.find('.description').val(description)
+    }).trigger('change')
+
+    $(document).on('change', '.qty', function () {
+        $tr = $(this).closest('tr')
+        $qty_old = parseInt($tr.find('.qty-old').val())
+        $this = $(this)
+
+        if (parseInt($(this).val()) < $qty_old) {
+            alert('Quantity cannot be less than default quantity')
+            $this.val($qty_old)
+
+            return false
+        }
     }).trigger('change')
 
     loadMaterial()
