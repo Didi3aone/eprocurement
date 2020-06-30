@@ -256,7 +256,6 @@
                                                 <th style="width: 10%">GR Doc</th>
                                                 <th style="width: 10%">GR No</th>
                                                 <th style="width: 10%">GR Date</th>
-                                                <th style="width: 10%">Document Entry</th>
                                                 <th style="width: 10%">&nbsp;</th>
                                             </tr>
                                         </thead>
@@ -270,7 +269,6 @@
                                                 <td><input type="text" class="doc_gr form-control" name="doc_gr[]" required readonly/></td>
                                                 <td><input type="text" class="item_gr form-control" name="item_gr[]" required readonly/></td>
                                                 <td><input type="text" class="tahun_gr form-control" name="tahun_gr[]" required readonly/></td>
-                                                <td><input type="text" class="reference_document form-control" name="reference_document[]" required readonly/></td>
                                                 <td>&nbsp;</td>
                                             </tr>
                                         </tbody>
@@ -309,7 +307,6 @@
                 <td><input type="text" class="doc_gr form-control" name="doc_gr[]" required readonly/></td>
                 <td><input type="text" class="item_gr form-control" name="item_gr[]" required readonly/></td>
                 <td><input type="text" class="tahun_gr form-control" name="tahun_gr[]" required readonly/></td>
-                <td><input type="text" class="reference_document form-control" name="reference_document[]" required readonly/></td>
                 <td>
                     <a href="javascript:;" class="remove-item btn btn-danger btn-xs">
                         <i class="fa fa-trash"></i> Remove

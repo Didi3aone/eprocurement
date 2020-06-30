@@ -18,6 +18,7 @@ class CreateBillingDetails extends Migration
             $table->string('billing_id')->nullable();
             $table->string('po_no')->nullable();
             $table->integer('qty')->nullable();
+            $table->integer('qty_old')->nullable();
             $table->timestamps();
         });
     }

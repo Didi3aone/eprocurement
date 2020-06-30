@@ -20,4 +20,9 @@ class Billing extends Model
     {
         return $this->hasMany(\App\Models\BillingDetail::class, 'billing_id', 'id');
     }
+
+    public function gr ()
+    {
+        return $this->hasOne(\App\Models\PurchaseOrderGr::class, 'po_no', 'po_no');
+    }
 }

@@ -59,9 +59,7 @@ class BillingController extends Controller
                 'purchase_requests_details.storage_location',
                 'purchase_requests_details.co_area',
             )
-            // ->toSql();
             ->get();
-            // dd($purchase_orders, Auth::user()->code);
 
         $data = [];
         foreach ($purchase_orders as $po) {
@@ -214,25 +212,25 @@ class BillingController extends Controller
             if ($request->file('po')) {
                 $filePo = $request->file('po');
                 $filePoName = time() . $filePo->getClientOriginalName();
-                // $filePo->move(public_path() . '/files/uploads/', $filePoName);
+                $filePo->move(public_path() . '/files/uploads/', $filePoName);
             }
 
             if ($request->file('surat_ket_bebas_pajak')) {
                 $fileBebas = $request->file('surat_ket_bebas_pajak');
                 $fileBebasName = time() . $fileBebas->getClientOriginalName();
-                // $fileBebas->move(public_path() . '/files/uploads/', $fileBebasName);
+                $fileBebas->move(public_path() . '/files/uploads/', $fileBebasName);
             }
             
             if ($request->file('file_faktur')) {
                 $fileFaktur = $request->file('file_faktur');
                 $fileFakturName = time() . $fileFaktur->getClientOriginalName();
-                // $fileFaktur->move(public_path() . '/files/uploads/', $fileFakturName);
+                $fileFaktur->move(public_path() . '/files/uploads/', $fileFakturName);
             }
             
             if ($request->file('file_invoice')) {
                 $fileInvoice = $request->file('file_invoice');
                 $fileInvoiceName = time() . $fileInvoice->getClientOriginalName();
-                // $fileInvoice->move(public_path() . '/files/uploads/', $fileInvoiceName);
+                $fileInvoice->move(public_path() . '/files/uploads/', $fileInvoiceName);
             }
 
             $billing = new Billing;
@@ -260,11 +258,13 @@ class BillingController extends Controller
                 $purchase_orders = explode('-', $val);
                 $po_no = $purchase_orders[0];
                 $qty = $request->get('qty')[$key];
+                $qty_old = $request->get('qty_old')[$key];
 
                 $billingDetail = new BillingDetail;
                 $billingDetail->billing_id = $billing->id;
                 $billingDetail->po_no = $po_no;
                 $billingDetail->qty = $qty;
+                $billingDetail->qty_old = $qty_old;
                 $billingDetail->save();
             }
 
@@ -281,7 +281,9 @@ class BillingController extends Controller
     public function edit($id)
     {
         $billing = Billing::find($id);
+        $details = BillingDetail::where('billing_id', $id)
+            ->get();
 
-        return view('vendor.billing.edit',compact('billing'));
+        return view('vendor.billing.edit',compact('billing', 'details'));
     }
 }
