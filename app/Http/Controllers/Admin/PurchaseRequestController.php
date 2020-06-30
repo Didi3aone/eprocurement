@@ -131,6 +131,7 @@ class PurchaseRequestController extends Controller
                 'purchase_requests_details.*',
                 'purchase_requests.request_no as pr_no',
                 'purchase_requests.PR_NO',
+                'purchase_requests.doc_type',
                 'purchase_requests.request_date as request_date'
             )
                 ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')

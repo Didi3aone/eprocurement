@@ -27,16 +27,17 @@ class MasterAcpController extends Controller
         $vendor = Vendor::orderBy('name')->get();
         $material = MasterMaterial::orderBy('description')->get();
         $acpNo   = AcpTable::get();
+        $currency = \App\Models\Currency::all();
 
-        return view('admin.master-acp.create', compact('vendor', 'material','acpNo'));
+        return view('admin.master-acp.create', compact('vendor', 'material','acpNo','currency'));
     }
 
     public function getMaterial (Request $request)
     {
         if( $request->get('fromPr') == \App\Models\AcpTable::MaterialPr ) {
             $model = \App\Models\PurchaseRequestsDetail::where(function ($query) use ($request) {
-                $query->where('material_id', 'like', '%' . $request->query('term') . '%')
-                    ->orWhere('description', 'like', '%' . $request->query('term') . '%');
+                $query->where('material_id', 'like', '%' . $request->query('q') . '%')
+                    ->orWhere('description', 'like', '%' . $request->query('q') . '%');
                 })->select(
                     'material_id as code',
                     'description'
@@ -49,8 +50,8 @@ class MasterAcpController extends Controller
                 ->get();
         } else {
             $model = MasterMaterial::where(function ($query) use ($request) {
-                    $query->where('code', 'like', '%' . $request->query('term') . '%')
-                        ->orWhere('description', 'like', '%' . $request->query('term') . '%');
+                    $query->where('code', 'like', '%' . $request->query('q') . '%')
+                        ->orWhere('description', 'like', '%' . $request->query('q') . '%');
                     })->select(
                         'code',
                         'description'
@@ -178,15 +179,21 @@ class MasterAcpController extends Controller
             }
 
             if( $isAcp ) {
-                if( ($price < 25000000) ) {
-                    $this->saveApprovals($acp->id, 'STAFF','ACP');
-                } else if( ($price > 25000000) && ($price < 100000000) ) {
-                    $this->saveApprovals($acp->id, 'CMO','ACP');
-                } else if( ($price > 100000000) && ($price < 250000000) ) {
-                    $this->saveApprovals($acp->id, 'CFO','ACP');
-                } else if( ($price > 250000000) ) {
-                    $this->saveApprovals($acp->id, 'COO','ACP');
-                } 
+                if( $price <= 25000000 ) {
+                    $this->saveApprovals($acp->id, 'STAFF','ACP', false);
+                } else if( $price > 25000000 && $price < 100000000 ) {
+                    $isCmo = false;
+                    if( $request->get('is_project') == 1 ) {
+                        $isCmo = true;
+                    }
+                    $this->saveApprovals($acp->id, 'CFO','ACP', $isCmo);
+                } else if( $price > 250000000 ) {
+                    $isCmo = false;
+                    if( $request->get('is_project') == 1 ) {
+                        $isCmo = true;
+                    }
+                    $this->saveApprovals($acp->id, 'COO','ACP',$isCmo);
+                }
             }
 
             \DB::commit();
@@ -229,7 +236,7 @@ class MasterAcpController extends Controller
 
     }
 
-    private function saveApprovals($quotation_id, $tingkat,$type)
+    private function saveApprovals($quotation_id, $tingkat,$type, $isCmo)
     {
 
         if( $tingkat == 'STAFF' ) {
@@ -246,35 +253,6 @@ class MasterAcpController extends Controller
             QuotationApproval::create([
                 'nik'                   => 190089,
                 'approval_position'     => 2,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type,
-                'acp_id'                =>  $quotation_id
-            ]);
-        } else if ($tingkat == 'CMO') {
-            QuotationApproval::create([
-                'nik'                   => 190256,
-                'approval_position'     => 1,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 1,
-                'acp_type'              => $type,
-                'acp_id'                =>  $quotation_id
-            ]);
-
-            QuotationApproval::create([
-                'nik'                   => 190089,
-                'approval_position'     => 2,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type
-            ]);
-
-            QuotationApproval::create([
-                'nik'                   => 180095,
-                'approval_position'     => 3,
                 'status'                => QuotationApproval::waitingApproval,
                 'quotation_id'          => $quotation_id,
                 'flag'                  => 0,
