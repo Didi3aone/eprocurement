@@ -57,78 +57,38 @@
                         </div>
                     </div><br>
                     <div class="row">
-                        <table class="table table-striped">
+                        <table class="table table-bordered table-condesed">
                             <thead>
-                                <tr>
+                                <tr style="background-color:yellow;">
                                     <th>Vendor</th>
-                                    <th>Email</th>
-                                    <th>Address</th>
-                                    <th>Winner</th>
-                                    <th>&nbsp;</th>
+                                    <th colspan=2 style="text-align:center;">Material</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($acp->detail as $rows)
+                            @foreach($acp->detail as $rows)
                                 @php
-                                    $winner = 'No';
+                                    $winner = '<span class="badge badge-danger">Lose</span>';
                                     if( $rows->is_winner == \App\Models\AcpTableDetail::Winner ) {
-                                        $winner = 'Yes';
+                                        $winner = '<span class="badge badge-primary">Winner</span>';
                                     }
+                                    $rowSpan = count(\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id));
                                 @endphp
                                 <tr>
-                                    <td>{{ $rows->vendor['name'] }}</td>
-                                    <td>{{ $rows->vendor['email'] }}</td>
-                                    <td>{{ $rows->vendor['address'] }}</td>
-                                    <td>{{ $winner }}</td>
-                                    <td>
-                                            <a 
-                                                class="open_modal_bidding btn btn-success" 
-                                                id="open_modal" 
-                                                data-toggle="modal" 
-                                                data-target="#modal_create_po_{{ $rows->vendor_code }}" 
-                                                href="javascript:;"
-                                            >
-                                                <i class="fa fa-cubes"></i> 
-                                                Show Detail
-                                            </a>
-                                        <div class="modal fade" id="modal_create_po_{{ $rows->vendor_code }}" tabindex="-1" role="dialog" aria-labelledby="modalCreatePO" aria-hidden="true">
-                                            <div class="modal-dialog modal-lg" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="modalImport">{{ 'ACP VIEW' }}</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <table class="table table-striped">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>Material ID</th>
-                                                                    <th>Descriptiom</th>
-                                                                    <th>Price</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                @foreach (\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id) as $row)
-                                                                    <tr>
-                                                                        <td>{{ $row->material_id }}</td>
-                                                                        <td>{{ $row->description }}</td>
-                                                                        <td>{{ number_format($row->price,2) }}</td>
-                                                                    </tr>
-                                                                @endforeach
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
+                                    <td colspan="1" rowspan={{ $rowSpan }}>{{ $rows->vendor['name'] }}</td>
+                                    <td colspan="2">{!! $winner !!}</td>
+                                </tr>
+                                <tr style="background-color:yellow;">
+                                    <th>Description</th>
+                                    <th>Price</th>
+                                </tr>
+                                @foreach (\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id) as $row)
+                                <tr>
+                                    <td></td>
+                                    <td>{{ $row->material_id." - ".$row->description }}</td>
+                                    <td>{{ number_format($row->price,2) }}</td>
                                 </tr>
                                 @endforeach
+                            @endforeach
                             </tbody>
                         </table>
                     </div>
