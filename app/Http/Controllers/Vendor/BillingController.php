@@ -7,6 +7,7 @@ use App\Http\Requests\StoreBillingRequest;
 use Illuminate\Http\Request;
 use App\Models\PurchaseOrder;
 use App\Models\Vendor\Billing;
+use App\Models\Vendor\BillingDetail;
 use Auth;
 
 class BillingController extends Controller
@@ -209,28 +210,29 @@ class BillingController extends Controller
             $fileInvoiceName = '';
             $fileBebasName = '';
             $path = 'billing/';
+
             if ($request->file('po')) {
                 $filePo = $request->file('po');
                 $filePoName = time() . $filePo->getClientOriginalName();
-                $filePo->move(public_path() . '/files/uploads/', $filePoName);
+                // $filePo->move(public_path() . '/files/uploads/', $filePoName);
             }
 
             if ($request->file('surat_ket_bebas_pajak')) {
                 $fileBebas = $request->file('surat_ket_bebas_pajak');
                 $fileBebasName = time() . $fileBebas->getClientOriginalName();
-                $fileBebas->move(public_path() . '/files/uploads/', $fileBebasName);
+                // $fileBebas->move(public_path() . '/files/uploads/', $fileBebasName);
             }
             
             if ($request->file('file_faktur')) {
                 $fileFaktur = $request->file('file_faktur');
                 $fileFakturName = time() . $fileFaktur->getClientOriginalName();
-                $fileFaktur->move(public_path() . '/files/uploads/', $fileFakturName);
+                // $fileFaktur->move(public_path() . '/files/uploads/', $fileFakturName);
             }
             
             if ($request->file('file_invoice')) {
                 $fileInvoice = $request->file('file_invoice');
                 $fileInvoiceName = time() . $fileInvoice->getClientOriginalName();
-                $fileInvoice->move(public_path() . '/files/uploads/', $fileInvoiceName);
+                // $fileInvoice->move(public_path() . '/files/uploads/', $fileInvoiceName);
             }
 
             $billing = new Billing;
@@ -253,6 +255,18 @@ class BillingController extends Controller
             $billing->file_invoice          = $fileInvoiceName;
             $billing->vendor_id             = Auth::user()->id;
             $billing->save();
+
+            foreach ($request->get('po_no') as $key => $val) {
+                $purchase_orders = explode('-', $val);
+                $po_no = $purchase_orders[0];
+                $qty = $request->get('qty')[$key];
+
+                $billingDetail = new BillingDetail;
+                $billingDetail->billing_id = $billing->id;
+                $billingDetail->po_no = $po_no;
+                $billingDetail->qty = $qty;
+                $billingDetail->save();
+            }
 
             \DB::commit();
         } catch (\Throwable $th) {

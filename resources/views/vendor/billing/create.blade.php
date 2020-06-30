@@ -263,18 +263,14 @@
                                         <tbody id="billing-detail">
                                             <tr>
                                                 <td><input type="number" class="qty form-control" name="qty[]" required/></td>
-                                                <td><input type="text" class="material form-control" name="material[]" required></select></td>
-                                                <td><input type="text" class="description form-control" name="description[]" required/></td>
+                                                <td><input type="text" class="material form-control" name="material[]" required readonly></select></td>
+                                                <td><input type="text" class="description form-control" name="description[]" required readonly/></td>
                                                 <td><select class="choose-po select2 po_no form-control" name="po_no[]" required></select></td>
-                                                <td><input type="text" class="doc_gr form-control" name="doc_gr[]" required/></td>
-                                                <td><input type="text" class="item_gr form-control" name="item_gr[]" required/></td>
-                                                <td><input type="text" class="tahun_gr form-control" name="tahun_gr[]" required/></td>
-                                                <td><input type="text" class="reference_document form-control" name="reference_document[]" required/></td>
-                                                <td>
-                                                    <a href="javascript:;" class="remove-item btn btn-danger btn-xs">
-                                                        <i class="fa fa-trash"></i> Remove
-                                                    </a>
-                                                </td>
+                                                <td><input type="text" class="doc_gr form-control" name="doc_gr[]" required readonly/></td>
+                                                <td><input type="text" class="item_gr form-control" name="item_gr[]" required readonly/></td>
+                                                <td><input type="text" class="tahun_gr form-control" name="tahun_gr[]" required readonly/></td>
+                                                <td><input type="text" class="reference_document form-control" name="reference_document[]" required readonly/></td>
+                                                <td>&nbsp;</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -305,13 +301,13 @@
         const template = `
             <tr>
                 <td><input type="number" class="qty form-control" name="qty[]" required/></td>
-                <td><input type="text" class="material form-control" name="material[]" required></select></td>
+                <td><input type="text" class="material form-control" name="material[]" required readonly></select></td>
                 <td><input type="text" class="description form-control" name="description[]" required readonly/></td>
                 <td><select class="choose-po select2 po_no form-control" name="po_no[]" required></select></td>
-                <td><input type="text" class="doc_gr form-control" name="doc_gr[]" required/></td>
-                <td><input type="text" class="item_gr form-control" name="item_gr[]" required/></td>
-                <td><input type="text" class="tahun_gr form-control" name="tahun_gr[]" required/></td>
-                <td><input type="text" class="reference_document form-control" name="reference_document[]" required/></td>
+                <td><input type="text" class="doc_gr form-control" name="doc_gr[]" required readonly/></td>
+                <td><input type="text" class="item_gr form-control" name="item_gr[]" required readonly/></td>
+                <td><input type="text" class="tahun_gr form-control" name="tahun_gr[]" required readonly/></td>
+                <td><input type="text" class="reference_document form-control" name="reference_document[]" required readonly/></td>
                 <td>
                     <a href="javascript:;" class="remove-item btn btn-danger btn-xs">
                         <i class="fa fa-trash"></i> Remove
@@ -365,7 +361,8 @@
         const doc_gr = value[3]
         const item_gr = value[4]
         const tahun_gr = value[5]
-        const reference_document = value[5]
+        const reference_document = value[6]
+        const description = value[7]
 
         $tr.find('.material').val(material)
         $tr.find('.qty').val(qty)
@@ -373,6 +370,7 @@
         $tr.find('.item_gr').val(item_gr)
         $tr.find('.tahun_gr').val(tahun_gr)
         $tr.find('.reference_document').val(reference_document)
+        $tr.find('.description').val(description)
     }).trigger('change')
 
     loadMaterial()

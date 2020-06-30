@@ -44,4 +44,9 @@ class PurchaseOrderGr extends Model
     {
         parent::boot();
     }
+
+    public function material ()
+    {
+        return $this->hasOne(\App\Models\MasterMaterial::class, 'code', 'material_no');
+    }
 }
