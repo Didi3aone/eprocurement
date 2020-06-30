@@ -28,15 +28,13 @@
                                 <th>Faktur No.</th>
                                 <th>Invoice No.</th>
                                 <th>Status</th>
-                                <th>
-                                    &nbsp;
-                                </th>
+                                <th>&nbsp;</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($billing as $key => $rows)
                                 <tr>
-                                    <td>{{ $rows->getVendor['name'] }}</td>
+                                    <td>{{ isset($rows->vendor) ? $rows->vendor->name : '' }}</td>
                                     <td>{{ $rows->no_faktur }}</td>
                                     <td>{{ $rows->no_invoice }}</td>
                                     <td>{{ App\Models\Vendor\Billing::TypeStatus[$rows->status] }}</td>

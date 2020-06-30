@@ -17,6 +17,7 @@ use App\Models\MaterialType;
 use App\Models\Plant;
 use App\Models\PurchasingGroup;
 use App\Models\ProfitCenter;
+use App\Models\PurchaseOrderGr;
 use DataTables;
 use Gate;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,6 +39,25 @@ class MaterialController extends Controller
     public function list ()
     {
         return DataTables::of(MasterMaterial::limit(10000)->get())->make(true);
+    }
+
+    public function select2 (Request $request)
+    {
+        $term = $request->get('term');
+
+        $poGR = PurchaseOrderGr::where('po_no', 'like', '%' . $term . '%')
+            ->limit(20)
+            ->get();
+
+        $data = [];
+        foreach ($poGR as $row) {
+            $data[] = [
+                'id' => $row->po_no.'-'.$row->material_no.'-'.$row->qty.'-'.$row->doc_gr.'-'.$row->item_gr.'-'.$row->tahun_gr.'-'.$row->reference_document,
+                'text' => $row->po_no
+            ];
+        }
+
+        return response()->json($data);
     }
 
     public function select (Request $request)

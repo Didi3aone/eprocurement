@@ -27,9 +27,7 @@
                                 <th>Faktur No.</th>
                                 <th>Invoice No.</th>
                                 <th>Status</th>
-                                <th>
-                                    &nbsp;
-                                </th>
+                                <th>&nbsp;</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -41,13 +39,44 @@
                                     <td>
                                         @if($rows->status != \App\Models\Vendor\Billing::Approved)
                                         <a href="{{ route('vendor.billing-edit',$rows->id) }}" class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i> Edit</a>
-                                        <a href="" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Hapus</a>
+                                        <a href="" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Delete</a>
                                         <a href="{{ route('vendor.billing-show',$rows->id) }}" class="btn btn-info btn-xs"><i class="fa fa-eye"></i> Show</a>
                                         @endif
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
+                        {{-- <thead>
+                            <tr>
+                                <th>PO No</th>
+                                <th>Material</th>
+                                <th>Price</th>
+                                <th>Qty</th>
+                                <th>Unit</th>
+                                <th>Plant</th>
+                                <th>Profit Center</th>
+                                <th>Store loc</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($purchase_orders as $po)
+                            <tr>
+                                <td>{{ $po->PO_NUMBER }}</td>
+                                <td>{{ $po->material_id }}</td>
+                                <td>{{ $po->price }}</td>
+                                <td>{{ $po->qty }}</td>
+                                <td>{{ $po->unit }}</td>
+                                <td>{{ $po->plant_code }}</td>
+                                <td>{{ $po->storage_location }}</td>
+                                <td>
+                                    <a href="{{ route('vendor.billing-show', $po->id) }}" class="href btn btn-info btn-xs">
+                                        <i class="fa fa-eye"></i> Show
+                                    </a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody> --}}
                     </table>
                 </div>
             </div>

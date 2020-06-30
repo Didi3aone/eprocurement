@@ -100,69 +100,68 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                            <div class="form-group col-lg-3">
-                                <label>{{ trans('cruds.billing.fields.file_invoice') }}</label>
-                                <input type="file" class="form-control form-control-line {{ $errors->has('file_invoice') ? 'is-invalid' : '' }}" name="file_invoice" value="{{ $billing->file_invoice ?? old('file_invoice', '') }}" required> 
-                                @if($errors->has('file_invoice'))
-                                    <div class="invalid-feedback">
-                                        {{ $errors->first('file_invoice') }}
-                                    </div>
-                                @endif
-                            </div>
-                            <div class="form-group col-lg-3">
-                                <label>{{ trans('cruds.billing.fields.file_principal') }}</label>
-                                <input type="file" class="form-control form-control-line {{ $errors->has('file_principal') ? 'is-invalid' : '' }}" name="file_principal" value="{{ $billing->file_principal ?? old('file_principal', '') }}" required> 
-                                @if($errors->has('file_principal'))
-                                    <div class="invalid-feedback">
-                                        {{ $errors->first('file_principal') }}
-                                    </div>
-                                @endif
-                            </div>
-                            <div class="form-group col-lg-3">
-                                <label>{{ trans('cruds.billing.fields.file_faktur') }}</label>
-                                <input type="file" class="form-control form-control-line {{ $errors->has('file_faktur') ? 'is-invalid' : '' }}" name="file_faktur" value="{{ $billing->file_faktur ?? old('file_faktur', '') }}" required> 
-                                @if($errors->has('file_faktur'))
-                                    <div class="invalid-feedback">
-                                        {{ $errors->first('file_faktur') }}
-                                    </div>
-                                @endif
-                            </div>
-                            <div class="form-group col-lg-3">
-                                <label>{{ trans('cruds.billing.fields.file_ktp') }}</label>
-                                <input type="file" class="form-control form-control-line {{ $errors->has('file_ktp') ? 'is-invalid' : '' }}" name="file_ktp" value="{{ $billing->file_ktp ?? old('file_ktp', '') }}" required> 
-                                @if($errors->has('file_ktp'))
-                                    <div class="invalid-feedback">
-                                        {{ $errors->first('file_ktp') }}
-                                    </div>
-                                @endif
-                            </div>
-                            <div class="form-group col-lg-3">
-                                <label>{{ trans('cruds.billing.fields.file_claim') }}</label>
-                                <input type="file" class="form-control form-control-line {{ $errors->has('file_claim') ? 'is-invalid' : '' }}" name="file_claim" value="{{ $billing->file_claim ?? old('file_claim', '') }}" required> 
-                                @if($errors->has('file_claim'))
-                                    <div class="invalid-feedback">
-                                        {{ $errors->first('file_claim') }}
-                                    </div>
-                                @endif
-                            </div>
-                            <div class="form-group col-lg-3">
-                                <label>{{ trans('cruds.billing.fields.file_copy_faktur') }}</label>
-                                <input type="file" class="form-control form-control-line {{ $errors->has('file_copy_faktur') ? 'is-invalid' : '' }}" name="file_copy_faktur" value="{{ $billing->file_copy_faktur ?? old('file_copy_faktur', '') }}" required> 
-                                @if($errors->has('file_copy_faktur'))
-                                    <div class="invalid-feedback">
-                                        {{ $errors->first('file_copy_faktur') }}
-                                    </div>
-                                @endif
-                            </div>
-                            <div class="form-group col-lg-3">
-                                <label>{{ trans('cruds.billing.fields.file_skp') }}</label>
-                                <input type="file" class="form-control form-control-line {{ $errors->has('file_skp') ? 'is-invalid' : '' }}" name="file_skp" value="{{ $billing->file_skp ?? old('file_skp', '') }}" required> 
-                                @if($errors->has('file_skp'))
-                                    <div class="invalid-feedback">
-                                        {{ $errors->first('file_skp') }}
-                                    </div>
-                                @endif
-                            </div>
+                        <div class="form-group col-lg-3">
+                            <label>{{ trans('cruds.billing.fields.file_invoice') }}</label>
+                            <input type="file" class="form-control form-control-line {{ $errors->has('file_invoice') ? 'is-invalid' : '' }}" name="file_invoice" value="{{ $billing->file_invoice ?? old('file_invoice', '') }}" required> 
+                            @if($errors->has('file_invoice'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('file_invoice') }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="form-group col-lg-3">
+                            <label>{{ trans('cruds.billing.fields.file_principal') }}</label>
+                            <input type="file" class="form-control form-control-line {{ $errors->has('file_principal') ? 'is-invalid' : '' }}" name="file_principal" value="{{ $billing->file_principal ?? old('file_principal', '') }}" required> 
+                            @if($errors->has('file_principal'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('file_principal') }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="form-group col-lg-3">
+                            <label>{{ trans('cruds.billing.fields.file_faktur') }}</label>
+                            <input type="file" class="form-control form-control-line {{ $errors->has('file_faktur') ? 'is-invalid' : '' }}" name="file_faktur" value="{{ $billing->file_faktur ?? old('file_faktur', '') }}" required> 
+                            @if($errors->has('file_faktur'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('file_faktur') }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="form-group col-lg-3">
+                            <label>{{ trans('cruds.billing.fields.file_ktp') }}</label>
+                            <input type="file" class="form-control form-control-line {{ $errors->has('file_ktp') ? 'is-invalid' : '' }}" name="file_ktp" value="{{ $billing->file_ktp ?? old('file_ktp', '') }}" required> 
+                            @if($errors->has('file_ktp'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('file_ktp') }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="form-group col-lg-3">
+                            <label>{{ trans('cruds.billing.fields.file_claim') }}</label>
+                            <input type="file" class="form-control form-control-line {{ $errors->has('file_claim') ? 'is-invalid' : '' }}" name="file_claim" value="{{ $billing->file_claim ?? old('file_claim', '') }}" required> 
+                            @if($errors->has('file_claim'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('file_claim') }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="form-group col-lg-3">
+                            <label>{{ trans('cruds.billing.fields.file_copy_faktur') }}</label>
+                            <input type="file" class="form-control form-control-line {{ $errors->has('file_copy_faktur') ? 'is-invalid' : '' }}" name="file_copy_faktur" value="{{ $billing->file_copy_faktur ?? old('file_copy_faktur', '') }}" required> 
+                            @if($errors->has('file_copy_faktur'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('file_copy_faktur') }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="form-group col-lg-3">
+                            <label>{{ trans('cruds.billing.fields.file_skp') }}</label>
+                            <input type="file" class="form-control form-control-line {{ $errors->has('file_skp') ? 'is-invalid' : '' }}" name="file_skp" value="{{ $billing->file_skp ?? old('file_skp', '') }}" required> 
+                            @if($errors->has('file_skp'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('file_skp') }}
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
