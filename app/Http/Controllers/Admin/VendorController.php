@@ -28,6 +28,7 @@ use App\Models\Vendor\VendorTaxNumbers;
 use App\Models\Vendor\VendorIdentificationNumbers;
 use App\Models\Vendor\VendorEmail;
 use App\Imports\VendorsImport;
+use App\Exports\VendorExport;
 use Gate, Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -55,6 +56,7 @@ class VendorController extends Controller
                     ->join('master_vendor_bp_group', 'master_vendor_bp_group.id', 'vendors.vendor_bp_group_id')
                     ->orderBy('status_', 'asc')
                     ->orderBy('updated_at', 'desc')
+                    // ->limit(10)
                     ->get();
         foreach ($vendors as $row) {
             $row->created_date = date('d M Y, H:i', strtotime($row->created_at));
@@ -67,6 +69,11 @@ class VendorController extends Controller
         }
 
         return view('admin.vendors.index',compact('vendors'));
+    }
+
+    public function download()
+    {
+        return (new VendorExport())->download('Data-Vendor-'.date('YmdHis').'.xlsx');
     }
 
     public function import(Request $request)
@@ -92,7 +99,7 @@ class VendorController extends Controller
         }
     }
 
-    public function migrate_full()
+    public function migrate()
     {
         ini_set('max_execution_time', 0);
 
