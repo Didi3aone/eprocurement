@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Exports;
+
+use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
+
+class VendorExport implements WithMultipleSheets
+{
+    use Exportable;
+    
+    /**
+     * @return array
+     */
+    public function sheets(): array
+    {
+        $sheets = [];
+
+        $sheet = [
+            'General Data' => new VendorGeneralDataExport(),
+            'BP Roles' => new VendorBPRolesExport(),
+            'Company Data' => new VendorBPRolesExport(),
+            'Withholding Tax Data' => new VendorWithholdingTaxTypeExport(),
+            'Purchasing Organization' => new VendorPurchasingOrganizationExport(),
+            'Partner Functions' => new VendorPartnerFunctionsExport(),
+            'Bank Details' => new VendorBankDetailsExport(),
+            'Tax Numbers' => new VendorTaxNumbersExport(),
+            'Identification Numbers' => new VendorIdentificationNumbersExport(),
+        ];
+        
+        foreach ($sheet as $key => $row) {
+            $sheets[] = $row;
+        }
+
+        return $sheets;
+    }
+}

@@ -50,7 +50,7 @@
                             <select class="form-control" name="terms_of_payment_id" required="">
                                 <option value="" selected="" disabled="">Select Term Of Payment</option>
                                 @foreach($terms_of_payment as $row)
-                                <option value="{{ $row->id }}" {{ $vendors->terms_of_payment_key_id==$row->id?'selected=""':'' }} >{{ $row->description }}</option>
+                                <option value="{{ $row->id }}" {{ $vendors->payment_terms==$row->code?'selected=""':'' }} >{{ $row->description }}</option>
                                 @endforeach
                             </select>
                         </div>

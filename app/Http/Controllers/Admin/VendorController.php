@@ -9,6 +9,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Vendor;
 use App\Models\Vendor\UserVendors;
 use App\Models\Vendor\UserVendorsImport;
+use App\Models\Vendor\UserVendorsImportBank;
 use App\Models\Vendor\MasterVendorAccountGL;
 use App\Models\Vendor\MasterVendorBankCountry;
 use App\Models\Vendor\MasterVendorBankKeys;
@@ -16,6 +17,7 @@ use App\Models\Vendor\MasterVendorBPGroup;
 use App\Models\Vendor\MasterVendorPlanningGroup;
 use App\Models\Vendor\MasterVendorTitle;
 use App\Models\Vendor\MasterVendorCountry;
+use App\Models\Vendor\MasterVendorTermsOfPayment;
 use App\Models\Vendor\VendorBPRoles;
 use App\Models\Vendor\VendorCompanyData;
 use App\Models\Vendor\VendorWithholdingTaxType;
@@ -26,6 +28,7 @@ use App\Models\Vendor\VendorTaxNumbers;
 use App\Models\Vendor\VendorIdentificationNumbers;
 use App\Models\Vendor\VendorEmail;
 use App\Imports\VendorsImport;
+use App\Exports\VendorExport;
 use Gate, Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -45,14 +48,15 @@ class VendorController extends Controller
 
         // $vendors = Vendor::all();
         $vendors = UserVendors::select(
-                        'user_vendors.*',
+                        'vendors.*',
                         'master_vendor_bp_group.code as vendor_bp_group_code',
                         'master_vendor_bp_group.name as vendor_bp_group_name',
-                        \DB::raw('CASE WHEN user_vendors.status = 0 THEN 0 ELSE 1 END AS status_')
+                        \DB::raw('CASE WHEN vendors.status = 0 THEN 0 ELSE 1 END AS status_')
                     )
-                    ->join('master_vendor_bp_group', 'master_vendor_bp_group.id', 'user_vendors.vendor_bp_group_id')
+                    ->join('master_vendor_bp_group', 'master_vendor_bp_group.id', 'vendors.vendor_bp_group_id')
                     ->orderBy('status_', 'asc')
                     ->orderBy('updated_at', 'desc')
+                    // ->limit(10)
                     ->get();
         foreach ($vendors as $row) {
             $row->created_date = date('d M Y, H:i', strtotime($row->created_at));
@@ -65,6 +69,11 @@ class VendorController extends Controller
         }
 
         return view('admin.vendors.index',compact('vendors'));
+    }
+
+    public function download()
+    {
+        return (new VendorExport())->download('Data-Vendor-'.date('YmdHis').'.xlsx');
     }
 
     public function import(Request $request)
@@ -111,9 +120,9 @@ class VendorController extends Controller
 
                     $user_vendor = $this->insert_user_vendor($row);
                     $this->insert_vendor_bp_roles($user_vendor->id);
-                    $this->insert_vendor_company_data($user_vendor->id, $is_local);
+                    $this->insert_vendor_company_data($user_vendor->id, $is_local, $row->payment_terms);
                     $this->insert_vendor_withholding_tax_type($user_vendor->id);
-                    $this->insert_vendor_purchasing_organization($user_vendor->id);
+                    $this->insert_vendor_purchasing_organization($user_vendor->id, $row->payment_terms);
                     $this->insert_vendor_partner_functions($user_vendor->id);
                     // $this->insert_vendor_bank_details($request, $user_vendor->id, $is_local);
                     $this->insert_vendor_tax_number($user_vendor->id, $row->tax_number_1);
@@ -125,6 +134,75 @@ class VendorController extends Controller
                 }
                 VendorEmail::create(['vendor_id' => $vendor_id, 'email' => $row->email]);
                 UserVendorsImport::where('id', $row->id)->update(['has_migrate' => 1]);
+            }
+
+            \DB::commit();
+            echo 'Success';
+        } catch (Exception $e) {
+            \DB::rollback();
+            \Log::error($e->getMessage());
+            echo $e->getMessage();
+        }
+    }
+
+    public function migrate_payment_terms()
+    {
+        ini_set('max_execution_time', 0);
+
+        try {
+            \DB::beginTransaction();
+
+            $user_vendors_import = UserVendorsImport::select(
+                                        \DB::raw('DISTINCT vendor'),
+                                        'payment_terms',
+                                        'id'
+                                    )
+                                    ->where('has_migrate', 2)
+                                    ->limit(1000)
+                                    ->get();
+            // echo json_encode($user_vendors_import); die();
+            foreach ($user_vendors_import as $row) {
+                $user_vendors = UserVendors::where('code', $row->vendor)->get()->first();
+                if (!$user_vendors) continue;
+                UserVendors::where('id', $user_vendors->id)->update(['payment_terms' => $row->payment_terms]);
+                VendorCompanyData::where('vendor_id', $user_vendors->id)->update(['payment_terms' => $row->payment_terms]);
+                VendorPurchasingOrganization::where('vendor_id', $user_vendors->id)->update(['term_of_payment_key' => $row->payment_terms]);
+
+                UserVendorsImport::where('id', $row->id)->update(['has_migrate' => 1]);
+            }
+
+            \DB::commit();
+            echo 'Success';
+        } catch (Exception $e) {
+            \DB::rollback();
+            \Log::error($e->getMessage());
+            echo $e->getMessage();
+        }
+    }
+
+    public function migrate_bank()
+    {
+        try {
+            \DB::beginTransaction();
+
+            $user_vendors_import_bank = UserVendorsImportBank::select()
+                                    ->where('has_migrate', 0)
+                                    ->limit(1000)
+                                    ->get();
+            // echo json_encode($user_vendors_import_bank); die();
+            foreach ($user_vendors_import_bank as $row) {
+                $user_vendors = UserVendors::where('code', $row->vendor)->get()->first();
+                if (!$user_vendors) continue;
+                VendorBankDetails::create([
+                    'vendor_id' => $user_vendors->id,
+                    'bank_country_key' => $row->bank_country,
+                    'bank_keys' => $row->bank_key,
+                    'account_no' => $row->bank_account,
+                    'bank_details' => $row->reference_details,
+                    'account_holder_name' => $row->account_holder,
+                ]);
+
+                UserVendorsImportBank::where('id', $row->id)->update(['has_migrate' => 1]);
             }
 
             \DB::commit();
@@ -185,7 +263,7 @@ class VendorController extends Controller
         return true;
     }
 
-    private function insert_vendor_company_data($vendor_id, $is_local)
+    private function insert_vendor_company_data($vendor_id, $is_local, $payment_terms)
     {
         $company_data = ['1100', '1200', '2100'];
         foreach ($company_data as $value) {
@@ -194,6 +272,7 @@ class VendorController extends Controller
             $post['company_code'] = $value;
             $post['account_gl'] = $is_local ? '2111011001' : '2111021001';
             $post['planning_group'] = $is_local ? 'A1' : 'A2';
+            $post['payment_terms'] = $payment_terms;
             $do_insert = VendorCompanyData::create($post);
             if (!$do_insert) throw new Exception('Failed at insert_vendor_company_data');
         }
@@ -219,12 +298,13 @@ class VendorController extends Controller
         return true;
     }
 
-    private function insert_vendor_purchasing_organization($vendor_id)
+    private function insert_vendor_purchasing_organization($vendor_id, $payment_terms)
     {
         $post = [];
         $post['vendor_id'] = $vendor_id;
         $post['purchasing_organization'] = '0000';
         $post['order_currency'] = 'IDR';
+        $post['term_of_payment_key'] = $payment_terms;
         $do_insert = VendorPurchasingOrganization::create($post);
         if (!$do_insert) throw new Exception('Failed at insert_vendor_purchasing_organization');
 
@@ -363,7 +443,8 @@ class VendorController extends Controller
 
         // $vendors = Vendor::findOrFail($id);
         $vendors = UserVendors::findOrFail($id);
-        $vendors->terms_of_payment = MasterVendorTermsOfPayment::find($vendors->terms_of_payment_key_id)->description;
+        $term_of_payment = MasterVendorTermsOfPayment::find($vendors->terms_of_payment_key_id);
+        $vendors->terms_of_payment = $term_of_payment->description ?? null;
 
         return view('admin.vendors.show', compact('vendors'));
     }
@@ -405,8 +486,8 @@ class VendorController extends Controller
             $do_update = true;
             $do_update = $do_update && UserVendors::where('id', $id)
                                         ->update([
-                                            'terms_of_payment_key_id' => $terms_of_payment_id,
-                                            'payment_terms' => $terms_of_payment->description,
+                                            'terms_of_payment_key_id' => null, //$terms_of_payment_id,
+                                            'payment_terms' => $terms_of_payment->code,
                                             'status' => $status
                                         ]);
             $do_update = $do_update && VendorCompanyData::where('vendor_id', $id)
