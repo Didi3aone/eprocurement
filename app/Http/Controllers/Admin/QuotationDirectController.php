@@ -380,6 +380,7 @@ class QuotationDirectController extends Controller
                     'currency'                  => $rows->currency,
                     'item_category'             => $rows->item_category,
                     'request_no'                => $rows->request_no,
+                    'plant_code'                => $rows->plant_code,
                     'tax_code'                  => $rows->tax_code == 1 ? 'V1' : 'V0',
                     'package_no'                => $packageParent,
                     'subpackage_no'             => $subpackgparent,

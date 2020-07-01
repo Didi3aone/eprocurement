@@ -31,7 +31,32 @@ class PurchaseOrderController extends Controller
     {
         abort_if(Gate::denies('purchase_order_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $po = PurchaseOrder::orderBy('created_at', 'desc')->get();
+        $po = PurchaseOrdersDetail::join('purchase_orders','purchase_orders.id','=','purchase_orders_details.purchase_order_id')
+                ->leftJoin('master_acps','master_acps.id','=','purchase_orders_details.acp_id')
+                ->leftJoin('vendors','vendors.code','=','purchase_orders.vendor_id')
+                ->select(
+                    'purchase_orders_details.purchasing_document',
+                    'purchase_orders_details.PO_ITEM',
+                    'purchase_orders_details.material_id',
+                    'purchase_orders_details.short_text',
+                    'purchase_orders_details.storage_location',
+                    'purchase_orders_details.qty',
+                    'purchase_orders_details.unit',
+                    'purchase_orders_details.currency as original_currency',
+                    'purchase_orders_details.original_price',
+                    'purchase_orders.currency',
+                    'purchase_orders_details.price',
+                    'purchase_orders_details.tax_code',
+                    'purchase_orders_details.id as detail_id',
+                    'purchase_orders_details.request_no',
+                    'purchase_orders_details.plant_code',
+                    'purchase_orders_details.purchasing_group_code',
+                    'purchase_orders.po_date',
+                    'purchase_orders.id',
+                    'master_acps.acp_no',
+                    'vendors.name as vendor'
+                )
+                ->orderBy('purchase_orders_details.created_at', 'desc')->get();
 
         return view('admin.purchase-order.index', compact('po'));
     }

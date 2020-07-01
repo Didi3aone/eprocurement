@@ -17,10 +17,28 @@
                     <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                             <tr>
-                                <th>{{ trans('cruds.purchase-order.fields.id') }}</th>
-                                <th>PO Number</th>
-                                <th>PO Date</th>
-                                <th>Vendor</th>
+                                <th>Release Indicator</th>
+                                <th>Purchasing Document</th>
+                                <th>Item Po Line</th>
+                                <th>Rfq/ACP Document</th>
+                                <th>Purchasing Group</th>
+                                <th>Document Date</th>
+                                <th>Material</th>
+                                <th>Short Text</th>
+                                <th>Supplier/Supplying Plant</th>
+                                <th>Plant</th>
+                                <th>Storage Location</th>
+                                <th>Order Quantity</th>
+                                <th>Order Unit</th>
+                                <th>Still to be delivered (qty)</th>
+                                <th>Still to be invoiced (qty)</th>
+                                <th>Original Currency</th>
+                                <th>Original Price</th>
+                                <th>Currency</th>
+                                <th>Net Price</th>
+                                <th>Req Tracking Number</th>
+                                <th>Still to be Delivered Value</th>
+                                <th>Tax Code</th>
                                 <th>
                                     &nbsp;
                                 </th>
@@ -29,10 +47,28 @@
                         <tbody>
                             @foreach($po as $key => $q)
                                 <tr>
-                                    <td>{{ $q->id ?? '' }}</td>
-                                    <td>{{ $q->PO_NUMBER }}</td>
+                                    <td>-</td>
+                                    <td>{{ $q->purchasing_document ?? 0 }}</td>
+                                    <td>{{ $q->PO_ITEM }}</td>
+                                    <td>{{ $q->acp_no ?? $q->purchasing_document }}</td>
+                                    <td>{{ $q->purchasing_group_code }}</td>
                                     <td>{{ $q->po_date }}</td>
-                                    <td>{{ $q->vendors['name'] ?? '' }}</td>
+                                    <td>{{ $q->material_id }}</td>
+                                    <td>{{ $q->short_text }}</td>
+                                    <td>{{ $q->vendor }}</td>
+                                    <td>{{ $q->plant_code }}</td>
+                                    <td>{{ $q->storage_location }}</td>
+                                    <td>{{ $q->qty }}</td>
+                                    <td>{{ $q->unit }}</td>
+                                    <td>{{ '0' }}</td>
+                                    <td>{{ '0' }}</td>
+                                    <td>{{ $q->original_currency }}</td>
+                                    <td>{{ $q->original_price }}</td>
+                                    <td>{{ $q->currency }}</td>
+                                    <td>{{ $q->price }}</td>
+                                    <td>{{ $q->request_no }}</td>
+                                    <td>{{ '0' }}</td>
+                                    <td>{{ $q->tax_code == 1 ? 'V1' : 'V0' }}</td>
                                     <td>
                                         <a class="btn btn-xs btn-primary" href="{{ route('admin.purchase-order.show', $q->id) }}">
                                             <i class="fa fa-eye"></i> {{ trans('global.view') }}

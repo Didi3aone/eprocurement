@@ -38,7 +38,7 @@ class PurchaseOrdersDetail extends Model
         'profit_center_code',
         'storage_location',
         'request_no',
-        'taxt_code',
+        'tax_code',
         'original_price',
         'currency',
         'item_category',
@@ -49,7 +49,8 @@ class PurchaseOrdersDetail extends Model
         'is_active',
         'created_at',
         'updated_at',
-        'delivery_date'
+        'delivery_date',
+        'plant_code'
     ];
 
     public const SERVICE = 9;
