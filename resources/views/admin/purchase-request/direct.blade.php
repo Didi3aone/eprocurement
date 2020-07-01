@@ -91,32 +91,34 @@
                                         <tr>
                                             <input type="hidden" name="doc_type_pr[]" id="doc_type" value="{{ $value->doc_type }}">
                                             <input type="hidden" name="plant_code[]" id="plant_code" value="{{ $value->plant_code }}">
-                                            <input type="hidden" name="pr_no[]" readonly value="{{ $value->pr_no }}">
-                                            <input type="hidden" name="request_date[]" readonly value="{{ $value->request_date }}">
-                                            <input type="hidden" name="rn_no[]" readonly value="{{ $value->request_no }}">
-                                            <input type="hidden" name="is_assets[]" readonly value="{{ $value->is_assets }}">
-                                            <input type="hidden" name="assets_no[]" readonly value="{{ $value->assets_no }}">
-                                            <input type="hidden" name="short_text[]" readonly value="{{ $value->short_text }}">
-                                            <input type="hidden" name="text_id[]" readonly value="{{ $value->text_id }}">
-                                            <input type="hidden" name="text_form[]" readonly value="{{ $value->text_form }}">
-                                            <input type="hidden" name="text_line[]" readonly value="{{ $value->text_line }}">
-                                            <input type="hidden" name="delivery_date_category[]" readonly value="{{ $value->delivery_date_category }}">
-                                            <input type="hidden" name="account_assignment[]" readonly value="{{ $value->account_assignment }}">
-                                            <input type="hidden" name="purchasing_group_code[]" readonly value="{{ $value->purchasing_group_code }}">
-                                            <input type="hidden" name="preq_name[]" readonly value="{{ $value->preq_name }}">
-                                            <input type="hidden" name="gl_acct_code[]" readonly value="{{ $value->gl_acct_code }}">
-                                            <input type="hidden" name="cost_center_code[]" readonly value="{{ $value->cost_center_code }}">
-                                            <input type="hidden" name="profit_center_code[]" readonly value="{{ $value->profit_center_code }}">
-                                            <input type="hidden" name="storage_location[]" readonly value="{{ $value->storage_location }}">
-                                            <input type="hidden" name="material_group[]" readonly value="{{ $value->material_group }}">
-                                            <input type="hidden" name="preq_item[]" readonly value="{{ $value->preq_item }}">
-                                            <input type="hidden" name="id[]" readonly value="{{ $value->id }}">
-                                            <input type="hidden" name="PR_NO[]" readonly value="{{ $value->PR_NO }}">
-                                            <input type="hidden" class="material_id" name="material_id[]" readonly value="{{ $value->material_id }}">
-                                            <input type="hidden" name="description[]" readonly value="{{ $value->description }}">
-                                            <input type="hidden" name="delivery_date[]" readonly value="{{ $value->delivery_date }}">
-                                            <input type="hidden" name="unit[]" readonly value="{{ $value->unit }}">
-                                            <input type="hidden" class="qty" name="qty[]" readonly value="{{ empty($value->qty) ? 0 : $value->qty }}">
+                                            <input type="hidden" name="pr_no[]" value="{{ $value->pr_no }}">
+                                            <input type="hidden" name="request_date[]" value="{{ $value->request_date }}">
+                                            <input type="hidden" name="rn_no[]" value="{{ $value->request_no }}">
+                                            <input type="hidden" name="is_assets[]" value="{{ $value->is_assets }}">
+                                            <input type="hidden" name="assets_no[]" value="{{ $value->assets_no }}">
+                                            <input type="hidden" name="short_text[]" value="{{ $value->short_text }}">
+                                            <input type="hidden" name="text_id[]" value="{{ $value->text_id }}">
+                                            <input type="hidden" name="text_form[]" value="{{ $value->text_form }}">
+                                            <input type="hidden" name="text_line[]" value="{{ $value->text_line }}">
+                                            <input type="hidden" name="delivery_date_category[]" value="{{ $value->delivery_date_category }}">
+                                            <input type="hidden" name="account_assignment[]" value="{{ $value->account_assignment }}">
+                                            <input type="hidden" name="purchasing_group_code[]" value="{{ $value->purchasing_group_code }}">
+                                            <input type="hidden" name="preq_name[]" value="{{ $value->preq_name }}">
+                                            <input type="hidden" name="gl_acct_code[]" value="{{ $value->gl_acct_code }}">
+                                            <input type="hidden" name="cost_center_code[]" value="{{ $value->cost_center_code }}">
+                                            <input type="hidden" name="profit_center_code[]" value="{{ $value->profit_center_code }}">
+                                            <input type="hidden" name="storage_location[]" value="{{ $value->storage_location }}">
+                                            <input type="hidden" name="material_group[]" value="{{ $value->material_group }}">
+                                            <input type="hidden" name="preq_item[]" value="{{ $value->preq_item }}">
+                                            <input type="hidden" name="id[]" value="{{ $value->id }}">
+                                            <input type="hidden" name="PR_NO[]" value="{{ $value->PR_NO }}">
+                                            <input type="hidden" class="material_id" name="material_id[]" value="{{ $value->material_id }}">
+                                            <input type="hidden" name="description[]" value="{{ $value->description }}">
+                                            <input type="hidden" name="delivery_date[]" value="{{ $value->delivery_date }}">
+                                            <input type="hidden" name="unit[]" value="{{ $value->unit }}">
+                                            <input type="hidden" name="notes_detail[]" value="{{ $value->notes }}">
+                                            <input type="hidden" name="category[]" value="{{ $value->category }}">
+                                            <input type="hidden" class="qty" name="qty[]" value="{{ empty($value->qty) ? 0 : $value->qty }}">
                                             <input type="hidden" class="acp_id" name="acp_id[]" id="acp_id" value="0">
                                             <input type="hidden" class="original_currency" name="original_currency[]" id="original_currency" value="0">
                                             <td>{!! $value->material_id .'<br>'.$value->description !!}</td>

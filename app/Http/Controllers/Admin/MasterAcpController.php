@@ -42,12 +42,12 @@ class MasterAcpController extends Controller
                     'material_id as code',
                     'description'
                 )
-                ->join('purchase_requests','purchase_requests.id','=','purchase_requests_details.request_id')
-                ->where('purchase_requests.doc_type','like','%Z%')
-                ->whereNotNull('material_id')
+                ->groupBy('material_id','description')
+                // ->join('purchase_requests','purchase_requests.id','=','purchase_requests_details.request_id')
                 ->orderBy('description', 'asc')
                 ->limit(50)
                 ->get();
+                // dd($request);
         } else {
             $model = MasterMaterial::where(function ($query) use ($request) {
                     $query->where('code', 'like', '%' . $request->query('q') . '%')
