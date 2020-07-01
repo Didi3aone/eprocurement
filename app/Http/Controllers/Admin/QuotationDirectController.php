@@ -393,6 +393,7 @@ class QuotationDirectController extends Controller
         $i = 0;
         $lineNo = 1;
         foreach ($details as $detail) {
+            $sched = QuotationDelivery::where('quotation_detail_id', $detail->id)->first();
             $schedLine  = sprintf('%05d', (10+$i));
             $indexes    = $i+1;
             $poItem     = sprintf('%05d', (10*$indexes));;
@@ -452,6 +453,7 @@ class QuotationDirectController extends Controller
             $quotationDetail->package_no                = $packageParent;
             $quotationDetail->subpackage_no             = $subpackgparent;
             $quotationDetail->line_no                   = '000000000'.$noLine;
+            $quotationDetail->SCHED_LINE                = $sched;
 
             $quotationDetail->save();
 
