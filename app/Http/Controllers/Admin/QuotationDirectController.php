@@ -359,7 +359,7 @@ class QuotationDirectController extends Controller
                     'assets_no'                 => $rows->assets_no,
                     'material_group'            => $rows->material_group,
                     'preq_item'                 => $rows->preq_item,
-                    'purchasing_document'       => $rows->purchasing_document,
+                    'purchasing_document'       => $rows->purchasing_document ?? 0,
                     'PR_NO'                     => $rows->PR_NO,
                     'assets_no'                 => $rows->assets_no,
                     'acp_id'                    => $rows->acp_id,
@@ -456,13 +456,14 @@ class QuotationDirectController extends Controller
             $quotationDetail->save();
 
             QuotationDelivery::create([
-                'quotation_id'  => $id,
-                'SCHED_LINE'    => $schedLine,
-                'PO_ITEM'       => $poItem,
-                'DELIVERY_DATE' => $detail['delivery_date_new'] ?? $detail['delivery_date'] ,
-                'PREQ_NO'       => $detail['PR_NO'],
-                'PREQ_ITEM'     => $detail['preq_item'],
-                'QUANTITY'      => $detail['qty']
+                'quotation_id'          => $id,
+                'quotation_detail_id'   => $quotationDetail->id,
+                'SCHED_LINE'            => $schedLine,
+                'PO_ITEM'               => $poItem,
+                'DELIVERY_DATE'         => $detail['delivery_date_new'] ?? $detail['delivery_date'] ,
+                'PREQ_NO'               => $detail['PR_NO'],
+                'PREQ_ITEM'             => $detail['preq_item'],
+                'QUANTITY'              => $detail['qty']
             ]);
 
             $i++;

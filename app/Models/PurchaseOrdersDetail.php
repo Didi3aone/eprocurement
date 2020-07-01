@@ -48,7 +48,8 @@ class PurchaseOrdersDetail extends Model
         'line_no',
         'is_active',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'delivery_date'
     ];
 
     public const SERVICE = 9;
@@ -56,5 +57,10 @@ class PurchaseOrdersDetail extends Model
     public function po()
     {
         return $this->belongsTo(\App\Models\PurchaseOrder::class,'purchase_order_id');
+    }
+
+    public function acp()
+    {
+        return $this->hasOne(\App\Models\AcpTable::class, 'acp_id');
     }
 }

@@ -35,6 +35,36 @@ class SapHelper {
         return $soapUrl;
     }
 
+    public static function getHistoryPo($materialCode)
+    {
+        $wsdl = public_path()."/xml/zbn_eproc_histpo.xml";
+        
+        $username = \sapHelp::Username;
+        $password = \sapHelp::Password;
+
+        $client = new \SoapClient($wsdl, array(
+            'login' => \sapHelp::Username,
+            'password' => \sapHelp::Password,
+            'trace' => true
+        ));
+
+        $auth = ['Username' => $username, 'Password' => $password];
+        $header = new \SoapHeader("http://0003427388-one-off.sap.com/YGYHI4A8Y_", "Authentication", $auth, false);
+        $client->__setSoapHeaders($header);
+
+        $params = [];
+        $params[0]['MATNR'] = '00000000000'.$materialCode;
+        $params[0]['RFQ_DETAIL']['item'] = [];
+
+        $result = $client->__soapCall('ZFM_WS_HISTPO', $params, NULL, $header);
+        
+        $data = [];
+        $data['header'] = $result->RFQ_HEADER;
+        $data['detail'] = $result->RFQ_DETAIL;
+
+        return $data;
+    }
+
     /**
      * send pr to sap
      * @author didi

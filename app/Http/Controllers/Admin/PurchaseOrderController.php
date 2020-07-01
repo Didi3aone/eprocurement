@@ -270,8 +270,10 @@ class PurchaseOrderController extends Controller
         abort_if(Gate::denies('purchase_order_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $purchaseOrder = PurchaseOrder::findOrFail($id);
+        $currency = \App\Models\Currency::all();
+        $top    = \App\Models\PaymentTerm::all();
 
-        return view('admin.purchase-order.edit', compact('profitCenter'));
+        return view('admin.purchase-order.edit', compact('purchaseOrder','currency','top'));
     }
 
     /**
