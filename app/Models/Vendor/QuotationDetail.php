@@ -22,6 +22,8 @@ class QuotationDetail extends Model
         'flag',
     ];
 
+    public const SERVICE = 9;
+
     public function quotation ()
     {
         return $this->hasOne(Quotation::class, 'id', 'quotation_order_id');

@@ -137,6 +137,8 @@
                                 <input type="hidden" name="material_group[]" readonly value="{{ $value->material_group }}">
                                 <input type="hidden" name="preq_item[]" readonly value="{{ $value->preq_item }}">
                                 <input type="hidden" name="PR_NO[]" readonly value="{{ $value->PR_NO }}">
+                                <input type="hidden" name="notes[]" value="{{ $value->notes }}">
+                                <input type="hidden" name="category[]" value="{{ $value->category }}">
                                 <input type="hidden" class="form-control material_id" name="material_id[]"  id="material_id" readonly value="{{ $value->material_id }}">
                                 <input type="hidden" name="description[]" readonly value="{{ $value->description }}">
                                 <input type="hidden" name="delivery_date[]" readonly value="{{ $value->delivery_date }}">
