@@ -8,7 +8,7 @@ class UserVendors extends Model
 {
     protected $connection = 'pgsql';
 
-    public $table = 'user_vendors';
+    public $table = 'vendors';
 
     protected $fillable = [
         'code',
@@ -35,7 +35,8 @@ class UserVendors extends Model
         'email',
         'email_2',
         'password',
-        'status'
+        'status',
+        'payment_terms'
     ];
 
     public function getBpGroup()
