@@ -308,7 +308,8 @@ class QuotationRepeatController extends Controller
                 $quotationDetail = QuotationDetail::where('quotation_order_id', $id)->get();
                 $quotationDeliveryDate = QuotationDelivery::where('quotation_id', $id)->get();
 
-                $sendSap = \sapHelp::sendPoToSap($quotation, $quotationDetail,$quotationDeliveryDate);
+                $sendSap = true;//\sapHelp::sendPoToSap($quotation, $quotationDetail,$quotationDeliveryDate);
+
                 if( $sendSap ) {
                     $this->_clone_purchase_orders($quotation, $quotationDetail, $sendSap);
                 }
@@ -344,7 +345,8 @@ class QuotationRepeatController extends Controller
             $subpackgparent = '000000000';
             $noLine         = '';
             foreach ($detail as $rows) {
-                if( $detail['item_category'] == PurchaseOrdersDetail::SERVICE ) {
+                $sched = QuotationDelivery::where('quotation_detail_id', $rows->id)->first();
+                if( $rows->category == PurchaseOrdersDetail::SERVICE ) {
                     //check position parent and child
                     if( $i == 0 ) {
                         $noLine = $lineNo;
@@ -383,15 +385,15 @@ class QuotationRepeatController extends Controller
                     'profit_center_code'        => $rows->profit_center_code,
                     'storage_location'          => $rows->storage_location,
                     'request_no'                => $rows->request_no,
-                    'taxt_code'                 => $rows->tax_code == 1 ? 'V1' : 'V0',
-                    'original_price'            => $rows->original_price,
-                    'currency'                  => $rows->currency,
+                    'original_price'            => $rows->orginal_price ?? 0,
+                    'currency'                  => $rows->currency ?? 'IDR',
                     'item_category'             => $rows->item_category,
                     'request_no'                => $rows->request_no,
                     'tax_code'                  => $rows->tax_code == 1 ? 'V1' : 'V0',
                     'package_no'                => $packageParent,
                     'subpackage_no'             => $subpackgparent,
                     'line_no'                   => '000000000'.$noLine,
+                    'SCHED_LINE'                => $sched
                 ]);
             }
     }
@@ -461,7 +463,6 @@ class QuotationRepeatController extends Controller
             $quotationDetail->package_no                = $packageParent;
             $quotationDetail->subpackage_no             = $subpackgparent;
             $quotationDetail->line_no                   = '000000000'.$noLine;
-            $quotationDetail->SCHED_LINE                = $sched;
 
             $quotationDetail->save();
 
