@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Gate, Artisan;
 use App\Models\Vendor\Billing;
+use App\Models\PurchaseOrderGr;
 use Symfony\Component\HttpFoundation\Response;
 
 class BillingController extends Controller
@@ -37,8 +38,11 @@ class BillingController extends Controller
     public function edit ($id)
     {
         $billing = Billing::find($id);
+        $details = PurchaseOrderGr::join('billing_details', 'billing_details.po_no', '=', 'purchase_order_gr.po_no')
+            ->where('billing_details.billing_id', $id)
+            ->get();
 
-        return view('admin.billing.edit', compact('billing'));
+        return view('admin.billing.edit', compact('billing', 'details'));
     }
 
     public function store (Request $request)

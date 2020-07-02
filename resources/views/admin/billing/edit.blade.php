@@ -73,7 +73,7 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="form-group col-lg-3">
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.proposal_id') }}</label>
                             <input type="text" class="form-control form-control-line {{ $errors->has('proposal_id') ? 'is-invalid' : '' }}" name="proposal_id" value="{{ $billing->proposal_id ?? old('proposal_id', '') }}" required> 
                             @if($errors->has('proposal_id'))
@@ -82,7 +82,7 @@
                                 </div>
                             @endif
                         </div>
-                        <div class="form-group col-lg-3">
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.document_no') }}</label>
                             <input type="text" class="form-control form-control-line {{ $errors->has('document_no') ? 'is-invalid' : '' }}" name="document_no" value="{{ $billing->document_no ?? old('document_no', '') }}" required> 
                             @if($errors->has('document_no'))
@@ -91,7 +91,7 @@
                                 </div>
                             @endif
                         </div>
-                        <div class="form-group col-lg-3">
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.vendor_id') }}</label>
                             <input type="text" class="form-control form-control-line {{ $errors->has('vendor_id') ? 'is-invalid' : '' }}" name="vendor_id" value="{{ $billing->vendor_id ?? old('vendor_id', '') }}" required> 
                             @if($errors->has('vendor_id'))
@@ -100,16 +100,16 @@
                                 </div>
                             @endif
                         </div>
-                        <div class="form-group col-lg-3">
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.proposal_date') }}</label>
-                            <input type="text" class="form-control form-control-line {{ $errors->has('proposal_date') ? 'is-invalid' : '' }}" name="proposal_date" value="{{ $billing->proposal_date ?? old('proposal_date', '') }}" required> 
+                            <input type="date" class="form-control form-control-line {{ $errors->has('proposal_date') ? 'is-invalid' : '' }}" name="proposal_date" value="{{ $billing->proposal_date ?? old('proposal_date', '') }}" required> 
                             @if($errors->has('proposal_date'))
                                 <div class="invalid-feedback">
                                     {{ $errors->first('proposal_date') }}
                                 </div>
                             @endif
                         </div>
-                        <div class="form-group col-lg-3">
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.npwp') }}</label>
                             <input type="text" class="form-control form-control-line {{ $errors->has('npwp') ? 'is-invalid' : '' }}" name="npwp" value="{{ $billing->npwp ?? old('npwp', '') }}" required> 
                             @if($errors->has('npwp'))
@@ -118,7 +118,7 @@
                                 </div>
                             @endif
                         </div>
-                        <div class="form-group col-lg-3">
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.no_rekening') }}</label>
                             <input type="text" class="form-control form-control-line {{ $errors->has('no_rekening') ? 'is-invalid' : '' }}" name="no_rekening" value="{{ $billing->no_rekening ?? old('no_rekening', '') }}" required> 
                             @if($errors->has('no_rekening'))
@@ -127,7 +127,7 @@
                                 </div>
                             @endif
                         </div>
-                        <div class="form-group col-lg-3">
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.no_faktur') }}</label>
                             <input type="text" class="form-control form-control-line {{ $errors->has('no_faktur') ? 'is-invalid' : '' }}" name="no_faktur" value="{{ $billing->no_faktur ?? old('no_faktur', '') }}" required> 
                             @if($errors->has('no_faktur'))
@@ -136,7 +136,7 @@
                                 </div>
                             @endif
                         </div>
-                        <div class="form-group col-lg-3">
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.status') }}</label>
                             <input type="text" class="form-control form-control-line {{ $errors->has('status') ? 'is-invalid' : '' }}" name="status" value="{{ $billing->status ? \App\Models\Vendor\Billing::TypeStatus[$billing->status] : '' }}" required readonly> 
                             @if($errors->has('status'))
@@ -145,7 +145,7 @@
                                 </div>
                             @endif
                         </div>
-                        <div class="form-group col-lg-2">
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.tgl_invoice') }}</label>
                             <input type="date" class="form-control form-control-line {{ $errors->has('tgl_invoice') ? 'is-invalid' : '' }}" name="tgl_invoice" value="{{ $billing->tgl_invoice ?? old('tgl_invoice', '') }}" required> 
                             @if($errors->has('tgl_invoice'))
@@ -154,7 +154,7 @@
                                 </div>
                             @endif
                         </div>
-                        <div class="form-group col-lg-2">
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.tgl_faktur') }}</label>
                             <input type="date" class="form-control form-control-line {{ $errors->has('tgl_faktur') ? 'is-invalid' : '' }}" name="tgl_faktur" value="{{ $billing->tgl_faktur ?? old('tgl_faktur', '') }}" required> 
                             @if($errors->has('tgl_faktur'))
@@ -163,7 +163,7 @@
                                 </div>
                             @endif
                         </div>
-                        <div class="form-group col-lg-2">
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.posting_date') }}</label>
                             <input type="date" class="form-control form-control-line {{ $errors->has('posting_date') ? 'is-invalid' : '' }}" name="posting_date" value="{{ $billing->posting_date ?? old('posting_date', '') }}" required> 
                             @if($errors->has('posting_date'))
@@ -172,7 +172,7 @@
                                 </div>
                             @endif
                         </div>
-                        <div class="form-group col-lg-2">
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.assignment') }}</label>
                             <input type="text" class="form-control form-control-line {{ $errors->has('assignment') ? 'is-invalid' : '' }}" name="assignment" value="{{ $billing->assignment ?? old('assignment', '') }}" required> 
                             @if($errors->has('assignment'))
@@ -181,16 +181,16 @@
                                 </div>
                             @endif
                         </div>
-                        <div class="form-group col-lg-2">
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.dpp') }}</label>
-                            <input type="text" class="form-control form-control-line {{ $errors->has('dpp') ? 'is-invalid' : '' }}" name="dpp" value="{{ $billing->dpp ?? old('dpp', '') }}" required> 
+                            <input type="number" class="form-control form-control-line {{ $errors->has('dpp') ? 'is-invalid' : '' }}" name="dpp" value="{{ $billing->dpp ?? old('dpp', '') }}" required> 
                             @if($errors->has('dpp'))
                                 <div class="invalid-feedback">
                                     {{ $errors->first('dpp') }}
                                 </div>
                             @endif
                         </div>
-                        <div class="form-group col-lg-2">
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.tipe_pajak') }}</label>
                             <input type="text" class="form-control form-control-line {{ $errors->has('tipe_pajak') ? 'is-invalid' : '' }}" name="tipe_pajak" value="{{ $billing->tipe_pajak ?? old('tipe_pajak', '') }}" required> 
                             @if($errors->has('tipe_pajak'))
@@ -199,16 +199,16 @@
                                 </div>
                             @endif
                         </div>
-                        <div class="form-group col-lg-2">
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.nominal_pajak') }}</label>
-                            <input type="text" class="form-control form-control-line {{ $errors->has('nominal_pajak') ? 'is-invalid' : '' }}" name="nominal_pajak" value="{{ $billing->nominal_pajak ?? old('nominal_pajak', '') }}" required> 
+                            <input type="number" class="form-control form-control-line {{ $errors->has('nominal_pajak') ? 'is-invalid' : '' }}" name="nominal_pajak" value="{{ $billing->nominal_pajak ?? old('nominal_pajak', '') }}" required> 
                             @if($errors->has('nominal_pajak'))
                                 <div class="invalid-feedback">
                                     {{ $errors->first('nominal_pajak') }}
                                 </div>
                             @endif
                         </div>
-                        <div class="form-group col-lg-2">
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.payment_term_claim') }}</label>
                             <input type="text" class="form-control form-control-line {{ $errors->has('payment_term_claim') ? 'is-invalid' : '' }}" name="payment_term_claim" value="{{ $billing->payment_term_claim ?? old('payment_term_claim', '') }}" required> 
                             @if($errors->has('payment_term_claim'))
@@ -217,16 +217,16 @@
                                 </div>
                             @endif
                         </div>
-                        <div class="form-group col-lg-2">
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.jumlah_pph') }}</label>
-                            <input type="text" class="form-control form-control-line {{ $errors->has('jumlah_pph') ? 'is-invalid' : '' }}" name="jumlah_pph" value="{{ $billing->jumlah_pph ?? old('jumlah_pph', '') }}" required> 
+                            <input type="number" class="form-control form-control-line {{ $errors->has('jumlah_pph') ? 'is-invalid' : '' }}" name="jumlah_pph" value="{{ $billing->jumlah_pph ?? old('jumlah_pph', '') }}" required> 
                             @if($errors->has('jumlah_pph'))
                                 <div class="invalid-feedback">
                                     {{ $errors->first('jumlah_pph') }}
                                 </div>
                             @endif
                         </div>
-                        <div class="form-group col-lg-2">
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.total_invoice') }}</label>
                             <input type="number" class="form-control form-control-line {{ $errors->has('total_invoice') ? 'is-invalid' : '' }}" name="total_invoice" value="{{ $billing->total_invoice ?? old('total_invoice', $billing->dpp + ($billing->dpp * ($billing->ppn / 100)) - $billing->pph) }}" required> 
                             @if($errors->has('total_invoice'))
@@ -235,7 +235,7 @@
                                 </div>
                             @endif
                         </div>
-                        <div class="form-group col-lg-2">
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.perihal_claim') }}</label>
                             <input type="text" class="form-control form-control-line {{ $errors->has('perihal_claim') ? 'is-invalid' : '' }}" name="perihal_claim" value="{{ $billing->perihal_claim ?? old('perihal_claim', '') }}" required> 
                             @if($errors->has('perihal_claim'))
@@ -253,6 +253,135 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
+                        <div class="form-group col-lg-4">
+                            <label>No Faktur Pajak</label>
+                            <input type="text" class="form-control form-control-line {{ $errors->has('no_faktur') ? 'is-invalid' : '' }}" name="no_faktur" value="{{ $billing->no_faktur ?? old('no_faktur', '') }}"> 
+                            @if($errors->has('no_faktur'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('no_faktur') }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>Tanggal Faktur Pajak <span class="text-danger">*</span></label>
+                            <input type="text" id="mdate" class="form-control form-control-line {{ $errors->has('tgl_faktur') ? 'is-invalid' : '' }}" name="tgl_faktur" value="{{ $billing->tgl_faktur ?? old('tgl_faktur', '') }}"> 
+                            @if($errors->has('tgl_faktur'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('tgl_faktur') }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>No. Invoice</label>
+                            <input type="text" class="form-control form-control-line {{ $errors->has('no_invoice') ? 'is-invalid' : '' }}" name="no_invoice" value="{{ $billing->no_invoice ?? old('no_invoice', '') }}"> 
+                            @if($errors->has('no_invoice'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('no_invoice') }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>Tanggal Invoice <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control mdate2 form-control-line {{ $errors->has('tgl_invoice') ? 'is-invalid' : '' }}" name="tgl_invoice" value="{{ $billing->tgl_invoice ?? old('tgl_invoice', '') }}"> 
+                            @if($errors->has('tgl_invoice'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('tgl_invoice') }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>Nominal Invoice Sesudah PPN <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-line {{ $errors->has('nominal_inv_after_ppn') ? 'is-invalid' : '' }}" name="nominal_inv_after_ppn" value="{{ $billing->nominal_inv_after_ppn ?? old('nominal_inv_after_ppn', '') }}"> 
+                            @if($errors->has('nominal_inv_after_ppn'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('nominal_inv_after_ppn') }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>PPN <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-line {{ $errors->has('ppn') ? 'is-invalid' : '' }}" name="ppn" value="{{ $billing->ppn ?? old('ppn', '') }}"> 
+                            @if($errors->has('ppn'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('ppn') }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>DPP <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-line {{ $errors->has('dpp') ? 'is-invalid' : '' }}" name="dpp" value="{{ $billing->dpp ?? old('dpp', '') }}"> 
+                            @if($errors->has('dpp'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('dpp') }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>No. Rekening <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-line {{ $errors->has('no_rekening') ? 'is-invalid' : '' }}" name="no_rekening" value="{{ $billing->no_rekening ?? old('no_rekening', '') }}"> 
+                            @if($errors->has('no_rekening'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('no_rekening') }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>No. Surat Jalan <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-line {{ $errors->has('no_surat_jalan') ? 'is-invalid' : '' }}" name="no_surat_jalan" value="{{ $billing->no_surat_jalan ?? old('no_surat_jalan', '') }}"> 
+                            @if($errors->has('no_surat_jalan'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('no_surat_jalan') }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>TGL. Surat Jalan <span class="text-danger">*</span></label>
+                            <input type="text" id="" class="form-control mdate form-control-line {{ $errors->has('tgl_surat_jalan') ? 'is-invalid' : '' }}" name="tgl_surat_jalan" value="{{ $billing->tgl_surat_jalan ?? old('tgl_surat_jalan', '') }}"> 
+                            @if($errors->has('tgl_surat_jalan'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('tgl_surat_jalan') }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>NPWP</label>
+                            <input type="text" id="" class="form-control form-control-line {{ $errors->has('npwp') ? 'is-invalid' : '' }}" name="npwp" value="{{ $billing->npwp ?? old('npwp', '') }}"> 
+                            @if($errors->has('npwp'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('npwp') }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>Keterangan PO</label>
+                            <input type="text" id="" class="form-control form-control-line {{ $errors->has('keterangan_po') ? 'is-invalid' : '' }}" name="keterangan_po" value="{{ $billing->keterangan_po ?? old('keterangan_po', '') }}"> 
+                            @if($errors->has('keterangan_po'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('keterangan_po') }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>PO <span class="text-danger">*</span> </label>
+                            <input type="file" class="form-control form-control-line" name="po" value="{{ $billing->po ?? old('po', '') }}"> 
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>Surat Ket. Bebas Pajak</label>
+                            <input type="file" id="" class="form-control form-control-line {{ $errors->has('surat_ket_bebas_pajak') ? 'is-invalid' : '' }}" name="surat_ket_bebas_pajak" value="{{ $billing->surat_ket_bebas_pajak ?? old('surat_ket_bebas_pajak', '') }}"> 
+                            @if($errors->has('surat_ket_bebas_pajak'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('surat_ket_bebas_pajak') }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>Upload File Invoice <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control form-control-line" name="file_invoice" value="{{ $billing->file_invoice ?? old('file_invoice', '') }}"> 
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>Upload File Faktur <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control form-control-line" name="file_faktur" value="{{ $billing->file_faktur ?? old('file_faktur', '') }}"> 
+                        </div>
 
 
                         {{-- dikarantina --}}
@@ -348,7 +477,49 @@
                         </div> --}}
                         {{-- end karantina --}}
 
-
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <h3 class="title col-lg-8">Purchase Order List</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="form-group col-lg-12 table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 10%">Qty</th>
+                                        <th style="width: 10%">Material Code</th>
+                                        <th style="width: 10%">Description</th>
+                                        <th style="width: 20%">PO No</th>
+                                        <th style="width: 10%">PO Item</th>
+                                        <th style="width: 10%">GR Doc</th>
+                                        <th style="width: 10%">GR No</th>
+                                        <th style="width: 20%">GR Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="billing-detail">
+                                    @foreach ($details as $val)
+                                    <tr>
+                                        <td><input type="number" class="qty form-control" name="qty[]" value="{{ $val->qty }}" readonly/></td>
+                                        <td><input type="text" class="material form-control" name="material[]" value="{{ $val->material_no }}" readonly></select></td>
+                                        <td><input type="text" class="description form-control" name="description[]" value="{{ $val->material->description }}" readonly/></td>
+                                        <td><input type="text" class="po_no form-control" name="po_no[]" value="{{ $val->po_no }}" readonly></td>
+                                        <td><input type="text" class="po_item form-control" name="po_item[]" value="{{ $val->po_item }}" readonly></td>
+                                        <td><input type="text" class="doc_gr form-control" name="doc_gr[]" value="{{ $val->doc_gr }}" readonly/></td>
+                                        <td><input type="text" class="item_gr form-control" name="item_gr[]" value="{{ $val->item_gr }}" readonly/></td>
+                                        <td><input type="text" class="posting_date form-control" name="posting_date[]" value="{{ $val->posting_date }}" readonly/></td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     <div class="form-actions">
                         @php

@@ -86,8 +86,8 @@ class Billing extends Model
         });
     }
 
-    public function getVendor()
+    public function vendor()
     {
-        return $this->hasOne(\App\Models\Vendor::class,'id','vendor_id');
+        return $this->hasOne(\App\Models\Vendor::class,'code','vendor_id');
     }
 }

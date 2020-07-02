@@ -196,7 +196,10 @@ class BillingController extends Controller
 
     public function create() 
     {
-        return view('vendor.billing.create');
+        $po_gr = PurchaseOrderGr::where('vendor_id', \Auth::user()->code)
+            ->get();
+
+        return view('vendor.billing.create', compact('po_gr'));
     }
 
     public function store(StoreBillingRequest $request)
@@ -256,8 +259,7 @@ class BillingController extends Controller
             $billing->save();
 
             foreach ($request->get('po_no') as $key => $val) {
-                $purchase_orders = explode('-', $val);
-                $po_no = $purchase_orders[0];
+                $po_no = $request->get('po_no')[$key];
                 $qty = $request->get('qty')[$key];
                 $qty_old = $request->get('qty_old')[$key];
 
@@ -267,6 +269,10 @@ class BillingController extends Controller
                 $billingDetail->qty = $qty;
                 $billingDetail->qty_old = $qty_old;
                 $billingDetail->save();
+
+                $po_gr = PurchaseOrderGr::where('po_no', $po_no)->first();
+                $po_gr->qty = $qty_old - $qty;
+                $po_gr->save();
             }
 
             \DB::commit();
@@ -295,11 +301,12 @@ class BillingController extends Controller
         $material_description = $model->material ? $model->material->description : '';
         
         $data['po_no'] = $model->po_no;
+        $data['po_item'] = $model->po_item;
         $data['material'] = $model->material_no;
         $data['qty'] = $model->qty;
         $data['doc_gr'] = $model->doc_gr;
         $data['item_gr'] = $model->item_gr;
-        $data['tahun_gr'] = $model->tahun_gr;
+        $data['posting_date'] = $model->posting_date;
         $data['reference_document'] = $model->reference_document;
         $data['description'] = $material_description;
 

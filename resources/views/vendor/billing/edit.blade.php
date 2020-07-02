@@ -155,11 +155,6 @@
                                 <div class="col-lg-8">
                                     <h3 class="title col-lg-8">Purchase Order List</h3>
                                 </div>
-                                {{-- <div class="col-lg-4 text-right">
-                                    <a href="javascript:;" id="add-material" class="btn btn-primary">
-                                        <i class="fa fa-plus"></i> Add Item
-                                    </a>
-                                </div> --}}
                             </div>
                         </div>
                         <div class="card-body">
@@ -168,26 +163,29 @@
                                     <table class="table table-striped">
                                         <thead>
                                             <tr>
+                                                <th style="width: 10%">Qty Old</th>
                                                 <th style="width: 10%">Qty</th>
                                                 <th style="width: 10%">Material Code</th>
                                                 <th style="width: 10%">Description</th>
                                                 <th style="width: 20%">PO No</th>
+                                                <th style="width: 10%">PO Item</th>
                                                 <th style="width: 10%">GR Doc</th>
                                                 <th style="width: 10%">GR No</th>
-                                                <th style="width: 10%">GR Date</th>
+                                                <th style="width: 20%">GR Date</th>
                                             </tr>
                                         </thead>
                                         <tbody id="billing-detail">
                                             @foreach ($details as $val)
                                             <tr>
-                                                <input type="hidden" name="qty_old[]" class="qty-old" value="{{ $val->qty }}">
-                                                <td><input type="number" class="qty form-control" name="qty[]" value="{{ $val->qty }}" required readonly/></td>
-                                                <td><input type="text" class="material form-control" name="material[]" value="{{ $val->gr->material_no }}" required readonly></select></td>
-                                                <td><input type="text" class="description form-control" name="description[]" value="{{ $val->gr->material->description }}" required readonly/></td>
-                                                <td><input type="text" class="po_no form-control" name="po_no[]" value="{{ $val->po_no }}" required readonly></td>
-                                                <td><input type="text" class="doc_gr form-control" name="doc_gr[]" value="{{ $val->gr->doc_gr }}" required readonly/></td>
-                                                <td><input type="text" class="item_gr form-control" name="item_gr[]" value="{{ $val->gr->item_gr }}" required readonly/></td>
-                                                <td><input type="text" class="tahun_gr form-control" name="tahun_gr[]" value="{{ $val->gr->tahun_gr }}" required readonly/></td>
+                                                <td><input type="number" name="qty_old[]" class="qty-old form-control" value="{{ $val->qty }}" readonly></td>
+                                                <td><input type="number" class="qty form-control" name="qty[]" value="{{ $val->qty }}" required/></td>
+                                                <td><input type="text" class="material form-control" name="material[]" value="{{ $val->gr->material_no }}" readonly></select></td>
+                                                <td><input type="text" class="description form-control" name="description[]" value="{{ $val->gr->material->description }}" readonly/></td>
+                                                <td><input type="text" class="po_no form-control" name="po_no[]" value="{{ $val->po_no }}" readonly></td>
+                                                <td><input type="text" class="po_item form-control" name="po_item[]" value="{{ $val->po_item }}" readonly></td>
+                                                <td><input type="text" class="doc_gr form-control" name="doc_gr[]" value="{{ $val->gr->doc_gr }}" readonly/></td>
+                                                <td><input type="text" class="item_gr form-control" name="item_gr[]" value="{{ $val->gr->item_gr }}" readonly/></td>
+                                                <td><input type="text" class="posting_date form-control" name="posting_date[]" value="{{ $val->gr->posting_date }}" readonly/></td>
                                             </tr>
                                             @endforeach
                                         </tbody>

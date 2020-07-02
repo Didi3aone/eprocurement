@@ -240,7 +240,11 @@
                                     <div class="row">
                                         <div class="col-lg-8 text-left">
                                             <div class="form-group">
-                                                <select name="search-po" class="choose-po form-control select2"></select>
+                                                <select name="search-po" class="choose-po form-control select2">
+                                                    @foreach ($po_gr as $gr)
+                                                        <option value="{{ $gr->po_no }}">{{ $gr->po_no }}</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="col-lg-4 text-right">
@@ -263,9 +267,10 @@
                                                 <th style="width: 10%">Material Code</th>
                                                 <th style="width: 10%">Description</th>
                                                 <th style="width: 20%">PO No</th>
+                                                <th style="width: 10%">PO Item</th>
                                                 <th style="width: 10%">GR Doc</th>
                                                 <th style="width: 10%">GR No</th>
-                                                <th style="width: 10%">GR Date</th>
+                                                <th style="width: 20%">GR Date</th>
                                                 <th style="width: 10%">&nbsp;</th>
                                             </tr>
                                         </thead>
@@ -297,28 +302,30 @@
 
         const PO_GR = $('.choose-po').val()
 
-        $.get(base_url + '/vendor/billing-po-gr/' + PO_GR, function (result) {
-            const template = `
-                <tr>
-                    <td><input type="number" class="qty-old form-control" name="qty_old[]" value="${result.qty}" readonly></td>
-                    <td><input type="number" class="qty form-control" name="qty[]" value="${result.qty}" required/></td>
-                    <td><input type="text" class="material form-control" name="material[]" value="${result.material}" required readonly></select></td>
-                    <td><input type="text" class="description form-control" name="description[]" value="${result.description}" required readonly/></td>
-                    <td><input type="text" class="form-control" name="po_no[]" value="${result.po_no}" required readonly></td>
-                    <td><input type="text" class="doc_gr form-control" name="doc_gr[]" value="${result.doc_gr}" required readonly/></td>
-                    <td><input type="text" class="item_gr form-control" name="item_gr[]" value="${result.item_gr}" required readonly/></td>
-                    <td><input type="text" class="tahun_gr form-control" name="tahun_gr[]" value="${result.tahun_gr}" required readonly/></td>
-                    <td>
-                        <a href="javascript:;" class="remove-item btn btn-danger btn-xs">
-                            <i class="fa fa-trash"></i> Remove
-                        </a>
-                    </td>
-                </tr>
-            `
+        if (PO_GR != '') {
+            $.get(base_url + '/vendor/billing-po-gr/' + PO_GR, function (result) {
+                const template = `
+                    <tr>
+                        <td><input type="number" class="qty-old form-control" name="qty_old[]" value="${result.qty}" readonly></td>
+                        <td><input type="number" class="qty form-control" name="qty[]" value="${result.qty}" required/></td>
+                        <td><input type="text" class="material form-control" name="material[]" value="${result.material}" readonly></select></td>
+                        <td><input type="text" class="description form-control" name="description[]" value="${result.description}" readonly/></td>
+                        <td><input type="text" class="po_no form-control" name="po_no[]" value="${result.po_no}" readonly></td>
+                        <td><input type="text" class="doc_gr form-control" name="doc_gr[]" value="${result.doc_gr}" readonly/></td>
+                        <td><input type="text" class="po_item form-control" name="po_item[]" value="${result.po_item}" readonly/></td>
+                        <td><input type="text" class="item_gr form-control" name="item_gr[]" value="${result.item_gr}" readonly/></td>
+                        <td><input type="text" class="posting_date form-control" name="posting_date[]" value="${result.posting_date}" readonly/></td>
+                        <td>
+                            <a href="javascript:;" class="remove-item btn btn-danger btn-xs">
+                                <i class="fa fa-trash"></i> Remove
+                            </a>
+                        </td>
+                    </tr>
+                `
 
-            $(document).find('#billing-detail').append(template)
-        })
-        loadMaterial()
+                $(document).find('#billing-detail').append(template)
+            })
+        }
     })
 
     $(document).on('click', '.remove-item', function (e) {
@@ -327,53 +334,51 @@
         $(this).parent().parent().remove()
     })
 
-    function loadMaterial () {
-        $('.choose-po').select2({
-            ajax: {
-                url: base_url + '/admin/material/select2',
-                dataType: 'json',
-                delay: 300,
-                data: function (params) {
-                    var query = {
-                        search: params.term,
-                        type: 'public'
-                    }
+    // $('.choose-po').select2({
+    //     ajax: {
+    //         url: base_url + '/admin/material/select2',
+    //         dataType: 'json',
+    //         delay: 300,
+    //         data: function (params) {
+    //             var query = {
+    //                 search: params.term,
+    //                 type: 'public'
+    //             }
 
-                    // Query parameters will be ?search=[term]&type=public
-                    return query;
-                },
-                processResults: function (response) {
-                    return {
-                        results: response
-                    }
-                },
-                cache: true
-            }
-        })
-    }
+    //             // Query parameters will be ?search=[term]&type=public
+    //             return query;
+    //         },
+    //         processResults: function (response) {
+    //             return {
+    //                 results: response
+    //             }
+    //         },
+    //         cache: true
+    //     }
+    // })
 
-    $(document).on('change', '.choose-po', function () {
-        $tr = $(this).closest('tr')
+    // $(document).on('change', '.choose-po', function () {
+    //     $tr = $(this).closest('tr')
 
-        const value = $(this).children('option:selected').val().split('-')
-        const po_no = value[0]
-        const material = value[1]
-        const qty = value[2]
-        const doc_gr = value[3]
-        const item_gr = value[4]
-        const tahun_gr = value[5]
-        const reference_document = value[6]
-        const description = value[7]
+    //     const value = $(this).children('option:selected').val().split('-')
+    //     const po_no = value[0]
+    //     const material = value[1]
+    //     const qty = value[2]
+    //     const doc_gr = value[3]
+    //     const item_gr = value[4]
+    //     const posting_date = value[5]
+    //     const reference_document = value[6]
+    //     const description = value[7]
 
-        $tr.find('.material').val(material)
-        $tr.find('.qty').val(qty)
-        $tr.find('.qty-old').val(qty)
-        $tr.find('.doc_gr').val(doc_gr)
-        $tr.find('.item_gr').val(item_gr)
-        $tr.find('.tahun_gr').val(tahun_gr)
-        $tr.find('.reference_document').val(reference_document)
-        $tr.find('.description').val(description)
-    }).trigger('change')
+    //     $tr.find('.material').val(material)
+    //     $tr.find('.qty').val(qty)
+    //     $tr.find('.qty-old').val(qty)
+    //     $tr.find('.doc_gr').val(doc_gr)
+    //     $tr.find('.item_gr').val(item_gr)
+    //     $tr.find('.posting_date').val(posting_date)
+    //     $tr.find('.reference_document').val(reference_document)
+    //     $tr.find('.description').val(description)
+    // }).trigger('change')
 
     $(document).on('change', '.qty', function () {
         $tr = $(this).closest('tr')
@@ -387,7 +392,5 @@
             return false
         }
     }).trigger('change')
-
-    loadMaterial()
 </script>
 @endsection
