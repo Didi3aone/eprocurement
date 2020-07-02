@@ -94,18 +94,22 @@
                                 </i> PO Repeat
                             </a>
                             <ul aria-expanded="false" class="collapse">
+                                @can('approval_po_repeat_assproc')
                                 <li>
                                     <a href="{{ route('admin.quotation-repeat-approval-ass') }}">
                                         <i class="fa fas fa-caret-right"></i> 
                                         Approval Ass Proc
                                     </a>
                                 </li>
+                                @endcan
+                                @can('approval_po_repeat_prochead')
                                 <li>
                                     <a href="{{ route('admin.quotation-repeat-approval-head') }}">
                                         <i class="fa fas fa-caret-right"></i> 
                                         Approval Head Proc
                                     </a>
                                 </li>
+                                @endcan
                             </ul>
                         </li>
                         @endcan
@@ -116,18 +120,22 @@
                                 </i> PO Direct
                             </a>
                             <ul aria-expanded="false" class="collapse">
+                                @can('approval_po_direct_assproc')
                                 <li>
                                     <a href="{{ route('admin.quotation-direct-approval-ass') }}">
                                         <i class="fa fas fa-caret-right"></i> 
                                         Approval Ass Proc
                                     </a>
                                 </li>
+                                @endcan
+                                @can('approval_po_direct_prochead')
                                 <li>
                                     <a href="{{ route('admin.quotation-direct-approval-head') }}">
                                         <i class="fa fas fa-caret-right"></i> 
                                         Approval Head Proc
                                     </a>
                                 </li>
+                                @endcan
                             </ul>
                         </li>
                         @endcan

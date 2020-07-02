@@ -23,6 +23,7 @@ class ChageTypeVendorsCode extends Migration
 
         Schema::table('purchase_orders_details', function (Blueprint $table) {
             $table->string('SCHED_LINE')->default(0);
+            $table->string('purchasing_document')->change();
         });
 
         Schema::table('quotation_deliverys', function (Blueprint $table) {
