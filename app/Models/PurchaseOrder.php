@@ -13,6 +13,7 @@ class PurchaseOrder extends Model
         'quotation_id',
         'notes',
         'po_date',
+        'plant_code',
         'vendor_id',
         'status',
         'payment_term',

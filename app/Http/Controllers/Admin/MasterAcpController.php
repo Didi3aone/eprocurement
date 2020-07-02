@@ -17,7 +17,7 @@ class MasterAcpController extends Controller
 {
     public function index ()
     {
-        $model = AcpTable::get();
+        $model = AcpTable::orderBy('created_at','desc')->get();
 
         return view('admin.master-acp.index', compact('model'));
     }
@@ -42,12 +42,12 @@ class MasterAcpController extends Controller
                     'material_id as code',
                     'description'
                 )
-                ->join('purchase_requests','purchase_requests.id','=','purchase_requests_details.request_id')
-                ->where('purchase_requests.doc_type','like','%Z%')
-                ->whereNotNull('material_id')
+                ->groupBy('material_id','description')
+                // ->join('purchase_requests','purchase_requests.id','=','purchase_requests_details.request_id')
                 ->orderBy('description', 'asc')
                 ->limit(50)
                 ->get();
+                // dd($request);
         } else {
             $model = MasterMaterial::where(function ($query) use ($request) {
                     $query->where('code', 'like', '%' . $request->query('q') . '%')
@@ -156,6 +156,7 @@ class MasterAcpController extends Controller
 
             $isAcp = false;
             $price = 0;
+            $assProc = "";
             foreach ($result as $key => $val) {
                 $material = new AcpTableMaterial;
                 $material->master_acp_id = $acp->id;
@@ -165,6 +166,19 @@ class MasterAcpController extends Controller
                 $material->qty = $val['qty'];
                 $material->file_attachment = $val['file_attachment'];
                 $material->save();
+                $isCmo = false;
+                $cMo = \App\Models\MasterMaterial::getMaterialCmo($val['material']);
+                if( $cMo->purchasing_group_code == 'S03' ||
+                    $cMo->purchasing_group_code == 'H09' ||
+                    $cMo->purchasing_group_code == 'M09' ||
+                    $cMo->purchasing_group_code == 'W03' ||
+                    $cMo->purchasing_group_code == 'S09' ||
+                    $cMo->purchasing_group_code == 'W09' ||
+                    $cMo->purchasing_group_code == 'M03' ) {
+                        $isCmo = true;
+                    }
+
+                $assProc = \App\Models\UserMap::getAssProc($cMo->purchasing_group_code)->user_id;
 
                 if ($val['winner'] == 1) {
                     $price += $val['price'];
@@ -180,19 +194,23 @@ class MasterAcpController extends Controller
 
             if( $isAcp ) {
                 if( $price <= 25000000 ) {
-                    $this->saveApprovals($acp->id, 'STAFF','ACP', false);
-                } else if( $price > 25000000 && $price < 100000000 ) {
-                    $isCmo = false;
+                    $isPlant = false;
                     if( $request->get('is_project') == 1 ) {
-                        $isCmo = true;
+                        $isPlant = true;
                     }
-                    $this->saveApprovals($acp->id, 'CFO','ACP', $isCmo);
+                    \saveApprovals($assProc,$acp->id, 'STAFF','ACP', $isPlant);
+                } else if( $price > 25000000 && $price <= 100000000 ) {
+                    $isPlant = false;
+                    if( $request->get('is_project') == 1 ) {
+                        $isPlant = true;
+                    }
+                    \saveApprovals($assProc,$acp->id, 'CFO','ACP', $isPlant,$isCmo);
                 } else if( $price > 250000000 ) {
-                    $isCmo = false;
+                    $isPlant = false;
                     if( $request->get('is_project') == 1 ) {
-                        $isCmo = true;
+                        $isPlant = true;
                     }
-                    $this->saveApprovals($acp->id, 'COO','ACP',$isCmo);
+                    \saveApprovals($assProc,$acp->id, 'COO','ACP',$isPlant,$isCmo);
                 }
             }
 
@@ -236,119 +254,6 @@ class MasterAcpController extends Controller
 
     }
 
-    private function saveApprovals($quotation_id, $tingkat,$type, $isCmo)
-    {
-
-        if( $tingkat == 'STAFF' ) {
-            QuotationApproval::create([
-                'nik'                   => 190256,
-                'approval_position'     => 1,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 1,
-                'acp_type'              => $type,
-                'acp_id'                =>  $quotation_id
-            ]);
-
-            QuotationApproval::create([
-                'nik'                   => 190089,
-                'approval_position'     => 2,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type,
-                'acp_id'                =>  $quotation_id
-            ]);
-        } else if ($tingkat == 'CFO') {
-            QuotationApproval::create([
-                'nik'                   => 190256,
-                'approval_position'     => 1,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 1,
-                'acp_type'              => $type,
-                'acp_id'                =>  $quotation_id
-            ]);
-
-            QuotationApproval::create([
-                'nik'                   => 190089,
-                'approval_position'     => 2,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type,
-                'acp_id'                =>  $quotation_id
-            ]);
-            
-            QuotationApproval::create([
-                'nik'                   => 180095,
-                'approval_position'     => 3,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type,
-                'acp_id'                =>  $quotation_id
-            ]);
-            QuotationApproval::create([
-                'nik'                   => 180178,
-                'approval_position'     => 4,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type,
-                'acp_id'                =>  $quotation_id
-            ]);
-        } else if ($tingkat == 'COO') {
-            QuotationApproval::create([
-                'nik'                   => 190256,
-                'approval_position'     => 1,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 1,
-                'acp_type'              => $type,
-                'acp_id'                =>  $quotation_id
-            ]);
-
-            QuotationApproval::create([
-                'nik'                   => 190089,
-                'approval_position'     => 2,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type,
-                'acp_id'                =>  $quotation_id
-            ]);
-            
-            QuotationApproval::create([
-                'nik'                   => 180095,
-                'approval_position'     => 3,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type,
-                'acp_id'                =>  $quotation_id
-            ]);
-            QuotationApproval::create([
-                'nik'                   => 180178,
-                'approval_position'     => 4,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type,
-                'acp_id'                =>  $quotation_id
-            ]);
-            QuotationApproval::create([
-                'nik'                   => 180178,
-                'approval_position'     => 5,
-                'status'                => QuotationApproval::waitingApproval,
-                'quotation_id'          => $quotation_id,
-                'flag'                  => 0,
-                'acp_type'              => $type,
-                'acp_id'                =>  $quotation_id
-            ]);
-        }
-    }
-
     public function fileUpload($request)
     {
         $data = [];
@@ -361,5 +266,13 @@ class MasterAcpController extends Controller
         }
 
         return serialize($data);
+    }
+
+    public function confirmation(Request $request)
+    {
+
+        $data = $request->all();
+
+        return view('admin.master-acp.preview',compact('data') );
     }
 }

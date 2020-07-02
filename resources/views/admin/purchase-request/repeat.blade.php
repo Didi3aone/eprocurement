@@ -33,17 +33,6 @@
             <div class="row">
                 <div class="col-lg-6">
                     <div class="form-group">
-                        <label>{{ trans('cruds.purchase-order.fields.po_no') }}</label>
-                        <input type="text" class="form-control form-control-line {{ $errors->has('po_no') ? 'is-invalid' : '' }}" name="po_no" value="{{ old('po_no', $po_no) }}" readonly> 
-                        @if($errors->has('po_no'))
-                            <div class="invalid-feedback">
-                                {{ $errors->first('po_no') }}
-                            </div>
-                        @endif
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="form-group">
                         <label>{{ trans('cruds.purchase-order.fields.doc_type') }}</label>
                         <select class="form-control form-control-line select2 {{ $errors->has('doc_type') ? 'is-invalid' : '' }}" name="doc_type">
                             @foreach ($docTypes as $type)
@@ -54,7 +43,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <label>{{ trans('cruds.purchase-order.fields.notes') }}</label>
+                <label>Term Of Payment Desciption</label>
                 <textarea id="notes" class="form-control form-control-line {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes"></textarea>
                 @if($errors->has('notes'))
                     <div class="invalid-feedback">
@@ -110,46 +99,57 @@
                             <th style="width: 64%">Tax</th>
                         </tr>
                     </thead>
-                    {{-- get from rfq,  net_order_price untuk pricenya --}}
                     <tbody>
                         @foreach($data as $key => $value) 
-                            <input type="hidden" name="id[]" value="{{ $value->id }}">
                             <tr>
+                                <input type="hidden" name="id[]" value="{{ $value->id }}">
+                                <input type="hidden" name="idDetail[]" value="{{ $value->id }}">
                                 <input type="hidden" name="plant_code[]" id="plant_code" value="{{ $value->plant_code }}">
-                                <input type="hidden" name="doc_type[]" id="doc_type" value="{{ $value->doc_type }}">
-                                <input type="hidden" name="pr_no[]" readonly value="{{ $value->pr_no }}">
-                                <input type="hidden" name="request_date[]" readonly value="{{ $value->request_date }}">
-                                <input type="hidden" name="rn_no[]" readonly value="{{ $value->request_no }}">
-                                <input type="hidden" name="is_assets[]" readonly value="{{ $value->is_assets }}">
-                                <input type="hidden" name="assets_no[]" readonly value="{{ $value->assets_no }}">
-                                <input type="hidden" name="text_id[]" readonly value="{{ $value->text_id }}">
-                                <input type="hidden" name="short_text[]" readonly value="{{ $value->short_text }}">
-                                <input type="hidden" name="text_form[]" readonly value="{{ $value->text_form }}">
-                                <input type="hidden" name="text_line[]" readonly value="{{ $value->text_line }}">
-                                <input type="hidden" name="delivery_date_category[]" readonly value="{{ $value->delivery_date_category }}">
-                                <input type="hidden" name="account_assignment[]" readonly value="{{ $value->account_assignment }}">
-                                <input type="hidden" name="purchasing_group_code[]" readonly value="{{ $value->purchasing_group_code }}">
-                                <input type="hidden" name="preq_name[]" readonly value="{{ $value->preq_name }}">
-                                <input type="hidden" name="gl_acct_code[]" readonly value="{{ $value->gl_acct_code }}">
-                                <input type="hidden" name="cost_center_code[]" readonly value="{{ $value->cost_center_code }}">
-                                <input type="hidden" name="profit_center_code[]" readonly value="{{ $value->profit_center_code }}">
-                                <input type="hidden" name="storage_location[]" readonly value="{{ $value->storage_location }}">
-                                <input type="hidden" name="material_group[]" readonly value="{{ $value->material_group }}">
-                                <input type="hidden" name="preq_item[]" readonly value="{{ $value->preq_item }}">
-                                <input type="hidden" name="PR_NO[]" readonly value="{{ $value->PR_NO }}">
+                                <input type="hidden" name="doc_type_detail[]" id="doc_type" value="{{ $value->doc_type }}">
+                                <input type="hidden" name="pr_no[]" value="{{ $value->pr_no }}">
+                                <input type="hidden" name="request_date[]" value="{{ $value->request_date }}">
+                                <input type="hidden" name="rn_no[]" value="{{ $value->request_no }}">
+                                <input type="hidden" name="is_assets[]" value="{{ $value->is_assets }}">
+                                <input type="hidden" name="assets_no[]" value="{{ $value->assets_no }}">
+                                <input type="hidden" name="text_id[]" value="{{ $value->text_id }}">
+                                <input type="hidden" name="short_text[]" value="{{ $value->short_text }}">
+                                <input type="hidden" name="text_form[]" value="{{ $value->text_form }}">
+                                <input type="hidden" name="text_line[]" value="{{ $value->text_line }}">
+                                <input type="hidden" name="delivery_date_category[]" value="{{ $value->delivery_date_category }}">
+                                <input type="hidden" name="account_assignment[]" value="{{ $value->account_assignment }}">
+                                <input type="hidden" name="purchasing_group_code[]" value="{{ $value->purchasing_group_code }}">
+                                <input type="hidden" name="preq_name[]" value="{{ $value->preq_name }}">
+                                <input type="hidden" name="gl_acct_code[]" value="{{ $value->gl_acct_code }}">
+                                <input type="hidden" name="cost_center_code[]" value="{{ $value->cost_center_code }}">
+                                <input type="hidden" name="profit_center_code[]" value="{{ $value->profit_center_code }}">
+                                <input type="hidden" name="storage_location[]" value="{{ $value->storage_location }}">
+                                <input type="hidden" name="material_group[]" value="{{ $value->material_group }}">
+                                <input type="hidden" name="preq_item[]" value="{{ $value->preq_item }}">
+                                <input type="hidden" name="PR_NO[]" value="{{ $value->PR_NO }}">
+                                <input type="hidden" name="notes_detail[]" value="{{ $value->notes }}">
+                                <input type="hidden" name="category[]" value="{{ $value->category }}">
                                 <input type="hidden" class="form-control material_id" name="material_id[]"  id="material_id" readonly value="{{ $value->material_id }}">
-                                <input type="hidden" name="description[]" readonly value="{{ $value->description }}">
-                                <input type="hidden" name="delivery_date[]" readonly value="{{ $value->delivery_date }}">
+                                <input type="hidden" name="description[]" value="{{ $value->description }}">
+                                <input type="hidden" name="delivery_date[]" value="{{ $value->delivery_date }}">
                                 <input type="hidden" class="" name="unit[]" readonly value="{{ $value->unit }}">
-                                <input type="hidden" class="" name="qty[]" readonly value="{{ empty($value->qty) ? 0 : $value->qty }}">
-                                <td>{!! $value->material_id .'<br>'.$value->description !!}</td>
+                                <input type="hidden" class="qty" name="qty[]" readonly value="{{ empty($value->qty) ? 0 : $value->qty }}">
+                                <td>{!! $value->material_id .'<br>'.$value->description !!}
+                                    @php
+                                        $hist = \sapHelp::getHistoryPo($value->material_id);
+                                    @endphp
+                                </td>
                                 <td>{{ $value->unit }}</td>
                                 <td>{{ empty($value->qty) ? 0 : $value->qty }}</td>
                                 <td>
-                                    <select name="history[]" id="history" class="select2 history" required>
+                                    <select name="rfq[]" id="history" class="select2 history" required>
                                         <option> -- Select --</option>
-                                        @foreach(getHistoryPo($value->material_id) as $key => $rows)
-                                            <option value="{{ $rows->price }}">{{ $rows->po['PO_NUMBER'] }}</option>
+                                        @foreach($hist['detail']->item as $key => $rows)
+                                            <option value="{{ $hist['header']->EBELN }}"
+                                                data-price="{{ $rows->NETPR }}"
+                                                data-vendor="{{ substr($hist['header']->LIFNR,3) }}"
+                                                data-currency="{{ $hist['header']->WAERS }}">
+                                                {{ $hist['header']->EBELN }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </td>
@@ -171,30 +171,18 @@
                     <div class="form-group">
                         <label for="">Vendor</label>
                         <select name="vendor_id" id="vendor_id" class="form-control select2" required>
-                            <option>-- Select --</option>
-                            @foreach ($vendor as $val)
-                            <option 
-                                value="{{ $val->code }}"
-                                data-id="{{ $val->id }}"
-                                data-name="{{ $val->name }}"
-                                data-email="{{ $val->email }}"
-                                data-address="{{ $val->address }}"
-                                data-npwp="{{ $val->npwp }}"
-                            >
-                                {{ $val->code }} - {{ $val->name }}
-                            </option>
-                            @endforeach
+                           
                         </select>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="form-group">
                         <label for="">Payment Term</label>
-                        <select name="payment_term" id="payment_term" class="form-control select2" required>
-                            <option>-- Select --</option>
+                        <select name="payment_term" id="payment_term" class="form-control select2">
+                            <option value="">-- Select --</option>
                             @foreach ($top as $val)
-                            <option value="{{ $val->no_of_days }}">
-                                {{ $val->payment_terms." - ".$val->no_of_days }}
+                            <option value="{{ $val->payment_terms }}">
+                                {{ $val->no_of_days." days" }}
                             </option>
                             @endforeach
                         </select>
@@ -292,10 +280,10 @@
         $('.select2').select2()
     }*/
 
-    $('.rfq').on('change', function (e) {
+    /**$('.rfq').on('change', function (e) {
         e.preventDefault()
         $("#image_loading").show()
-        const purchasing_document = $(this).val()
+        const purchasing_document = $(this).data()
         const row = $(this).closest('tr')
         const net = row.find('.net_price')
         const ori = row.find('.original_price')
@@ -315,30 +303,53 @@
             }
         })
     })
+    */
 
     $('.history').on('change', function (e) {
         e.preventDefault()
         $("#image_loading").show()
-        const price = $(this).val()
         const row = $(this).closest('tr')
+        const price = row.find('option:selected').data('price')
         const net = row.find('.net_price')
         const ori = row.find('.original_price')
+        const code = row.find('option:selected').data('vendor')
+        const qty = row.find('.qty').val()
 
+        getVendors(code)
         if( price ) {
             let fixPrice = 0
             const rate = $(".exchange_rate").val()
-            if( $("#currency").val() == 'USD' ) {
-                fixPrice = price / rate
+            if( $("#currency").val() != 'IDR' ) {
+                fixPrice = ((price * rate) * qty)
             } else {
-                fixPrice = price
+                fixPrice = (price * qty)
             }
-            net.val(Math.round(fixPrice))
-            ori.val(price)
+            
+            const oriPrice = (price * qty)
+            net.val(fixPrice)
+            ori.val(price * qty)
         } else {
             net.val(0)
             ori.val(0)
         }
     })
+
+    function getVendors(code)
+    {
+        const url = '{{ route('admin.get-vendors') }}'
+        const $vendor_id = $("#vendor_id")
+        $.getJSON(url, { 'code' : code}, function(items) {
+            let newOptions = ''
+
+             for (var id in items) {
+                newOptions += '<option value="'+ id +'">'+ items[id] +'</option>';
+            }
+
+            $('#image_loading').hide()
+            $vendor_id.html(newOptions)
+        });
+    }
+
     loadChangeRate()
 
     /*$(document).on('keyup', '.exchange_rate', function(event) {

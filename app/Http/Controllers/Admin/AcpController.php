@@ -146,23 +146,24 @@ class AcpController extends Controller
                 //to SAP
             } else if( $posisi->approval_position < $total ) {
                 $posisi = $posisi->approval_position + 1;
-
                 //current approval update
-                QuotationApproval::where('quotation_id',$request->quotation_id)->where('nik',\Auth::user()->nik)->update([
+                QuotationApproval::where('quotation_id',$request->quotation_id)->where('nik',\Auth::user()->nik)
+                ->update([
                     'status'        => QuotationApproval::Approved,
                     'flag'          => QuotationApproval::alreadyApproval,
                     'approve_date'  => \Carbon\Carbon::now(),
                 ]);
 
                 //next approval 
-                QuotationApproval::where('quotation_id',$request->quotation_id)->where('approval_position', $posisi)->update([
+                $next = QuotationApproval::where('quotation_id',$request->quotation_id)->where('approval_position', $posisi)->update([
                     'status' => QuotationApproval::waitingApproval,
                     'flag'   => QuotationApproval::NotYetApproval,
                 ]);
 
                 $users = getProfileLocal(\Auth::user()->nik);
-                $email = $users->email;
-                $name  = $users->name;
+                // $email = $users->email;
+                // $name  = $users->name;
+                $name  = "didi";
                 $email = 'diditriawan13@gmail.com';
                 \Mail::to($email)->send(new enesisApprovalAcpMail($acp, $name));
             }

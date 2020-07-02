@@ -136,7 +136,7 @@ class QuotationDirectController extends Controller
                 'price'                     => $request->get('price')[$i],
                 'original_price'            => $request->get('original_price')[$i],
                 'original_currency'         => $request->get('original_currency')[$i],
-                'qty'                       => $request->get('qty')[$i],
+                'qty'                       => \removeTitik($request->get('qty')[$i]),
                 'qty_pr'                    => $material->qty,
                 'is_assets'                 => $request->get('is_assets')[$i],
                 'assets_no'                 => $request->get('assets_no')[$i],
@@ -161,14 +161,16 @@ class QuotationDirectController extends Controller
                 'tax_code'                  => $request->get('tax_code')[$i],
                 'vendor_id'                 => $request->vendor_id,
                 'request_no'                => $requestNo,
-                'acp_id'                    => $request->get('acp_id')[$i]
+                'acp_id'                    => $request->get('acp_id')[$i],
+                'item_category'             => $request->get('category')[$i],
+                'notes'                     => $request->get('notes_detail')[$i],
             ];
 
             array_push($details, $data);
 
             PurchaseRequestHistory::insertHistory($data);
-            $material->qty      -= $request->get('qty')[$i];
-            $material->qty_order = $request->get('qty')[$i];
+            $material->qty      -= \removeTitik($request->get('qty')[$i]);
+            $material->qty_order = \removeTitik($request->get('qty')[$i]);
             $material->save();
         }
 
@@ -181,6 +183,8 @@ class QuotationDirectController extends Controller
             }
             $max  = Quotation::select(\DB::raw('count(id) as id'))->first()->id;
             $poNo = 'PO/' . date('m') . '/' . date('Y') . '/' . sprintf('%07d', ++$max);
+            $payVendor = \App\Models\Vendor::where('code', $request->vendor_id)
+                ->first()->payment_terms;
             $quotation = new Quotation;
             $quotation->po_no           = $poNo;
             $quotation->notes           = $request->get('notes');
@@ -188,7 +192,7 @@ class QuotationDirectController extends Controller
             $quotation->upload_file     = $file_upload;
             $quotation->status          = Quotation::QuotationDirect;
             $quotation->currency        = $request->get('currency');
-            $quotation->payment_term    = $request->get('payment_term');
+            $quotation->payment_term    = $request->get('payment_term') ?? $payVendor;
             $quotation->vendor_id       = $request->vendor_id;
             $quotation->acp_id          = $request->acp_id[0];
             $quotation->approval_status = Quotation::Waiting;
@@ -319,41 +323,98 @@ class QuotationDirectController extends Controller
     private function _clone_purchase_orders($header, $detail, $poNumber)
     {
         $poId = PurchaseOrder::create([
-                    'quotation_id' => $header->id,
-                    'notes'        => $header->notes,
-                    'po_date'      => \Carbon\Carbon::now(),
-                    'vendor_id'    => $header->vendor_id,
-                    'status'       => 1,
-                    'payment_term' => $header->payment_term,
-                    'currency'     => $header->currency,
-                    'PO_NUMBER'    => $poNumber ?? 0,
-                ]);
-
-        for ($i = 0; $i < count($detail); $i++) { 
-            PurchaseOrdersDetail::create([
-                'purchase_order_id'     => $poId->id,
-                'description'           => $detail[$i]['description'],
-                'qty'                   => $detail[$i]['qty'],
-                'unit'                  => $detail[$i]['unit'],
-                'notes'                 => $detail[$i]['notes'],
-                'price'                 => $detail[$i]['price'],
-                'material_id'           => $detail[$i]['material_id'],
-                'assets_no'             => $detail[$i]['assets_no'],
-                'material_group'        => $datail[$i]['material_group'],
-                'preq_item'             => $detail[$i]['preq_item'],
-                'purchasing_document'   => $detail[$i]['purchasing_document'],
-                'PR_NO'                 => $detail[$i]['PR_NO']
+                'quotation_id' => $header->id,
+                'notes'        => $header->notes,
+                'po_date'      => \Carbon\Carbon::now(),
+                'vendor_id'    => $header->vendor_id,
+                'status'       => 1,
+                'payment_term' => $header->payment_term,
+                'currency'     => $header->currency,
+                'PO_NUMBER'    => $poNumber ?? 0,
             ]);
-        }
+
+            $service        = '';
+            $packageParent  = '000000000';
+            $subpackgparent = '000000000';
+            $noLine         = '';
+            foreach ($detail as $rows) {
+                if( $detail['item_category'] == PurchaseOrdersDetail::SERVICE ) {
+                    //check position parent and child
+                    if( $i == 0 ) {
+                        $noLine = $lineNo;
+                    } else {
+                        if( $i == 1 ) {
+                            $noLine = $lineNo - 1;
+                        } else {
+                            $noLine = $lineNo - $i;
+                        }
+                    }
+                }
+                PurchaseOrdersDetail::create([
+                    'purchase_order_id'         => $poId->id,
+                    'description'               => $rows->description ?? '-',
+                    'qty'                       => $rows->qty,
+                    'unit'                      => $rows->unit,
+                    'notes'                     => $rows->notes ?? '-',
+                    'price'                     => $rows->price ?? 0,
+                    'material_id'               => $rows->material,
+                    'assets_no'                 => $rows->assets_no,
+                    'material_group'            => $rows->material_group,
+                    'preq_item'                 => $rows->preq_item,
+                    'purchasing_document'       => $rows->purchasing_document ?? 0,
+                    'PR_NO'                     => $rows->PR_NO,
+                    'assets_no'                 => $rows->assets_no,
+                    'acp_id'                    => $rows->acp_id,
+                    'short_text'                => $rows->short_text,
+                    'text_id'                   => $rows->text_id,
+                    'text_form'                 => $rows->text_form,
+                    'text_line'                 => $rows->text_line,
+                    'delivery_date_category'    => $rows->delivery_date_category,
+                    'account_assignment'        => $rows->account_assignment,
+                    'purchasing_group_code'     => $rows->purchasing_group_code,
+                    'gl_acct_code'              => $rows->gl_acct_code,
+                    'cost_center_code'          => $rows->cost_center_code,
+                    'profit_center_code'        => $rows->profit_center_code,
+                    'storage_location'          => $rows->storage_location,
+                    'request_no'                => $rows->request_no,
+                    'original_price'            => $rows->original_price,
+                    'currency'                  => $rows->currency,
+                    'item_category'             => $rows->item_category,
+                    'request_no'                => $rows->request_no,
+                    'plant_code'                => $rows->plant_code,
+                    'tax_code'                  => $rows->tax_code == 1 ? 'V1' : 'V0',
+                    'package_no'                => $packageParent,
+                    'subpackage_no'             => $subpackgparent,
+                    'line_no'                   => '000000000'.$noLine,
+                ]);
+            }
     }
 
     private function _insert_details($details, $id)
     {
         $i = 0;
+        $lineNo = 1;
         foreach ($details as $detail) {
             $schedLine  = sprintf('%05d', (10+$i));
             $indexes    = $i+1;
             $poItem     = sprintf('%05d', (10*$indexes));;
+            
+            $service        = '';
+            $packageParent  = '000000000';
+            $subpackgparent = '000000000';
+            $noLine         = '';
+            if( $detail['item_category'] == QuotationDetail::SERVICE ) {
+                //check position parent and child
+                if( $i == 0 ) {
+                    $noLine = $lineNo;
+                } else {
+                    if( $i == 1 ) {
+                        $noLine = $lineNo - 1;
+                    } else {
+                        $noLine = $lineNo - $i;
+                    }
+                }
+            }
 
             $quotationDetail = new QuotationDetail;
             $quotationDetail->quotation_order_id        = $id;
@@ -361,6 +422,7 @@ class QuotationDirectController extends Controller
             $quotationDetail->unit                      = $detail['unit'];
             $quotationDetail->material                  = $detail['material_id'];
             $quotationDetail->description               = $detail['description'];
+            $quotationDetail->notes                     = $detail['notes'];
             $quotationDetail->plant_code                = $detail['plant_code'];
             $quotationDetail->price                     = $detail['price'];
             $quotationDetail->orginal_price             = $detail['original_price'];
@@ -387,17 +449,23 @@ class QuotationDirectController extends Controller
             $quotationDetail->delivery_date             = $detail['delivery_date'];
             $quotationDetail->currency                  = $detail['original_currency'];
             $quotationDetail->request_no                = $detail['request_no'];
+            $quotationDetail->item_category             = $detail['item_category'];
             $quotationDetail->tax_code                  = $detail['tax_code'] == 1 ? 'V1' : 'V0';
+            $quotationDetail->package_no                = $packageParent;
+            $quotationDetail->subpackage_no             = $subpackgparent;
+            $quotationDetail->line_no                   = '000000000'.$noLine;
+
             $quotationDetail->save();
 
             QuotationDelivery::create([
-                'quotation_id'  => $id,
-                'SCHED_LINE'    => $schedLine,
-                'PO_ITEM'       => $poItem,
-                'DELIVERY_DATE' => $detail['delivery_date_new'] ?? $detail['delivery_date'] ,
-                'PREQ_NO'       => $detail['PR_NO'],
-                'PREQ_ITEM'     => $detail['preq_item'],
-                'QUANTITY'      => $detail['qty']
+                'quotation_id'          => $id,
+                'quotation_detail_id'   => $quotationDetail->id,
+                'SCHED_LINE'            => $schedLine,
+                'PO_ITEM'               => $poItem,
+                'DELIVERY_DATE'         => $detail['delivery_date_new'] ?? $detail['delivery_date'] ,
+                'PREQ_NO'               => $detail['PR_NO'],
+                'PREQ_ITEM'             => $detail['preq_item'],
+                'QUANTITY'              => $detail['qty']
             ]);
 
             $i++;

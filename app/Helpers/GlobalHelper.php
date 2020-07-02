@@ -2,6 +2,7 @@
     use Carbon\Carbon;
     use App\Models\employeeApps\User as u;
     use App\Models\employeeApps\ConfigurationApp;
+    use App\Models\Vendor\QuotationApproval;
 
     function configEmailNotification()
     {
@@ -125,5 +126,289 @@
             }
         }
         return true;
+    }
+
+    function saveApprovals($assProc, $quotation_id, $tingkat,$type, $isPlant, $isCmo = false)
+    {
+
+        if( $tingkat == 'STAFF' ) {
+            if( $isPlant ) {
+                QuotationApproval::create([
+                    'nik'                   => 190256,
+                    'approval_position'     => 1,
+                    'status'                => QuotationApproval::waitingApproval,
+                    'quotation_id'          => $quotation_id,
+                    'flag'                  => 1,
+                    'acp_type'              => $type,
+                    'acp_id'                => $quotation_id
+                ]);
+
+                QuotationApproval::create([
+                    'nik'                   => $assProc,
+                    'approval_position'     => 2,
+                    'status'                => QuotationApproval::waitingApproval,
+                    'quotation_id'          => $quotation_id,
+                    'flag'                  => 0,
+                    'acp_type'              => $type,
+                    'acp_id'                => $quotation_id
+                ]);
+    
+                QuotationApproval::create([
+                    'nik'                   => 'PROCUREMENT01',
+                    'approval_position'     => 3,
+                    'status'                => QuotationApproval::waitingApproval,
+                    'quotation_id'          => $quotation_id,
+                    'flag'                  => 0,
+                    'acp_type'              => $type,
+                    'acp_id'                => $quotation_id
+                ]);
+            } else {
+                QuotationApproval::create([
+                    'nik'                   => $assProc,
+                    'approval_position'     => 1,
+                    'status'                => QuotationApproval::waitingApproval,
+                    'quotation_id'          => $quotation_id,
+                    'flag'                  => 1,
+                    'acp_type'              => $type,
+                    'acp_id'                => $quotation_id
+                ]);
+    
+                QuotationApproval::create([
+                    'nik'                   => 'PROCUREMENT01',
+                    'approval_position'     => 2,
+                    'status'                => QuotationApproval::waitingApproval,
+                    'quotation_id'          => $quotation_id,
+                    'flag'                  => 0,
+                    'acp_type'              => $type,
+                    'acp_id'                => $quotation_id
+                ]);
+            }
+            
+        } else if ($tingkat == 'CFO') {
+            if( $isPlant ) {
+                QuotationApproval::create([
+                    'nik'                   => 190256,
+                    'approval_position'     => 1,
+                    'status'                => QuotationApproval::waitingApproval,
+                    'quotation_id'          => $quotation_id,
+                    'flag'                  => 1,
+                    'acp_type'              => $type,
+                    'acp_id'                => $quotation_id
+                ]);
+
+                QuotationApproval::create([
+                    'nik'                   => $assProc,
+                    'approval_position'     => 2,
+                    'status'                => QuotationApproval::waitingApproval,
+                    'quotation_id'          => $quotation_id,
+                    'flag'                  => 0,
+                    'acp_type'              => $type,
+                    'acp_id'                => $quotation_id
+                ]);
+
+    
+                QuotationApproval::create([
+                    'nik'                   => 'PROCUREMENT01',
+                    'approval_position'     => 3,
+                    'status'                => QuotationApproval::waitingApproval,
+                    'quotation_id'          => $quotation_id,
+                    'flag'                  => 0,
+                    'acp_type'              => $type,
+                    'acp_id'                => $quotation_id
+                ]);
+                
+                $nexturutan = 4;
+                if( $isCmo ) {
+                    $nexturutan = 5;
+                    QuotationApproval::create([
+                        'nik'                   => 190256,
+                        'approval_position'     => 4,
+                        'status'                => QuotationApproval::waitingApproval,
+                        'quotation_id'          => $quotation_id,
+                        'flag'                  => 0,
+                        'acp_type'              => $type,
+                        'acp_id'                => $quotation_id
+                    ]);
+                }
+                
+                QuotationApproval::create([
+                    'nik'                   => 180095,
+                    'approval_position'     => $nexturutan,
+                    'status'                => QuotationApproval::waitingApproval,
+                    'quotation_id'          => $quotation_id,
+                    'flag'                  => 0,
+                    'acp_type'              => $type,
+                    'acp_id'                => $quotation_id
+                ]);
+            } else {
+                QuotationApproval::create([
+                    'nik'                   => $assProc,
+                    'approval_position'     => 1,
+                    'status'                => QuotationApproval::waitingApproval,
+                    'quotation_id'          => $quotation_id,
+                    'flag'                  => 1,
+                    'acp_type'              => $type,
+                    'acp_id'                => $quotation_id
+                ]);
+    
+                QuotationApproval::create([
+                    'nik'                   => 'PROCUREMENT01',
+                    'approval_position'     => 2,
+                    'status'                => QuotationApproval::waitingApproval,
+                    'quotation_id'          => $quotation_id,
+                    'flag'                  => 0,
+                    'acp_type'              => $type,
+                    'acp_id'                => $quotation_id
+                ]);
+
+                $nexturutan = 3;
+                if( $isCmo ) {
+                    $nexturutan = 4;
+                    QuotationApproval::create([
+                        'nik'                   => 190256,
+                        'approval_position'     => 3,
+                        'status'                => QuotationApproval::waitingApproval,
+                        'quotation_id'          => $quotation_id,
+                        'flag'                  => 0,
+                        'acp_type'              => $type,
+                        'acp_id'                => $quotation_id
+                    ]);
+                }
+                
+                QuotationApproval::create([
+                    'nik'                   => 180095,
+                    'approval_position'     => $nexturutan,
+                    'status'                => QuotationApproval::waitingApproval,
+                    'quotation_id'          => $quotation_id,
+                    'flag'                  => 0,
+                    'acp_type'              => $type,
+                    'acp_id'                => $quotation_id
+                ]);
+            }
+        } else if ($tingkat == 'COO') {
+            
+            if( $isPlant ) {
+                QuotationApproval::create([
+                    'nik'                   => 190256,
+                    'approval_position'     => 1,
+                    'status'                => QuotationApproval::waitingApproval,
+                    'quotation_id'          => $quotation_id,
+                    'flag'                  => 1,
+                    'acp_type'              => $type,
+                    'acp_id'                => $quotation_id
+                ]);
+
+                QuotationApproval::create([
+                    'nik'                   => $assProc,
+                    'approval_position'     => 2,
+                    'status'                => QuotationApproval::waitingApproval,
+                    'quotation_id'          => $quotation_id,
+                    'flag'                  => 0,
+                    'acp_type'              => $type,
+                    'acp_id'                => $quotation_id
+                ]);
+    
+                QuotationApproval::create([
+                    'nik'                   => 'PROCUREMENT01',
+                    'approval_position'     => 3,
+                    'status'                => QuotationApproval::waitingApproval,
+                    'quotation_id'          => $quotation_id,
+                    'flag'                  => 0,
+                    'acp_type'              => $type,
+                    'acp_id'                => $quotation_id
+                ]);
+
+                $nexturutan = 4;
+                if( $isCmo ) {
+                    $nexturutan = 5;
+                    QuotationApproval::create([
+                        'nik'                   => 190256,
+                        'approval_position'     => 4,
+                        'status'                => QuotationApproval::waitingApproval,
+                        'quotation_id'          => $quotation_id,
+                        'flag'                  => 0,
+                        'acp_type'              => $type,
+                        'acp_id'                => $quotation_id
+                    ]);
+                }
+                
+                QuotationApproval::create([
+                    'nik'                   => 180095,
+                    'approval_position'     => $nexturutan,
+                    'status'                => QuotationApproval::waitingApproval,
+                    'quotation_id'          => $quotation_id,
+                    'flag'                  => 0,
+                    'acp_type'              => $type,
+                    'acp_id'                => $quotation_id
+                ]);
+                QuotationApproval::create([
+                    'nik'                   => 180178,
+                    'approval_position'     => 5,
+                    'status'                => QuotationApproval::waitingApproval,
+                    'quotation_id'          => $quotation_id,
+                    'flag'                  => 0,
+                    'acp_type'              => $type,
+                    'acp_id'                => $quotation_id
+                ]);
+            } else {
+                QuotationApproval::create([
+                    'nik'                   => $assProc,
+                    'approval_position'     => 1,
+                    'status'                => QuotationApproval::waitingApproval,
+                    'quotation_id'          => $quotation_id,
+                    'flag'                  => 1,
+                    'acp_type'              => $type,
+                    'acp_id'                => $quotation_id
+                ]);
+    
+                QuotationApproval::create([
+                    'nik'                   => 'PROCUREMENT01',
+                    'approval_position'     => 2,
+                    'status'                => QuotationApproval::waitingApproval,
+                    'quotation_id'          => $quotation_id,
+                    'flag'                  => 0,
+                    'acp_type'              => $type,
+                    'acp_id'                => $quotation_id
+                ]);
+
+                $nexturutan = 3;
+                if( $isCmo ) {
+                    $nexturutan = 4;
+                    QuotationApproval::create([
+                        'nik'                   => 190256,
+                        'approval_position'     => 3,
+                        'status'                => QuotationApproval::waitingApproval,
+                        'quotation_id'          => $quotation_id,
+                        'flag'                  => 0,
+                        'acp_type'              => $type,
+                        'acp_id'                => $quotation_id
+                    ]);
+                }
+                
+                QuotationApproval::create([
+                    'nik'                   => 180095,
+                    'approval_position'     => $nexturutan,
+                    'status'                => QuotationApproval::waitingApproval,
+                    'quotation_id'          => $quotation_id,
+                    'flag'                  => 0,
+                    'acp_type'              => $type,
+                    'acp_id'                => $quotation_id
+                ]);
+                QuotationApproval::create([
+                    'nik'                   => 180178,
+                    'approval_position'     => 4,
+                    'status'                => QuotationApproval::waitingApproval,
+                    'quotation_id'          => $quotation_id,
+                    'flag'                  => 0,
+                    'acp_type'              => $type,
+                    'acp_id'                => $quotation_id
+                ]);
+            }
+        }
+    }
+
+    function removeTitik($titik)
+    {
+        return str_replace('.','',$titik);
     }
 ?>

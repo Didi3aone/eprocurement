@@ -17,6 +17,7 @@
             </a>
         </div>
         <div class="col-lg-6 text-right">
+            <a href="{{ route('admin.vendors.download') }}" class="btn btn-success"><i class="fa fa-file"></i> Export Vendors</a>
             <button class="btn btn-info" data-toggle="modal" data-target="#modal_import">
                 <i class="fa fa-download"></i> {{ trans('cruds.vendors.import') }}
             </button>

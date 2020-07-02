@@ -25,6 +25,8 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     // Vendors
     Route::delete('vendors/destroy', 'VendorController@massDestroy')->name('vendors.massDestroy');
     Route::post('vendors/import', 'VendorController@import')->name('vendors.import');
+    Route::get('vendors/download', 'VendorController@download')->name('vendors.download');
+    Route::get('vendors/migrate', 'VendorController@migrate')->name('vendors.migrate');
     Route::post('vendors/set-password', 'VendorController@setPassword')->name('vendors.set-password');
     Route::get('get-vendors','VendorController@getVendor')->name('get-vendors');
     Route::resource('vendors', 'VendorController');
@@ -239,6 +241,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
 
     // Master ACP
     Route::get('master-acp-material', 'MasterAcpController@getMaterial')->name('master-acp-material');
+    Route::post('master-acp-confirmation', 'MasterAcpController@confirmation')->name('master-acp-confirmation');
     Route::resource('master-acp', 'MasterAcpController');
 
     // SOAP
