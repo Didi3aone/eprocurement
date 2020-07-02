@@ -178,8 +178,8 @@
                 <div class="col-lg-6">
                     <div class="form-group">
                         <label for="">Payment Term</label>
-                        <select name="payment_term" id="payment_term" class="form-control select2" required>
-                            <option>-- Select --</option>
+                        <select name="payment_term" id="payment_term" class="form-control select2">
+                            <option value="">-- Select --</option>
                             @foreach ($top as $val)
                             <option value="{{ $val->payment_terms }}">
                                 {{ $val->no_of_days." days" }}

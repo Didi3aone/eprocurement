@@ -191,7 +191,8 @@ class QuotationRepeatController extends Controller
             $max  = Quotation::select(\DB::raw('count(id) as id'))->first()->id;
             $poNo = 'PO/' . date('m') . '/' . date('Y') . '/' . sprintf('%07d', ++$max);
 
-            $payVendor = \App\Models\Vendor::where('code', $request->vendor_id)->payment_terms;
+            $payVendor = \App\Models\Vendor::where('code', $request->vendor_id)
+                ->first()->payment_terms;
             $quotation = new Quotation;
             $quotation->po_no           = $poNo;
             $quotation->notes           = $request->get('notes');
