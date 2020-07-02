@@ -287,8 +287,11 @@
         $.getJSON(url,{'purchasing_document': purchasing_document }, function (items) {
             $("#image_loading").hide()
             if(items.purchasing_document) {
+                const qtyVal = qty.val() 
+                const qtyFix = qtyVal.replace(/\./g,'')
+                console.log(qtyFix)
                 let nets = items.net_order_price ? items.net_order_price : '0'
-                let price = qty.val() * nets
+                let price = qtyFix * nets
                 net.val(price)
                 ori.val(nets)
             } else {
