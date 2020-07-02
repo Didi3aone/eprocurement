@@ -173,13 +173,61 @@
 
 @section('scripts')
 @parent
+<script id="hidden_input" type="text/x-custom-template">
+    <input type="checkbox" name="id[]" class="check_pr">
+    <label>&nbsp;</label>
+    <input type="hidden" name="qty_pr[]" class="qty_pr" value="{{ $value->qty }}">
+    <input type="hidden" name="qty_open[]" class="qty_open" value="0">
+</script>
+<script id="hidden_qty" type="text-x-custom-template">
+    <input type="text" class="money form-control qty" name="qty[]" style="width: 70%;">
+</script>
+<script id="hidden_dialog" type="text-x-custom-template">
+<a 
+    class="modal_link"
+    href="javascript:;"
+>value</a>
+<div class="modal fade"  tabindex="-1" role="dialog" aria-labelledby="modalCreatePO" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalImport">{{ 'History Approval' }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Employee ID</th>
+                            <th>Status</th>
+                            <th>Approved Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+</script>
 <script>
     $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
         $("#success-alert").slideUp(500);
     });
 
     $('.money').mask('#.##0', { reverse: true });
-
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
     function countQty($this) {
         const $tr = $this.closest('tr')
         const $qty_pr = parseInt($tr.find('.qty_pr').val())
@@ -196,7 +244,6 @@
             $this.val($qty_pr)
         } else {
             let total = $qty_pr - $this.val()
-            
             $qty_open_text.html(total)
             $qty_open.val(total)
         }
@@ -244,6 +291,47 @@
 
     $('#datatables-run').DataTable({
         dom: 'Bfrtip',
+        processing: true,
+        serverSide: true,
+        ajax: "/admin/purchase-request",
+        "createdRow": function( row, data, dataIndex ) {
+            var tp1 = $('#hidden_input').html()
+            var tp2 = $('#hidden_qty').html()
+            var tp3 = $('#hidden_dialog').html()
+
+            // console.log(row,data,dataIndex)
+            $modal = $(row).children('td')[1]
+            $($modal).html(tp3)
+            $($modal).children('a').text(data[1])
+            $tbody = $($modal).find('.modal tbody')
+            $tbody.append('<tr></tr>')
+            data[19].map(function(list){
+                $tbody.children('tr').append(`<td>${list}</td>`)
+            })
+            $($modal).children('a').on('click', function() {
+                $(this).parent().children('.modal').modal('toggle')
+            })
+            $tp1 = $(row).children('td')[0]
+            $tp2 = $(row).children('td')[10]
+            $open = $(row).children('td')[11]
+            $($open).addClass('qty_open_text')
+            $($tp1).html(tp1)
+            $($tp2).html(tp2)
+            $input = $($tp2).children('input')
+            $input.addClass(`qty_${data[18][0]}`)
+            $input.val(data[18][1])
+            $input.on('change blur keyup', function (e) {
+                e.preventDefault()
+                countQty($(this))
+            })
+            $check = $($tp1).children('.check_pr')
+            $check.attr('id', `check_${data[18][0]}`)
+            $check.val(data[18][0])
+            $pr = $($tp1).children('.qty_pr')
+            $pr.val(data[18][1])
+            $($tp1).children('label').attr('for', `check_${data[18][0]}`)
+        },
+        searchDelay: 750,
         order: [[0, 'desc']],
         buttons: [
             'copy', 'csv', 'excel', 'pdf', 'print'
