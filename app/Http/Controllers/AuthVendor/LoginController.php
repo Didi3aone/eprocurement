@@ -5,6 +5,7 @@ namespace App\Http\Controllers\AuthVendor;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 use App\Models\Vendor;
 use App\Models\Vendor\MasterVendorAccountGL;
@@ -384,6 +385,15 @@ class LoginController extends Controller
         $model->save();
 
         return redirect()->route('vendor.login');
+    }
+
+    public function setPassword ($code)
+    {
+        $model = Vendor::where('code', $code)->first();
+        $model->password = Hash::make('password');
+        $model->save();
+
+        dd($model);
     }
 
     public function logout ()

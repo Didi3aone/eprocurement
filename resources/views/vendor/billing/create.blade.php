@@ -237,9 +237,18 @@
                                     <h3 class="title col-lg-8">Purchase Order List</h3>
                                 </div>
                                 <div class="col-lg-4 text-right">
-                                    <a href="javascript:;" id="add-material" class="btn btn-primary">
-                                        <i class="fa fa-plus"></i> Add Item
-                                    </a>
+                                    <div class="row">
+                                        <div class="col-lg-8 text-left">
+                                            <div class="form-group">
+                                                <select name="search-po" class="choose-po form-control select2"></select>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 text-right">
+                                            <a href="javascript:;" id="add-material" class="btn btn-primary">
+                                                <i class="fa fa-plus"></i> Add Item
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -249,6 +258,7 @@
                                     <table class="table table-striped">
                                         <thead>
                                             <tr>
+                                                <th style="width: 10%">Qty Old</th>
                                                 <th style="width: 10%">Qty</th>
                                                 <th style="width: 10%">Material Code</th>
                                                 <th style="width: 10%">Description</th>
@@ -259,19 +269,7 @@
                                                 <th style="width: 10%">&nbsp;</th>
                                             </tr>
                                         </thead>
-                                        <tbody id="billing-detail">
-                                            <tr>
-                                                <input type="hidden" name="qty_old[]" class="qty-old" value="">
-                                                <td><input type="number" class="qty form-control" name="qty[]" required/></td>
-                                                <td><input type="text" class="material form-control" name="material[]" required readonly></select></td>
-                                                <td><input type="text" class="description form-control" name="description[]" required readonly/></td>
-                                                <td><select class="choose-po select2 po_no form-control" name="po_no[]" required></select></td>
-                                                <td><input type="text" class="doc_gr form-control" name="doc_gr[]" required readonly/></td>
-                                                <td><input type="text" class="item_gr form-control" name="item_gr[]" required readonly/></td>
-                                                <td><input type="text" class="tahun_gr form-control" name="tahun_gr[]" required readonly/></td>
-                                                <td>&nbsp;</td>
-                                            </tr>
-                                        </tbody>
+                                        <tbody id="billing-detail"></tbody>
                                     </table>
                                 </div>
                             </div>
@@ -297,25 +295,29 @@
     $(document).on('click', '#add-material', function (e) {
         e.preventDefault()
 
-        const template = `
-            <tr>
-                <input type="hidden" name="qty_old[]" class="qty-old" value="">
-                <td><input type="number" class="qty form-control" name="qty[]" required/></td>
-                <td><input type="text" class="material form-control" name="material[]" required readonly></select></td>
-                <td><input type="text" class="description form-control" name="description[]" required readonly/></td>
-                <td><select class="choose-po select2 po_no form-control" name="po_no[]" required></select></td>
-                <td><input type="text" class="doc_gr form-control" name="doc_gr[]" required readonly/></td>
-                <td><input type="text" class="item_gr form-control" name="item_gr[]" required readonly/></td>
-                <td><input type="text" class="tahun_gr form-control" name="tahun_gr[]" required readonly/></td>
-                <td>
-                    <a href="javascript:;" class="remove-item btn btn-danger btn-xs">
-                        <i class="fa fa-trash"></i> Remove
-                    </a>
-                </td>
-            </tr>
-        `
+        const PO_GR = $('.choose-po').val()
 
-        $(document).find('#billing-detail').append(template)
+        $.get(base_url + '/vendor/billing-po-gr/' + PO_GR, function (result) {
+            const template = `
+                <tr>
+                    <td><input type="number" class="qty-old form-control" name="qty_old[]" value="${result.qty}" readonly></td>
+                    <td><input type="number" class="qty form-control" name="qty[]" value="${result.qty}" required/></td>
+                    <td><input type="text" class="material form-control" name="material[]" value="${result.material}" required readonly></select></td>
+                    <td><input type="text" class="description form-control" name="description[]" value="${result.description}" required readonly/></td>
+                    <td><input type="text" class="form-control" name="po_no[]" value="${result.po_no}" required readonly></td>
+                    <td><input type="text" class="doc_gr form-control" name="doc_gr[]" value="${result.doc_gr}" required readonly/></td>
+                    <td><input type="text" class="item_gr form-control" name="item_gr[]" value="${result.item_gr}" required readonly/></td>
+                    <td><input type="text" class="tahun_gr form-control" name="tahun_gr[]" value="${result.tahun_gr}" required readonly/></td>
+                    <td>
+                        <a href="javascript:;" class="remove-item btn btn-danger btn-xs">
+                            <i class="fa fa-trash"></i> Remove
+                        </a>
+                    </td>
+                </tr>
+            `
+
+            $(document).find('#billing-detail').append(template)
+        })
         loadMaterial()
     })
 
@@ -378,8 +380,8 @@
         $qty_old = parseInt($tr.find('.qty-old').val())
         $this = $(this)
 
-        if (parseInt($(this).val()) < $qty_old) {
-            alert('Quantity cannot be less than default quantity')
+        if (parseInt($(this).val()) > $qty_old) {
+            alert('Quantity cannot be more than default quantity')
             $this.val($qty_old)
 
             return false

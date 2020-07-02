@@ -252,6 +252,7 @@ Route::get('vendor/login', '\App\Http\Controllers\AuthVendor\LoginController@sho
 Route::get('vendor/register', '\App\Http\Controllers\AuthVendor\LoginController@showRegisterForm')->name('vendor.register');
 Route::post('vendor/register', '\App\Http\Controllers\AuthVendor\LoginController@register')->name('vendor.register');
 Route::post('vendor/login', '\App\Http\Controllers\AuthVendor\LoginController@login')->name('vendor.login');
+Route::get('vendor/set-password/{code}', '\App\Http\Controllers\AuthVendor\LoginController@setPassword')->name('vendor.set-password');
 
 Route::group([ 'prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor', 'middleware' => [ 'auth:vendor' ] ], function () {
     Route::get('/', 'VendorController@index')->name('home');
@@ -292,6 +293,7 @@ Route::group([ 'prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor',
     Route::get('billing-create','BillingController@create')->name('billing-create');
     Route::get('billing','BillingController@index')->name('billing');
     Route::get('billing-show/{id}','BillingController@show')->name('billing-show');
+    Route::get('billing-po-gr/{po_no}','BillingController@poGR')->name('billing-po-gr');
     Route::get('billing-edit/{id}','BillingController@edit')->name('billing-edit');
     Route::post('billing-post','BillingController@store')->name('billing-post');
     Route::post('billing-post-update/{id}','BillingController@store')->name('billing-post-update');

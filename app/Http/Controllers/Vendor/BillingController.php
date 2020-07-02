@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\PurchaseOrder;
 use App\Models\Vendor\Billing;
 use App\Models\Vendor\BillingDetail;
+use App\Models\PurchaseOrderGr;
 use Auth;
 
 class BillingController extends Controller
@@ -285,5 +286,23 @@ class BillingController extends Controller
             ->get();
 
         return view('vendor.billing.edit',compact('billing', 'details'));
+    }
+
+    public function poGR ($po_no)
+    {
+        $model = PurchaseOrderGr::where('po_no', $po_no)->first();
+
+        $material_description = $model->material ? $model->material->description : '';
+        
+        $data['po_no'] = $model->po_no;
+        $data['material'] = $model->material_no;
+        $data['qty'] = $model->qty;
+        $data['doc_gr'] = $model->doc_gr;
+        $data['item_gr'] = $model->item_gr;
+        $data['tahun_gr'] = $model->tahun_gr;
+        $data['reference_document'] = $model->reference_document;
+        $data['description'] = $material_description;
+
+        return response()->json($data);
     }
 }

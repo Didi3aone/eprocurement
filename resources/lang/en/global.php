@@ -256,5 +256,7 @@ return [
     'winner'                               => 'Click to Win',
     'to-winner'                            => 'Winner',
     'approve'                              => 'Approve',
+    'reject'                               => 'Reject',
+    'submit'                               => 'Submit',
     'preview'                              => 'Preview'
 ];

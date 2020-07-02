@@ -54,8 +54,8 @@ class MaterialController extends Controller
             $material_description = $row->material ? $row->material->description : '';
 
             $data[] = [
-                'id' => $row->po_no.'-'.$row->material_no.'-'.$row->qty.'-'.$row->doc_gr.'-'.$row->item_gr.'-'.$row->tahun_gr.'-'.$row->reference_document.'-'.$material_description,
-                'text' => $row->po_no
+                'id' => $row->po_no,
+                'text' => $row->po_no . ' - ' . $material_description
             ];
         }
 
