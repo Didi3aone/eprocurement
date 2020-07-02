@@ -191,13 +191,14 @@ class QuotationRepeatController extends Controller
             $max  = Quotation::select(\DB::raw('count(id) as id'))->first()->id;
             $poNo = 'PO/' . date('m') . '/' . date('Y') . '/' . sprintf('%07d', ++$max);
 
+            $payVendor = \App\Models\Vendor::where('code', $request->vendor_id)->payment_terms;
             $quotation = new Quotation;
             $quotation->po_no           = $poNo;
             $quotation->notes           = $request->get('notes');
             $quotation->doc_type        = $request->get('doc_type');
             $quotation->upload_file     = $request->get('upload_files');
             $quotation->currency        = $request->get('currency');
-            $quotation->payment_term    = $request->get('payment_term');
+            $quotation->payment_term    = $request->get('payment_term') ?? $payVendor;
             $quotation->vendor_id       = $request->vendor_id;
             $quotation->status          = Quotation::QuotationRepeat;
             $quotation->approval_status = Quotation::Waiting;
@@ -404,7 +405,6 @@ class QuotationRepeatController extends Controller
         $i = 0;
         $lineNo = 1;
         foreach ($details as $detail) {
-            $sched = QuotationDelivery::where('quotation_detail_id', $detail->id)->first();
             $schedLine  = sprintf('%05d', (10+$i));
             $indexes    = $i+1;
             $poItem     = sprintf('%05d', (10*$indexes));;

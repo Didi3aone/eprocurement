@@ -182,7 +182,7 @@
                             <option>-- Select --</option>
                             @foreach ($top as $val)
                             <option value="{{ $val->payment_terms }}">
-                                {{ $val->payment_terms." - ".$val->no_of_days }}
+                                {{ $val->no_of_days." days" }}
                             </option>
                             @endforeach
                         </select>
