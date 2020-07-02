@@ -146,7 +146,7 @@
                                         @foreach($hist['detail']->item as $key => $rows)
                                             <option value="{{ $hist['header']->EBELN }}"
                                                 data-price="{{ $rows->NETPR }}"
-                                                data-vendor="{{ $hist['header']->LIFNR }}"
+                                                data-vendor="{{ substr($hist['header']->LIFNR,3) }}"
                                                 data-currency="{{ $hist['header']->WAERS }}">
                                                 {{ $hist['header']->EBELN }}
                                             </option>
