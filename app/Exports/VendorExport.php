@@ -14,6 +14,7 @@ class VendorExport implements WithMultipleSheets
      */
     public function sheets(): array
     {
+        ini_set('memory_limit', '-1');
         $sheets = [];
 
         $sheet = [

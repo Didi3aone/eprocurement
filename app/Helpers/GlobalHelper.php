@@ -406,4 +406,9 @@
             }
         }
     }
+
+    function removeTitik($titik)
+    {
+        return str_replace('.','',$titik);
+    }
 ?>

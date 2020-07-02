@@ -136,7 +136,7 @@ class QuotationDirectController extends Controller
                 'price'                     => $request->get('price')[$i],
                 'original_price'            => $request->get('original_price')[$i],
                 'original_currency'         => $request->get('original_currency')[$i],
-                'qty'                       => $request->get('qty')[$i],
+                'qty'                       => \removeTitik($request->get('qty')[$i]),
                 'qty_pr'                    => $material->qty,
                 'is_assets'                 => $request->get('is_assets')[$i],
                 'assets_no'                 => $request->get('assets_no')[$i],
@@ -169,8 +169,8 @@ class QuotationDirectController extends Controller
             array_push($details, $data);
 
             PurchaseRequestHistory::insertHistory($data);
-            $material->qty      -= $request->get('qty')[$i];
-            $material->qty_order = $request->get('qty')[$i];
+            $material->qty      -= \removeTitik($request->get('qty')[$i]);
+            $material->qty_order = \removeTitik($request->get('qty')[$i]);
             $material->save();
         }
 
@@ -183,6 +183,8 @@ class QuotationDirectController extends Controller
             }
             $max  = Quotation::select(\DB::raw('count(id) as id'))->first()->id;
             $poNo = 'PO/' . date('m') . '/' . date('Y') . '/' . sprintf('%07d', ++$max);
+            $payVendor = \App\Models\Vendor::where('code', $request->vendor_id)
+                ->first()->payment_terms;
             $quotation = new Quotation;
             $quotation->po_no           = $poNo;
             $quotation->notes           = $request->get('notes');
@@ -190,7 +192,7 @@ class QuotationDirectController extends Controller
             $quotation->upload_file     = $file_upload;
             $quotation->status          = Quotation::QuotationDirect;
             $quotation->currency        = $request->get('currency');
-            $quotation->payment_term    = $request->get('payment_term');
+            $quotation->payment_term    = $request->get('payment_term') ?? $payVendor;
             $quotation->vendor_id       = $request->vendor_id;
             $quotation->acp_id          = $request->acp_id[0];
             $quotation->approval_status = Quotation::Waiting;
@@ -375,7 +377,6 @@ class QuotationDirectController extends Controller
                     'profit_center_code'        => $rows->profit_center_code,
                     'storage_location'          => $rows->storage_location,
                     'request_no'                => $rows->request_no,
-                    'taxt_code'                 => $rows->tax_code == 1 ? 'V1' : 'V0',
                     'original_price'            => $rows->original_price,
                     'currency'                  => $rows->currency,
                     'item_category'             => $rows->item_category,
@@ -394,7 +395,6 @@ class QuotationDirectController extends Controller
         $i = 0;
         $lineNo = 1;
         foreach ($details as $detail) {
-            $sched = QuotationDelivery::where('quotation_detail_id', $detail->id)->first();
             $schedLine  = sprintf('%05d', (10+$i));
             $indexes    = $i+1;
             $poItem     = sprintf('%05d', (10*$indexes));;
@@ -454,7 +454,6 @@ class QuotationDirectController extends Controller
             $quotationDetail->package_no                = $packageParent;
             $quotationDetail->subpackage_no             = $subpackgparent;
             $quotationDetail->line_no                   = '000000000'.$noLine;
-            $quotationDetail->SCHED_LINE                = $sched;
 
             $quotationDetail->save();
 

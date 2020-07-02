@@ -1342,6 +1342,7 @@ class SapHelper {
         ];
         $params[0]['RETURN'] = $RETURN;
         $result = $client->__soapCall('ZFM_WS_PO', $params, NULL, $header);
+        // dd($result);
         return $result->EXPPURCHASEORDER;
     }
 }
