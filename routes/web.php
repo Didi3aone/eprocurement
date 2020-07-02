@@ -241,6 +241,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
 
     // Master ACP
     Route::get('master-acp-material', 'MasterAcpController@getMaterial')->name('master-acp-material');
+    Route::post('master-acp-confirmation', 'MasterAcpController@confirmation')->name('master-acp-confirmation');
     Route::resource('master-acp', 'MasterAcpController');
 
     // SOAP

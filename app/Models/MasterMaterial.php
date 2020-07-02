@@ -28,6 +28,11 @@ class MasterMaterial extends Model
         parent::boot();
     }
 
+    public static function getMaterialCmo($materialID)
+    {
+        return MasterMaterial::where('code', $materialID)->first();
+    }
+
     public function material_group()
     {
         return $this->hasOne(\App\Models\MaterialGroup::class, 'code', 'material_group_code');

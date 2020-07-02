@@ -9,14 +9,6 @@
         </ol>
     </div>
 </div>
-@if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-        {{ session('success') }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-@endif
 @can('master_acp_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-6">
@@ -70,6 +62,7 @@
 <script>
 $('#datatables-run').DataTable({
     dom: 'Bfrtip',
+    order: [[0, 'desc']],
     buttons: [
         'copy', 'csv', 'excel', 'pdf', 'print'
     ]

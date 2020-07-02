@@ -44,6 +44,11 @@ class Vendor extends Authenticatable
         'password',
         'status'
     ];
+
+    public function getPaymentTerms($vendorCode)
+    {
+        return Vendor::where('code', $vendorCode)->first()->payment_terms;
+    }
     
     public function getEmailVerifiedAtAttribute($value)
     {

@@ -143,7 +143,22 @@
 @section('scripts')
 <script>
     const base_url = '{{ url('/') }}'
-
+    $(".preview").click(function() {
+        $.ajax({
+            type: "POST",
+            url: "{{ route('admin.master-acp-confirmation') }}",
+            headers: {
+                'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                _token: "{{ csrf_token() }}",
+                data : $("form").serialize()
+            },
+            success: function (data) {
+            
+            }
+        });
+    })
     /**<td class="file_attachment">
         <input type="file" name="file_attachment_${vendor}[]" class="form-control"/>
     </td>**/

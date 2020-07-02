@@ -175,7 +175,7 @@
                         @can('master_acp')
                             <li class="">
                                 <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-money"></i>
-                                    <span class="hide-menu"> Master ACP </span>
+                                    <span class="hide-menu"> ACP </span>
                                 </a>
                                 <ul aria-expanded="false" class="collapse">
                                     <li>

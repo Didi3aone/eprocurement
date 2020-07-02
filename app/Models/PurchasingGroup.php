@@ -22,4 +22,11 @@ class PurchasingGroup extends Model
     {
         parent::boot();
     }
+
+    public function getMaterialCmo($purchasingGroupCode)
+    {
+        return PurchasingGroup::whereIn('dpj_code',['ENG400','HSE400'])
+            ->where('code', $purchasingGroupCode)
+            ->first();
+    }
 }

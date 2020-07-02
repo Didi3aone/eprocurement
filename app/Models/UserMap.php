@@ -23,6 +23,13 @@ class UserMap extends Model
         parent::boot();
     }
 
+    public static function getAssProc($pgGroup)
+    {
+        return UserMap::where('purchasing_group_code','like','%'.$pgGroup."%")
+            ->where('user_id','like','%ASSPROC%')
+            ->first();
+    }
+
     public function nik ()
     {
         return $this->hasOne(\App\Models\User::class, 'nik', 'nik');
