@@ -338,6 +338,7 @@ class QuotationDirectController extends Controller
             $subpackgparent = '000000000';
             $noLine         = '';
             foreach ($detail as $rows) {
+                $deliveryDate = QuotationDelivery::where('quotation_detail_id',$rows->id)->first()->DELIVERY_DATE;
                 if( $detail['item_category'] == PurchaseOrdersDetail::SERVICE ) {
                     //check position parent and child
                     if( $i == 0 ) {
@@ -379,6 +380,8 @@ class QuotationDirectController extends Controller
                     'request_no'                => $rows->request_no,
                     'original_price'            => $rows->original_price,
                     'currency'                  => $rows->currency,
+                    'preq_name'                 => $rows->preq_name,
+                    'delivery_date'             => $deliveryDate,
                     'item_category'             => $rows->item_category,
                     'request_no'                => $rows->request_no,
                     'plant_code'                => $rows->plant_code,

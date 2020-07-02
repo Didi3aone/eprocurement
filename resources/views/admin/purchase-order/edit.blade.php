@@ -38,21 +38,22 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="">Currency</label>
-                                <select name="currency" id="currency" class="form-control select2" required>
+                                <input type="text" class="form-control form-control-line exchange_rate" name="currency" value="{{ $purchaseOrder->currency }}"> 
+                                {{-- <select name="currency" id="currency" class="form-control select2" required>
                                     @foreach($currency as $key => $value)
                                         <option value="{{ $value->currency }}" @if($value->currency == $purchaseOrder->currency) selected @endif>
                                             {{ $value->currency }}
                                         </option>
                                     @endforeach
-                                </select>
+                                </select> --}}
                             </div>
                         </div>
-                        <div class="col-lg-6">
+                        {{-- <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Exchange Rate</label>
                                 <input type="text" class="form-control form-control-line exchange_rate" name="exchange_rate" value="" @if($purchaseOrder->currency == 'IDR') disabled @endif> 
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                     <div class="row">
                         <div class="col-lg-6">
@@ -67,8 +68,8 @@
                                 <select name="payment_term" id="payment_term" class="form-control select2" required>
                                     <option>-- Select --</option>
                                     @foreach ($top as $val)
-                                    <option value="{{ $val->payment_terms }}" @if($val->payment_terms == $purchaseOrder->payment_terms) selected @endif>
-                                        {{ $val->payment_terms." - ".$val->no_of_days }}
+                                    <option value="{{ $val->payment_terms }}" @if($val->payment_terms == $purchaseOrder->payment_term) selected @endif>
+                                        {{ $val->no_of_days." days" }}
                                     </option>
                                     @endforeach
                                 </select>
@@ -94,11 +95,12 @@
                             <tbody>
                                 @foreach($purchaseOrder->orderDetail as $key => $value) 
                                     <tr>
+                                        <input type="hidden" class="id" name="idDetail[]" id="id" value="{{ $value->id }}">
                                        <td>{{ $value->material_id." - ". $value->description }}</td>
                                        <td>{{ $value->unit }}</td>
                                        <td><input type="text" class="qty" name="qty[]" id="qty" value="{{ $value->qty }}"></td>
                                        <td><input type="text" class="price" name="price[]" id="price" value="{{ $value->price }}"</td>
-                                       <td>{{ $value->delivery_date }}</td>
+                                       <td><input type="text" class="delivery_date mdate" name="delivery_date[]" id="delivery_date" value="{{ $value->delivery_date }}"></td>
                                        <td>
                                             <input type="checkbox" class="" id="check_{{ $value->id }}" name="tax_code[]" value="1"
                                                 @if($value->tax_code == 1) checked @endif>

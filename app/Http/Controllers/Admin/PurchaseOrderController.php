@@ -310,14 +310,23 @@ class PurchaseOrderController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $purchaseOrder = PurchaseOrder::findOrFail($id);
-        $purchaseOrder->code = $request->get('code');
-        $purchaseOrder->name = $request->get('name');
-        $purchaseOrder->small_description = $request->get('small_description');
-        $purchaseOrder->description = $request->get('description');
+        $purchaseOrder                      = PurchaseOrder::findOrFail($id);
+        $purchaseOrder->notes               = $request->get('notes');
+        $purchaseOrder->payment_term        = $request->get('payment_term');
         $purchaseOrder->save();
         
-        return redirect()->route('admin.purchase-order.index')->with('status', trans('cruds.purchase_order.alert_success_update'));
+        foreach ($request->idDetail as $key => $rows) {
+            $poDetail = PurchaseOrdersDetail::findOrFail($rows);
+            $poDetail->qty            = $request->qty[$key];
+            $poDetail->price          = $request->price[$key];
+            $poDetail->currency       = $request->currency[$key];
+            $poDetail->delivery_date  = $request->delivery_date[$key];
+            $poDetail->tax_code       = $request->tax_code[$key] == 1 ? 'V1' : 'V0';
+
+            $poDetail->save();
+        }
+        
+        return redirect()->route('admin.purchase-order.index')->with('status', 'Purchase order has been updated');
     }
 
     /**
