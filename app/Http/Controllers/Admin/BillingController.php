@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Gate, Artisan;
 use App\Models\Vendor\Billing;
 use App\Models\PurchaseOrderGr;
+use App\Models\PaymentTerm;
 use Symfony\Component\HttpFoundation\Response;
 
 class BillingController extends Controller
@@ -18,7 +19,11 @@ class BillingController extends Controller
      */
     public function index()
     {
-        $billing = Billing::all();
+        $spv = 0;
+        if (Gate::check('accounting_spv'))
+            $spv = 1;
+
+        $billing = Billing::where('is_spv', $spv)->get();
 
         return view('admin.billing.index', compact('billing'));
     }
@@ -38,11 +43,12 @@ class BillingController extends Controller
     public function edit ($id)
     {
         $billing = Billing::find($id);
+        $payments = PaymentTerm::all();
         $details = PurchaseOrderGr::join('billing_details', 'billing_details.po_no', '=', 'purchase_order_gr.po_no')
             ->where('billing_details.billing_id', $id)
             ->get();
 
-        return view('admin.billing.edit', compact('billing', 'details'));
+        return view('admin.billing.edit', compact('billing', 'payments', 'details'));
     }
 
     public function store (Request $request)

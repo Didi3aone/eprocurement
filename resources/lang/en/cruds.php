@@ -758,7 +758,7 @@ return [
         'alert_success'        => 'Billing Transaction successfully saved',
         'fields'        => [
             'id' => 'ID',
-            'proposal_id' => 'Proposal ID',
+            'proposal_id' => 'Billing ID',
             'document_no' => 'Accounting Document No',
             'vendor_id' => 'Vendor Code',
             'billing_no' => 'Billing No',
