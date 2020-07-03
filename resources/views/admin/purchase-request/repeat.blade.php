@@ -145,13 +145,15 @@
                                 <td>
                                     <select name="rfq[]" id="history" class="select2 history" required>
                                         <option> -- Select --</option>
-                                        @foreach($hist['detail']->item as $key => $rows)
-                                            <option value="{{ $hist['header']->item[$key]->EBELN }}"
-                                                data-price="{{ $rows->NETPR }}"
-                                                data-vendor="{{ substr($hist['header']->item[$key]->LIFNR,3) }}"
-                                                data-currency="{{ $hist['header']->item[$key]->WAERS }}">
-                                                {{ $hist['header']->item[$key]->EBELN."/".$hist['header']->item[$key]->LIFRE }}
-                                            </option>
+                                        @foreach($hist['header']->item as $key => $rows)
+                                            @if(!empty($rows->EBELN))
+                                                <option value="{{ $rows->EBELN }}"
+                                                    data-price="{{ $hist['detail']->item[$key]->NETPR }}"
+                                                    data-vendor="{{ substr($rows->LIFNR,3) }}"
+                                                    data-currency="{{ $rows->WAERS }}">
+                                                    {{ $rows->EBELN."/".$rows->LIFRE }}
+                                                </option>
+                                            @endif
                                         @endforeach
                                     </select>
                                 </td>
@@ -287,7 +289,7 @@
 
         getVendors(code)
         getCurrency(oriCurrency)
-        calculateSumRate(price,0)
+        //calculateSumRate(price,0)
 
         if( price ) {
             let fixPrice = 0
@@ -298,8 +300,8 @@
                 fixPrice = (price)
             }**/
             
-            net.val(price)
-            ori.val(price)
+            net.val(price * 100)
+            ori.val(price * 100)
         } else {
             net.val(0)
             ori.val(0)
