@@ -218,6 +218,7 @@
         "ordering": false
     });
     $(".exchange_rate").attr('disabled',true)
+    $("#currency").attr('disabled',true);
     $("#currency").on('change',function(e) {
         let id = $(this).val()      
         $(".exchange_rate").attr('disabled',false)
@@ -275,8 +276,6 @@
         getCurrency(oriCurrency)
 
         if( price ) {
-            let fixPrice = 0
-            const rate = $(".exchange_rate").val()
             
             net.val(price * 100)
             ori.val(price * 100)
@@ -292,12 +291,31 @@
         const $currency = $("#currency")
         $.getJSON(url, function(items) {
             let newOptions = ''
+            $("#currency").attr('disabled',false);
 
              for (var id in items) {
                 let selected = ''
                 if( currency == items[id] ) {
-                    console.log(items[id])
-                    //console.log('kesini ga')
+                    selected = 'selected'
+                }
+                newOptions += '<option value="'+ id +'" '+selected+'>'+ items[id] +'</option>';
+            }
+
+            $('#image_loading').hide()
+            $currency.html(newOptions)
+        });
+    }
+
+    function getPaymentTerm(vendorCode)
+    {
+        const url = '{{ route('admin.quotation-payment-term') }}'
+        const $currency = $("#currency")
+        $.getJSON(url, function(items) {
+            let newOptions = ''
+
+             for (var id in items) {
+                let selected = ''
+                if( currency == items[id] ) {
                     selected = 'selected'
                 }
                 newOptions += '<option value="'+ id +'" '+selected+'>'+ items[id] +'</option>';
@@ -323,19 +341,5 @@
             $vendor_id.html(newOptions)
         });
     }
-
-    calculateSumRate()
-    //loadChangeRate()
-
-    /*$(document).on('keyup', '.exchange_rate', function(event) {
-        numberWithComma($(this).val())
-    });
-
-    function numberWithComma(number) {
-        let numbers         = number + ''
-        let components      = numbers.split(".");
-            components [0]  = components [0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        return components.join(".");
-    }*/
 </script>
 @endsection

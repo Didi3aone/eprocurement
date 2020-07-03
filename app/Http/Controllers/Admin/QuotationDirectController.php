@@ -463,8 +463,8 @@ class QuotationDirectController extends Controller
             $quotationDetail->request_no                = $detail['request_no'];
             $quotationDetail->item_category             = $detail['item_category'];
             $quotationDetail->tax_code                  = $detail['tax_code'] == 1 ? 'V1' : 'V0';
-            $quotationDetail->package_no                = $packageParent;
-            $quotationDetail->subpackage_no             = $subpackgparent;
+            $quotationDetail->package_no                = $packageParent.$noLine;
+            $quotationDetail->subpackage_no             = $subpackgparent.$noLine;
             $quotationDetail->line_no                   = '000000000'.$noLine;
 
             $quotationDetail->save();

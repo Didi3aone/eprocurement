@@ -91,7 +91,7 @@ class PoGrGet extends Command
                                                 ->where('PO_ITEM', $value[$i]->EBELP)
                                                 ->first();
                                     
-                                    $poDetail->qty_gr           =  $value[$i]->MENGE;
+                                    $poDetail->qty_gr           = $value[$i]->MENGE;
                                     $poDetail->qty_outstanding  = $poDetail->qty - $value[$i]->MENGE;
                                     $poDetail->update();
                                 }

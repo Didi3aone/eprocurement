@@ -22,7 +22,8 @@ class QuotationDetail extends Model
         'flag',
     ];
 
-    public const SERVICE = 9;
+    public const SERVICE  = 9;
+    public const STANDART = 0;
 
     public function quotation ()
     {
