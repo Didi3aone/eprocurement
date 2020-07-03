@@ -163,12 +163,22 @@
                         <span class="hide-menu"> {{ 'Billing' }} </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">
+                        @can('accounting_staff')
                         <li>
                             <a href="{{ route('admin.billing') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
                                 List Billing
                             </a>
                         </li>
+                        @endcan
+                        @can('accounting_spv')
+                        <li>
+                            <a href="{{ route('admin.billing') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> 
+                                List Billing
+                            </a>
+                        </li>
+                        @endcan
                     </ul>
                 </li>
                 @endcan

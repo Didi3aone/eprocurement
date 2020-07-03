@@ -13,6 +13,7 @@
     <div class="col-12">
         <form class="form-material m-t-40" action="{{ route("admin.billing-store") }}" enctype="multipart/form-data" method="post">
             @csrf
+            <input type="hidden" name="id" value="{{ $billing->id }}">
             <div class="card">
                 <div class="card-header">
                     <h3 class="title">Attachment</h3>
@@ -120,7 +121,7 @@
                         </div>
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.no_rekening') }}</label>
-                            <input type="text" class="form-control form-control-line {{ $errors->has('no_rekening') ? 'is-invalid' : '' }}" name="no_rekening" value="{{ $billing->no_rekening ?? old('no_rekening', '') }}" required> 
+                            <input type="text" class="form-control form-control-line {{ $errors->has('no_rekening') ? 'is-invalid' : '' }}" name="no_rekening" value="{{ $billing->npwp ?? old('no_rekening', '') }}" required> 
                             @if($errors->has('no_rekening'))
                                 <div class="invalid-feedback">
                                     {{ $errors->first('no_rekening') }}
@@ -192,7 +193,7 @@
                         </div>
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.tipe_pajak') }}</label>
-                            <input type="text" class="form-control form-control-line {{ $errors->has('tipe_pajak') ? 'is-invalid' : '' }}" name="tipe_pajak" value="{{ $billing->tipe_pajak ?? old('tipe_pajak', '') }}" required> 
+                            <input type="text" class="form-control form-control-line {{ $errors->has('tipe_pajak') ? 'is-invalid' : '' }}" name="tipe_pajak" value="{{ $billing->ppn ?? old('tipe_pajak', '') }}" required> 
                             @if($errors->has('tipe_pajak'))
                                 <div class="invalid-feedback">
                                     {{ $errors->first('tipe_pajak') }}
@@ -210,12 +211,11 @@
                         </div>
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.payment_term_claim') }}</label>
-                            <input type="text" class="form-control form-control-line {{ $errors->has('payment_term_claim') ? 'is-invalid' : '' }}" name="payment_term_claim" value="{{ $billing->payment_term_claim ?? old('payment_term_claim', '') }}" required> 
-                            @if($errors->has('payment_term_claim'))
-                                <div class="invalid-feedback">
-                                    {{ $errors->first('payment_term_claim') }}
-                                </div>
-                            @endif
+                            <select class="form-control form-control-line {{ $errors->has('payment_term_claim') ? 'is-invalid' : '' }}" name="payment_term_claim" value="{{ $billing->payment_term_claim ?? old('payment_term_claim', '') }}" required> 
+                                @foreach ($payments as $pay)
+                                    <option value="{{ $pay->payment_terms }}">{{ $pay->payment_terms }} - {{ $pay->own_explanation }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.jumlah_pph') }}</label>
@@ -361,7 +361,7 @@
                                 </div>
                             @endif
                         </div>
-                        <div class="form-group col-lg-4">
+                        {{-- <div class="form-group col-lg-4">
                             <label>PO <span class="text-danger">*</span> </label>
                             <input type="file" class="form-control form-control-line" name="po" value="{{ $billing->po ?? old('po', '') }}"> 
                         </div>
@@ -381,7 +381,7 @@
                         <div class="form-group col-lg-4">
                             <label>Upload File Faktur <span class="text-danger">*</span></label>
                             <input type="file" class="form-control form-control-line" name="file_faktur" value="{{ $billing->file_faktur ?? old('file_faktur', '') }}"> 
-                        </div>
+                        </div> --}}
 
 
                         {{-- dikarantina --}}
@@ -495,6 +495,7 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 10%">Qty</th>
+                                        <th style="width: 10%">Value</th>
                                         <th style="width: 10%">Material Code</th>
                                         <th style="width: 10%">Description</th>
                                         <th style="width: 20%">PO No</th>
@@ -508,6 +509,7 @@
                                     @foreach ($details as $val)
                                     <tr>
                                         <td><input type="number" class="qty form-control" name="qty[]" value="{{ $val->qty }}" readonly/></td>
+                                        <td><input type="number" class="amount form-control" name="amount[]" value="{{ $val->amount }}" readonly/></td>
                                         <td><input type="text" class="material form-control" name="material[]" value="{{ $val->material_no }}" readonly></select></td>
                                         <td><input type="text" class="description form-control" name="description[]" value="{{ $val->material->description }}" readonly/></td>
                                         <td><input type="text" class="po_no form-control" name="po_no[]" value="{{ $val->po_no }}" readonly></td>
@@ -533,10 +535,17 @@
                                 $disabled = false;
                         @endphp
                         @if ($disabled == false)
-                        <a href="javascript:;" id="approval" type="approve" class="btn btn-warning"> <i class="fa fa-check"></i> {{ trans('global.approve') }}</a>
-                        <a href="javascript:;" id="reject" type="reject" class="btn btn-danger"> <i class="fa fa-check"></i> {{ trans('global.reject') }}</a>
+                            @can('accounting_staff')
+                                <a href="javascript:;" id="approval" type="button" class="btn btn-warning"> <i class="fa fa-check"></i> {{ trans('global.approve') }}</a>
+                                <a href="javascript:;" id="reject" data-toggle="modal" data-id="{{ $billing->id }}" data-target="#modal_rejected_reason" type="button" class="btn btn-danger"> <i class="fa fa-check"></i> {{ trans('global.reject') }}</a>
+                            @endcan
+                            @can('accounting_spv')
+                                <a href="javascript:;" id="reject" data-toggle="modal" data-id="{{ $billing->id }}" data-target="#modal_rejected_reason" type="button" class="btn btn-danger"> <i class="fa fa-check"></i> {{ trans('global.reject') }}</a>
+                            @endcan
                         @elseif ($disabled == true)
-                        <a href="javascript:;" id="submit" type="submit" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.submit') }}</a>
+                            @can('accounting_spv')
+                                <a href="javascript:;" id="submit" type="button" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.submit') }}</a>
+                            @endcan
                         @endif
                         <a href="{{ route('admin.billing') }}" type="button" class="btn btn-inverse">Cancel</a>
                     </div>
@@ -545,4 +554,51 @@
         </form>
     </div>
 </div>
+
+<div class="modal fade" id="modal_rejected_reason" tabindex="-1" role="dialog" aria-labelledby="modal_rejected_reason" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Rejected Reason</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('admin.billing-post-rejected') }}" method="post" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="billing-id" value="">
+                    <textarea name="reason" id="reason" cols="30" rows="10"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-trash"></i> Close</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endsection
+
+@section('scripts')
+<script>
+    $(document).on('click', '#approval', function (result) {
+        $form = $('.form-material')
+        $form.attr('action', '{{ route('admin.billing-post-approved') }}')
+        $form.submit()
+    })
+
+    $(document).on('click', '#reject', function (result) {
+        const $modal = $('#modal_rejected_reason')
+        $modal.find('#billing-id').val($(this).data('id'))
+        $modal.modal('show')
+    })
+
+    $(document).on('click', '#submit', function (result) {
+        $form = $('.form-material')
+        $form.attr('action', '{{ route('admin.billing-store') }}')
+        $form.submit()
+    })
+</script>
 @endsection
