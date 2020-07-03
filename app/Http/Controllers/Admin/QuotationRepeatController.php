@@ -132,6 +132,7 @@ class QuotationRepeatController extends Controller
 
             // insert to pr history
             $data = [
+                'request_detail_id'         => $request->idDetail[$i],
                 'request_no'                => $request->get('rn_no')[$i],
                 'pr_id'                     => $request->get('pr_no')[$i],
                 'rn_no'                     => $request->get('rn_no')[$i],
@@ -349,24 +350,9 @@ class QuotationRepeatController extends Controller
                 'doc_type'     => $header->doc_type
             ]);
 
-            $service        = '';
-            $packageParent  = '000000000';
-            $subpackgparent = '000000000';
-            $noLine         = '';
             foreach ($detail as $rows) {
                 $sched = QuotationDelivery::where('quotation_detail_id', $rows->id)->first();
-                if( $rows->category == PurchaseOrdersDetail::SERVICE ) {
-                    //check position parent and child
-                    if( $i == 0 ) {
-                        $noLine = $lineNo;
-                    } else {
-                        if( $i == 1 ) {
-                            $noLine = $lineNo - 1;
-                        } else {
-                            $noLine = $lineNo - $i;
-                        }
-                    }
-                }
+
                 PurchaseOrdersDetail::create([
                     'purchase_order_id'         => $poId->id,
                     'description'               => $rows->description ?? '-',
@@ -377,12 +363,11 @@ class QuotationRepeatController extends Controller
                     'material_id'               => $rows->material,
                     'assets_no'                 => $rows->assets_no,
                     'material_group'            => $rows->material_group,
-                    'preq_item'                 => $rows->preq_item,
-                    'purchasing_document'       => $rows->purchasing_document,
+                    'preq_item'                 => $rows->PREQ_ITEM,
+                    'purchasing_document'       => $rows->purchasing_document ?? 0,
                     'PR_NO'                     => $rows->PR_NO,
-                    'PO_ITEM'                   => $rows->PO_ITEM,
                     'assets_no'                 => $rows->assets_no,
-                    'acp_id'                    => $rows->acp_id ?? 0,
+                    'acp_id'                    => $rows->acp_id,
                     'short_text'                => $rows->short_text,
                     'text_id'                   => $rows->text_id,
                     'text_form'                 => $rows->text_form,
@@ -394,17 +379,21 @@ class QuotationRepeatController extends Controller
                     'cost_center_code'          => $rows->cost_center_code,
                     'profit_center_code'        => $rows->profit_center_code,
                     'storage_location'          => $rows->storage_location,
+                    'PO_ITEM'                   => $rows->PO_ITEM,
                     'request_no'                => $rows->request_no,
-                    'original_price'            => $rows->orginal_price ?? 0,
-                    'currency'                  => $rows->currency ?? 'IDR',
+                    'original_price'            => $rows->orginal_price,
+                    'currency'                  => $rows->currency,
+                    'preq_name'                 => $rows->preq_name,
+                    'delivery_date'             => $sched->DELIVERY_DATE,
                     'item_category'             => $rows->item_category,
                     'request_no'                => $rows->request_no,
                     'plant_code'                => $rows->plant_code,
                     'tax_code'                  => $rows->tax_code == 1 ? 'V1' : 'V0',
-                    'package_no'                => $packageParent,
-                    'subpackage_no'             => $subpackgparent,
-                    'line_no'                   => '000000000'.$noLine,
-                    'SCHED_LINE'                => $sched
+                    'package_no'                => $rows->package_no,
+                    'subpackage_no'             => $rows->subpackage_no,
+                    'line_no'                   => $rows->line_no,
+                    'SCHED_LINE'                => $sched->SCHED_LINE,
+                    'request_detail_id'         => $rows->request_detail_id
                 ]);
             }
     }
@@ -416,7 +405,7 @@ class QuotationRepeatController extends Controller
         foreach ($details as $detail) {
             $schedLine  = sprintf('%05d', (1+$i));
             $indexes    = $i+1;
-            $poItem     = sprintf('%05d', (10*$indexes));;
+            $poItem     = ('000'.(10+($i*10)));//sprintf('%05d', (10*$indexes));;
             
             $service        = '';
             $packageParent  = '000000000';
@@ -473,6 +462,7 @@ class QuotationRepeatController extends Controller
             $quotationDetail->package_no                = $packageParent.$noLine;
             $quotationDetail->subpackage_no             = $subpackgparent.$noLine;
             $quotationDetail->line_no                   = '000000000'.$noLine;
+            $quotationDetail->request_detail_id         = $detail['request_detail_id'];
 
             $quotationDetail->save();
 

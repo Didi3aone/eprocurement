@@ -551,27 +551,25 @@ class PurchaseRequestController extends Controller
      */
     public function getMaterialPr(Request $request)
     {
-        $model = PurchaseRequestsDetail::where(function ($query) use ($request) {
+        $data = PurchaseRequestsDetail::where(function ($query) use ($request) {
             $query->where('material_id', 'like', '%' . $request->query('q') . '%')
                 ->orWhere('description', 'like', '%' . $request->query('q') . '%');
             })->select(
+                'id',
                 'material_id as code',
-                'description'
+                'description',
+                'unit',
+                'qty',
+                'gl_acct_code',
+                'cost_center_code',
+                'profit_center_code',
+                'storage_location',
+                'short_text',
+                'purchasing_group_code',
+                'plant_code',
             )
-            ->groupBy('material_id','description')
-            ->orderBy('description', 'asc')
-            ->limit(50)
             ->get();
             
-        $data = [];
-        foreach ($model as $row) {
-            array_push($data, [
-                'id' => $row->code,
-                'text' => $row->code.' - '.$row->description,
-                'title' => $row->description
-            ]);
-        }
-        
         return \Response::json($data);
     }
 }

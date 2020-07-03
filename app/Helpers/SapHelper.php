@@ -1777,7 +1777,7 @@ class SapHelper {
                     'QUANTITY' => '',
                     'DISTR_PERC' => '',
                     'NET_VALUE' => '',
-                    'GL_ACCOUNT' => ,// DARI PR 
+                    'GL_ACCOUNT' => '',// DARI PR 
                     'BUS_AREA' => '',
                     'COSTCENTER' => '', //DARI PR
                     'SD_DOC' => '',
@@ -1797,7 +1797,7 @@ class SapHelper {
                     'PART_ACCT' => '',
                     'CMMT_ITEM' => '',
                     'REC_IND' => '',
-                    'FUNDS_CTR' => ,
+                    'FUNDS_CTR' => '',
                     'FUND' => '',
                     'FUNC_AREA' => '',
                     'REF_DATE' => '',

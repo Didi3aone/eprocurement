@@ -125,6 +125,7 @@ class QuotationDirectController extends Controller
             }
 
             $data = [
+                'request_detail_id'         => $request->idDetail[$i],
                 'request_no'                => $request->get('rn_no')[$i],
                 'pr_id'                     => $request->get('pr_no')[$i],
                 'rn_no'                     => $request->get('rn_no')[$i],
@@ -341,24 +342,9 @@ class QuotationDirectController extends Controller
                 'doc_type'     => $header->doc_type
             ]);
 
-            $service        = '';
-            $packageParent  = '000000000';
-            $subpackgparent = '000000000';
-            $noLine         = '';
             foreach ($detail as $rows) {
-                $deliveryDate = QuotationDelivery::where('quotation_detail_id',$rows->id)->first()->DELIVERY_DATE;
-                if( $rows['item_category'] == PurchaseOrdersDetail::SERVICE ) {
-                    //check position parent and child
-                    if( $i == 0 ) {
-                        $noLine = $lineNo;
-                    } else {
-                        if( $i == 1 ) {
-                            $noLine = $lineNo - 1;
-                        } else {
-                            $noLine = $lineNo - $i;
-                        }
-                    }
-                }
+                $sched = QuotationDelivery::where('quotation_detail_id', $rows->id)->first();
+
                 PurchaseOrdersDetail::create([
                     'purchase_order_id'         => $poId->id,
                     'description'               => $rows->description ?? '-',
@@ -369,7 +355,7 @@ class QuotationDirectController extends Controller
                     'material_id'               => $rows->material,
                     'assets_no'                 => $rows->assets_no,
                     'material_group'            => $rows->material_group,
-                    'preq_item'                 => $rows->preq_item,
+                    'preq_item'                 => $rows->PREQ_ITEM,
                     'purchasing_document'       => $rows->purchasing_document ?? 0,
                     'PR_NO'                     => $rows->PR_NO,
                     'assets_no'                 => $rows->assets_no,
@@ -390,14 +376,16 @@ class QuotationDirectController extends Controller
                     'original_price'            => $rows->orginal_price,
                     'currency'                  => $rows->currency,
                     'preq_name'                 => $rows->preq_name,
-                    'delivery_date'             => $deliveryDate,
+                    'delivery_date'             => $sched->DELIVERY_DATE,
                     'item_category'             => $rows->item_category,
                     'request_no'                => $rows->request_no,
                     'plant_code'                => $rows->plant_code,
                     'tax_code'                  => $rows->tax_code == 1 ? 'V1' : 'V0',
-                    'package_no'                => $packageParent,
-                    'subpackage_no'             => $subpackgparent,
-                    'line_no'                   => '000000000'.$noLine,
+                    'package_no'                => $rows->package_no,
+                    'subpackage_no'             => $rows->subpackage_no,
+                    'line_no'                   => $rows->line_no,
+                    'SCHED_LINE'                => $sched->SCHED_LINE,
+                    'request_detail_id'         => $rows->request_detail_id
                 ]);
             }
     }
@@ -409,7 +397,7 @@ class QuotationDirectController extends Controller
         foreach ($details as $detail) {
             $schedLine  = sprintf('%05d', (1+$i));
             $indexes    = $i+1;
-            $poItem     = sprintf('%05d', (10*$indexes));;
+            $poItem     = ('000'.(10+($i*10)));//sprintf('%05d', (10*$indexes));;
             
             $service        = '';
             $packageParent  = '000000000';
@@ -466,6 +454,7 @@ class QuotationDirectController extends Controller
             $quotationDetail->package_no                = $packageParent.$noLine;
             $quotationDetail->subpackage_no             = $subpackgparent.$noLine;
             $quotationDetail->line_no                   = '000000000'.$noLine;
+            $quotationDetail->request_detail_id         = $detail['request_detail_id'];
 
             $quotationDetail->save();
 

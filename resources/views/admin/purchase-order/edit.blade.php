@@ -99,6 +99,7 @@
                                 @foreach($purchaseOrder->orderDetail as $key => $value) 
                                     <tr>
                                         <input type="hidden" class="id" name="idDetail[]" id="id" value="{{ $value->id }}">
+                                        <input type="hidden" class="id" name="idPrDetail[]" id="idPrDetail" value="">
                                        <td>{{ $value->material_id." - ". $value->description }}</td>
                                        <td>{{ $value->unit }}</td>
                                        <td><input type="text" class="qty" name="qty[]" id="qty" value="{{ $value->qty }}"></td>
@@ -149,11 +150,12 @@
         let html = `
                  <tr data-id="${index}">
                     <input type="hidden" class="id" name="idDetail[]" id="id" value="">
+                    <input type="hidden" class="id" name="idPrDetail[]" id="idPrDetail_${index}" value="">
                     <td><select name="material_id[]" id="material_id_${index}" class="material_id select2 form-control"></select></td>
                     <td><input type="text" class="unit" name="unit[]" id="unit_${index}" value=""></td>
                     <td><input type="text" class="qty" name="qty[]" id="qty_${index}" value=""></td>
                     <td><input type="text" class="price" name="price[]" id="price" value=""</td>
-                    <td><input type="text" class="delivery_date mdate" name="delivery_date[]" id="delivery_date" value=""></td>
+                    <td><input type="text" class="delivery_date" id="mdate" name="delivery_date[]" id="delivery_date" value=""></td>
                     <td>
                         <input type="checkbox" class="" id="check_${index}" name="tax_code[]" value="1">
                         <label for="check_${index}">&nbsp;</label>
@@ -234,59 +236,6 @@
         }
     });
 
-    /*function getRq(vendorId)
-    {
-        $("#image_loading").show()
-
-        const url = '{{ route('admin.rfq-get-by-vendor') }}'
-        const row = $(this).closest('tr')
-
-        $rfq = $(".rfq");
-        $.ajax({
-            url: url,
-            data: {
-                vendor_id : vendorId
-            },
-            success: function (data) {
-                $("#image_loading").hide()
-                $rfq.empty()
-                $rfq.append('<option value="">-- Select --</option>')
-
-                for (var i = 0; i < data.length; i++) {
-                    $rfq.append('<option value=' + data[i].purchasing_document + '>'+ data[i].purchasing_document +' </option>');
-                }
-
-                $rfq.change()
-            }
-        });
-        $('.select2').select2()
-    }*/
-
-    /**$('.rfq').on('change', function (e) {
-        e.preventDefault()
-        $("#image_loading").show()
-        const purchasing_document = $(this).data()
-        const row = $(this).closest('tr')
-        const net = row.find('.net_price')
-        const ori = row.find('.original_price')
-        const url = '{{ route('admin.rfq-get-net-price') }}'
-        const materialId = row.find('.material_id')
-        const plant_code = $("#plant_code").val()
-
-        $.getJSON(url,{'purchasing_document': purchasing_document,'plant' : plant_code }, function (items) {
-            $("#image_loading").hide()
-            if(items.purchasing_document) {
-                let nets = items.net_order_price ? items.net_order_price : 'Not found RFQ price'
-                net.val(nets)
-                ori.val(nets)
-            } else {
-                net.val('Not found RFQ price')
-                ori.val(nets)
-            }
-        })
-    })
-    */
-
     $('.history').on('change', function (e) {
         e.preventDefault()
         $("#image_loading").show()
@@ -317,7 +266,7 @@
     })
 
     function listMaterial (i) {
-        const url = '{{ route('admin.get-material') }}'
+        const url = '{{ route('admin.get-material-pr') }}'
         const $material_id = $('#material_id_'+ i);
         $('#image_loading').show()
 
@@ -326,7 +275,8 @@
             $material_id.append('<option value="">-- Select --</option>');
 
             for (var i = 0; i < data.length; i++) {
-                $material_id.append('<option value=' + data[i].materialCode + ' data-unit='+data[i].uom+'>' + data[i].materialCode +' - '+ data[i].description +' </option>');
+                $material_id.append(
+                    '<option value='+data[i].code+' data-unit='+data[i].unit+' data-qty='+data[i].qty+' data-id='+data[i].id+'>' + data[i].code +' - '+ data[i].description +' </option>');
             }
 
             $('#image_loading').hide()
@@ -340,7 +290,11 @@
     function oncange(i) {
         $("#material_id_" + i).change(function() {
             let unit = $('#material_id_'+ i +' option:selected').data('unit')
+            let qty = $('#material_id_'+ i +' option:selected').data('qty')
+            let idz = $('#material_id_'+ i +' option:selected').data('id')
             $("#unit_"+i).val(unit)
+            $("#qty_"+i).val(qty)
+            $("#idPrDetail_"+i).val(idz)
         })
     }
 
@@ -361,17 +315,5 @@
     }
 
     loadChangeRate()
-    //listMaterial(0)
-
-    /*$(document).on('keyup', '.exchange_rate', function(event) {
-        numberWithComma($(this).val())
-    });
-
-    function numberWithComma(number) {
-        let numbers         = number + ''
-        let components      = numbers.split(".");
-            components [0]  = components [0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        return components.join(".");
-    }*/
 </script>
 @endsection
