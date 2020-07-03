@@ -14,7 +14,7 @@ use App\Models\Vendor\QuotationDelivery;
 use App\Models\PurchaseRequestsDetail;
 use App\Models\PurchaseRequestHistory;
 use App\Models\PurchaseOrder;
-use App\Models\PurchaseOrderDetail;
+use App\Models\PurchaseOrdersDetail;
 use App\Models\MasterRfq;
 use App\Models\Vendor;
 use App\Mail\PurchaseOrderMail;
@@ -136,7 +136,7 @@ class QuotationDirectController extends Controller
                 'price'                     => $request->get('price')[$i],
                 'original_price'            => $request->get('original_price')[$i],
                 'original_currency'         => $request->get('original_currency')[$i],
-                'qty'                       => \removeTitik($request->get('qty')[$i]),
+                'qty'                       => $request->get('qty')[$i],
                 'qty_pr'                    => $material->qty,
                 'is_assets'                 => $request->get('is_assets')[$i],
                 'assets_no'                 => $request->get('assets_no')[$i],
@@ -169,8 +169,8 @@ class QuotationDirectController extends Controller
             array_push($details, $data);
 
             PurchaseRequestHistory::insertHistory($data);
-            $material->qty      -= \removeTitik($request->get('qty')[$i]);
-            $material->qty_order = \removeTitik($request->get('qty')[$i]);
+            $material->qty      -= $request->get('qty')[$i];
+            $material->qty_order = $request->get('qty')[$i];
             $material->save();
         }
 
@@ -286,6 +286,7 @@ class QuotationDirectController extends Controller
      */
     public function directApproveHead($ids)
     {
+        \DB::beginTransaction();
         try {
             $ids = base64_decode($ids);
             $ids = explode(',', $ids);
@@ -300,16 +301,22 @@ class QuotationDirectController extends Controller
                 $quotationDeliveryDate = QuotationDelivery::where('quotation_id', $id)->get();
 
                 $sendSap = \sapHelp::sendPoToSap($quotation, $quotationDetail,$quotationDeliveryDate);
-                // $sendSap = true;
-
-                if( $sendSap ) {
-                    $this->_clone_purchase_orders($quotation, $quotationDetail,$sendSap);
-                }
+                
+                $this->_clone_purchase_orders($quotation, $quotationDetail, $sendSap);
+                // if( $sendSap ) {
+                //     \DB::commit();
+                // } else {
+                //     return redirect()->route('admin.quotation-direct-approval-head')->with('error', 'Internal server error');
+                // }
+                // if( $sendSap ) {
+                //     $this->_clone_purchase_orders($quotation, $quotationDetail,$sendSap);
+                // }
 
             }
             return redirect()->route('admin.quotation-direct-approval-head')->with('status', 'Direct Order has been approved!');
         } catch (\Throwable $th) {
             throw $th;
+            \DB::rollback();
         }
     }
 
@@ -340,7 +347,7 @@ class QuotationDirectController extends Controller
             $noLine         = '';
             foreach ($detail as $rows) {
                 $deliveryDate = QuotationDelivery::where('quotation_detail_id',$rows->id)->first()->DELIVERY_DATE;
-                if( $detail['item_category'] == PurchaseOrdersDetail::SERVICE ) {
+                if( $rows['item_category'] == PurchaseOrdersDetail::SERVICE ) {
                     //check position parent and child
                     if( $i == 0 ) {
                         $noLine = $lineNo;
@@ -378,8 +385,9 @@ class QuotationDirectController extends Controller
                     'cost_center_code'          => $rows->cost_center_code,
                     'profit_center_code'        => $rows->profit_center_code,
                     'storage_location'          => $rows->storage_location,
+                    'PO_ITEM'                   => $rows->PO_ITEM,
                     'request_no'                => $rows->request_no,
-                    'original_price'            => $rows->original_price,
+                    'original_price'            => $rows->orginal_price,
                     'currency'                  => $rows->currency,
                     'preq_name'                 => $rows->preq_name,
                     'delivery_date'             => $deliveryDate,
@@ -399,7 +407,7 @@ class QuotationDirectController extends Controller
         $i = 0;
         $lineNo = 1;
         foreach ($details as $detail) {
-            $schedLine  = sprintf('%05d', (10+$i));
+            $schedLine  = sprintf('%05d', (1+$i));
             $indexes    = $i+1;
             $poItem     = sprintf('%05d', (10*$indexes));;
             

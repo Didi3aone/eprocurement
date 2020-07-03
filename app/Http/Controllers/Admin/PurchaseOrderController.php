@@ -233,56 +233,6 @@ class PurchaseOrderController extends Controller
 
         return view('admin.purchase-order.show',compact('purchaseOrder'));   
     }
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    // public function show($id)
-    // {
-    //     $po = PurchaseOrder::find($id);
-    //     $quotation = Quotation::where('po_no', $po->po_no)->get();
-    //     $poinvoice = PurchaseOrderInvoice::where('purchase_order_id', $po->id)->get()->first();
-    //     $pr = PurchaseRequestsDetail::select(
-    //         'purchase_requests_details.request_id',
-    //         'purchase_requests_details.description',
-    //         'purchase_requests_details.qty',
-    //         'purchase_requests_details.unit',
-    //         'purchase_requests_details.price',
-    //         'purchase_requests_details.material_id',
-    //         'purchase_requests_details.assets_no',
-    //         'purchase_requests_details.short_text',
-    //         'purchase_requests_details.delivery_date',
-    //         'purchase_requests_details.account_assignment',
-    //         'purchase_requests_details.gr_ind',
-    //         'purchase_requests_details.ir_ind',
-    //         'purchase_requests_details.purchasing_group_code',
-    //         'purchase_requests_details.preq_name',
-    //         'purchase_requests_details.plant_code',
-    //         'purchase_requests_details.gl_acct_code',
-    //         'purchase_requests_details.cost_center_code',
-    //         'purchase_requests_details.co_area',
-    //         'purchase_requests_details.profit_center_code',
-    //         'purchase_requests_details.storage_location',
-    //         \DB::raw('materials.description as m_description'),
-    //         \DB::raw('material_groups.code as mg_code'),
-    //         \DB::raw('material_groups.description as mg_description'),
-    //         \DB::raw('plants.code as p_code'),
-    //         \DB::raw('plants.description as p_description')
-    //     )
-    //         ->join('materials', 'materials.code', '=', 'purchase_requests_details.material_id')
-    //         ->join('material_groups', 'material_groups.id', '=', 'materials.m_group_id')
-    //         ->join('plants', 'plants.id', '=', 'materials.m_plant_id')
-    //         ->where('purchase_requests_details.request_id', $id)
-    //         ->get();
-
-    //     $types = DocumentType::get();
-
-    //     // get po_no from SAP
-
-    //     return view('admin.purchase-order.form', compact('quotation', 'po', 'pr', 'types', 'poinvoice'));
-    // }
 
     /**
      * Show the form for editing the specified resource.

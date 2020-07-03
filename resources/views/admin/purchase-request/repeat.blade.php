@@ -243,12 +243,6 @@
         })
     }
 
-    $(".conversi").click(function(e) {
-        const rows = $(this).closest('tr')
-        console.log($('.net_price').val())
-        console.log(rows.find('.net_price').val());
-    })
-
     function formatDate(date) {
         var d = new Date(date),
             month = '' + (d.getMonth() + 1),
@@ -265,36 +259,6 @@
 
     $('.money').mask('#.##0', { reverse: true });
 
-    /**const loadChangeRate = function () {
-        $("#currency").on('change',function(e) {
-            let id = $(this).val()
-            
-            if( id != 'IDR' ) {
-                $(".exchange_rate").attr('disabled',false)
-            } else {
-                $(".exchange_rate").val(' ')
-                $(".exchange_rate").attr('disabled',true)
-            }
-        }).trigger('change');
-    }**/
-    $(document).ready(function() {
-        $(".exchange_rate").keyup(function() {
-            //calculateSumRate();
-            //calculateSumRate()
-        });
-    })
-
-    const calculateSumRate = function(ori, rate) {
-        console.log(ori)
-        let changeCurrency = $("#currency").val()
-
-        if( rate != '0' && changeCurrency == 'IDR' ) {
-            $(".net_price").val('0')
-        } else {
-            $(".net_price").val('0')
-        }
-    }   
-
     $('.history').on('change', function (e) {
         e.preventDefault()
         $("#image_loading").show()
@@ -309,16 +273,10 @@
 
         getVendors(code)
         getCurrency(oriCurrency)
-        //calculateSumRate(price,0)
 
         if( price ) {
             let fixPrice = 0
             const rate = $(".exchange_rate").val()
-            /**if( $("#currency").val() != 'IDR' ) {
-                fixPrice = (price * rate) 
-            } else {
-                fixPrice = (price)
-            }**/
             
             net.val(price * 100)
             ori.val(price * 100)

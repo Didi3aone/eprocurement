@@ -55,7 +55,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <label>{{ trans('cruds.master-acp.fields.currency') }}</label>
                         <select name="currency" id="currency" class="form-control select2" required>
                             @foreach($currency as $key => $value)
@@ -64,7 +64,7 @@
                                 </option>
                             @endforeach
                         </select>
-                    </div>
+                    </div> --}}
                     <div class="form-group">
                         <label>{{ trans('cruds.master-acp.fields.start_date') }}</label>
                         <input type="text" class="mdate form-control form-control-line {{ $errors->has('start_date') ? 'is-invalid' : '' }}" name="start_date" value="{{ date('Y-m-d') }}" required> 
@@ -168,11 +168,14 @@
                 <td>
                     <select name="material_${vendor}[]" id="" class="choose-material form-control select2"></select>
                 </td>
+                <td>
+                    <select name="currency_${vendor}[]" id="" class="choose-currency form-control select2"></select>
+                </td>
                 <td class="price">
                     <input type="text" name="price_${vendor}[]" class="money form-control"/>
                 </td>
                 <td class="qty">
-                    <input type="text" name="qty_${vendor}[]" class="form-control"/>
+                    <input type="text" name="qty_${vendor}[]" class="form-control" required/>
                 </td>
                 <td>
                     <button 
@@ -223,9 +226,9 @@
                             <thead>
                                 <tr>
                                     <th style="width: 30%">Material Code</th>
+                                    <th style="width: 20%">Currency</th>
                                     <th style="width: 25%">Price</th>
-                                    <th style="width: 20%">Qty</th>
-                                <!--    <th style="width: 40%">File</th> -->
+                                    <th style="width: 20%">Per</th>
                                     <th class="text-right" style="width: 10%">&nbsp;</th>
                                 </tr>
                             </thead>
@@ -272,6 +275,27 @@
                         fromPr : $("input[name='is_from_pr']:checked").val()
                     };
                 },
+                processResults: function (response) {
+                    return {
+                        results: response
+                    }
+                },
+                cache: true
+            },
+            escapeMarkup: function(markup) {
+                return markup;
+            },
+            templateSelection: function(data) {
+                return data.title;
+            },
+            allowClear: true
+        })
+
+        $(document).find('.choose-currency').select2({
+            ajax: {
+                url: base_url + '/admin/master-acp-currency',
+                dataType: 'json',
+                delay: 300,
                 processResults: function (response) {
                     return {
                         results: response

@@ -14,6 +14,7 @@ class QuotationDelivery extends Model
     protected $fillable = [
         'id',
         'quotation_id',
+        'quotation_detail_id',
         'SCHED_LINE',
         'PO_ITEM',
         'DELIVERY_DATE',

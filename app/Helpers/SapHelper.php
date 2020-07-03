@@ -716,6 +716,7 @@ class SapHelper {
         $params = [];
         $params[0]['POHEADER'] = [];
         $params[0]['POHEADERX'] = [];
+        $params[0]['POTEXTHEADER'] = [];
         $params[0]['POITEM'] = [];
         $params[0]['POITEMX'] = [];
         $params[0]['POSCHEDULE'] = [];
@@ -861,8 +862,18 @@ class SapHelper {
             'EXT_REF' => ''
         ];
 
+        $POTEXTHEADER = [
+            "PO_NUMBER" => '', 
+            "PO_ITEM" =>  '00010',
+            "TEXT_ID" =>  'EKKO',
+            "TEXT_FORM" =>  'EN',
+            "TEXT_LINE" =>  $quotation->notes
+        ];
+
         $params[0]['POHEADER'] = $POHEADER;
         $params[0]['POHEADERX'] = $POHEADERX;
+
+        $params[0]['POTEXTHEADER'] = $POTEXTHEADER;
 
         $count_ = count($quotationDetail);
         $is_array = ((int)$count_) > 1 ? true : false;
@@ -1345,8 +1356,25 @@ class SapHelper {
         ];
         $params[0]['RETURN'] = $RETURN;
         $result = $client->__soapCall('ZFM_WS_PO', $params, NULL, $header);
-        // dd($result);
-        return $result->EXPPURCHASEORDER;
+        if( $result->EXPPURCHASEORDER) {
+            \App\Models\employeeApps\SapLogSoap::create([
+                'log_type' => 'PURCHASE ORDER',
+                'log_type_id' => $quotation->id,
+                'log_params_employee' => \json_encode($params),
+                'log_response_sap' => $result->EXPPURCHASEORDER,
+                'status' => 'SUCCESS',
+            ]); 
+            return $result->EXPPURCHASEORDER;
+        } else {
+            \App\Models\employeeApps\SapLogSoap::create([
+                'log_type' => 'PURCHASE ORDER',
+                'log_type_id' => $quotation->id,
+                'log_params_employee' => \json_encode($params),
+                'log_response_sap' => \json_encode($result),
+                'status' => 'FAILED',
+            ]); 
+            return false;
+        }
     }
 
     public static function sendPOchangeToSap($poNumber)
@@ -1385,16 +1413,16 @@ class SapHelper {
         $POHEADER = [
             'PO_NUMBER' => '',
             'COMP_CODE' => '',
-            'DOC_TYPE' => '',$poHeader->doc_type,
+            'DOC_TYPE' => $poHeader->doc_type,
             'DELETE_IND' => '',
             'STATUS' => '',
             'CREAT_DATE' => '',
             'CREATED_BY' => '',
             'ITEM_INTVL' => '',
-            'VENDOR' => '',//'000'.$poHeader->vendor_id ?? '0003000046',
+            'VENDOR' => '',
             'LANGU' => '',
             'LANGU_ISO' => '',
-            'PMNTTRMS' => '',//$poHeader->payment_term ?? '',
+            'PMNTTRMS' => $poHeader->payment_term ?? '',
             'DSCNT1_TO' => '',
             'DSCNT2_TO' => '',
             'DSCNT3_TO' => '',
@@ -1402,7 +1430,7 @@ class SapHelper {
             'DSCT_PCT2' => '',
             'PURCH_ORG' => '',
             'PUR_GROUP' => '',
-            'CURRENCY' => '',//$poHeader->currency ?? 'IDR',
+            'CURRENCY' => $poHeader->currency ?? 'IDR',
             'CURRENCY_ISO' => '',
             'EXCH_RATE' => '',
             'EX_RATE_FX' => '',
@@ -1453,7 +1481,7 @@ class SapHelper {
         $POHEADERX = [
             'PO_NUMBER' => '',
             'COMP_CODE' => '',
-            'DOC_TYPE' => '',
+            'DOC_TYPE' => 'X',
             'DELETE_IND' => '',
             'STATUS' => '',
             'CREAT_DATE' => '',
@@ -1462,7 +1490,7 @@ class SapHelper {
             'VENDOR' => '',
             'LANGU' => '',
             'LANGU_ISO' => '',
-            'PMNTTRMS' => '',
+            'PMNTTRMS' => 'X',
             'DSCNT1_TO' => '',
             'DSCNT2_TO' => '',
             'DSCNT3_TO' => '',
@@ -1470,7 +1498,7 @@ class SapHelper {
             'DSCT_PCT2' => '',
             'PURCH_ORG' => '',
             'PUR_GROUP' => '',
-            'CURRENCY' => '',
+            'CURRENCY' => 'X',
             'CURRENCY_ISO' => '',
             'EXCH_RATE' => '',
             'EX_RATE_FX' => '',
@@ -1535,7 +1563,7 @@ class SapHelper {
             }
             $POITEM = [
                 'PO_ITEM' => $poDetail[$i]->PO_ITEM,//LINE
-                'DELETE_IND' => '',//$itemDelete,
+                'DELETE_IND' => $itemDelete,
                 'SHORT_TEXT' => '',
                 'MATERIAL' => '',
                 'MATERIAL_EXTERNAL' => '',
@@ -1551,17 +1579,17 @@ class SapHelper {
                 'MATL_GROUP' => '',
                 'INFO_REC' => '',
                 'VEND_MAT' => '',
-                'QUANTITY' => '10',$poDetail[$i]->qty,
+                'QUANTITY' => $poDetail[$i]->qty,
                 'PO_UNIT' => '',
                 'PO_UNIT_ISO' => '',
                 'ORDERPR_UN' => '',
                 'ORDERPR_UN_ISO' => '',
                 'CONV_NUM1' => '',
                 'CONV_DEN1' => '',
-                'NET_PRICE' => '',//$poDetail[$i]->price ?? '1000000',
+                'NET_PRICE' => $poDetail[$i]->price,
                 'PRICE_UNIT' => '',
                 'GR_PR_TIME' => '',
-                'TAX_CODE' => '',//$poDetail[$i]->tax_code == 1 ? 'V1' : 'V0',
+                'TAX_CODE' => $poDetail[$i]->tax_code,
                 'BON_GRP1' => '',
                 'QUAL_INSP' => '',
                 'INFO_UPD' => '',
@@ -1726,7 +1754,7 @@ class SapHelper {
             $POITEMX = [
                 'PO_ITEM' => $poDetail[$i]->PO_ITEM,
                 'PO_ITEMX' => 'X',
-                'DELETE_IND' => '',//$itemDelete,
+                'DELETE_IND' => $itemDelete,
                 'SHORT_TEXT' => '',
                 'MATERIAL' => '',
                 'MATERIAL_EXTERNAL' => '',
@@ -2008,9 +2036,8 @@ class SapHelper {
             "SYSTEM" => "0"
         ];
         $params[0]['RETURN'] = $RETURN;
-        // dd($params);
+      
         $result = $client->__soapCall('ZFM_WS_POCHANGE', $params, NULL, $header);
-        dd($result);
-        return $result->EXPPURCHASEORDER;
+        return $result;
     }
 }

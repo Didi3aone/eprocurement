@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class SapLogSoap extends Model
 {
+    public $table = 'sap_log_soaps';
     protected $primaryKey = 'id';
     public $incrementing = false;
     protected $connection = 'pgsql3';

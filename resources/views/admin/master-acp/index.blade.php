@@ -30,6 +30,7 @@
                                 <th>{{ trans('cruds.master-acp.fields.acp_no') }}</th>
                                 <th>Approval</th>
                                 <th>Project</th>
+                                <th>Created At</th>
                                 <th>&nbsp;</th>
                             </tr>
                         </thead>
@@ -40,6 +41,7 @@
                                     <td>{{ $acp->acp_no ?? '' }}</td>
                                     <td>{{ \App\Models\AcpTable::Type_Status[$acp->status_approval] }}</td>
                                     <td>{{ \App\Models\AcpTable::Type_Project[$acp->is_project] }}</td>
+                                    <td>{{ $acp->created_at }}</td>
                                     <td>
                                         @can('master_acp_show')
                                             <a class="btn btn-primary" href="{{ route('admin.master-acp.show', $acp->id) }}">

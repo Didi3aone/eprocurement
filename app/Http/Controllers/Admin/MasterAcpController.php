@@ -17,7 +17,9 @@ class MasterAcpController extends Controller
 {
     public function index ()
     {
-        $model = AcpTable::orderBy('created_at','desc')->get();
+        $model = AcpTable::orderBy('created_at','desc')
+            ->where('created_by',\Auth::user()->nik)
+            ->get();
 
         return view('admin.master-acp.index', compact('model'));
     }
@@ -71,6 +73,23 @@ class MasterAcpController extends Controller
         }
 
         return response()->json($data);
+    }
+
+    public function getCurrency(Request $request)
+    {
+        $currency = \App\Models\Currency::where('currency','like','%'.strtoupper($request->query('term')).'%')
+                    ->get();
+
+        $data = [];
+        foreach( $currency as $row ) {
+            array_push($data, [
+                'id' => $row->currency,
+                'text' => $row->currency,
+                'title' => $row->currency
+            ]);
+        }
+
+        return \Response::json($data);
     }
 
     public function store (Request $request)
@@ -149,6 +168,7 @@ class MasterAcpController extends Controller
                     $temp['material'] = $row;
                     $temp['price'] = $request['price_' . $value][$i];
                     $temp['qty'] = $request['qty_' . $value][$i];
+                    $temp['currency'] = $request['currency_' . $value][$i];
                     $temp['file_attachment'] = $filename;
                     $result[] = $temp;
                 }
@@ -164,6 +184,7 @@ class MasterAcpController extends Controller
                 $material->material_id = $val['material'];
                 $material->price = $val['price'];
                 $material->qty = $val['qty'];
+                $material->currency = $val['currency'] ?? "IDR";
                 $material->file_attachment = $val['file_attachment'];
                 $material->save();
                 $isCmo = false;
@@ -177,7 +198,6 @@ class MasterAcpController extends Controller
                     $cMo->purchasing_group_code == 'M03' ) {
                         $isCmo = true;
                     }
-
                 $assProc = \App\Models\UserMap::getAssProc($cMo->purchasing_group_code)->user_id;
 
                 if ($val['winner'] == 1) {
