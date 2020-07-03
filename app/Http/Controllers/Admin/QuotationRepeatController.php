@@ -340,6 +340,7 @@ class QuotationRepeatController extends Controller
                 'payment_term' => $header->payment_term,
                 'currency'     => $header->currency,
                 'PO_NUMBER'    => $poNumber ?? 0,
+                'doc_type'     => $header->doc_type
             ]);
 
             $service        = '';
@@ -495,5 +496,17 @@ class QuotationRepeatController extends Controller
         }
 
         return serialize($data);
+    }
+
+    public function getCurrency(Request $request)
+    {
+        $currency = \App\Models\Currency::get();
+
+        $data = [];
+        foreach( $currency as $rows ) {
+            $data[$rows->currency] = $rows->currency;
+        }
+
+        return \Response::json($data);
     }
 }

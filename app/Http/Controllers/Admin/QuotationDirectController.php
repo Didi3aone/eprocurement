@@ -331,6 +331,7 @@ class QuotationDirectController extends Controller
                 'payment_term' => $header->payment_term,
                 'currency'     => $header->currency,
                 'PO_NUMBER'    => $poNumber ?? 0,
+                'doc_type'     => $header->doc_type
             ]);
 
             $service        = '';

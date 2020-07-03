@@ -14,6 +14,7 @@ class PurchaseOrder extends Model
         'notes',
         'po_date',
         'plant_code',
+        'doc_type',
         'vendor_id',
         'status',
         'payment_term',

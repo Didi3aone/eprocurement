@@ -54,6 +54,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::get('material/select2', 'MaterialController@select2')->name('material.select2');
     Route::get('material/list', 'MaterialController@list')->name('material.list');
     Route::post('material/import', 'MaterialController@import')->name('material.import');
+    Route::get('get-material', 'MaterialController@getMaterial')->name('get-material');
     Route::resource('material', 'MaterialController');
 
     // Purchasing Group
@@ -141,6 +142,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::get('purchase-request-project','PurchaseRequestController@approvalProject')->name('purchase-request-project');
     Route::put('purchase-request-project-approval','PurchaseRequestController@approvalPrStaffPurchasing')->name('purchase-request-project-approval');
     Route::put('purchase-request-project-rejected','PurchaseRequestController@rejectedPr')->name('purchase-request-project-rejected');
+    Route::get('get-material-pr','PurchaseRequestController@getMaterialPr')->name('get-material-pr');
     Route::resource('purchase-request', 'PurchaseRequestController');
 
     // request note
@@ -159,6 +161,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::get('purchase-order-approval-po/{id}', 'PurchaseOrderController@approvalPo')->name('purchase-order-approval-po');
     Route::get('purchase-order/release', 'PurchaseOrderController@release')->name('purchase-order.release');
     Route::get('purchase-order/direct', 'PurchaseOrderController@direct')->name('purchase-order.direct');
+    Route::put('purchase-order-destroy', 'PurchaseOrderController@destroyItem')->name('purchase-order-destroy');
     Route::resource('purchase-order', 'PurchaseOrderController');
 
     // quotation
@@ -206,6 +209,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::get('quotation-repeat-approval-ass','QuotationRepeatController@approvalListAss')->name('quotation-repeat-approval-ass');
     Route::get('quotation/repeat/approve/ass/{ids}', 'QuotationRepeatController@repeatpproveAss')->name('quotation.repeat.approve.ass');
     Route::get('quotation/repeat/approve/head/{ids}', 'QuotationRepeatController@repeatApproveHead')->name('quotation.repeat.approve.head');
+    Route::get('quotation-currency','QuotationRepeatController@getCurrency')->name('quotation-currency');
     Route::resource('quotation-repeat', 'QuotationRepeatController');
 
     // rfq

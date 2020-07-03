@@ -190,13 +190,6 @@ class PurchaseRequestController extends Controller
         return view('admin.purchase-request.approval-project', compact('prProject'));
     }
 
-    public function show($id)
-    {
-        $prProject = PurchaseRequest::find($id);
-
-        return view('admin.purchase-request.show', compact('prProject'));
-    }
-
     /**
      * resource for create po.
      *
@@ -549,5 +542,36 @@ class PurchaseRequestController extends Controller
         }
 
         return response()->json($message);
+    }
+
+     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response\Json
+     */
+    public function getMaterialPr(Request $request)
+    {
+        $model = PurchaseRequestsDetail::where(function ($query) use ($request) {
+            $query->where('material_id', 'like', '%' . $request->query('q') . '%')
+                ->orWhere('description', 'like', '%' . $request->query('q') . '%');
+            })->select(
+                'material_id as code',
+                'description'
+            )
+            ->groupBy('material_id','description')
+            ->orderBy('description', 'asc')
+            ->limit(50)
+            ->get();
+            
+        $data = [];
+        foreach ($model as $row) {
+            array_push($data, [
+                'id' => $row->code,
+                'text' => $row->code.' - '.$row->description,
+                'title' => $row->description
+            ]);
+        }
+        
+        return \Response::json($data);
     }
 }

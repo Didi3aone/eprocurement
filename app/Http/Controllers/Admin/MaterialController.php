@@ -229,4 +229,24 @@ class MaterialController extends Controller
             'message' => $message,
         ]);
     }
+
+     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response\Json
+     */
+    public function getMaterial(Request $request)
+    {
+        $data = MasterMaterial::select(
+                    'uom_code as uom',
+                    'code as materialCode',
+                    'description',
+                    'purchasing_group_code as pg_code',
+                    'storage_location_code as storeCode',
+                    'material_group_code'
+                )
+                ->get();
+        
+        return \Response::json($data);
+    }
 }

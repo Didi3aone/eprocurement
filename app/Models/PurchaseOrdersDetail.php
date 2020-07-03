@@ -50,7 +50,8 @@ class PurchaseOrdersDetail extends Model
         'created_at',
         'updated_at',
         'delivery_date',
-        'plant_code'
+        'plant_code',
+        'SCHED_LINE'
     ];
 
     public const SERVICE = 9;

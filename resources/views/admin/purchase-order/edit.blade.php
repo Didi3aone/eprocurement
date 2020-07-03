@@ -84,15 +84,18 @@
                         <table id="datatables-run" class="table table-condesed">
                             <thead>
                                 <tr>
-                                    <th style="width: 20%">Material</th>
+                                    <th style="width: 40%">Material</th>
                                     <th style="width: 5%">Unit</th>
                                     <th style="width: 10%">Qty</th>
                                     <th style="width: 20%">Net Price</th>
                                     <th style="width: 14%">Delivery Date</th>
                                     <th style="width: 64%">Tax</th>
+                                    <th style="width: 64%">
+                                        <button type="button" id="add_item" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add Item</button>
+                                    </th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="poItem">
                                 @foreach($purchaseOrder->orderDetail as $key => $value) 
                                     <tr>
                                         <input type="hidden" class="id" name="idDetail[]" id="id" value="{{ $value->id }}">
@@ -105,6 +108,11 @@
                                             <input type="checkbox" class="" id="check_{{ $value->id }}" name="tax_code[]" value="1"
                                                 @if($value->tax_code == 1) checked @endif>
                                             <label for="check_{{ $value->id }}">&nbsp;</label>
+                                       </td>
+                                       <td>
+                                            <a href="javascript:;" data-id="{{ $value->id }}" class="remove-item btn btn-danger btn-xs">
+                                                <i class="fa fa-trash"></i> Delete
+                                            </a>
                                        </td>
                                     </tr>
                                 @endforeach
@@ -132,6 +140,39 @@
         "bInfo": false,
         "ordering": false
     });
+
+    let index = 1
+    $(document).ready(function() {
+        $('#add_item').on('click', function (e) {
+        e.preventDefault()
+
+        let html = `
+                 <tr data-id="${index}">
+                    <input type="hidden" class="id" name="idDetail[]" id="id" value="">
+                    <td><select name="material_id[]" id="material_id_${index}" class="material_id select2 form-control"></select></td>
+                    <td><input type="text" class="unit" name="unit[]" id="unit_${index}" value=""></td>
+                    <td><input type="text" class="qty" name="qty[]" id="qty_${index}" value=""></td>
+                    <td><input type="text" class="price" name="price[]" id="price" value=""</td>
+                    <td><input type="text" class="delivery_date mdate" name="delivery_date[]" id="delivery_date" value=""></td>
+                    <td>
+                        <input type="checkbox" class="" id="check_${index}" name="tax_code[]" value="1">
+                        <label for="check_${index}">&nbsp;</label>
+                    </td>
+                    <td>
+                        <a href="javascript:;" data-id="" class="remove-item btn btn-danger btn-xs">
+                            <i class="fa fa-trash"></i> Delete
+                        </a>
+                    </td>
+                </tr>
+            `
+
+            $('#poItem').append(html)
+            $('.select2').select2();
+            listMaterial(index)
+            index++
+        })
+    })
+
     $("#currency").on('change',function(e) {
         let id = $(this).val()
         
@@ -171,6 +212,27 @@
             }
         }).trigger('change');
     }
+
+    $(document).on('click','.remove-item',function(e){
+        e.preventDefault()
+        let id = $(this).data('id');
+        let deleteFile = confirm("Do you really want to Delete?");
+
+        if (deleteFile == true) {
+            $(this).parent().parent().remove()
+            $.ajax({
+                url: '{{ route("admin.purchase-order-destroy") }}',
+                type: 'PUT',
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    id:id
+                },
+                success: function(response){
+                    
+                }
+            });
+        }
+    });
 
     /*function getRq(vendorId)
     {
@@ -254,6 +316,34 @@
         }
     })
 
+    function listMaterial (i) {
+        const url = '{{ route('admin.get-material') }}'
+        const $material_id = $('#material_id_'+ i);
+        $('#image_loading').show()
+
+        $.getJSON(url, function (data) {
+            $material_id.empty();
+            $material_id.append('<option value="">-- Select --</option>');
+
+            for (var i = 0; i < data.length; i++) {
+                $material_id.append('<option value=' + data[i].materialCode + ' data-unit='+data[i].uom+'>' + data[i].materialCode +' - '+ data[i].description +' </option>');
+            }
+
+            $('#image_loading').hide()
+            $material_id.change();
+        });
+
+        $('.select2').select2()
+        oncange(i);
+    }
+
+    function oncange(i) {
+        $("#material_id_" + i).change(function() {
+            let unit = $('#material_id_'+ i +' option:selected').data('unit')
+            $("#unit_"+i).val(unit)
+        })
+    }
+
     function getVendors(code)
     {
         const url = '{{ route('admin.get-vendors') }}'
@@ -271,6 +361,7 @@
     }
 
     loadChangeRate()
+    //listMaterial(0)
 
     /*$(document).on('keyup', '.exchange_rate', function(event) {
         numberWithComma($(this).val())

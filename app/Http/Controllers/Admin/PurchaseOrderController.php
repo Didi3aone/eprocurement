@@ -317,16 +317,28 @@ class PurchaseOrderController extends Controller
         
         foreach ($request->idDetail as $key => $rows) {
             $poDetail = PurchaseOrdersDetail::findOrFail($rows);
-            $poDetail->qty            = $request->qty[$key];
-            $poDetail->price          = $request->price[$key];
-            $poDetail->currency       = $request->currency[$key];
-            $poDetail->delivery_date  = $request->delivery_date[$key];
-            $poDetail->tax_code       = $request->tax_code[$key] == 1 ? 'V1' : 'V0';
 
-            $poDetail->save();
+            if( $poDetail !='' ) {
+                $poDetail->qty            = $request->qty[$key];
+                $poDetail->price          = $request->price[$key];
+                $poDetail->currency       = $request->currency[$key];
+                $poDetail->delivery_date  = $request->delivery_date[$key];
+                $poDetail->tax_code       = $request->tax_code[$key] == 1 ? 'V1' : 'V0';
+    
+                $poDetail->update();
+            } else {
+                
+            }
+        }
+        $poChange = \sapHelp::sendPOchangeToSap($purchaseOrder->PO_NUMBER);
+
+        if( $poChange ) {
+            return redirect()->route('admin.purchase-order.index')->with('status', 'Purchase order has been updated');
+        } else {
+            return redirect()->route('admin.purchase-order.edit',$id)->withInput();
+            \Session::flash('error','Internal server error');
         }
         
-        return redirect()->route('admin.purchase-order.index')->with('status', 'Purchase order has been updated');
     }
 
     /**
@@ -355,5 +367,27 @@ class PurchaseOrderController extends Controller
             'success' => $success,
             'message' => $message,
         ]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyItem(Request $request)
+    {
+        // abort_if(Gate::denies('purchase_order_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        
+        if( isset($request->id) ) {
+            $delete = PurchaseOrdersDetail::findOrFail($request->id);
+            $delete->is_active = 0;
+            $delete->update();
+
+            return response()->json([
+                'success' => true
+            ], 200);
+        }
     }
 }

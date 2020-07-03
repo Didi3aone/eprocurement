@@ -66,11 +66,11 @@
                     <div class="form-group">
                         <label for="">Currency</label>
                         <select name="currency" id="currency" class="form-control select2" required>
-                            @foreach($currency as $key => $value)
+                            {{-- @foreach($currency as $key => $value)
                                 <option value="{{ $value->currency }}" @if($value->currency == 'IDR') selected @endif>
                                     {{ $value->currency }}
                                 </option>
-                            @endforeach
+                            @endforeach --}}
                         </select>
                     </div>
                 </div>
@@ -93,6 +93,7 @@
                             <th style="width: 5%">Unit</th>
                             <th style="width: 10%">Qty</th>
                             <th style="width: 20%">History PO</th>
+                            <th style="width: 20%">Currency</th>
                             <th style="width: 20%">Original Price</th>
                             <th style="width: 20%">Net Price</th>
                             <th style="width: 14%">Delivery Date</th>
@@ -100,6 +101,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {{-- <a class="btn btn-primary conversi" href="javascript:void(0)"><i class="fa fa-money"></i> Conversion</a> --}}
                         @foreach($data as $key => $value) 
                             <tr>
                                 <input type="hidden" name="id[]" value="{{ $value->id }}">
@@ -144,15 +146,16 @@
                                     <select name="rfq[]" id="history" class="select2 history" required>
                                         <option> -- Select --</option>
                                         @foreach($hist['detail']->item as $key => $rows)
-                                            <option value="{{ $hist['header']->EBELN }}"
+                                            <option value="{{ $hist['header']->item[$key]->EBELN }}"
                                                 data-price="{{ $rows->NETPR }}"
-                                                data-vendor="{{ substr($hist['header']->LIFNR,3) }}"
-                                                data-currency="{{ $hist['header']->WAERS }}">
-                                                {{ $hist['header']->EBELN }}
+                                                data-vendor="{{ substr($hist['header']->item[$key]->LIFNR,3) }}"
+                                                data-currency="{{ $hist['header']->item[$key]->WAERS }}">
+                                                {{ $hist['header']->item[$key]->EBELN."/".$hist['header']->item[$key]->LIFRE }}
                                             </option>
                                         @endforeach
                                     </select>
                                 </td>
+                                <td><input type="text" class="original_currency" name="original_currency[]" id="original_currency" value="" readonly></td>
                                 <td><input type="text" class="original_price" name="original_price[]" id="original_price" value="" readonly></td>
                                 <td><input type="text" class="net_price" name="price[]" id="net_price" value="" readonly></td>
                                 <td><input type="text" class="mdate" name="delivery_date_new[]" id="delivery_date_new" value="{{ $value->delivery_date }}"></td>
@@ -212,15 +215,16 @@
         "bInfo": false,
         "ordering": false
     });
+    $(".exchange_rate").attr('disabled',true)
     $("#currency").on('change',function(e) {
-        let id = $(this).val()
-        
-        if( id != 'IDR' ) {
-            $(".exchange_rate").attr('disabled',false)
-        } else {
-            $(".exchange_rate").val(' ')
-            $(".exchange_rate").attr('disabled',true)
-        }
+        let id = $(this).val()      
+        $(".exchange_rate").attr('disabled',false)
+    })
+
+    $(".conversi").click(function(e) {
+        const rows = $(this).closest('tr')
+        console.log($('.net_price').val())
+        console.log(rows.find('.net_price').val());
     })
 
     function formatDate(date) {
@@ -239,7 +243,7 @@
 
     $('.money').mask('#.##0', { reverse: true });
 
-    const loadChangeRate = function () {
+    /**const loadChangeRate = function () {
         $("#currency").on('change',function(e) {
             let id = $(this).val()
             
@@ -250,89 +254,79 @@
                 $(".exchange_rate").attr('disabled',true)
             }
         }).trigger('change');
-    }
-
-    /*function getRq(vendorId)
-    {
-        $("#image_loading").show()
-
-        const url = '{{ route('admin.rfq-get-by-vendor') }}'
-        const row = $(this).closest('tr')
-
-        $rfq = $(".rfq");
-        $.ajax({
-            url: url,
-            data: {
-                vendor_id : vendorId
-            },
-            success: function (data) {
-                $("#image_loading").hide()
-                $rfq.empty()
-                $rfq.append('<option value="">-- Select --</option>')
-
-                for (var i = 0; i < data.length; i++) {
-                    $rfq.append('<option value=' + data[i].purchasing_document + '>'+ data[i].purchasing_document +' </option>');
-                }
-
-                $rfq.change()
-            }
+    }**/
+    $(document).ready(function() {
+        $(".exchange_rate").keyup(function() {
+            //calculateSumRate();
+            //calculateSumRate()
         });
-        $('.select2').select2()
-    }*/
-
-    /**$('.rfq').on('change', function (e) {
-        e.preventDefault()
-        $("#image_loading").show()
-        const purchasing_document = $(this).data()
-        const row = $(this).closest('tr')
-        const net = row.find('.net_price')
-        const ori = row.find('.original_price')
-        const url = '{{ route('admin.rfq-get-net-price') }}'
-        const materialId = row.find('.material_id')
-        const plant_code = $("#plant_code").val()
-
-        $.getJSON(url,{'purchasing_document': purchasing_document,'plant' : plant_code }, function (items) {
-            $("#image_loading").hide()
-            if(items.purchasing_document) {
-                let nets = items.net_order_price ? items.net_order_price : 'Not found RFQ price'
-                net.val(nets)
-                ori.val(nets)
-            } else {
-                net.val('Not found RFQ price')
-                ori.val(nets)
-            }
-        })
     })
-    */
+
+    const calculateSumRate = function(ori, rate) {
+        console.log(ori)
+        let changeCurrency = $("#currency").val()
+
+        if( rate != '0' && changeCurrency == 'IDR' ) {
+            $(".net_price").val('0')
+        } else {
+            $(".net_price").val('0')
+        }
+    }   
 
     $('.history').on('change', function (e) {
         e.preventDefault()
         $("#image_loading").show()
         const row = $(this).closest('tr')
         const price = row.find('option:selected').data('price')
+        const oriCurrency = row.find('option:selected').data('currency')
         const net = row.find('.net_price')
         const ori = row.find('.original_price')
         const code = row.find('option:selected').data('vendor')
         const qty = row.find('.qty').val()
+        const oriCurr = row.find('.original_currency').val(oriCurrency)
 
         getVendors(code)
+        getCurrency(oriCurrency)
+        calculateSumRate(price,0)
+
         if( price ) {
             let fixPrice = 0
             const rate = $(".exchange_rate").val()
-            if( $("#currency").val() != 'IDR' ) {
-                fixPrice = ((price * rate) * qty)
+            /**if( $("#currency").val() != 'IDR' ) {
+                fixPrice = (price * rate) 
             } else {
-                fixPrice = (price * qty)
-            }
+                fixPrice = (price)
+            }**/
             
-            const oriPrice = (price * qty)
-            net.val(fixPrice)
-            ori.val(price * qty)
+            net.val(price)
+            ori.val(price)
         } else {
             net.val(0)
             ori.val(0)
         }
     })
+
+    function getCurrency(currency)
+    {
+        const url = '{{ route('admin.quotation-currency') }}'
+        const $currency = $("#currency")
+        $.getJSON(url, function(items) {
+            let newOptions = ''
+
+             for (var id in items) {
+                let selected = ''
+                if( currency == items[id] ) {
+                    console.log(items[id])
+                    //console.log('kesini ga')
+                    selected = 'selected'
+                }
+                newOptions += '<option value="'+ id +'" '+selected+'>'+ items[id] +'</option>';
+            }
+
+            $('#image_loading').hide()
+            $currency.html(newOptions)
+        });
+    }
 
     function getVendors(code)
     {
@@ -350,7 +344,8 @@
         });
     }
 
-    loadChangeRate()
+    calculateSumRate()
+    //loadChangeRate()
 
     /*$(document).on('keyup', '.exchange_rate', function(event) {
         numberWithComma($(this).val())
