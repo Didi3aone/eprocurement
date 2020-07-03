@@ -221,7 +221,27 @@
     $("#currency").on('change',function(e) {
         let id = $(this).val()      
         $(".exchange_rate").attr('disabled',false)
+        handleChange()
     })
+    $(".exchange_rate").on('keyup change', function(e) {
+        handleChange()
+    })
+    function handleChange() {
+        $tr = $('#datatables-run tbody tr')
+        var $ex = $('.exchange_rate').val()
+        $ex = $ex===''? '1': $ex
+        $.each($tr, function(i, $el) {
+            var $ori = $($el).find('.original_currency').val()
+            var $curr = $("#currency").val()
+            var ori = $($el).find('.original_price').val()
+            ori = ori===''? '1': ori
+            var $net = $($el).find('.net_price')
+            var update = parseFloat(ori) * parseFloat($ex)
+            if($ori!== $curr) {
+                $net.val(parseInt(update))
+            }
+        })
+    }
 
     $(".conversi").click(function(e) {
         const rows = $(this).closest('tr')
