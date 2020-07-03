@@ -145,13 +145,15 @@
                                 <td>
                                     <select name="rfq[]" id="history" class="select2 history" required>
                                         <option> -- Select --</option>
-                                        @foreach($hist['detail']->item as $key => $rows)
-                                            <option value="{{ $hist['header']->item[$key]->EBELN }}"
-                                                data-price="{{ $rows->NETPR }}"
-                                                data-vendor="{{ substr($hist['header']->item[$key]->LIFNR,3) }}"
-                                                data-currency="{{ $hist['header']->item[$key]->WAERS }}">
-                                                {{ $hist['header']->item[$key]->EBELN."/".$hist['header']->item[$key]->LIFRE }}
-                                            </option>
+                                        @foreach($hist['header']->item as $key => $rows)
+                                            @if(!empty($rows->EBELN))
+                                                <option value="{{ $rows->EBELN }}"
+                                                    data-price="{{ $hist['detail']->item[$key]->NETPR }}"
+                                                    data-vendor="{{ substr($rows->LIFNR,3) }}"
+                                                    data-currency="{{ $rows->WAERS }}">
+                                                    {{ $rows->EBELN."/".$rows->LIFRE }}
+                                                </option>
+                                            @endif
                                         @endforeach
                                     </select>
                                 </td>
@@ -216,16 +218,31 @@
         "ordering": false
     });
     $(".exchange_rate").attr('disabled',true)
+    $("#currency").attr('disabled',true);
     $("#currency").on('change',function(e) {
         let id = $(this).val()      
         $(".exchange_rate").attr('disabled',false)
+        handleChange()
     })
-
-    $(".conversi").click(function(e) {
-        const rows = $(this).closest('tr')
-        console.log($('.net_price').val())
-        console.log(rows.find('.net_price').val());
+    $(".exchange_rate").on('keyup change', function(e) {
+        handleChange()
     })
+    function handleChange() {
+        $tr = $('#datatables-run tbody tr')
+        var $ex = $('.exchange_rate').val()
+        $ex = $ex===''? '1': $ex
+        $.each($tr, function(i, $el) {
+            var $ori = $($el).find('.original_currency').val()
+            var $curr = $("#currency").val()
+            var ori = $($el).find('.original_price').val()
+            ori = ori===''? '1': ori
+            var $net = $($el).find('.net_price')
+            var update = parseFloat(ori) * parseFloat($ex)
+            if($ori!== $curr) {
+                $net.val(parseInt(update))
+            }
+        })
+    }
 
     function formatDate(date) {
         var d = new Date(date),
@@ -243,36 +260,6 @@
 
     $('.money').mask('#.##0', { reverse: true });
 
-    /**const loadChangeRate = function () {
-        $("#currency").on('change',function(e) {
-            let id = $(this).val()
-            
-            if( id != 'IDR' ) {
-                $(".exchange_rate").attr('disabled',false)
-            } else {
-                $(".exchange_rate").val(' ')
-                $(".exchange_rate").attr('disabled',true)
-            }
-        }).trigger('change');
-    }**/
-    $(document).ready(function() {
-        $(".exchange_rate").keyup(function() {
-            //calculateSumRate();
-            //calculateSumRate()
-        });
-    })
-
-    const calculateSumRate = function(ori, rate) {
-        console.log(ori)
-        let changeCurrency = $("#currency").val()
-
-        if( rate != '0' && changeCurrency == 'IDR' ) {
-            $(".net_price").val('0')
-        } else {
-            $(".net_price").val('0')
-        }
-    }   
-
     $('.history').on('change', function (e) {
         e.preventDefault()
         $("#image_loading").show()
@@ -287,19 +274,11 @@
 
         getVendors(code)
         getCurrency(oriCurrency)
-        calculateSumRate(price,0)
 
         if( price ) {
-            let fixPrice = 0
-            const rate = $(".exchange_rate").val()
-            /**if( $("#currency").val() != 'IDR' ) {
-                fixPrice = (price * rate) 
-            } else {
-                fixPrice = (price)
-            }**/
             
-            net.val(price)
-            ori.val(price)
+            net.val(price * 100)
+            ori.val(price * 100)
         } else {
             net.val(0)
             ori.val(0)
@@ -312,12 +291,31 @@
         const $currency = $("#currency")
         $.getJSON(url, function(items) {
             let newOptions = ''
+            $("#currency").attr('disabled',false);
 
              for (var id in items) {
                 let selected = ''
                 if( currency == items[id] ) {
-                    console.log(items[id])
-                    //console.log('kesini ga')
+                    selected = 'selected'
+                }
+                newOptions += '<option value="'+ id +'" '+selected+'>'+ items[id] +'</option>';
+            }
+
+            $('#image_loading').hide()
+            $currency.html(newOptions)
+        });
+    }
+
+    function getPaymentTerm(vendorCode)
+    {
+        const url = '{{ route('admin.quotation-payment-term') }}'
+        const $currency = $("#currency")
+        $.getJSON(url, function(items) {
+            let newOptions = ''
+
+             for (var id in items) {
+                let selected = ''
+                if( currency == items[id] ) {
                     selected = 'selected'
                 }
                 newOptions += '<option value="'+ id +'" '+selected+'>'+ items[id] +'</option>';
@@ -343,19 +341,5 @@
             $vendor_id.html(newOptions)
         });
     }
-
-    calculateSumRate()
-    //loadChangeRate()
-
-    /*$(document).on('keyup', '.exchange_rate', function(event) {
-        numberWithComma($(this).val())
-    });
-
-    function numberWithComma(number) {
-        let numbers         = number + ''
-        let components      = numbers.split(".");
-            components [0]  = components [0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        return components.join(".");
-    }*/
 </script>
 @endsection

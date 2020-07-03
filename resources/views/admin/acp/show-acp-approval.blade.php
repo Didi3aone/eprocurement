@@ -29,10 +29,10 @@
                                         <th>ACP No.</th>
                                         <td>{{ $acp->acp_no }}</td>
                                     </tr>
-                                    <tr>
+                                    {{-- <tr>
                                         <th>Currency</th>
                                         <td>{{ $acp->currency }}</td>
-                                    </tr>
+                                    </tr> --}}
                                     <tr>
                                         <th>File</th>
                                         @if(isset($acp->upload_file))
@@ -64,7 +64,8 @@
                                     <th><b>Winner</b></th>
                                     <th style="text-align:center;">Material</th>
                                     <th style="text-align:center;">Unit</th>
-                                    <th style="text-align:center;">Qty</th>
+                                    <th style="text-align:center;">Per</th>
+                                    <th style="text-align:center;">Currency</th>
                                     <th style="text-align:center;">Price</th>
                                 </tr>
                             </thead>
@@ -84,6 +85,7 @@
                                         <td>{{ $row->material_id." - ".$row->description }}</td>
                                         <td>{{ $row->uom_code }}</td>
                                         <td>{{ $row->qty }}</td>
+                                        <td>{{ $row->currency }}</td>
                                         <td>{{ number_format($row->price,2) }}</td>
                                 </tr>
                                 @endforeach

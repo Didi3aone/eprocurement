@@ -297,10 +297,11 @@ class QuotationRepeatController extends Controller
      */
     public function repeatApproveHead($ids)
     {
+        \DB::beginTransaction();
         try {
             $ids = base64_decode($ids);
             $ids = explode(',', $ids);
- 
+            
             foreach( $ids as $id ) {
                 $quotation = Quotation::find($id);
                 $quotation->approval_status = Quotation::ApprovalHead;
@@ -310,15 +311,20 @@ class QuotationRepeatController extends Controller
                 $quotationDetail = QuotationDetail::where('quotation_order_id', $id)->get();
                 $quotationDeliveryDate = QuotationDelivery::where('quotation_id', $id)->get();
 
-                $sendSap = true;//\sapHelp::sendPoToSap($quotation, $quotationDetail,$quotationDeliveryDate);
+                $sendSap = \sapHelp::sendPoToSap($quotation, $quotationDetail,$quotationDeliveryDate);
 
                 if( $sendSap ) {
                     $this->_clone_purchase_orders($quotation, $quotationDetail, $sendSap);
+                    \DB::commit();
+                } else {
+                    \DB::rollback();
+                    return redirect()->route('admin.quotation-repeat-approval-head')->with('error', 'Internal server error');
                 }
             }
             return redirect()->route('admin.quotation-repeat-approval-head')->with('status', 'Direct Order has been approved!');
         } catch (\Throwable $th) {
             throw $th;
+            \DB::rollback();
         }
     }
 
@@ -374,6 +380,7 @@ class QuotationRepeatController extends Controller
                     'preq_item'                 => $rows->preq_item,
                     'purchasing_document'       => $rows->purchasing_document,
                     'PR_NO'                     => $rows->PR_NO,
+                    'PO_ITEM'                   => $rows->PO_ITEM,
                     'assets_no'                 => $rows->assets_no,
                     'acp_id'                    => $rows->acp_id ?? 0,
                     'short_text'                => $rows->short_text,
@@ -407,7 +414,7 @@ class QuotationRepeatController extends Controller
         $i = 0;
         $lineNo = 1;
         foreach ($details as $detail) {
-            $schedLine  = sprintf('%05d', (10+$i));
+            $schedLine  = sprintf('%05d', (1+$i));
             $indexes    = $i+1;
             $poItem     = sprintf('%05d', (10*$indexes));;
             
@@ -416,7 +423,7 @@ class QuotationRepeatController extends Controller
             $subpackgparent = '000000000';
             $noLine         = '';
             if( $detail['item_category'] == QuotationDetail::SERVICE ) {
-                //check position parent and child
+                //check position parent and 
                 if( $i == 0 ) {
                     $noLine = $lineNo;
                 } else {
@@ -463,8 +470,8 @@ class QuotationRepeatController extends Controller
             $quotationDetail->request_no                = $detail['request_no'];
             $quotationDetail->item_category             = $detail['item_category'];
             $quotationDetail->tax_code                  = $detail['tax_code'] == 1 ? 'V1' : 'V0';
-            $quotationDetail->package_no                = $packageParent;
-            $quotationDetail->subpackage_no             = $subpackgparent;
+            $quotationDetail->package_no                = $packageParent.$noLine;
+            $quotationDetail->subpackage_no             = $subpackgparent.$noLine;
             $quotationDetail->line_no                   = '000000000'.$noLine;
 
             $quotationDetail->save();
@@ -501,6 +508,18 @@ class QuotationRepeatController extends Controller
     public function getCurrency(Request $request)
     {
         $currency = \App\Models\Currency::get();
+
+        $data = [];
+        foreach( $currency as $rows ) {
+            $data[$rows->currency] = $rows->currency;
+        }
+
+        return \Response::json($data);
+    }
+
+    public function getPaymentTerm(Request $request)
+    {
+        $currency = \App\Models\PaymentTerm::get();
 
         $data = [];
         foreach( $currency as $rows ) {

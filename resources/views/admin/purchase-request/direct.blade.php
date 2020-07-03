@@ -54,11 +54,7 @@
                             <div class="form-group">
                                 <label for="">Currency</label>
                                 <select name="currency" id="currency" class="form-control select2" required>
-                                    @foreach($currency as $key => $value)
-                                        <option value="{{ $value->currency }}" @if($value->currency == 'IDR') selected @endif>
-                                            {{ $value->currency }}
-                                        </option>
-                                    @endforeach
+                                  
                                 </select>
                             </div>
                         </div>
@@ -80,6 +76,7 @@
                                         <th style="width: 10%;padding-right:15px;">Unit</th>
                                         <th style="width: 10%;">Qty</th>
                                         <th style="width: 40%;padding-right:180px;">RFQ</th>
+                                        <th style="width: 16%">Currency</th>
                                         <th style="width: 16%">Net Price</th>
                                         <th style="width: 16%">Original Price</th>
                                         <th style="width: 14%">Delivery Date</th>
@@ -120,7 +117,6 @@
                                             <input type="hidden" name="category[]" value="{{ $value->category }}">
                                             <input type="hidden" class="qty" name="qty[]" value="{{ empty($value->qty) ? 0 : $value->qty }}">
                                             <input type="hidden" class="acp_id" name="acp_id[]" id="acp_id" value="0">
-                                            <input type="hidden" class="original_currency" name="original_currency[]" id="original_currency" value="0">
                                             <td>{!! $value->material_id .'<br>'.$value->description !!}</td>
                                             <td>{{ $value->unit }}</td>
                                             <td>{{ empty($value->qty) ? 0 : $value->qty }}</td>
@@ -142,6 +138,7 @@
                                                     @endif
                                                 </select>
                                             </td>
+                                            <td><input type="text" class="original_currency" name="original_currency[]" id="original_currency" value="" readonly></td>
                                             <td><input type="text" class="net_price" name="price[]" id="net_price" value="" readonly></td>
                                             <td><input type="text" class="original_price" name="original_price[]" id="original_price" value="" readonly></td>
                                             <td><input type="text" class="mdate" name="delivery_date_new[]" id="delivery_date_new" value="{{ $value->delivery_date }}"></td>
@@ -170,7 +167,7 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <label for="">Payment Term (OPTIONAL)</label>
+                                <label for="">Payment Term</label>
                                 <select name="payment_term" id="payment_term" class="form-control select2">
                                     <option value="">-- Select --</option>
                                     @foreach ($top as $val)
@@ -215,31 +212,33 @@
         "ordering": false
     });
     let index = 1
+    $(".exchange_rate").attr('disabled',true)
     $("#currency").on('change',function(e) {
-        let id = $(this).val()
-        
-        if( id != 'IDR' ) {
-            $(".exchange_rate").attr('disabled',false)
-        } else {
-            $(".exchange_rate").val(' ')
-            $(".exchange_rate").attr('disabled',true)
-        }
+        let id = $(this).val()      
+        $(".exchange_rate").attr('disabled',false)
+        handleChange()
     })
 
-    const loadChangeRate = function () {
-        $("#currency").on('change',function(e) {
-            let id = $(this).val()
-            
-            if( id != 'IDR' ) {
-                $(".exchange_rate").attr('disabled',false)
-            } else {
-                $(".exchange_rate").val(' ')
-                $(".exchange_rate").attr('disabled',true)
-            }
-        }).trigger('change');
-    }
+    $(".exchange_rate").on('keyup change', function(e) {
+        handleChange()
+    })
 
-    loadChangeRate()
+    function handleChange() {
+        $tr = $('#datatables-run tbody tr')
+        var $ex = $('.exchange_rate').val()
+        $ex = $ex===''? '1': $ex
+        $.each($tr, function(i, $el) {
+            var $ori = $($el).find('.original_currency').val()
+            var $curr = $("#currency").val()
+            var ori = $($el).find('.original_price').val()
+            ori = ori===''? '1': ori
+            var $net = $($el).find('.net_price')
+            var update = parseFloat(ori) * parseFloat($ex)
+            if($ori!== $curr) {
+                $net.val(parseInt(update))
+            }
+        })
+    }
 
     function formatDate(date) {
         var d = new Date(date),
@@ -260,7 +259,6 @@
     const loadRfq = function () {
         $("#vendor_id").change(function() {
             const vendorId = $(this).val()
-            //getRq(vendorId)
         }).trigger('change');
     }
 
@@ -283,16 +281,14 @@
         row.find('.original_currency').val(ori_curr)
 
         getVendor(code)
+        getCurrency(ori_curr)
 
         $.getJSON(url,{'purchasing_document': purchasing_document }, function (items) {
             $("#image_loading").hide()
             if(items.purchasing_document) {
-                const qtyVal = qty.val() 
-                const qtyFix = qtyVal.replace(/\./g,'')
-                console.log(qtyFix)
                 let nets = items.net_order_price ? items.net_order_price : '0'
-                let price = qtyFix * nets
-                net.val(price)
+               
+                net.val(nets)
                 ori.val(nets)
             } else {
                 net.val('0')
@@ -316,6 +312,24 @@
         })
     }
 
-    //loadRfq()//
+    function getCurrency(currency)
+    {
+        const url = '{{ route('admin.quotation-currency') }}'
+        const $currency = $("#currency")
+        $.getJSON(url, function(items) {
+            let newOptions = ''
+
+             for (var id in items) {
+                let selected = ''
+                if( currency == items[id] ) {
+                    selected = 'selected'
+                }
+                newOptions += '<option value="'+ id +'" '+selected+'>'+ items[id] +'</option>';
+            }
+
+            $('#image_loading').hide()
+            $currency.html(newOptions)
+        });
+    }
 </script>
 @endsection
