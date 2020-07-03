@@ -3,10 +3,11 @@
 namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use App\Models\Vendor\VendorIdentificationNumbers;
 
-class VendorIdentificationNumbersExport implements FromCollection, WithTitle
+class VendorIdentificationNumbersExport implements FromCollection, WithHeadings, WithTitle
 {
     /**
      * @return Builder
@@ -14,7 +15,26 @@ class VendorIdentificationNumbersExport implements FromCollection, WithTitle
 
     public function collection()
     {
-        return VendorIdentificationNumbers::get();
+        $data = VendorIdentificationNumbers::select(
+                    'vendors.code',
+                    'vendor_identification_numbers.identification_type',
+                    'vendor_identification_numbers.identification_numbers'
+                )
+                ->join('vendors', 'vendors.id', 'vendor_identification_numbers.vendor_id')
+                ->get();
+        return $data;
+    }
+
+    /**
+     * @return array
+     */
+    public function headings(): array
+    {
+        return [
+            'Vendor Code',
+            'Identification Type',
+            'Identification Numbers'
+        ];
     }
 
     /**
