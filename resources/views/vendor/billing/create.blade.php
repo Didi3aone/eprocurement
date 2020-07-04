@@ -83,13 +83,8 @@
                                 <p id="demo"></p>
                                 <div class="form-group col-lg-4">
                                     <label>Nominal Invoice Sesudah PPN <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control form-control-line {{ $errors->has('nominal_inv_after_ppn') ? 'is-invalid' : '' }}" name="nominal_inv_after_ppn" id="nominal_inv_after_ppn" value="{{ old('nominal_inv_after_ppn', '') }}" disabled> 
+                                    <input type="text" class="form-control form-control-line" name="nominal_inv_after_ppn" id="nominal_inv_after_ppn" value="{{ old('nominal_inv_after_ppn', '') }}" readonly> 
                                     
-                                    @if($errors->has('nominal_inv_after_ppn'))
-                                        <div class="invalid-feedback">
-                                            {{ $errors->first('nominal_inv_after_ppn') }}
-                                        </div>
-                                    @endif
                                 </div>
                                 <div class="form-group col-lg-4">
                                     <label>No. Rekening <span class="text-danger">*</span></label>
