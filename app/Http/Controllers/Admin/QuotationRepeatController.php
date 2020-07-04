@@ -318,7 +318,7 @@ class QuotationRepeatController extends Controller
                     $this->_clone_purchase_orders($quotation, $quotationDetail, $sendSap);
                     \DB::commit();
                 } else {
-                    \DB::rollback();
+                    // \DB::rollback();
                     return redirect()->route('admin.quotation-repeat-approval-head')->with('error', 'Internal server error');
                 }
             }

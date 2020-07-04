@@ -130,7 +130,7 @@
                         </div>
                     </div>
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-success" id="save"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
+                        <button type="submit" class="btn btn-success" id="saves"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
                         <a href="{{ route('admin.master-acp.index') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i> Cancel</a>
                     </div>
                 </form>

@@ -28,19 +28,24 @@ class AcpTableMaterial extends Model
     {
         return AcpTableMaterial::where('master_acp_vendor_id', $vendor)
             ->where('master_acp_id', $acp_id)
-            ->join('vendors','vendors.code','=','master_acp_materials.master_acp_vendor_id')
-            ->join('master_materials','master_materials.code','=','master_acp_materials.material_id')
+            ->join('vendors','vendors.code','=','mam.master_acp_vendor_id')
+            ->leftJoin('master_materials as mm','mm.code','=','mam.material_id')
+            ->leftJoin('purchase_requests_details as prd','prd.description','=','mam.material_id')
             ->select(
-                'vendors.name',
-                'vendors.code',
-                'master_materials.description',
-                'master_materials.uom_code',
-                'master_acp_materials.material_id',
-                'master_acp_materials.price',
-                'master_acp_materials.qty',
-                'master_acp_materials.currency',
-            )
-            ->distinct()
+                \DB::raw("
+                CASE
+                WHEN (mm.code IS NULL OR mm.code = '') THEN prd.description 
+                ELSE''
+               END AS material_id,
+               case 
+               when  (mm.uom_code is null or MM.uom_code  = '') then prd.unit 
+               else ''
+               end as uom_code,
+               mam.qty,
+               mam.currency,
+               mam.price")
+            )->from('master_acp_materials','mam')
+            // ->distinct()
             ->get();
     }
 

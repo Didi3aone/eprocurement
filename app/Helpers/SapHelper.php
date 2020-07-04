@@ -1951,6 +1951,7 @@ class SapHelper {
                 'log_response_sap' => \json_encode($result),
                 'status' => 'FAILED',
             ]); 
+            dd($result);
             return false;
         }
     }
