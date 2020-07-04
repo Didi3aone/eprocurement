@@ -92,7 +92,7 @@
                                      <select class="form-control select2" name="no_rekening" id="no_rekening" placeholder="Choose">
                                         <option value=""> Choose </option>
                                         @foreach($rekening as $id => $account_no )
-                                            <option value=" {{ $id }} " >{{ $account_no }}</option>
+                                            <option value=" {{ $account_no }} " >{{ $account_no }}</option>
                                         @endforeach
                                     </select>
                                     @if($errors->has('no_rekening'))
