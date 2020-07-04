@@ -59,11 +59,11 @@
                                     @endif
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>Nominal Invoice Sesudah PPN <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control form-control-line {{ $errors->has('nominal_inv_after_ppn') ? 'is-invalid' : '' }}" name="nominal_inv_after_ppn" value="{{ old('nominal_inv_after_ppn', $billing->nominal_inv_after_ppn) }}" readonly> 
-                                    @if($errors->has('nominal_inv_after_ppn'))
+                                    <label>DPP <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control form-control-line {{ $errors->has('dpp') ? 'is-invalid' : '' }}" name="dpp" value="{{ old('dpp', $billing->dpp) }}" readonly> 
+                                    @if($errors->has('dpp'))
                                         <div class="invalid-feedback">
-                                            {{ $errors->first('nominal_inv_after_ppn') }}
+                                            {{ $errors->first('dpp') }}
                                         </div>
                                     @endif
                                 </div>
@@ -77,11 +77,11 @@
                                     @endif
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>DPP <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control form-control-line {{ $errors->has('dpp') ? 'is-invalid' : '' }}" name="dpp" value="{{ old('dpp', $billing->dpp) }}" readonly> 
-                                    @if($errors->has('dpp'))
+                                    <label>Nominal Invoice Sesudah PPN <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control form-control-line {{ $errors->has('nominal_inv_after_ppn') ? 'is-invalid' : '' }}" name="nominal_inv_after_ppn" value="{{ old('nominal_inv_after_ppn', $billing->nominal_inv_after_ppn) }}" readonly> 
+                                    @if($errors->has('nominal_inv_after_ppn'))
                                         <div class="invalid-feedback">
-                                            {{ $errors->first('dpp') }}
+                                            {{ $errors->first('nominal_inv_after_ppn') }}
                                         </div>
                                     @endif
                                 </div>

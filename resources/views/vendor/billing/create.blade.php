@@ -403,9 +403,10 @@
        var dpp = $("#dpp").val();
        if(ppn == "V1") {
            var count = parseInt(dpp) * 1.1;
-           $("#nominal_inv_after_ppn").val(count);
+           var roundedString = count.toFixed(2);
+           $("#nominal_inv_after_ppn").val(Number(roundedString));
        } else if(ppn == "V0") {
-           $("#nominal_inv_after_ppn").val(dpp);
+           $("#nominal_inv_after_ppn").val(Number(dpp));
        }
 
    });
