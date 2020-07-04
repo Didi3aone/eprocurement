@@ -298,7 +298,9 @@ class QuotationDirectController extends Controller
                 $quotation->approved_head   = \Auth::user()->user_id;
                 $quotation->save();
 
-                $quotationDetail = QuotationDetail::where('quotation_order_id', $id)->get();
+                $quotationDetail = QuotationDetail::where('quotation_order_id', $id)
+                                ->orderBy('PREQ_ITEM','asc')
+                                ->get();
                 $quotationDeliveryDate = QuotationDelivery::where('quotation_id', $id)
                                     ->orderBy('PREQ_ITEM','asc')
                                     ->get();
