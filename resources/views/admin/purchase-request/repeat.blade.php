@@ -145,7 +145,7 @@
                                 <td>
                                     <select name="rfq[]" id="history" class="select2 history" required>
                                         <option> -- Select --</option>
-                                        @if( !empty($hist['header']) )
+                                        @if( !empty($hist['header']->item) )
                                             @foreach($hist['header']->item as $key => $rows)
                                                 @if(!empty($rows->EBELN))
                                                     <option value="{{ $rows->EBELN }}"

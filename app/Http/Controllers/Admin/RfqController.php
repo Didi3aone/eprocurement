@@ -199,8 +199,8 @@ class RfqController extends Controller
                     'master_rfqs.purchasing_document',
                 )
                 ->where('material_id', $request->material_id)
-                ->where('master_acps.start_date','>=',\Carbon\Carbon::now())
-                ->where('master_acps.end_date','<=',\Carbon\Carbon::now())
+                ->where('master_acps.start_date','>=',date('Y-m-d'))
+                ->where('master_acps.end_date','<=',date('Y-m-d'))
                 ->where('master_acps.status_approval',)
                 ->get();
 
