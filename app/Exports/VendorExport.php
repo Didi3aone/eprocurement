@@ -20,7 +20,7 @@ class VendorExport implements WithMultipleSheets
         $sheet = [
             'General Data' => new VendorGeneralDataExport(),
             'BP Roles' => new VendorBPRolesExport(),
-            'Company Data' => new VendorBPRolesExport(),
+            'Company Data' => new VendorCompanyDataExport(),
             'Withholding Tax Data' => new VendorWithholdingTaxTypeExport(),
             'Purchasing Organization' => new VendorPurchasingOrganizationExport(),
             'Partner Functions' => new VendorPartnerFunctionsExport(),
