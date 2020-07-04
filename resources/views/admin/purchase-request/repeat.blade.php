@@ -145,16 +145,18 @@
                                 <td>
                                     <select name="rfq[]" id="history" class="select2 history" required>
                                         <option> -- Select --</option>
-                                        @foreach($hist['header']->item as $key => $rows)
-                                            @if(!empty($rows->EBELN))
-                                                <option value="{{ $rows->EBELN }}"
-                                                    data-price="{{ $hist['detail']->item[$key]->NETPR }}"
-                                                    data-vendor="{{ substr($rows->LIFNR,3) }}"
-                                                    data-currency="{{ $rows->WAERS }}">
-                                                    {{ $rows->EBELN."/".$rows->LIFRE }}
-                                                </option>
-                                            @endif
-                                        @endforeach
+                                        @if( !empty($hist['header']) )
+                                            @foreach($hist['header']->item as $key => $rows)
+                                                @if(!empty($rows->EBELN))
+                                                    <option value="{{ $rows->EBELN }}"
+                                                        data-price="{{ $hist['detail']->item[$key]->NETPR }}"
+                                                        data-vendor="{{ substr($rows->LIFNR,3) }}"
+                                                        data-currency="{{ $rows->WAERS }}">
+                                                        {{ $rows->EBELN."/".$rows->LIFRE }}
+                                                    </option>
+                                                @endif
+                                            @endforeach
+                                        @endif
                                     </select>
                                 </td>
                                 <td><input type="text" class="original_currency" name="original_currency[]" id="original_currency" value="" readonly></td>
@@ -292,26 +294,6 @@
         $.getJSON(url, function(items) {
             let newOptions = ''
             $("#currency").attr('disabled',false);
-
-             for (var id in items) {
-                let selected = ''
-                if( currency == items[id] ) {
-                    selected = 'selected'
-                }
-                newOptions += '<option value="'+ id +'" '+selected+'>'+ items[id] +'</option>';
-            }
-
-            $('#image_loading').hide()
-            $currency.html(newOptions)
-        });
-    }
-
-    function getPaymentTerm(vendorCode)
-    {
-        const url = '{{ route('admin.quotation-payment-term') }}'
-        const $currency = $("#currency")
-        $.getJSON(url, function(items) {
-            let newOptions = ''
 
              for (var id in items) {
                 let selected = ''
