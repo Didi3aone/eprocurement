@@ -250,13 +250,15 @@ class BillingController extends Controller
                 $fileInvoice->move(public_path() . '/files/uploads/', $fileInvoiceName);
             }
 
+            $nominal_inv_after_ppn =  str_replace(',', '.', $request->nominal_inv_after_ppn);
+
             $billing = new Billing;
             $billing->billing_no            = time();
             $billing->tgl_faktur            = $request->tgl_faktur;
             $billing->no_faktur             = $request->no_faktur;
             $billing->no_invoice            = $request->no_invoice;
             $billing->tgl_invoice           = $request->tgl_invoice;
-            $billing->nominal_inv_after_ppn = $request->nominal_inv_after_ppn;
+            $billing->nominal_inv_after_ppn = $nominal_inv_after_ppn;
             $billing->ppn                   = $request->ppn;
             $billing->dpp                   = $request->dpp;
             $billing->no_rekening           = $request->no_rekening;
@@ -275,14 +277,18 @@ class BillingController extends Controller
                 $po_no = $request->get('po_no')[$key];
                 $qty = $request->get('qty')[$key];
                 $qty_old = $request->get('qty_old')[$key];
+                $PO_ITEM = $request->get('PO_ITEM')[$key];
+                $material_no = $request->get('material_no')[$key];
+                $debet_credit = $request->get('debet_credit')[$key];
+                $qty_old = $request->get('qty_old')[$key];
 
                 $billingDetail = new BillingDetail;
                 $billingDetail->billing_id = $billing->id;
                 $billingDetail->po_no = $po_no;
                 $billingDetail->qty = $qty;
                 $billingDetail->qty_old = $qty_old;
-                $billingDetail->po_item = $po_item;
-                $billingDetail->material_no = $material_no;
+                $billingDetail->PO_ITEM = $PO_ITEM;
+                $billingDetail->material_id = $material_no;
                 $billingDetail->debet_credit = $debet_credit;
                 $billingDetail->qty_old = $qty_old;
                 $billingDetail->save();
@@ -318,7 +324,7 @@ class BillingController extends Controller
         $material_description = $model->material ? $model->material->description : '';
         
         $data['po_no'] = $model->po_no;
-        $data['po_item'] = $model->po_item;
+        $data['PO_ITEM'] = $model->PO_ITEM;
         $data['material'] = $model->material_no;
         $data['qty'] = $model->qty;
         $data['doc_gr'] = $model->doc_gr;

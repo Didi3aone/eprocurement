@@ -315,7 +315,7 @@
                         <td><input type="text" class="material form-control" name="material[]" value="${result.material}" readonly></select></td>
                         <td><input type="text" class="description form-control" name="description[]" value="${result.description}" readonly/></td>
                         <td><input type="text" class="po_no form-control" name="po_no[]" value="${result.po_no}" readonly></td>
-                        <td><input type="text" class="po_item form-control" name="po_item[]" value="${result.po_item}" readonly/></td>
+                        <td><input type="text" class="po_item form-control" name="PO_ITEM[]" value="${result.PO_ITEM}" readonly/></td>
                         <td><input type="text" class="doc_gr form-control" name="doc_gr[]" value="${result.doc_gr}" readonly/></td>
                         <td><input type="text" class="item_gr form-control" name="item_gr[]" value="${result.item_gr}" readonly/></td>
                         <td><input type="text" class="posting_date form-control" name="posting_date[]" value="${result.posting_date}" readonly/></td>

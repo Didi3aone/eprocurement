@@ -30,9 +30,6 @@ class StoreBillingRequest extends FormRequest
             'tgl_invoice' => [
                 'required',
             ],
-            'nominal_inv_after_ppn' => [
-                'required',
-            ],
             'ppn' => [
                 'required',
             ],
@@ -42,12 +39,7 @@ class StoreBillingRequest extends FormRequest
             'no_rekening' => [
                 'required',
             ],
-            'no_surat_jalan' => [
-                'required',
-            ],
-            'tgl_surat_jalan' => [
-                'required',
-            ]
+           
         ];
     }
 }
