@@ -1271,7 +1271,7 @@ class SapHelper {
                     "DELIV_TIME" => "", 
                     "STAT_DATE" => "",
                     "PREQ_NO" =>  (string) $quotationDetail[$i]->PR_NO, // kedua no pr di insert
-                    "PREQ_ITEM" => $quotationDetail[$i]->PREQ_ITEM, // line 
+                    "PREQ_ITEM" => $quotationDeliveryDate[$i]->PREQ_ITEM, // line 
                     "PO_DATE" => "",
                     "ROUTESCHED" => "",
                     "MS_DATE" => "",
