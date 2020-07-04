@@ -33,19 +33,20 @@ class AcpTableMaterial extends Model
             ->leftJoin('purchase_requests_details as prd','prd.description','=','mam.material_id')
             ->select(
                 \DB::raw("
+                mam.material_id,
                 CASE
                 WHEN (mm.code IS NULL OR mm.code = '') THEN prd.description 
-                ELSE''
+                ELSE mm.code
                END AS material_id,
                case 
                when  (mm.uom_code is null or MM.uom_code  = '') then prd.unit 
-               else ''
+               else mm.uom_code
                end as uom_code,
                mam.qty,
                mam.currency,
                mam.price")
             )->from('master_acp_materials','mam')
-            // ->distinct()
+            ->distinct()
             ->get();
     }
 

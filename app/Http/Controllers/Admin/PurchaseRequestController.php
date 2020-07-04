@@ -52,7 +52,8 @@ class PurchaseRequestController extends Controller
             \DB::raw('purchase_requests.request_no as pr_no'),
             'purchase_requests.request_date',
             'purchase_requests.PR_NO',
-            'purchase_requests.total'
+            'purchase_requests.total',
+            'purchase_requests.id as uuid'
         )
             ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
             ->where('purchase_requests_details.is_validate', PurchaseRequestsDetail::YesValidate)

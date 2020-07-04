@@ -63,6 +63,7 @@
                                     <th><b>Vendor</b></th>
                                     <th><b>Winner</b></th>
                                     <th style="text-align:center;">Material</th>
+                                    <th style="text-align:center;">Description</th>
                                     <th style="text-align:center;">Unit</th>
                                     <th style="text-align:center;">Qty</th>
                                     <th style="text-align:center;">Price</th>
@@ -81,7 +82,8 @@
                                     <td rowspan={{ $rowSpan }}>{{ $rows->vendor['name'] }}</td>
                                     <td rowspan={{ $rowSpan }}>{!! $winner !!}</td>
                                     @foreach (\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id) as $row)
-                                        <td>{{ $row->material_id." - ".$row->description }}</td>
+                                        <td>{{ $row->material_id ?? '-'}}</td>
+                                        <td>{{ \App\Models\MasterMaterial::getMaterialName($row->material_id)->description ?? $row->material_id  }}</td>
                                         <td>{{ $row->uom_code }}</td>
                                         <td>{{ $row->qty }}</td>
                                         <td>{{ number_format($row->price,2) }}</td>

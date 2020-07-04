@@ -18,7 +18,7 @@ class MasterAcpController extends Controller
     public function index ()
     {
         $model = AcpTable::orderBy('created_at','desc')
-            ->where('created_by',\Auth::user()->nik)
+                ->where('created_by',\Auth::user()->nik)
             ->get();
 
         return view('admin.master-acp.index', compact('model'));
