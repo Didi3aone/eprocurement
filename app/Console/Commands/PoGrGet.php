@@ -67,18 +67,18 @@ class PoGrGet extends Command
         $client->__setSoapHeaders($header);
         $params = [];
         try {
-            $purchaseOrder = \App\Models\PurchaseOrder::limit(1)->get();
-            $purchaseOrder = [
-                0 => '3010002118',
-                1 => '3010000001'
-            ];
+            $purchaseOrder = \App\Models\PurchaseOrder::get();
+            // $purchaseOrder = [
+            //     0 => '3010002118',
+            //     1 => '3010000001'
+            // ];
             $poHeader = [];
             $poDetail = [];
 
             foreach( $purchaseOrder as $key => $row ) {
                 echo "..... \n";
                 echo "get po gr \n";
-                $params[0]['EBELN'] = $row;
+                $params[0]['EBELN'] = $row->PO_NUMBER;
                 $result = $client->__soapCall("ZFM_WS_POGR", $params, NULL, $header);
                 foreach( $result->ITAB as $value ) {
                     if( is_array($value) ) {
@@ -87,7 +87,7 @@ class PoGrGet extends Command
                                 $poHeader = \App\Models\PurchaseOrder::where('PO_NUMBER', $value[$i]->EBELN)->first();
     
                                 if( !empty($poHeader) ) {
-                                    $poDetail = \App\Models\PurchaseOrdersDetail::where('purchsase_order_id', $poHeader->id)
+                                    $poDetail = \App\Models\PurchaseOrdersDetail::where('purchase_order_id', $poHeader->id)
                                                 ->where('PO_ITEM', $value[$i]->EBELP)
                                                 ->first();
                                     
@@ -129,7 +129,7 @@ class PoGrGet extends Command
                     } else {
                         $poHeader = \App\Models\PurchaseOrder::where('PO_NUMBER', $value->EBELN)->first();
                         if( !empty($poHeader) ) {
-                            $poDetail = \App\Models\PurchaseOrdersDetail::where('purchsase_order_id', $poHeader->id)
+                            $poDetail = \App\Models\PurchaseOrdersDetail::where('purchase_order_id', $poHeader->id)
                                         ->where('PO_ITEM',$value->EBELP)
                                         ->first();
                             
