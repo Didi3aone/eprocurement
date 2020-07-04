@@ -8,7 +8,9 @@ use Illuminate\Http\Request;
 use App\Models\PurchaseOrder;
 use App\Models\Vendor\Billing;
 use App\Models\Vendor\BillingDetail;
+use App\Models\Vendor\VendorTaxNumbers;
 use App\Models\PurchaseOrderGr;
+use App\Models\Vendor\VendorBankDetails;
 use Auth;
 
 class BillingController extends Controller
@@ -198,8 +200,12 @@ class BillingController extends Controller
     {
         $po_gr = PurchaseOrderGr::where('vendor_id', \Auth::user()->code)
             ->get();
+        $rekening =  VendorBankDetails::where('vendor_id', \Auth::user()->id)
+            ->first();
+        $npwp = VendorTaxNumbers::where('vendor_id', \Auth::user()->id)
+            ->first();
 
-        return view('vendor.billing.create', compact('po_gr'));
+        return view('vendor.billing.create', compact('po_gr', 'rekening', 'npwp'));
     }
 
     public function store(StoreBillingRequest $request)
@@ -208,6 +214,7 @@ class BillingController extends Controller
         try {
             // save file
             $filePoName = '';
+            $suratJalan = '';
             $fileFakturName  = '';
             $fileInvoiceName = '';
             $fileBebasName = '';
@@ -217,6 +224,12 @@ class BillingController extends Controller
                 $filePo = $request->file('po');
                 $filePoName = time() . $filePo->getClientOriginalName();
                 $filePo->move(public_path() . '/files/uploads/', $filePoName);
+            }
+
+            if ($request->file('no_surat_jalan')) {
+                $suratJalan = $request->file('no_surat_jalan');
+                $suratJalanName = time() . $suratJalan->getClientOriginalName();
+                $suratJalan->move(public_path() . '/files/uploads/', $suratJalanName);
             }
 
             if ($request->file('surat_ket_bebas_pajak')) {
@@ -247,8 +260,8 @@ class BillingController extends Controller
             $billing->ppn                   = $request->ppn;
             $billing->dpp                   = $request->dpp;
             $billing->no_rekening           = $request->no_rekening;
-            $billing->no_surat_jalan        = $request->no_surat_jalan;
-            $billing->tgl_surat_jalan       = $request->tgl_surat_jalan;
+            $billing->no_surat_jalan        = $suratJalanName;
+            // $billing->tgl_surat_jalan       = $request->tgl_surat_jalan;
             $billing->npwp                  = $request->npwp;
             $billing->surat_ket_bebas_pajak = $fileBebasName;
             $billing->po                    = $filePoName;
@@ -267,6 +280,10 @@ class BillingController extends Controller
                 $billingDetail->billing_id = $billing->id;
                 $billingDetail->po_no = $po_no;
                 $billingDetail->qty = $qty;
+                $billingDetail->qty_old = $qty_old;
+                $billingDetail->po_item = $po_item;
+                $billingDetail->material_no = $material_no;
+                $billingDetail->debet_credit = $debet_credit;
                 $billingDetail->qty_old = $qty_old;
                 $billingDetail->save();
 
@@ -309,6 +326,8 @@ class BillingController extends Controller
         $data['posting_date'] = $model->posting_date;
         $data['reference_document'] = $model->reference_document;
         $data['description'] = $material_description;
+        $data['debet_credit'] = $model->debet_credit;
+        
 
         return response()->json($data);
     }

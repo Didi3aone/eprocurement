@@ -58,26 +58,8 @@
                                     @endif
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>Nominal Invoice Sesudah PPN <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control form-control-line {{ $errors->has('nominal_inv_after_ppn') ? 'is-invalid' : '' }}" name="nominal_inv_after_ppn" value="{{ old('nominal_inv_after_ppn', '') }}"> 
-                                    @if($errors->has('nominal_inv_after_ppn'))
-                                        <div class="invalid-feedback">
-                                            {{ $errors->first('nominal_inv_after_ppn') }}
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="form-group col-lg-4">
-                                    <label>PPN <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control form-control-line {{ $errors->has('ppn') ? 'is-invalid' : '' }}" name="ppn" value="{{ old('ppn', '') }}"> 
-                                    @if($errors->has('ppn'))
-                                        <div class="invalid-feedback">
-                                            {{ $errors->first('ppn') }}
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="form-group col-lg-4">
                                     <label>DPP <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control form-control-line {{ $errors->has('dpp') ? 'is-invalid' : '' }}" name="dpp" value="{{ old('dpp', '') }}"> 
+                                    <input type="text" class="form-control form-control-line {{ $errors->has('dpp') ? 'is-invalid' : '' }}" name="dpp" id="dpp" value="{{ old('dpp', '') }}"> 
                                     @if($errors->has('dpp'))
                                         <div class="invalid-feedback">
                                             {{ $errors->first('dpp') }}
@@ -85,8 +67,33 @@
                                     @endif
                                 </div>
                                 <div class="form-group col-lg-4">
+                                    <label>PPN <span class="text-danger">*</span></label>
+                                    {{-- <input type="text" class="form-control form-control-line {{ $errors->has('ppn') ? 'is-invalid' : '' }}" name="ppn" value="{{ old('ppn', '') }}">  --}}
+                                    <select class="form-control select2" name="ppn" id="ppn" placeholder="Choose">
+                                        <option value=""> Choose </option>
+                                        <option value="V0"> None </option>
+                                        <option value="V1"> PPN </option>
+                                    </select>
+                                    @if($errors->has('ppn'))
+                                        <div class="invalid-feedback">
+                                            {{ $errors->first('ppn') }}
+                                        </div>
+                                    @endif
+                                </div>
+                                <p id="demo"></p>
+                                <div class="form-group col-lg-4">
+                                    <label>Nominal Invoice Sesudah PPN <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control form-control-line {{ $errors->has('nominal_inv_after_ppn') ? 'is-invalid' : '' }}" name="nominal_inv_after_ppn" id="nominal_inv_after_ppn" value="{{ old('nominal_inv_after_ppn', '') }}" disabled> 
+                                    
+                                    @if($errors->has('nominal_inv_after_ppn'))
+                                        <div class="invalid-feedback">
+                                            {{ $errors->first('nominal_inv_after_ppn') }}
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="form-group col-lg-4">
                                     <label>No. Rekening <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control form-control-line {{ $errors->has('no_rekening') ? 'is-invalid' : '' }}" name="no_rekening" value="{{ old('no_rekening', '') }}"> 
+                                    <input type="text" class="form-control form-control-line {{ $errors->has('no_rekening') ? 'is-invalid' : '' }}" name="no_rekening" value="{{ old('no_rekening', $rekening->account_no) }}"> 
                                     @if($errors->has('no_rekening'))
                                         <div class="invalid-feedback">
                                             {{ $errors->first('no_rekening') }}
@@ -94,15 +101,15 @@
                                     @endif
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>No. Surat Jalan <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control form-control-line {{ $errors->has('no_surat_jalan') ? 'is-invalid' : '' }}" name="no_surat_jalan" value="{{ old('no_surat_jalan', '') }}"> 
-                                    @if($errors->has('no_surat_jalan'))
+                                    <label>NPWP</label>
+                                    <input type="text" id="" class="form-control form-control-line {{ $errors->has('npwp') ? 'is-invalid' : '' }}" name="npwp" value="{{ old('npwp', $npwp->tax_numbers) }}"> 
+                                    @if($errors->has('npwp'))
                                         <div class="invalid-feedback">
-                                            {{ $errors->first('no_surat_jalan') }}
+                                            {{ $errors->first('npwp') }}
                                         </div>
                                     @endif
                                 </div>
-                                <div class="form-group col-lg-4">
+                                {{-- <div class="form-group col-lg-4">
                                     <label>TGL. Surat Jalan <span class="text-danger">*</span></label>
                                     <input type="text" id="" class="form-control mdate form-control-line {{ $errors->has('tgl_surat_jalan') ? 'is-invalid' : '' }}" name="tgl_surat_jalan" value="{{ old('tgl_surat_jalan', '') }}"> 
                                     @if($errors->has('tgl_surat_jalan'))
@@ -110,16 +117,7 @@
                                             {{ $errors->first('tgl_surat_jalan') }}
                                         </div>
                                     @endif
-                                </div>
-                                <div class="form-group col-lg-4">
-                                    <label>NPWP</label>
-                                    <input type="text" id="" class="form-control form-control-line {{ $errors->has('npwp') ? 'is-invalid' : '' }}" name="npwp" value="{{ old('npwp', '') }}"> 
-                                    @if($errors->has('npwp'))
-                                        <div class="invalid-feedback">
-                                            {{ $errors->first('npwp') }}
-                                        </div>
-                                    @endif
-                                </div>
+                                </div> --}}
                                 <div class="form-group col-lg-4">
                                     <label>Keterangan PO</label>
                                     <textarea class="form-control form-control-line" name="keterangan_po"></textarea>
@@ -127,6 +125,10 @@
                                 <div class="form-group col-lg-4">
                                     <label>PO <span class="text-danger">*</span> </label>
                                     <input type="file" class="form-control form-control-line" name="po" value="{{ old('po', '') }}"> 
+                                </div>
+                                <div class="form-group col-lg-4">
+                                    <label>No. Surat Jalan <span class="text-danger">*</span></label>
+                                    <input type="file" class="form-control form-control-line" name="no_surat_jalan" value="{{ old('no_surat_jalan', '') }}"> 
                                 </div>
                                 <div class="form-group col-lg-4">
                                     <label>Surat Ket. Bebas Pajak</label>
@@ -311,10 +313,12 @@
                         <td><input type="text" class="material form-control" name="material[]" value="${result.material}" readonly></select></td>
                         <td><input type="text" class="description form-control" name="description[]" value="${result.description}" readonly/></td>
                         <td><input type="text" class="po_no form-control" name="po_no[]" value="${result.po_no}" readonly></td>
-                        <td><input type="text" class="doc_gr form-control" name="doc_gr[]" value="${result.doc_gr}" readonly/></td>
                         <td><input type="text" class="po_item form-control" name="po_item[]" value="${result.po_item}" readonly/></td>
+                        <td><input type="text" class="doc_gr form-control" name="doc_gr[]" value="${result.doc_gr}" readonly/></td>
                         <td><input type="text" class="item_gr form-control" name="item_gr[]" value="${result.item_gr}" readonly/></td>
                         <td><input type="text" class="posting_date form-control" name="posting_date[]" value="${result.posting_date}" readonly/></td>
+                        <td><input type="text" class="material_no form-control" name="material_no[]" value="${result.material_no}" readonly/></td>
+                        <td><input type="text" class="debet_credit form-control" name="debet_credit[]" value="${result.debet_credit}" readonly/></td>
                         <td>
                             <a href="javascript:;" class="remove-item btn btn-danger btn-xs">
                                 <i class="fa fa-trash"></i> Remove
@@ -392,5 +396,19 @@
             return false
         }
     }).trigger('change')
+
+
+   $('select').on('change', function() {
+       var ppn =  this.value;
+       var dpp = $("#dpp").val();
+       if(ppn == "V1") {
+           var count = parseInt(dpp) * 1.1;
+           $("#nominal_inv_after_ppn").val(count);
+       } else if(ppn == "V0") {
+           $("#nominal_inv_after_ppn").val(dpp);
+       }
+
+   });
+
 </script>
 @endsection
