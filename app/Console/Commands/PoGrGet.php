@@ -122,7 +122,7 @@ class PoGrGet extends Command
                                     'gl_account'                => $value[$i]->SAKTO ?? '',
                                     'profit_center'             => $value[$i]->PRCTR ?? '',
                                     'purchase_order_detail_id'  => $poDetail->id ?? 0,
-                                    'price_per_pc'              => ($value[$i]->DMBTR/$value[$i]->MENGE)
+                                    'price_per_pc'              => ($value[$i]->DMBTR/$value[$i]->MENGE) * 100
                                 ]);
                             }
                         }
@@ -164,7 +164,7 @@ class PoGrGet extends Command
                             'gl_account'                => $value->SAKTO ?? '',
                             'profit_center'             => $value->PRCTR ?? '',
                             'purchase_order_detail_id'  => $poDetail->id ?? 0,
-                            'price_per_pc'              => ($value->DMBTR/$value->MENGE)
+                            'price_per_pc'              => ($value->DMBTR/$value->MENGE) * 100
                         ]);
                     }
                 }
