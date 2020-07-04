@@ -52,7 +52,8 @@ class PurchaseRequestController extends Controller
             \DB::raw('purchase_requests.request_no as pr_no'),
             'purchase_requests.request_date',
             'purchase_requests.PR_NO',
-            'purchase_requests.total'
+            'purchase_requests.total',
+            'purchase_requests.id as uuid'
         )
             ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
             ->where('purchase_requests_details.is_validate', PurchaseRequestsDetail::YesValidate)
@@ -190,6 +191,11 @@ class PurchaseRequestController extends Controller
         return view('admin.purchase-request.approval-project', compact('prProject'));
     }
 
+    public function show($id)
+    {
+        $prProject = PurchaseRequest::find($id);
+        return view('admin.purchase-request.show', compact('prProject'));
+    }
     /**
      * resource for create po.
      *
@@ -551,27 +557,25 @@ class PurchaseRequestController extends Controller
      */
     public function getMaterialPr(Request $request)
     {
-        $model = PurchaseRequestsDetail::where(function ($query) use ($request) {
+        $data = PurchaseRequestsDetail::where(function ($query) use ($request) {
             $query->where('material_id', 'like', '%' . $request->query('q') . '%')
                 ->orWhere('description', 'like', '%' . $request->query('q') . '%');
             })->select(
+                'id',
                 'material_id as code',
-                'description'
+                'description',
+                'unit',
+                'qty',
+                'gl_acct_code',
+                'cost_center_code',
+                'profit_center_code',
+                'storage_location',
+                'short_text',
+                'purchasing_group_code',
+                'plant_code',
             )
-            ->groupBy('material_id','description')
-            ->orderBy('description', 'asc')
-            ->limit(50)
             ->get();
             
-        $data = [];
-        foreach ($model as $row) {
-            array_push($data, [
-                'id' => $row->code,
-                'text' => $row->code.' - '.$row->description,
-                'title' => $row->description
-            ]);
-        }
-        
         return \Response::json($data);
     }
 }

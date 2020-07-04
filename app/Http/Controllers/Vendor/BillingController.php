@@ -183,7 +183,6 @@ class BillingController extends Controller
         }
 
         $billing = Billing::where('created_by', Auth::user()->id)
-            ->whereNotNull('po_no')
             ->get();
 
         return view('vendor.billing.index', compact('billing', 'purchase_orders'));
@@ -268,7 +267,7 @@ class BillingController extends Controller
             $billing->keterangan_po         = $request->keterangan_po;
             $billing->file_faktur           = $fileFakturName;
             $billing->file_invoice          = $fileInvoiceName;
-            $billing->vendor_id             = Auth::user()->id;
+            $billing->vendor_id             = Auth::user()->code;
             $billing->save();
 
             foreach ($request->get('po_no') as $key => $val) {

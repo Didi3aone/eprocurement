@@ -51,7 +51,8 @@ class PurchaseOrdersDetail extends Model
         'updated_at',
         'delivery_date',
         'plant_code',
-        'SCHED_LINE'
+        'SCHED_LINE',
+        'request_detail_id'
     ];
 
     public const SERVICE = 9;

@@ -13,6 +13,7 @@ class VendorWithholdingTaxType extends Model
     protected $fillable = [
         'vendor_id',
         'company_code',
-        'withholding_tax_type'
+        'withholding_tax_type',
+        'subject'
     ];
 }

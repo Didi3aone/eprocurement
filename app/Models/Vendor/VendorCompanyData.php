@@ -14,6 +14,7 @@ class VendorCompanyData extends Model
         'vendor_id',
         'company_code',
         'account_gl',
-        'planning_group'
+        'planning_group',
+        'payment_terms'
     ];
 }

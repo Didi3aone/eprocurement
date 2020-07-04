@@ -18,7 +18,7 @@ class MasterAcpController extends Controller
     public function index ()
     {
         $model = AcpTable::orderBy('created_at','desc')
-            ->where('created_by',\Auth::user()->nik)
+                ->where('created_by',\Auth::user()->nik)
             ->get();
 
         return view('admin.master-acp.index', compact('model'));
@@ -41,15 +41,19 @@ class MasterAcpController extends Controller
                 $query->where('material_id', 'like', '%' . $request->query('q') . '%')
                     ->orWhere('description', 'like', '%' . $request->query('q') . '%');
                 })->select(
-                    'material_id as code',
-                    'description'
+                    \DB::raw(
+                        "CASE
+                        WHEN (material_id IS NULL OR material_id = '') THEN description 
+                        ELSE material_id 
+                        END AS code,
+                        description"
+                    )
                 )
+                ->where('qty','>',0)
                 ->groupBy('material_id','description')
-                // ->join('purchase_requests','purchase_requests.id','=','purchase_requests_details.request_id')
                 ->orderBy('description', 'asc')
                 ->limit(50)
                 ->get();
-                // dd($request);
         } else {
             $model = MasterMaterial::where(function ($query) use ($request) {
                     $query->where('code', 'like', '%' . $request->query('q') . '%')
@@ -188,16 +192,30 @@ class MasterAcpController extends Controller
                 $material->file_attachment = $val['file_attachment'];
                 $material->save();
                 $isCmo = false;
+                // dd($val['material']);
                 $cMo = \App\Models\MasterMaterial::getMaterialCmo($val['material']);
-                if( $cMo->purchasing_group_code == 'S03' ||
-                    $cMo->purchasing_group_code == 'H09' ||
-                    $cMo->purchasing_group_code == 'M09' ||
-                    $cMo->purchasing_group_code == 'W03' ||
-                    $cMo->purchasing_group_code == 'S09' ||
-                    $cMo->purchasing_group_code == 'W09' ||
-                    $cMo->purchasing_group_code == 'M03' ) {
-                        $isCmo = true;
-                    }
+                if( $cMo != null ) {
+                    if( $cMo->purchasing_group_code == 'S03' ||
+                        $cMo->purchasing_group_code == 'H09' ||
+                        $cMo->purchasing_group_code == 'M09' ||
+                        $cMo->purchasing_group_code == 'W03' ||
+                        $cMo->purchasing_group_code == 'S09' ||
+                        $cMo->purchasing_group_code == 'W09' ||
+                        $cMo->purchasing_group_code == 'M03' ) {
+                            $isCmo = true;
+                        }
+                } else {
+                    $cMo = \App\Models\PurchaseRequestsDetail::where('description',$val['material'])->first();
+                    if( $cMo->purchasing_group_code == 'S03' ||
+                        $cMo->purchasing_group_code == 'H09' ||
+                        $cMo->purchasing_group_code == 'M09' ||
+                        $cMo->purchasing_group_code == 'W03' ||
+                        $cMo->purchasing_group_code == 'S09' ||
+                        $cMo->purchasing_group_code == 'W09' ||
+                        $cMo->purchasing_group_code == 'M03' ) {
+                            $isCmo = true;
+                        }
+                }
                 $assProc = \App\Models\UserMap::getAssProc($cMo->purchasing_group_code)->user_id;
 
                 if ($val['winner'] == 1) {

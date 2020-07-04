@@ -13,7 +13,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <a class="btn btn-primary" href="{{ route('admin.acp-approval') }}">
+                <a class="btn btn-primary" href="{{ route('admin.master-acp.index') }}">
                     <i class="fa fa-arrow-left"></i> Back To list
                 </a>
             </div>
@@ -29,10 +29,10 @@
                                         <th>ACP No.</th>
                                         <td>{{ $acp->acp_no }}</td>
                                     </tr>
-                                    {{-- <tr>
+                                    <tr>
                                         <th>Currency</th>
                                         <td>{{ $acp->currency }}</td>
-                                    </tr> --}}
+                                    </tr>
                                     <tr>
                                         <th>File</th>
                                         @if(isset($acp->upload_file))
@@ -63,9 +63,9 @@
                                     <th><b>Vendor</b></th>
                                     <th><b>Winner</b></th>
                                     <th style="text-align:center;">Material</th>
+                                    <th style="text-align:center;">Description</th>
                                     <th style="text-align:center;">Unit</th>
-                                    <th style="text-align:center;">Per</th>
-                                    <th style="text-align:center;">Currency</th>
+                                    <th style="text-align:center;">Qty</th>
                                     <th style="text-align:center;">Price</th>
                                 </tr>
                             </thead>
@@ -82,10 +82,10 @@
                                     <td rowspan={{ $rowSpan }}>{{ $rows->vendor['name'] }}</td>
                                     <td rowspan={{ $rowSpan }}>{!! $winner !!}</td>
                                     @foreach (\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id) as $row)
-                                        <td>{{ $row->material_id." - ".$row->description }}</td>
+                                        <td>{{ $row->material_id ?? '-'}}</td>
+                                        <td>{{ \App\Models\MasterMaterial::getMaterialName($row->material_id)->description ?? $row->material_id  }}</td>
                                         <td>{{ $row->uom_code }}</td>
                                         <td>{{ $row->qty }}</td>
-                                        <td>{{ $row->currency }}</td>
                                         <td>{{ number_format($row->price,2) }}</td>
                                 </tr>
                                 @endforeach
@@ -94,16 +94,34 @@
                         </table>
                     </div>
 
-                    <div class="row" style="margin-top: 20px">
+                    {{-- <div class="row" style="margin-top: 20px">
                         <div class="col-lg-12">
                             <div class="form-actions">
                                 <button type="submit" class="btn btn-success click" id="save"> <i class="fa fa-check"></i> Approve</button>
                                 <a class="btn btn-danger reject" href="#"> <i class="fa fa-times"></i> Reject </a>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                 </form>
             </div>
+            {{-- <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <table class="table table-bordered table-condesed">
+                            <thead>
+                                <tr>
+                                    <th><b>Employee ID</b></th>
+                                    <th><b>Status</b></th>
+                                    <th style="text-align:center;">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div> --}}
         </div>
     </div>
 </div>

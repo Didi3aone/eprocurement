@@ -13,6 +13,7 @@ class VendorPurchasingOrganization extends Model
     protected $fillable = [
         'vendor_id',
         'purchasing_organization',
-        'order_currency'
+        'order_currency',
+        'term_of_payment_key'
     ];
 }

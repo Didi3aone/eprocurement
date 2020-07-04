@@ -91,7 +91,7 @@ class PoGrGet extends Command
                                                 ->where('PO_ITEM', $value[$i]->EBELP)
                                                 ->first();
                                     
-                                    $poDetail->qty_gr           =  $value[$i]->MENGE;
+                                    $poDetail->qty_gr           = $value[$i]->MENGE;
                                     $poDetail->qty_outstanding  = $poDetail->qty - $value[$i]->MENGE;
                                     $poDetail->update();
                                 }
@@ -122,7 +122,7 @@ class PoGrGet extends Command
                                     'gl_account'                => $value[$i]->SAKTO ?? '',
                                     'profit_center'             => $value[$i]->PRCTR ?? '',
                                     'purchase_order_detail_id'  => $poDetail->id ?? 0,
-                                    'price_per_pc'              => ($value[$i]->DMBTR/$value[$i]->MENGE)
+                                    'price_per_pc'              => ($value[$i]->DMBTR/$value[$i]->MENGE) * 100
                                 ]);
                             }
                         }
@@ -164,7 +164,7 @@ class PoGrGet extends Command
                             'gl_account'                => $value->SAKTO ?? '',
                             'profit_center'             => $value->PRCTR ?? '',
                             'purchase_order_detail_id'  => $poDetail->id ?? 0,
-                            'price_per_pc'              => ($value->DMBTR/$value->MENGE)
+                            'price_per_pc'              => ($value->DMBTR/$value->MENGE) * 100
                         ]);
                     }
                 }
