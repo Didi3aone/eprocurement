@@ -190,6 +190,11 @@ class PurchaseRequestController extends Controller
         return view('admin.purchase-request.approval-project', compact('prProject'));
     }
 
+    public function show($id)
+    {
+        $prProject = PurchaseRequest::find($id);
+        return view('admin.purchase-request.show', compact('prProject'));
+    }
     /**
      * resource for create po.
      *
