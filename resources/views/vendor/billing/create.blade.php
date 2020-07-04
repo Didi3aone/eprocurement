@@ -93,7 +93,13 @@
                                 </div>
                                 <div class="form-group col-lg-4">
                                     <label>No. Rekening <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control form-control-line {{ $errors->has('no_rekening') ? 'is-invalid' : '' }}" name="no_rekening" value="{{ old('no_rekening', $rekening->account_no) }}"> 
+                                    {{-- <input type="text" class="form-control form-control-line {{ $errors->has('no_rekening') ? 'is-invalid' : '' }}" name="no_rekening" value="{{ old('no_rekening', $rekening->account_no) }}">  --}}
+                                     <select class="form-control select2" name="no_rekening" id="no_rekening" placeholder="Choose">
+                                        <option value=""> Choose </option>
+                                        @foreach($rekening as $id => $account_no )
+                                            <option value=" {{ $id }} " >{{ $account_no }}</option>
+                                        @endforeach
+                                    </select>
                                     @if($errors->has('no_rekening'))
                                         <div class="invalid-feedback">
                                             {{ $errors->first('no_rekening') }}
@@ -402,12 +408,15 @@
    $('select').on('change', function() {
        var ppn =  this.value;
        var dpp = $("#dpp").val();
+       tt = dpp.replace(/,/g, '.');
        if(ppn == "V1") {
-           var count = parseFloat(dpp) * 1.1;
+           var count = parseFloat(tt) * 1.1;
            var roundedString = count.toFixed(2);
-           $("#nominal_inv_after_ppn").val(Number(roundedString));
+           var cm = roundedString.replace(".", ",");
+           $("#nominal_inv_after_ppn").val(cm);
        } else if(ppn == "V0") {
-           $("#nominal_inv_after_ppn").val(Number(dpp));
+           var cm = dpp.replace(".", ",");
+           $("#nominal_inv_after_ppn").val(cm);
        }
 
    });

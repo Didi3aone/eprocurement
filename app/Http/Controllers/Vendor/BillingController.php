@@ -200,7 +200,8 @@ class BillingController extends Controller
         $po_gr = PurchaseOrderGr::where('vendor_id', \Auth::user()->code)
             ->get();
         $rekening =  VendorBankDetails::where('vendor_id', \Auth::user()->id)
-            ->first();
+            ->get()
+            ->pluck('account_no', 'id');
         $npwp = VendorTaxNumbers::where('vendor_id', \Auth::user()->id)
             ->first();
 
