@@ -148,6 +148,7 @@
                                     <input type="file" class="form-control form-control-line" name="file_faktur" value="{{ old('file_faktur', '') }}"> 
                                 </div>
                             </div>
+                            
                                 {{-- <div class="form-group col-lg-3">
                                     <label>{{ trans('cruds.billing.fields.proposal_id') }}</label>
                                     <input type="text" class="form-control form-control-line {{ $errors->has('proposal_id') ? 'is-invalid' : '' }}" name="proposal_id" value="{{ $billing->proposal_id ?? old('proposal_id', '') }}" required> 
@@ -402,7 +403,7 @@
        var ppn =  this.value;
        var dpp = $("#dpp").val();
        if(ppn == "V1") {
-           var count = parseInt(dpp) * 1.1;
+           var count = parseFloat(dpp) * 1.1;
            var roundedString = count.toFixed(2);
            $("#nominal_inv_after_ppn").val(Number(roundedString));
        } else if(ppn == "V0") {
