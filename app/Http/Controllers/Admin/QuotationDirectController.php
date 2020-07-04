@@ -299,7 +299,9 @@ class QuotationDirectController extends Controller
                 $quotation->save();
 
                 $quotationDetail = QuotationDetail::where('quotation_order_id', $id)->get();
-                $quotationDeliveryDate = QuotationDelivery::where('quotation_id', $id)->get();
+                $quotationDeliveryDate = QuotationDelivery::where('quotation_id', $id)
+                                    ->orderBy('PREQ_ITEM','asc')
+                                    ->get();
 
                 $sendSap = \sapHelp::sendPoToSap($quotation, $quotationDetail,$quotationDeliveryDate);
                 
