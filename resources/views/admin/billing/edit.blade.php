@@ -71,7 +71,7 @@
                         </div>
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.proposal_date') }}</label>
-                            <input type="date" class="form-control form-control-line {{ $errors->has('proposal_date') ? 'is-invalid' : '' }}" name="proposal_date" value="{{ $billing->proposal_date ?? old('proposal_date', '') }}" required> 
+                            <input type="date" class="form-control form-control-line {{ $errors->has('proposal_date') ? 'is-invalid' : '' }}" name="proposal_date" value="{{ $billing->proposal_date ?? old('proposal_date', '') }}" readonly> 
                             @if($errors->has('proposal_date'))
                                 <div class="invalid-feedback">
                                     {{ $errors->first('proposal_date') }}
@@ -152,7 +152,7 @@
                         </div>
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.dpp') }}</label>
-                            <input type="text" class="form-control form-control-line {{ $errors->has('dpp') ? 'is-invalid' : '' }}" name="dpp" value="{{ $billing->dpp ?? old('dpp', '') }}" readonly> 
+                            <input type="text" class="form-control form-control-line {{ $errors->has('dpp') ? 'is-invalid' : '' }}" name="dpp" id="dpp" value="{{ $billing->dpp ?? old('dpp', '') }}" readonly> 
                             @if($errors->has('dpp'))
                                 <div class="invalid-feedback">
                                     {{ $errors->first('dpp') }}
@@ -179,15 +179,23 @@
                         </div>
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.payment_term_claim') }}</label>
-                            <select class="form-control form-control-line {{ $errors->has('payment_term_claim') ? 'is-invalid' : '' }}" name="payment_term_claim" value="{{ $billing->payment_term_claim ?? old('payment_term_claim', '') }}" required> 
+                            <select class="form-control select2 form-control-line {{ $errors->has('payment_term_claim') ? 'is-invalid' : '' }}" name="payment_term_claim" value="{{ $billing->payment_term_claim ?? old('payment_term_claim', '') }}" required> 
                                 @foreach ($payments as $pay)
                                     <option value="{{ $pay->payment_terms }}">{{ $pay->payment_terms }} - {{ $pay->own_explanation }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="form-group col-lg-4">
+                            <label>{{ trans('cruds.billing.fields.tipe_pph') }}</label>
+                            <select class="form-control select2 form-control-line" name="tipe_pph" id="tipe_pph" value="{{ $billing->tipe_pph ?? old('tipe_pph', '') }}">
+                                @foreach ($tipePphs as $tipe)
+                                    <option value="{{ $tipe->withholding_tax_rate }}">{{ $tipe->withholding_tax_code }} - {{ $tipe->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.jumlah_pph') }}</label>
-                            <input type="number" class="form-control form-control-line {{ $errors->has('jumlah_pph') ? 'is-invalid' : '' }}" name="jumlah_pph" value="{{ $billing->jumlah_pph ?? old('jumlah_pph', '') }}" required> 
+                            <input type="number" class="form-control form-control-line {{ $errors->has('jumlah_pph') ? 'is-invalid' : '' }}" name="jumlah_pph" id="jumlah_pph" value="{{ $billing->jumlah_pph ?? old('jumlah_pph', '') }}" required> 
                             @if($errors->has('jumlah_pph'))
                                 <div class="invalid-feedback">
                                     {{ $errors->first('jumlah_pph') }}
@@ -209,6 +217,24 @@
                             @if($errors->has('perihal_claim'))
                                 <div class="invalid-feedback">
                                     {{ $errors->first('perihal_claim') }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>{{ trans('cruds.billing.fields.currency') }}</label>
+                            <input type="text" class="form-control form-control-line {{ $errors->has('currency') ? 'is-invalid' : '' }}" name="currency" value="{{ $billing->currency ?? old('currency', 'IDR') }}" required> 
+                            @if($errors->has('currency'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('currency') }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>{{ trans('cruds.billing.fields.exchange_rate') }}</label>
+                            <input type="text" class="form-control form-control-line {{ $errors->has('exchange_rate') ? 'is-invalid' : '' }}" name="exchange_rate" value="{{ $billing->exchange_rate ?? old('exchange_rate', '') }}" required> 
+                            @if($errors->has('exchange_rate'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('exchange_rate') }}
                                 </div>
                             @endif
                         </div>
@@ -277,7 +303,7 @@
                         </div>
                         <div class="form-group col-lg-4">
                             <label>DPP</label>
-                            <input type="text" class="form-control form-control-line {{ $errors->has('dpp') ? 'is-invalid' : '' }}" name="dpp" value="{{ $billing->dpp ?? old('dpp', '') }}" readonly> 
+                            <input type="text" class="form-control form-control-line {{ $errors->has('dpp') ? 'is-invalid' : '' }}" name="dpp" id="dpp" value="{{ $billing->dpp ?? old('dpp', '') }}" readonly> 
                             @if($errors->has('dpp'))
                                 <div class="invalid-feedback">
                                     {{ $errors->first('dpp') }}
@@ -533,6 +559,13 @@
 
 @section('scripts')
 <script>
+    $(document).on('change', '#tipe_pph', function () {
+        const nominal_pph = $(this).val() * $('#dpp').val()
+        console.log($(this).val(), $('#dpp').val(), nominal_pph)
+
+        $(document).find('#jumlah_pph').val(nominal_pph)
+    }).trigger('change')
+
     $(document).on('click', '#approval', function (result) {
         $form = $('.form-material')
         $form.attr('action', '{{ route('admin.billing-post-approved') }}')

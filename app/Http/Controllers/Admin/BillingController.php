@@ -8,6 +8,7 @@ use Gate, Artisan;
 use App\Models\Vendor\Billing;
 use App\Models\PurchaseOrderGr;
 use App\Models\PaymentTerm;
+use App\Models\MasterPph;
 use Symfony\Component\HttpFoundation\Response;
 
 class BillingController extends Controller
@@ -44,11 +45,12 @@ class BillingController extends Controller
     {
         $billing = Billing::find($id);
         $payments = PaymentTerm::all();
+        $tipePphs = MasterPph::all();
         $details = PurchaseOrderGr::join('billing_details', 'billing_details.po_no', '=', 'purchase_order_gr.po_no')
             ->where('billing_details.billing_id', $id)
             ->get();
 
-        return view('admin.billing.edit', compact('billing', 'payments', 'details'));
+        return view('admin.billing.edit', compact('billing', 'payments', 'tipePphs', 'details'));
     }
 
     public function store (Request $request)

@@ -200,6 +200,7 @@ class QuotationRepeatController extends Controller
             $quotation->doc_type        = $request->get('doc_type');
             $quotation->upload_file     = $request->get('upload_files');
             $quotation->currency        = $request->get('currency');
+            $quotation->exchange_rate   = $request->get('exchange_rate');
             $quotation->payment_term    = $request->get('payment_term') ?? $payVendor;
             $quotation->vendor_id       = $request->vendor_id;
             $quotation->status          = Quotation::QuotationRepeat;
