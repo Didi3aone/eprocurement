@@ -302,21 +302,18 @@ class QuotationDirectController extends Controller
                                 ->orderBy('PREQ_ITEM','asc')
                                 ->get();
                 $quotationDeliveryDate = QuotationDelivery::where('quotation_id', $id)
+                                    ->orderBy('SCHED_LINE','asc')
                                     ->orderBy('PREQ_ITEM','asc')
                                     ->get();
 
                 $sendSap = \sapHelp::sendPoToSap($quotation, $quotationDetail,$quotationDeliveryDate);
                 
-                $this->_clone_purchase_orders($quotation, $quotationDetail, $sendSap);
-                // if( $sendSap ) {
-                //     \DB::commit();
-                // } else {
-                //     return redirect()->route('admin.quotation-direct-approval-head')->with('error', 'Internal server error');
-                // }
-                // if( $sendSap ) {
-                //     $this->_clone_purchase_orders($quotation, $quotationDetail,$sendSap);
-                // }
-
+                if( $sendSap ) {
+                    $this->_clone_purchase_orders($quotation, $quotationDetail, $sendSap);
+                    \DB::commit();
+                } else {
+                    return redirect()->route('admin.quotation-direct-approval-head')->with('error', 'Internal server error');
+                }
             }
             return redirect()->route('admin.quotation-direct-approval-head')->with('status', 'Direct Order has been approved!');
         } catch (\Throwable $th) {

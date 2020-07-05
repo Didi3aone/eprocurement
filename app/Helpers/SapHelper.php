@@ -1264,7 +1264,7 @@ class SapHelper {
 
                 $POSCHEDULE = [
                     "PO_ITEM" => $poItem, //line
-                    "SCHED_LINE" => $quotationDeliveryDate[$i]->SCHED_LINE, // 0001 ++
+                    "SCHED_LINE" => '0001',//$quotationDeliveryDate[$i]->SCHED_LINE, // 0001 ++
                     "DEL_DATCAT_EXT" => "",
                     "DELIVERY_DATE" => $quotationDeliveryDate[$i]->DELIVERY_DATE,//delivery date
                     "QUANTITY" =>  (string) $quotationDeliveryDate[$i]->QUANTITY,// qty
@@ -1295,7 +1295,7 @@ class SapHelper {
 
                 $POSCHEDULEX = [
                     "PO_ITEM" => $poItem,
-                    "SCHED_LINE" => $schedLine,
+                    "SCHED_LINE" => '0001',//$quotationDeliveryDate[$i]->SCHED_LINE,
                     "PO_ITEMX" => "X",
                     "SCHED_LINEX" => "X",
                     "DEL_DATCAT_EXT" => "",
