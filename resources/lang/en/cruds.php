@@ -784,6 +784,7 @@ return [
             'file_faktur' => 'File Faktur',
             'file_invoice' => 'File Invoice',
             'title' => 'Title',
+            'base_line_date' => 'Base Line Date',
             'proposal_date' => 'Payment Proposal Date',
             'division' => 'Division',
             'region' => 'Region',

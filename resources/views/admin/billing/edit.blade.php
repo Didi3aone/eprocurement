@@ -133,11 +133,11 @@
                             @endif
                         </div>
                         <div class="form-group col-lg-4">
-                            <label>{{ trans('cruds.billing.fields.posting_date') }}</label>
-                            <input type="date" class="form-control form-control-line {{ $errors->has('posting_date') ? 'is-invalid' : '' }}" name="posting_date" value="{{ $billing->posting_date ?? old('posting_date', '') }}" required> 
-                            @if($errors->has('posting_date'))
+                            <label>{{ trans('cruds.billing.fields.base_line_date') }}</label>
+                            <input type="date" class="form-control form-control-line {{ $errors->has('base_line_date') ? 'is-invalid' : '' }}" name="base_line_date" value="{{ $billing->posting_date ?? old('base_line_date', '') }}" required> 
+                            @if($errors->has('base_line_date'))
                                 <div class="invalid-feedback">
-                                    {{ $errors->first('posting_date') }}
+                                    {{ $errors->first('base_line_date') }}
                                 </div>
                             @endif
                         </div>
@@ -195,7 +195,7 @@
                         </div>
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.jumlah_pph') }}</label>
-                            <input type="number" class="form-control form-control-line {{ $errors->has('jumlah_pph') ? 'is-invalid' : '' }}" name="jumlah_pph" id="jumlah_pph" value="{{ $billing->jumlah_pph ?? old('jumlah_pph', '') }}" required> 
+                            <input type="number" class="form-control form-control-line {{ $errors->has('jumlah_pph') ? 'is-invalid' : '' }}" name="jumlah_pph" id="jumlah_pph" value="{{ $billing->jumlah_pph ?? old('jumlah_pph', '') }}" readonly> 
                             @if($errors->has('jumlah_pph'))
                                 <div class="invalid-feedback">
                                     {{ $errors->first('jumlah_pph') }}
@@ -204,7 +204,7 @@
                         </div>
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.total_invoice') }}</label>
-                            <input type="number" class="form-control form-control-line {{ $errors->has('total_invoice') ? 'is-invalid' : '' }}" name="total_invoice" value="{{ old('total_invoice','') }}" required> 
+                            <input type="number" class="form-control form-control-line {{ $errors->has('total_invoice') ? 'is-invalid' : '' }}" name="total_invoice" value="{{ $billing->dpp + $billing->ppn ?? old('total_invoice','') }}" required> 
                             @if($errors->has('total_invoice'))
                                 <div class="invalid-feedback">
                                     {{ $errors->first('total_invoice') }}
