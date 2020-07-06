@@ -81,6 +81,7 @@ class PoGrGet extends Command
                 $params[0]['EBELN'] = $row->PO_NUMBER;
                 $result = $client->__soapCall("ZFM_WS_POGR", $params, NULL, $header);
                 foreach( $result->ITAB as $value ) {
+                    dd($value);
                     if( is_array($value) ) {
                         for ($i = 0; $i <= count($value); $i++) {
                             if( !empty($value[$i]) ) {

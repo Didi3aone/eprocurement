@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Gate, Artisan;
 use App\Models\Vendor\Billing;
+use App\Models\Vendor\BillingDetail;
 use App\Models\PurchaseOrderGr;
 use App\Models\PaymentTerm;
 use App\Models\MasterPph;
+use App\Models\Currency;
+use App\Models\MasterBankHouse;
 use Symfony\Component\HttpFoundation\Response;
 
 class BillingController extends Controller
@@ -21,14 +24,25 @@ class BillingController extends Controller
     public function index()
     {
         $spv = 0;
-        if (Gate::check('accounting_spv'))
-            $spv = 1;
-
         $billing = Billing::where('is_spv', $spv)->get();
 
         return view('admin.billing.index', compact('billing'));
     }
 
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function listSpv()
+    {
+        $spv = 1;
+
+        $billing = Billing::where('is_spv', $spv)->get();
+
+        return view('admin.billing.index-spv', compact('billing'));
+    }
+ 
      /**
      * Display a listing of the resource.
      *
@@ -37,8 +51,12 @@ class BillingController extends Controller
     public function show($id)
     {
         $billing = Billing::find($id);
+        $payments = PaymentTerm::all();
+        $tipePphs = MasterPph::all();
+        $currency = Currency::all();
+        $bankHouse = MasterBankHouse::all();
 
-        return view('admin.billing.show', compact('billing'));
+        return view('admin.billing.show', compact('billing', 'bankHouse','payments', 'tipePphs','currency'));
     }
 
     public function edit ($id)
@@ -46,34 +64,49 @@ class BillingController extends Controller
         $billing = Billing::find($id);
         $payments = PaymentTerm::all();
         $tipePphs = MasterPph::all();
-        $details = PurchaseOrderGr::join('billing_details', 'billing_details.po_no', '=', 'purchase_order_gr.po_no')
-            ->where('billing_details.billing_id', $id)
-            ->get();
+        $currency = Currency::all();
+        $bankHouse = MasterBankHouse::all();
 
-        return view('admin.billing.edit', compact('billing', 'payments', 'tipePphs', 'details'));
+        return view('admin.billing.edit', compact('billing', 'bankHouse','payments', 'tipePphs','currency'));
     }
 
     public function store (Request $request)
     {
-        dd($request->all());
+        // foreach ($request->get('po_no') as $key => $val) {
+        //     $data = [
+        //         'po_no' => $request->get('po_no')[$key],
+        //         'posting_date' => $request->get('posting_date')[$key],
+        //     ];
 
-        foreach ($request->get('po_no') as $key => $val) {
-            $data = [
-                'po_no' => $request->get('po_no')[$key],
-                'posting_date' => $request->get('posting_date')[$key],
-            ];
+        //     $this->_sendToSap($data);
+        // }
 
-            $this->_sendToSap($data);
-        }
+        \Session::flash('status','Billing has been approved');
+        return \redirect()->route('admin.billing-spv-list');
     }
 
     public function storeApproved(Request $request)
     {
         $billing = Billing::find($request->id);
         $billing->status = Billing::Approved;
+        $billing->assignment = $request->assignment;
+        $billing->payment_term_claim  = $request->payment_term_claim;
+        $billing->tipe_pph = $request->tipe_pph;
+        $billing->jumlah_pph = $request->jumlah_pph;
+        $billing->currency = $request->currency;
+        $billing->perihal_claim = $request->perihal_claim;
+        $billing->house_bank = $request->house_bank;
+        $billing->exchange_rate  = $request->exchange_rate   ;
+        $billing->is_spv = 1;
         $billing->update();
 
+        foreach( $request->iddetail as $key => $rows ) {
+            $detail = BillingDetail::find($rows);
+            $detail->amount = $request->amount[$key];
+        }
+
         \Session::flash('status','Billing has been approved');
+        return \redirect()->route('admin.billing');
     }
     
     public function storeRejected(Request $request)

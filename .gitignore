@@ -36,3 +36,5 @@ Homestead.json
 
 composer.lock
 # public
+
+/public

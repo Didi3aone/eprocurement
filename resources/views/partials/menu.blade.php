@@ -173,7 +173,7 @@
                         @endcan
                         @can('accounting_spv')
                         <li>
-                            <a href="{{ route('admin.billing') }}" class="">
+                            <a href="{{ route('admin.billing-spv-list') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
                                 List Billing
                             </a>

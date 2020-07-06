@@ -48,7 +48,8 @@ class Billing extends Model
 
     public const TypeStatus = [
         1 => 'Waiting For Approval',
-        2 => 'Approved',
+        2 => 'Approved Staff',
+        7 => 'Approved Spv',
         3 => 'Rejected',
         4 => 'Submit to SAP',
         5 => 'Payment Proposal',
@@ -57,6 +58,7 @@ class Billing extends Model
 
     public const WaitingApprove = 1;
     public const Approved = 2;
+    public const ApprovedSpv = 7;
     public const Rejected = 3;
     public const Submitted = 4;
     public const Payment = 5;
@@ -89,5 +91,10 @@ class Billing extends Model
     public function vendor()
     {
         return $this->hasOne(\App\Models\Vendor::class,'code','vendor_id');
+    }
+
+    public function detail()
+    {
+        return $this->hasMany(\App\Models\Vendor\BillingDetail::class,'billing_id');
     }
 }

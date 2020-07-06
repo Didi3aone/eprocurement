@@ -21,6 +21,11 @@ class BillingDetail extends Model
         return $this->hasOne(\App\Models\Billing::class, 'id', 'billing_id');
     }
 
+    public function material()
+    {
+        return $this->hasOne(\App\Models\MasterMaterial::class, 'code','material_id');
+    }
+
     public function gr ()
     {
         return $this->hasOne(\App\Models\PurchaseOrderGr::class, 'po_no', 'po_no');

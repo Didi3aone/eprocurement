@@ -22,7 +22,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="form-group col-lg-4">
-                                    <label>No Faktur Pajak</label>
+                                    <label>Faktur No</label>
                                     <input type="text" class="form-control form-control-line {{ $errors->has('no_faktur') ? 'is-invalid' : '' }}" name="no_faktur" value="{{ old('no_faktur', '') }}"> 
                                     @if($errors->has('no_faktur'))
                                         <div class="invalid-feedback">
@@ -31,7 +31,7 @@
                                     @endif
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>Tanggal Faktur Pajak <span class="text-danger">*</span></label>
+                                    <label>Faktur Date <span class="text-danger">*</span></label>
                                     <input type="text" id="mdate" class="form-control form-control-line {{ $errors->has('tgl_faktur') ? 'is-invalid' : '' }}" name="tgl_faktur" value="{{ old('tgl_faktur', '') }}"> 
                                     @if($errors->has('tgl_faktur'))
                                         <div class="invalid-feedback">
@@ -49,7 +49,7 @@
                                     @endif
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>Tanggal Invoice <span class="text-danger">*</span></label>
+                                    <label>Invoice Date <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control mdate2 form-control-line {{ $errors->has('tgl_invoice') ? 'is-invalid' : '' }}" name="tgl_invoice" value="{{ old('tgl_invoice', '') }}"> 
                                     @if($errors->has('tgl_invoice'))
                                         <div class="invalid-feedback">
@@ -266,7 +266,7 @@
                                     <table class="table table-striped">
                                         <thead>
                                             <tr>
-                                                <th style="width: 10%">Qty Old</th>
+                                                <th style="width: 10%">Qty GR</th>
                                                 <th style="width: 10%">Qty</th>
                                                 <th style="width: 10%">Material Code</th>
                                                 <th style="width: 10%">Description</th>
@@ -300,6 +300,13 @@
 @section('scripts')
 <script>
     const base_url = '{{ url('/') }}'
+    $('#datatables-run').DataTable({
+        "searching": false,
+        "bPaginate": false,
+        "bLengthChange": false,
+        "bInfo": false,
+        "ordering": false
+    });
 
     $(document).on('click', '#add-material', function (e) {
         e.preventDefault()
@@ -310,17 +317,27 @@
             $.get(base_url + '/vendor/billing-po-gr/' + PO_GR, function (result) {
                 const template = `
                     <tr>
+                        <input type="hidden"name="currency[]" value="${result.currency}">
+                        <input type="hidden"name="plant_code[]" value="${result.plant}">
+                        <input type="hidden"name="gl_account[]" value="${result.gl_account}">
+                        <input type="hidden"name="profit_center[]" value="${result.profit_center}">
+                        <input type="hidden"name="amount[]" value="${result.amount}">
+                        <input type="hidden"name="material_document[]" value="${result.material_document}">
+                        <input type="hidden"name="reference_document_item[]" value="${result.reference_document_item}">
+                        <input type="hidden"name="doc_gr[]" value="${result.doc_gr}">
+                        <input type="hidden" name="debet_credit[]" value="${result.debet_credit}"/>
+                        <input type="hidden" name="item_gr[]" value="${result.item_gr}"/>
+                        <input type="hidden" name="storage_location[]" value="${result.storage_location}"/>
+                        <input type="hidden" name="unit[]" value="${result.satuan}"/>
                         <td><input type="number" class="qty-old form-control" name="qty_old[]" value="${result.qty}" readonly></td>
                         <td><input type="number" class="qty form-control" name="qty[]" value="${result.qty}" required/></td>
                         <td><input type="text" class="material form-control" name="material[]" value="${result.material}" readonly></select></td>
                         <td><input type="text" class="description form-control" name="description[]" value="${result.description}" readonly/></td>
                         <td><input type="text" class="po_no form-control" name="po_no[]" value="${result.po_no}" readonly></td>
-                        <td><input type="text" class="po_item form-control" name="PO_ITEM[]" value="${result.PO_ITEM}" readonly/></td>
+                        <td><input type="text" class="po_item form-control" name="PO_ITEM[]" value="${result.po_item}" readonly/></td>
                         <td><input type="text" class="doc_gr form-control" name="doc_gr[]" value="${result.doc_gr}" readonly/></td>
                         <td><input type="text" class="item_gr form-control" name="item_gr[]" value="${result.item_gr}" readonly/></td>
                         <td><input type="text" class="posting_date form-control" name="posting_date[]" value="${result.posting_date}" readonly/></td>
-                        <td><input type="text" class="material_no form-control" name="material_no[]" value="${result.material_no}" readonly/></td>
-                        <td><input type="text" class="debet_credit form-control" name="debet_credit[]" value="${result.debet_credit}" readonly/></td>
                         <td>
                             <a href="javascript:;" class="remove-item btn btn-danger btn-xs">
                                 <i class="fa fa-trash"></i> Remove

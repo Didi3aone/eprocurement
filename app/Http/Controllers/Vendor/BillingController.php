@@ -253,7 +253,7 @@ class BillingController extends Controller
             $nominal_inv_after_ppn =  str_replace(',', '.', $request->nominal_inv_after_ppn);
 
             $billing = new Billing;
-            $billing->billing_no            = time();
+            $billing->billing_no            = substr(time(),5)."".time();
             $billing->tgl_faktur            = $request->tgl_faktur;
             $billing->no_faktur             = $request->no_faktur;
             $billing->no_invoice            = $request->no_invoice;
@@ -263,7 +263,6 @@ class BillingController extends Controller
             $billing->dpp                   = $request->dpp;
             $billing->no_rekening           = $request->no_rekening;
             $billing->no_surat_jalan        = $suratJalanName;
-            // $billing->tgl_surat_jalan       = $request->tgl_surat_jalan;
             $billing->npwp                  = $request->npwp;
             $billing->surat_ket_bebas_pajak = $fileBebasName;
             $billing->po                    = $filePoName;
@@ -274,26 +273,41 @@ class BillingController extends Controller
             $billing->save();
 
             foreach ($request->get('po_no') as $key => $val) {
-                $po_no = $request->get('po_no')[$key];
-                $qty = $request->get('qty')[$key];
-                $qty_old = $request->get('qty_old')[$key];
-                $PO_ITEM = $request->get('PO_ITEM')[$key];
-                $material_no = $request->get('material_no')[$key];
-                $debet_credit = $request->get('debet_credit')[$key];
-                $qty_old = $request->get('qty_old')[$key];
+                $po_no              = $request->get('po_no')[$key];
+                $qty                = $request->get('qty')[$key];
+                $qty_old            = $request->get('qty_old')[$key];
+                $PO_ITEM            = $request->get('PO_ITEM')[$key];
+                $material_no        = $request->get('material')[$key];
+                $debet_credit       = $request->get('debet_credit')[$key];
+                $qty_old            = $request->get('qty_old')[$key];
 
-                $billingDetail = new BillingDetail;
-                $billingDetail->billing_id = $billing->id;
-                $billingDetail->po_no = $po_no;
-                $billingDetail->qty = $qty;
-                $billingDetail->qty_old = $qty_old;
-                $billingDetail->PO_ITEM = $PO_ITEM;
-                $billingDetail->material_id = $material_no;
-                $billingDetail->debet_credit = $debet_credit;
-                $billingDetail->qty_old = $qty_old;
+                $billingDetail                              = new BillingDetail;
+                $billingDetail->billing_id                  = $billing->id;
+                $billingDetail->po_no                       = $po_no;
+                $billingDetail->qty                         = $qty;
+                $billingDetail->qty_old                     = $qty_old;
+                $billingDetail->PO_ITEM                     = $PO_ITEM;
+                $billingDetail->material_id                 = $material_no;
+                $billingDetail->debet_credit                = $debet_credit;
+                $billingDetail->plant_code                  = $request->get('plant_code')[$key];
+                $billingDetail->gl_account                  = $request->get('gl_account')[$key];
+                $billingDetail->profit_center               = $request->get('profit_center')[$key];
+                $billingDetail->amount                      = $request->get('amount')[$key];
+                $billingDetail->material_document           = $request->get('material_document')[$key];
+                $billingDetail->reference_document_item     = $request->get('reference_document_item')[$key];
+                $billingDetail->doc_gr                      = $request->get('doc_gr')[$key];
+                $billingDetail->currency                    = $request->get('currency')[$key];
+                $billingDetail->item_gr                     = $request->get('item_gr')[$key];
+                $billingDetail->storage_location            = $request->get('storage_location')[$key];
+                $billingDetail->unit                        = $request->get('unit')[$key];
                 $billingDetail->save();
 
-                $po_gr = PurchaseOrderGr::where('po_no', $po_no)->first();
+                $po_gr = PurchaseOrderGr::where('po_no', $po_no)
+                        ->where('po_item', $PO_ITEM)
+                        ->where('material_no', $material_no)
+                        ->first();
+
+                // $po_pr->qty_billing = $qty;
                 $po_gr->qty = $qty_old - $qty;
                 $po_gr->save();
             }
@@ -324,7 +338,7 @@ class BillingController extends Controller
         $material_description = $model->material ? $model->material->description : '';
         
         $data['po_no'] = $model->po_no;
-        $data['PO_ITEM'] = $model->PO_ITEM;
+        $data['po_item'] = $model->po_item;
         $data['material'] = $model->material_no;
         $data['qty'] = $model->qty;
         $data['doc_gr'] = $model->doc_gr;
@@ -333,6 +347,16 @@ class BillingController extends Controller
         $data['reference_document'] = $model->reference_document;
         $data['description'] = $material_description;
         $data['debet_credit'] = $model->debet_credit;
+        $data['currency'] = $model->currency;
+        $data['plant'] = $model->plant;
+        $data['gl_account'] = $model->gl_account;
+        $data['profit_center'] = $model->profit_center;
+        $data['amount'] = $model->amount;
+        $data['material_document'] = $model->material_document;
+        $data['reference_document_item'] = $model->reference_document_item;
+        $data['doc_gr'] = $model->doc_gr;
+        $data['storage_location'] = $model->storage_location;
+        $data['satuan'] = $model->satuan;
         
 
         return response()->json($data);
