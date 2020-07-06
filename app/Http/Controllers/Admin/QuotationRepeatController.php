@@ -204,6 +204,7 @@ class QuotationRepeatController extends Controller
             $quotation->payment_term    = $request->get('payment_term') ?? $payVendor;
             $quotation->vendor_id       = $request->vendor_id;
             $quotation->status          = Quotation::QuotationRepeat;
+            $quotation->exchange_rate   = $request->exchange_rate;
             $quotation->approval_status = Quotation::Waiting;
 
             $quotation->save();

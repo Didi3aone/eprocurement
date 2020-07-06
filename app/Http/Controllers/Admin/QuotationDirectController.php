@@ -186,6 +186,7 @@ class QuotationDirectController extends Controller
             $poNo = 'PO/' . date('m') . '/' . date('Y') . '/' . sprintf('%07d', ++$max);
             $payVendor = \App\Models\Vendor::where('code', $request->vendor_id)
                 ->first()->payment_terms;
+                
             $quotation = new Quotation;
             $quotation->po_no           = $poNo;
             $quotation->notes           = $request->get('notes');
@@ -195,6 +196,7 @@ class QuotationDirectController extends Controller
             $quotation->currency        = $request->get('currency');
             $quotation->payment_term    = $request->get('payment_term') ?? $payVendor;
             $quotation->vendor_id       = $request->vendor_id;
+            $quotation->exchange_rate   = $request->exchange_rate;
             $quotation->acp_id          = $request->acp_id[0];
             $quotation->approval_status = Quotation::Waiting;
             $quotation->save();
