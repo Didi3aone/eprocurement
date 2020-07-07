@@ -39,7 +39,9 @@ class PurchaseOrderGr extends Model
         'updated_at',
         'purchase_order_detail_id',
         'price_per_pc',
-        'qty_billing'
+        'qty_billing',
+        'cost_center_code',
+        'posting_date'
     ];
 
     public static function boot()

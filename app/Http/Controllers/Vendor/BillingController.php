@@ -295,11 +295,16 @@ class BillingController extends Controller
                 $billingDetail->amount                      = $request->get('amount')[$key];
                 $billingDetail->material_document           = $request->get('material_document')[$key];
                 $billingDetail->reference_document_item     = $request->get('reference_document_item')[$key];
-                $billingDetail->doc_gr                      = $request->get('doc_gr')[$key];
+                $billingDetail->doc_gr                      = $request->get('doc_gr')[$key]; 
                 $billingDetail->currency                    = $request->get('currency')[$key];
                 $billingDetail->item_gr                     = $request->get('item_gr')[$key];
                 $billingDetail->storage_location            = $request->get('storage_location')[$key];
                 $billingDetail->unit                        = $request->get('unit')[$key];
+                $billingDetail->reference_document          = $request->get('reference_document')[$key];
+                $billingDetail->price_per_pc                = $request->get('price_per_pc')[$key];
+                $billingDetail->material_doc_item           = $request->get('material_doc_item')[$key];
+                $billingDetail->cost_center_code            = $request->get('cost_center_code')[$key];
+                $billingDetail->tahun_gr                    = $request->get('tahun_gr')[$key];
                 $billingDetail->save();
 
                 $po_gr = PurchaseOrderGr::where('po_no', $po_no)
@@ -357,6 +362,10 @@ class BillingController extends Controller
         $data['doc_gr'] = $model->doc_gr;
         $data['storage_location'] = $model->storage_location;
         $data['satuan'] = $model->satuan;
+        $data['material_doc_item'] = $model->material_doc_item;
+        $data['price_per_pc'] = $model->price_per_pc;
+        $data['cost_center_code'] = $model->cost_center_code;
+        $data['tahun_gr'] = $model->tahun_gr;
         
 
         return response()->json($data);

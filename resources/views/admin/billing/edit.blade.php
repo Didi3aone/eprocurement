@@ -213,7 +213,7 @@
                                         <td>{{ $val->qty }}</td>
                                         <td><input type="text" class="amount" name="amount[]" value="{{ $val->amount }}"/></td>
                                         <td>{{ $val->material_id." - ".$val->material->description }}</td>
-                                        <td><input type="text" class="" name="po_no[]" value="{{ $val->po_no }}" readonly></td>
+                                        <td><input type="text" class="" name="po_no" value="{{ $val->po_no }}" readonly></td>
                                         <td><input type="text" class="" name="po_item[]" value="{{ $val->PO_ITEM }}" readonly></td>
                                         <td><input type="text" class="" name="doc_gr[]" value="{{ $val->doc_gr }}" readonly/></td>
                                         <td><input type="text" class="" name="item_gr[]" value="{{ $val->item_gr }}" readonly/></td>

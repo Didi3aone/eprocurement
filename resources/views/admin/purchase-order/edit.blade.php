@@ -91,7 +91,7 @@
                                     <th style="width: 14%">Delivery Date</th>
                                     <th style="width: 64%">Tax</th>
                                     <th style="width: 64%">
-                                        <button type="button" id="add_item" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add Item</button>
+                                        {{-- <button type="button" id="add_item" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add Item</button> --}}
                                     </th>
                                 </tr>
                             </thead>

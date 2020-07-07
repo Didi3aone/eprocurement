@@ -329,6 +329,11 @@
                         <input type="hidden" name="item_gr[]" value="${result.item_gr}"/>
                         <input type="hidden" name="storage_location[]" value="${result.storage_location}"/>
                         <input type="hidden" name="unit[]" value="${result.satuan}"/>
+                        <input type="hidden" name="reference_document[]" value="${result.reference_document}"/>
+                        <input type="hidden" name="material_doc_item[]" value="${result.material_doc_item}"/>
+                        <input type="hidden" name="cost_center_code[]" value="${result.cost_center_code}"/>
+                        <input type="hidden" name="tahun_gr[]" value="${result.tahun_gr}"/>
+                        <input type="hidden" name="price_per_pc[]" value="${result.price_per_pc}"/>
                         <td><input type="number" class="qty-old form-control" name="qty_old[]" value="${result.qty}" readonly></td>
                         <td><input type="number" class="qty form-control" name="qty[]" value="${result.qty}" required/></td>
                         <td><input type="text" class="material form-control" name="material[]" value="${result.material}" readonly></select></td>

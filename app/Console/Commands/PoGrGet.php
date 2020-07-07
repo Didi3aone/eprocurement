@@ -51,7 +51,7 @@ class PoGrGet extends Command
     public function handle()
     {
         echo "Start ..... \n";
-        $wsdl = public_path() . "/xml/zbn_eproc_pogr.xml";
+        $wsdl = public_path() . "/xml/zbn_eproc_pogr_v2.xml";
 
         $username = "IT_02";
         $password = "ademsari";
@@ -81,7 +81,6 @@ class PoGrGet extends Command
                 $params[0]['EBELN'] = $row->PO_NUMBER;
                 $result = $client->__soapCall("ZFM_WS_POGR", $params, NULL, $header);
                 foreach( $result->ITAB as $value ) {
-                    dd($value);
                     if( is_array($value) ) {
                         for ($i = 0; $i <= count($value); $i++) {
                             if( !empty($value[$i]) ) {
@@ -106,7 +105,7 @@ class PoGrGet extends Command
                                     'debet_credit'              => $value[$i]->SHKZG ?? '',//s itu debit h itu kredit
                                     'material_no'               => str_replace('00000000000','',$value[$i]->MATNR),
                                     'qty'                       => $value[$i]->MENGE,
-                                    'amount'                    => $value[$i]->DMBTR,
+                                    'amount'                    => $value[$i]->WRBTR,
                                     'plant'                     => $value[$i]->WERKS,
                                     'storage_location'          => $value[$i]->LGORT,
                                     'batch'                     => $value[$i]->CHARG ?? '',
@@ -123,7 +122,9 @@ class PoGrGet extends Command
                                     'gl_account'                => $value[$i]->SAKTO ?? '',
                                     'profit_center'             => $value[$i]->PRCTR ?? '',
                                     'purchase_order_detail_id'  => $poDetail->id ?? 0,
-                                    'price_per_pc'              => ($value[$i]->DMBTR/$value[$i]->MENGE) * 100
+                                    'price_per_pc'              => ($value[$i]->DMBTR/$value[$i]->MENGE) * 100,
+                                    'cost_center_code'          => $value[$i]->KOSTL, 
+                                    'posting_date'              => $value[$i]->BUDAT, 
                                 ]);
                             }
                         }
@@ -148,7 +149,7 @@ class PoGrGet extends Command
                             'debet_credit'              => $value->SHKZG ?? '',//s itu debit h itu kredit
                             'material_no'               => str_replace('00000000000','',$value->MATNR),
                             'qty'                       => $value->MENGE,
-                            'amount'                    => $value->DMBTR,
+                            'amount'                    => $value->WRBTR,
                             'plant'                     => $value->WERKS,
                             'storage_location'          => $value->LGORT,
                             'batch'                     => $value->CHARG ?? '',
@@ -165,7 +166,9 @@ class PoGrGet extends Command
                             'gl_account'                => $value->SAKTO ?? '',
                             'profit_center'             => $value->PRCTR ?? '',
                             'purchase_order_detail_id'  => $poDetail->id ?? 0,
-                            'price_per_pc'              => ($value->DMBTR/$value->MENGE) * 100
+                            'price_per_pc'              => ($value->DMBTR/$value->MENGE) * 100,
+                            'cost_center_code'          => $value[$i]->KOSTL,
+                            'posting_date'              => $value[$i]->BUDAT, 
                         ]);
                     }
                 }
