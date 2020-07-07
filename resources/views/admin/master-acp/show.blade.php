@@ -30,6 +30,10 @@
                                         <td>{{ $acp->acp_no }}</td>
                                     </tr>
                                     <tr>
+                                        <th>Project</th>
+                                        <td>{{ $acp->is_project == 1 ? 'Project' : '-' }}</td>
+                                    </tr>
+                                    <tr>
                                         <th>File</th>
                                         @if(isset($acp->upload_file))
                                             <td>
@@ -102,24 +106,26 @@
                     </div> --}}
                 </form>
             </div>
-            {{-- <div class="card-body">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <table class="table table-bordered table-condesed">
-                            <thead>
-                                <tr>
-                                    <th><b>Employee ID</b></th>
-                                    <th><b>Status</b></th>
-                                    <th style="text-align:center;">Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div> --}}
+            <div class="card-body">
+                <table class="table table-bordered table-condesed">
+                    <thead>
+                        <tr>
+                            <th>Employee ID</th>
+                            <th>Status</th>
+                            <th>Approve Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($approval as $key => $value)
+                            <tr>
+                                <td>{{ $value->nik }}</td>
+                                <td>{{ $value->status == 0 ? 'Waiting For Approval' : 'Approved' }}</td>
+                                <td>{{ $value->approve_date ?? '-' }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

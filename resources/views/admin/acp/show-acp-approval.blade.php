@@ -29,10 +29,10 @@
                                         <th>ACP No.</th>
                                         <td>{{ $acp->acp_no }}</td>
                                     </tr>
-                                    {{-- <tr>
-                                        <th>Currency</th>
-                                        <td>{{ $acp->currency }}</td>
-                                    </tr> --}}
+                                    <tr>
+                                        <th>Project</th>
+                                        <td>{{ $acp->is_project == 1 ? 'Project' : '-' }}</td>
+                                    </tr>
                                     <tr>
                                         <th>File</th>
                                         @if(isset($acp->upload_file))
@@ -47,6 +47,8 @@
                                                         </a>
                                                         <br>
                                                     @endforeach
+                                                @else 
+                                                    {{-- No file found --}}
                                                 @endif
                                             </td>
                                         @endif
