@@ -143,7 +143,7 @@
                                         <option> -- Select --</option>
                                         @if( !empty($hist['header']->item) )
                                             @foreach($hist['header']->item as $key => $rows)
-                                                @if(!empty($hist['detail']->item[$key]->NETPR))
+                                                @if(!empty($hist['detail']->item))
                                                     @if(!empty($rows->EBELN))
                                                         <option value="{{ $rows->EBELN }}"
                                                             data-price="{{ $hist['detail']->item[$key]->NETPR }}"
