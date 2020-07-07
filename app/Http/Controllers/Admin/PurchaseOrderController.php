@@ -272,92 +272,91 @@ class PurchaseOrderController extends Controller
         $sched          = "";
         foreach ($request->idDetail as $key => $rows) {
             $poDetail = PurchaseOrdersDetail::find($rows);
-            if( $poDetail !='' ) {
-                if( $poDetail->qty != $request->qty[$key] ) {
-                    $prDetail = PurchaseRequestsDetail::find($poDetail->request_detail_id);
-                    $prDetail->qty      += $poDetail->qty;
-                    $prDetail->qty_order = 0;
-                    $prDetail->update();
-
-                    $prDetail->qty      -= $request->qty[$key];
-                    $prDetail->qty_order = $request->qty[$key];
-
-                    $prDetail->save();
-
-                }
-                $poDetail->qty            = $request->qty[$key];
-                $poDetail->price          = $request->price[$key];
-                $poDetail->currency       = $request->currency[$key];
-                $poDetail->delivery_date  = $request->delivery_date[$key];
-                $poDetail->tax_code       = $request->tax_code[$key] == 1 ? 'V1' : 'V0';
-                
-                $poDetail->update();
-            } else {
-                $prDetail = PurchaseRequestsDetail::find($request->idPrDetail[$key]);
-                $prDetail->qty       -= $request->qty[$key];
-                $prDetail->qty_order  = $request->qty[$key];
-                
-                if( $prDetail->category == PurchaseOrdersDetail::SERVICE ) {
-                    //check position parent and child
-                    if( $key == 0 ) {
-                        $noLine = $lineNo;
-                    } else {
-                        if( $key == 1 ) {
-                            $noLine = $lineNo - 1;
-                        } else {
-                            $noLine = $lineNo - $key;
-                        }
-                    }
-                }
-
-                $poItem = PurchaseOrdersDetail::where('purchase_order_id',$id)->max('PO_ITEM');
-                $poItem += 10; 
-
+            // if( $poDetail !='' ) {
+            if( $poDetail->qty != $request->qty[$key] ) {
+                $prDetail = PurchaseRequestsDetail::find($poDetail->request_detail_id);
+                $prDetail->qty      += $poDetail->qty;
+                $prDetail->qty_order = 0;
                 $prDetail->update();
-                $prHeader = PurchaseRequest::find($prDetail->request_id);
-                PurchaseOrdersDetail::create([
-                    'purchase_order_id'         => $id,
-                    'description'               => $prDetail->description ?? '-',
-                    'qty'                       => $prDetail->qty,
-                    'unit'                      => $prDetail->unit,
-                    'notes'                     => $prDetail->notes ?? '-',
-                    'price'                     => $request->price[$key] ?? 0,
-                    'material_id'               => $prDetail->material,
-                    'assets_no'                 => $prDetail->assets_no,
-                    'material_group'            => $prDetail->material_group,
-                    'preq_item'                 => $prDetail->PREQ_ITEM,
-                    'purchasing_document'       => $prDetail->purchasing_document ?? 0,
-                    'PR_NO'                     => $prHeader->PR_NO,
-                    'assets_no'                 => $prDetail->assets_no,
-                    'acp_id'                    => $prDetail->acp_id ?? 0,
-                    'short_text'                => $prDetail->short_text,
-                    'text_id'                   => $prDetail->text_id,
-                    'text_form'                 => $prDetail->text_form,
-                    'text_line'                 => $prDetail->text_line,
-                    'delivery_date_category'    => $prDetail->delivery_date_category,
-                    'account_assignment'        => $prDetail->account_assignment,
-                    'purchasing_group_code'     => $prDetail->purchasing_group_code,
-                    'gl_acct_code'              => $prDetail->gl_acct_code,
-                    'cost_center_code'          => $prDetail->cost_center_code,
-                    'profit_center_code'        => $prDetail->profit_center_code,
-                    'storage_location'          => $prDetail->storage_location,
-                    'PO_ITEM'                   => "000".$poItem,
-                    'request_no'                => $prDetail->request_no,
-                    'original_price'            => $request->price[$key] ?? 0,
-                    'currency'                  => $prDetail->currency ?? 'IDR',
-                    'preq_name'                 => $prDetail->preq_name,
-                    'delivery_date'             => $request->delivery_date[$key],
-                    'item_category'             => $prDetail->category,
-                    'request_no'                => $prDetail->request_no,
-                    'plant_code'                => $prDetail->plant_code,
-                    'tax_code'                  => $request->tax_code[$key] == 1 ? 'V1' : 'V0',
-                    'package_no'                => $packageParent.$noLine,
-                    'subpackage_no'             => $subpackgparent.$noLine,
-                    'line_no'                   => '000000000'.$noLine,
-                    'SCHED_LINE'                => '000'.$key + 1,
-                    'request_detail_id'         => $prDetail->request_detail_id
-                ]);
+
+                $prDetail->qty      -= $request->qty[$key];
+                $prDetail->qty_order = $request->qty[$key];
+
+                $prDetail->save();
+
             }
+            $poDetail->qty            = $request->qty[$key];
+            $poDetail->price          = $request->price[$key];
+            $poDetail->currency       = $request->currency[$key];
+            $poDetail->delivery_date  = $request->delivery_date[$key];
+            $poDetail->tax_code       = $request->tax_code[$key] == 1 ? 'V1' : 'V0';
+            $poDetail->update();
+            // } else {
+            //     $prDetail = PurchaseRequestsDetail::find($request->idPrDetail[$key]);
+            //     $prDetail->qty       -= $request->qty[$key];
+            //     $prDetail->qty_order  = $request->qty[$key];
+                
+            //     if( $prDetail->category == PurchaseOrdersDetail::SERVICE ) {
+            //         //check position parent and child
+            //         if( $key == 0 ) {
+            //             $noLine = $lineNo;
+            //         } else {
+            //             if( $key == 1 ) {
+            //                 $noLine = $lineNo - 1;
+            //             } else {
+            //                 $noLine = $lineNo - $key;
+            //             }
+            //         }
+            //     }
+
+            //     $poItem = PurchaseOrdersDetail::where('purchase_order_id',$id)->max('PO_ITEM');
+            //     $poItem += 10; 
+
+            //     $prDetail->update();
+            //     $prHeader = PurchaseRequest::find($prDetail->request_id);
+            //     PurchaseOrdersDetail::create([
+            //         'purchase_order_id'         => $id,
+            //         'description'               => $prDetail->description ?? '-',
+            //         'qty'                       => $prDetail->qty,
+            //         'unit'                      => $prDetail->unit,
+            //         'notes'                     => $prDetail->notes ?? '-',
+            //         'price'                     => $request->price[$key] ?? 0,
+            //         'material_id'               => $prDetail->material,
+            //         'assets_no'                 => $prDetail->assets_no,
+            //         'material_group'            => $prDetail->material_group,
+            //         'preq_item'                 => $prDetail->PREQ_ITEM,
+            //         'purchasing_document'       => $prDetail->purchasing_document ?? 0,
+            //         'PR_NO'                     => $prHeader->PR_NO,
+            //         'assets_no'                 => $prDetail->assets_no,
+            //         'acp_id'                    => $prDetail->acp_id ?? 0,
+            //         'short_text'                => $prDetail->short_text,
+            //         'text_id'                   => $prDetail->text_id,
+            //         'text_form'                 => $prDetail->text_form,
+            //         'text_line'                 => $prDetail->text_line,
+            //         'delivery_date_category'    => $prDetail->delivery_date_category,
+            //         'account_assignment'        => $prDetail->account_assignment,
+            //         'purchasing_group_code'     => $prDetail->purchasing_group_code,
+            //         'gl_acct_code'              => $prDetail->gl_acct_code,
+            //         'cost_center_code'          => $prDetail->cost_center_code,
+            //         'profit_center_code'        => $prDetail->profit_center_code,
+            //         'storage_location'          => $prDetail->storage_location,
+            //         'PO_ITEM'                   => "000".$poItem,
+            //         'request_no'                => $prDetail->request_no,
+            //         'original_price'            => $request->price[$key] ?? 0,
+            //         'currency'                  => $prDetail->currency ?? 'IDR',
+            //         'preq_name'                 => $prDetail->preq_name,
+            //         'delivery_date'             => $request->delivery_date[$key],
+            //         'item_category'             => $prDetail->category,
+            //         'request_no'                => $prDetail->request_no,
+            //         'plant_code'                => $prDetail->plant_code,
+            //         'tax_code'                  => $request->tax_code[$key] == 1 ? 'V1' : 'V0',
+            //         'package_no'                => $packageParent.$noLine,
+            //         'subpackage_no'             => $subpackgparent.$noLine,
+            //         'line_no'                   => '000000000'.$noLine,
+            //         'SCHED_LINE'                => '000'.$key + 1,
+            //         'request_detail_id'         => $prDetail->request_detail_id
+            //     ]);
+            // }
         }
         $poChange = true;//\sapHelp::sendPOchangeToSap($purchaseOrder->PO_NUMBER);
 

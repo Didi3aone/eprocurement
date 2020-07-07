@@ -68,7 +68,7 @@
                                     <td>{{ $q->price }}</td>
                                     <td>{{ $q->request_no }}</td>
                                     <td>{{ '0' }}</td>
-                                    <td>{{ $q->tax_code == 1 ? 'V1' : 'V0' }}</td>
+                                    <td>{{ $q->tax_code  }}</td>
                                     <td>
                                         <a class="btn btn-xs btn-primary" href="{{ route('admin.purchase-order.show', $q->id) }}">
                                             <i class="fa fa-eye"></i> {{ trans('global.view') }}
