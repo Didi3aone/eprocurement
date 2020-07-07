@@ -159,6 +159,28 @@
             }
         });
     })
+
+    $('#saves').click(function() {
+        checked = $("input[type=checkbox]:checked").length;
+
+        if(!checked) {
+            swal('Oops','You must check at least one checkbox.','error')
+            return false;
+        }
+    });
+
+
+    /**$("#saves").click(function(e) { 
+        e.preventDefault()
+        let winnerS = $('.wines').val() 
+
+        $.each(winnerS,function($i,$el) {
+            let elementWin = $($el).find('wines').val()
+
+            console.log()
+        })
+
+    })**/
     /**<td class="file_attachment">
         <input type="file" name="file_attachment_${vendor}[]" class="form-control"/>
     </td>**/
@@ -207,7 +229,7 @@
                     <td>${email_vendor}</td>
                     <td class="text-right">
                         <input type="hidden" name="vendor_id[]" class="vendor_id" value="${input_vendor}">
-                        <input type="checkbox" name="winner_${input_vendor}" id="winner_${input_vendor}" value="1"/>
+                        <input type="checkbox" name="winner_${input_vendor} wines" id="winner_${input_vendor}" value="1"/>
                         <label for="winner_${input_vendor}">Winner</label>
                         <button class="add_material btn btn-success btn-xs" data-vendor="${input_vendor}">
                             <i class="fa fa-plus-square"></i> Add Material

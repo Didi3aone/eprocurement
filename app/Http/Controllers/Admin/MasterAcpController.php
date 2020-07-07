@@ -12,6 +12,7 @@ use App\Models\AcpTableMaterial;
 use App\Models\MasterRfq;
 use App\Models\Vendor\QuotationApproval;
 use App\Models\MasterRfqDetail;
+use App\Models\UserMap;
 
 class MasterAcpController extends Controller
 {
@@ -37,6 +38,8 @@ class MasterAcpController extends Controller
     public function getMaterial (Request $request)
     {
         if( $request->get('fromPr') == \App\Models\AcpTable::MaterialPr ) {
+            $userMapping = UserMap::where('user_id', \Auth::user()->user_id)->first();
+            $userMapping = explode(',', $userMapping->purchasing_group_code);
             $model = \App\Models\PurchaseRequestsDetail::where(function ($query) use ($request) {
                 $query->where('material_id', 'like', '%' . $request->query('q') . '%')
                     ->orWhere('description', 'like', '%' . $request->query('q') . '%');
@@ -50,6 +53,7 @@ class MasterAcpController extends Controller
                     )
                 )
                 ->where('qty','>',0)
+                ->whereIn('purchasing_group_code',$userMapping)
                 ->groupBy('material_id','description')
                 ->orderBy('description', 'asc')
                 ->limit(50)
@@ -191,8 +195,9 @@ class MasterAcpController extends Controller
                 $material->currency = $val['currency'] ?? "IDR";
                 $material->file_attachment = $val['file_attachment'];
                 $material->save();
+
+                //get material cmo
                 $isCmo = false;
-                // dd($val['material']);
                 $cMo = \App\Models\MasterMaterial::getMaterialCmo($val['material']);
                 if( $cMo != null ) {
                     if( $cMo->purchasing_group_code == 'S03' ||
@@ -222,10 +227,10 @@ class MasterAcpController extends Controller
                     $price += $val['price'];
                     $isAcp = true;
                     // insert to rfq detail
-                    $rfqDetail = new MasterRfqDetail;
+                    $rfqDetail                      = new MasterRfqDetail;
                     $rfqDetail->purchasing_document = $val['purchasing_document'];
-                    $rfqDetail->material = $val['material'];
-                    $rfqDetail->net_order_price = $val['price'];
+                    $rfqDetail->material            = $val['material'];
+                    $rfqDetail->net_order_price     = $val['price'];
                     $rfqDetail->save();
                 }
             }
