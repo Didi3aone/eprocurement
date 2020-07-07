@@ -164,7 +164,7 @@
         checked = $("input[type=checkbox]:checked").length;
 
         if(!checked) {
-            swal('Oops','You must check at least one checkbox.','error')
+            swal('Oops','Please check winner vendor','error')
             return false;
         }
     });
@@ -262,7 +262,8 @@
 
             $('#vendors').append(template)
         } else {
-            alert('No vendor selected')
+            swal('Oops','No vendor selected','error')
+            return false
         }
     })
 
