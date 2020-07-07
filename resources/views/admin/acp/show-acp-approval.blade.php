@@ -102,7 +102,7 @@
                         <div class="col-lg-12">
                             <div class="form-actions">
                                 <button type="submit" class="btn btn-success click" id="save"> <i class="fa fa-check"></i> Approve</button>
-                                <a class="btn btn-danger reject" href="#"> <i class="fa fa-times"></i> Reject </a>
+                                <a class="btn btn-danger reject" href="#" onclick="reject('{{ $acp->id }}')" data-id="{{ $acp->id }}"> <i class="fa fa-times"></i> Reject </a>
                             </div>
                         </div>
                     </div>
@@ -129,39 +129,58 @@
         </div>
     </div>
 </div>
+<div class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Are you sure ? </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    @method('put')
+                    <label>Reason</label>
+                    <input type="hidden" name="ids" id="ids" value="{{ $acp->id }}">
+                    <textarea class="form-control" name="reason" id="reason"></textarea>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary submits">Submit</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 @section('scripts')
 @parent 
     <script>
-    $('.reject').click(function(e){
-        e.preventDefault();
-        let id = $(this).data('id');
+    function reject(id) {
+        $(".modal").modal('show')
+    }
 
-        swal("Input reason rejected !!!", {
-            content: "input",
-        })
-        .then((value) => {
-            $.ajax({
-                type: "PUT",
-                url: "{{ route('admin.billing-post-rejected') }}",
-                headers: {
-                    'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    id : id,
-                    reason : value
-                },
-                dataType:'json',
-                success: function (data) {
-                
-                }
-            });
+    $(".submits").click(function() {
+        let value = $("#reason").val()
 
-            setTimeout(function() {
-               // location.reload();
-            },500)
+        $.ajax({
+            type: "POST",
+            url: "{{ route('admin.acp-post-rejected') }}",
+            headers: {
+                'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                _token: "{{ csrf_token() }}",
+                id : $("#ids").val(),
+                reason : value
+            },
+           // dataType:'json',
+            success: function (data) {
+                //location.reload()
+                location.href = '{{ route('admin.acp-approval') }}'
+            }
         });
-    });
+    })
 </script>
 @endsection

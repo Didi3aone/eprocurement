@@ -176,4 +176,18 @@ class AcpController extends Controller
         // Return response
         return \redirect()->route('admin.acp-approval')->with('status','Acp has been approved');
     }
+
+    public function acpApprovalReject(Request $request)
+    {
+        $update = QuotationApproval::where('quotation_id', $request->id)
+            ->where('nik', \Auth::user()->nik)
+            ->update([
+                'status'        => 3,
+                'reason_reject' => $request->reason,
+                'flag'          => QuotationApproval::alreadyApproval,
+                'approve_date'  => \Carbon\Carbon::now(),
+            ]);
+
+        \Session::flash('status','Acp has been rejected');
+    }
 }

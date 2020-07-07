@@ -18,7 +18,8 @@ class QuotationApproval extends Model
         'quotation_id',
         'approve_date',
         'acp_type',
-        'acp_id'
+        'acp_id',
+        'reason_reject'
     ];
 
     public const waitingApproval = 0;

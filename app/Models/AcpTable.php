@@ -20,6 +20,7 @@ class AcpTable extends Model
         'created_at',
         'updated_at',
         'deleted_at',
+        'reason_reject'
     ];
 
     public const Type_Status = [
