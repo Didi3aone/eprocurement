@@ -38,9 +38,9 @@
                                     <tr>
                                         <th>&nbsp;</th>
                                         <th>Purchase Requisition</th>
+                                        <th>Doc. Type</th>
                                         <th>Item Of Requisition</th>
                                         <th>Release Date</th>
-                                        {{-- <th>Release Indicator</th> --}}
                                         <th>Material</th>
                                         <th>Short Text</th>
                                         <th>Qty Requested</th>

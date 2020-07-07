@@ -54,6 +54,19 @@ class Quotation extends Model
                 abort(500, $e->getMessage());
             }
         });
+
+        static::updating(function ($model) {
+            try {
+                $user              = \Auth::user();
+                $model->updated_by = $user->nik;
+            } catch (UnsatisfiedDependencyException $e) {
+                abort(500, $e->getMessage());
+            }
+        });
+
+        static::deleting(function ($model) {
+            
+        });
     }
 
     public function detail ()

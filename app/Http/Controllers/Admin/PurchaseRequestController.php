@@ -53,6 +53,7 @@ class PurchaseRequestController extends Controller
             'purchase_requests.request_date',
             'purchase_requests.PR_NO',
             'purchase_requests.total',
+            'purchase_requests.doc_type',
             'purchase_requests.id as uuid'
         )
             ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
@@ -123,6 +124,7 @@ class PurchaseRequestController extends Controller
                         return [
                             ($key+1) + $start,
                             $value->PR_NO,
+                            $value->doc_type,
                             $value->preq_item,
                             $value->release_date,
                             $value->material_id,
