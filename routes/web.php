@@ -201,12 +201,20 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
 
     Route::get('quotation-direct-approval-head','QuotationDirectController@approvalListHead')->name('quotation-direct-approval-head');
     Route::get('quotation-direct-approval-ass','QuotationDirectController@approvalListAss')->name('quotation-direct-approval-ass');
+    Route::get('quotation-direct-show-approval/{id}','QuotationDirectController@showApproval')->name('quotation-direct-show-approval');
+    Route::get('quotation-direct-show-approval-head/{id}','QuotationDirectController@showApprovalHead')->name('quotation-direct-show-approval-head');
+    Route::put('quotation-direct-rejected','QuotationDirectController@directRejected')->name('quotation-direct-rejected');
+    Route::put('quotation-direct-rejected-head','QuotationDirectController@directRejectedHead')->name('quotation-direct-rejected-head');
     Route::get('quotation/direct/approve/ass/{ids}', 'QuotationDirectController@directApproveAss')->name('quotation.direct.approve.ass');
     Route::get('quotation/direct/approve/head/{ids}', 'QuotationDirectController@directApproveHead')->name('quotation.direct.approve.head');
     Route::resource('quotation-direct', 'QuotationDirectController');
 
     Route::get('quotation-repeat-approval-head','QuotationRepeatController@approvalListHead')->name('quotation-repeat-approval-head');
     Route::get('quotation-repeat-approval-ass','QuotationRepeatController@approvalListAss')->name('quotation-repeat-approval-ass');
+    Route::get('quotation-repeat-show-approval/{id}','QuotationRepeatController@showApproval')->name('quotation-repeat-show-approval');
+    Route::get('quotation-repeat-show-approval-head/{id}','QuotationRepeatController@showApprovalHead')->name('quotation-repeat-show-approval-head');
+    Route::put('quotation-repeat-rejected','QuotationRepeatController@repeatRejected')->name('quotation-repeat-rejected');
+    Route::put('quotation-repeat-rejected-head','QuotationRepeatController@repeatRejectedHead')->name('quotation-repeat-rejected-head');
     Route::get('quotation/repeat/approve/ass/{ids}', 'QuotationRepeatController@repeatpproveAss')->name('quotation.repeat.approve.ass');
     Route::get('quotation/repeat/approve/head/{ids}', 'QuotationRepeatController@repeatApproveHead')->name('quotation.repeat.approve.head');
     Route::get('quotation-currency','QuotationRepeatController@getCurrency')->name('quotation-currency');

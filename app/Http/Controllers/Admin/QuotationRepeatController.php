@@ -234,6 +234,32 @@ class QuotationRepeatController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showApproval($id)
+    {
+        $quotation = Quotation::find($id);
+
+        return view('admin.quotation.repeat.show-approval',compact('quotation'));
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showApprovalHead($id)
+    {
+        $quotation = Quotation::find($id);
+
+        return view('admin.quotation.repeat.show-approval-head',compact('quotation'));
+    }
+
+    /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
@@ -329,6 +355,63 @@ class QuotationRepeatController extends Controller
             throw $th;
             \DB::rollback();
         }
+    }
+
+     /**
+     * multiple approve po.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function repeatRejected(Request $request)
+    {
+        $quotation = Quotation::find($request->id);
+        $quotation->approval_status = Quotation::Rejected;
+        $quotation->approved_asspro = \Auth::user()->user_id;
+        $quotation->reason_reject   = $request->reason;
+        $quotation->save();
+
+        $quotationDetail = QuotationDetail::where('quotation_order_id', $quotation->id)
+                        ->get();
+        //update lagi qty ke awal 
+        foreach( $quotationDetail as $key => $rows ) {
+            $poDetail = PurchaseRequestsDetail::where('id', $rows->request_detail_id)->first();
+            dd($poDetail);
+            if( $poDetail != null ) {
+                $poDetail->qty += $rows->qty;
+                $poDetail->update();
+            }
+        }
+
+        \Session::flash('status','PO repeat has been rejected');
+    }
+
+    /**
+     * multiple approve po.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function repeatRejectedHead(Request $request)
+    {
+        $quotation = Quotation::find($id);
+        $quotation->approval_status = Quotation::Rejected;
+        $quotation->approved_head   = \Auth::user()->user_id;
+        $quotation->reason_reject   = $request->reason;
+        $quotation->save();
+
+        $quotationDetail = QuotationDetail::where('quotation_order_id', $quotation->id)
+                        ->get();
+        //update lagi qty ke awal 
+        foreach( $quotationDetail as $key => $rows ) {
+            $poDetail = PurchaseRequestsDetail::where('id', $rows->request_detail_id)->first();
+            if( $poDetail != null ) {
+                $poDetail->qty += $rows->qty;
+                $poDetail->update();
+            }
+        }
+
+        \Session::flash('status','PO repeat has been rejected');
     }
 
     /**

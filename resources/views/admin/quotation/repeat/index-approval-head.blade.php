@@ -31,6 +31,7 @@
                                         <th>PO Eprocurement</th>
                                         <th>Vendor</th>
                                         <th>Date</th>
+                                        <th>&nbsp;</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -45,6 +46,11 @@
                                             <td>{{ $val->name }}</td>
                                             <td>
                                                 {{ \Carbon\Carbon::parse($val->created_at)->format('d-m-Y') }}
+                                            </td>
+                                            <td>
+                                                <a class="btn btn-primary btn-xs" href="{{ route('admin.quotation-repeat-show-approval-head', $val->id) }}">
+                                                    <i class="fa fa-eye"></i> {{ trans('global.view') }}
+                                                </a>
                                             </td>
                                         </tr>
                                     @endforeach

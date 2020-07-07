@@ -214,6 +214,7 @@
                 </td>
             </tr>
         `
+        $('.money').mask('#.##0', { reverse: true })
     }
 
     $(document).on('click', '#btn-search-vendor', function (e) {
@@ -221,6 +222,7 @@
 
         const $search = $('#search-vendor').children('option:selected')
         const input_vendor = $search.val()
+        const $vendorId = $("#search-vendor").val()
 
         if (input_vendor != '-- Select --') {
             const id_vendor = $search.data('id')
@@ -264,7 +266,6 @@
                     </td>
                 </tr>
             `
-
             $('#vendors').append(template)
         } else {
             swal('Oops','No vendor selected','error')

@@ -143,16 +143,18 @@
                                         <option> -- Select --</option>
                                         @if( !empty($hist['header']->item) )
                                             @foreach($hist['header']->item as $key => $rows)
-                                                @if(!empty($hist['detail']->item))
-                                                    @if(!empty($rows->EBELN))
-                                                        <option value="{{ $rows->EBELN }}"
-                                                            data-price="{{ $hist['detail']->item[$key]->NETPR }}"
-                                                            data-vendor="{{ substr($rows->LIFNR,3) }}"
-                                                            data-currency="{{ $rows->WAERS }}">
-                                                            {{ $rows->EBELN."/".$rows->LIFRE }}
-                                                        </option>
+                                                @for($i = 0; $i < 10; $i++)
+                                                    @if(!empty($hist['detail']))
+                                                        @if(!empty($rows->EBELN))
+                                                            <option value="{{ $rows->EBELN }}"
+                                                                data-price="{{ $hist['detail']->item[$key]->NETPR }}"
+                                                                data-vendor="{{ substr($rows->LIFNR,3) }}"
+                                                                data-currency="{{ $rows->WAERS }}">
+                                                                {{ $rows->EBELN."/".$rows->LIFRE }}
+                                                            </option>
+                                                        @endif
                                                     @endif
-                                                @endif
+                                                @endfor
                                             @endforeach
                                         @endif
                                     </select>
@@ -275,9 +277,14 @@
         getCurrency(oriCurrency)
 
         if( price ) {
-            
-            net.val(price * 100)
-            ori.val(price * 100)
+            let FixedPrice = 0
+            if( oriCurrency == 'IDR' ) {
+                FixedPrice = price * 100
+            } else {
+                FixedPrice = price 
+            }
+            net.val(FixedPrice)
+            ori.val(FixedPrice)
         } else {
             net.val(0)
             ori.val(0)

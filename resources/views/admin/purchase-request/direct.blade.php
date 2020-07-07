@@ -87,6 +87,7 @@
                                     @foreach($data as $key => $value)
                                         <tr>
                                             <input type="hidden" name="doc_type_pr[]" id="doc_type" value="{{ $value->doc_type }}">
+                                            <input type="hidden" name="idDetail[]" id="idDetail" value="{{ $value->idDetail }}">
                                             <input type="hidden" name="plant_code[]" id="plant_code" value="{{ $value->plant_code }}">
                                             <input type="hidden" name="pr_no[]" value="{{ $value->pr_no }}">
                                             <input type="hidden" name="request_date[]" value="{{ $value->request_date }}">
