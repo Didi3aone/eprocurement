@@ -167,6 +167,11 @@
             swal('Oops','Please check winner vendor','error')
             return false;
         }
+
+        if( checked > 1 ) {
+            swal('Oops','Choose the winner of one vendor','error')
+            return false;
+        }
     });
 
 
