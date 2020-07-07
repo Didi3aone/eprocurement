@@ -186,12 +186,12 @@
                     <div class="form-group">
                         <label for="">Payment Term</label>
                         <select name="payment_term" id="payment_term" class="form-control select2">
-                            <option value="">-- Select --</option>
-                            @foreach ($top as $val)
+                            {{-- <option value="">-- Select --</option> --}}
+                            {{-- @foreach ($top as $val)
                             <option value="{{ $val->payment_terms }}">
                                 {{ $val->no_of_days." days" }}
                             </option>
-                            @endforeach
+                            @endforeach --}}
                         </select>
                     </div>
                 </div>
@@ -312,41 +312,55 @@
         });
     }
 
-    /**function getPayment(currency)
+    function getPayment(pay)
     {
-        const url = '{{ route('admin.quotation-currency') }}'
-        const $currency = $("#currency")
+        const url = '{{ route('admin.quotation-payment') }}'
+        const $payment_term = $("#payment_term")
         $.getJSON(url, function(items) {
             let newOptions = ''
-            $("#currency").attr('disabled',false);
+            $("#payment_term").attr('disabled',false);
 
              for (var id in items) {
                 let selected = ''
-                if( currency == items[id] ) {
+                if( pay == id ) {
                     selected = 'selected'
                 }
                 newOptions += '<option value="'+ id +'" '+selected+'>'+ items[id] +'</option>';
             }
 
             $('#image_loading').hide()
-            $currency.html(newOptions)
+            $payment_term.html(newOptions)
         });
-    }**/
+    }
 
     function getVendors(code)
     {
         const url = '{{ route('admin.get-vendors') }}'
         const $vendor_id = $("#vendor_id")
-        $.getJSON(url, { 'code' : code}, function(items) {
-            let newOptions = ''
+        $.ajax({
+            url: url,
+            method: 'get',
+            cache: false,
+            data: {
+                code: code
+            },
+            success: function (data) {
+                $vendor_id.empty();
+                for (var i = 0; i < data.length; i++) {
+                    $vendor_id.append('<option value=' + data[i].code + ' data-payment='+data[i].payment_terms+'>'+data[i].code+' - '+ data[i].name +' </option>');
+                }
 
-             for (var id in items) {
-                newOptions += '<option value="'+ id +'">'+ items[id] +'</option>';
+                $vendor_id.change();
             }
-
-            $('#image_loading').hide()
-            $vendor_id.html(newOptions)
         });
+        oncange()
+    }
+
+    function oncange() {
+        $("#vendor_id").change(function() {
+            let pay = $('#vendor_id option:selected').data('payment')
+            getPayment(pay)
+        })
     }
 </script>
 @endsection

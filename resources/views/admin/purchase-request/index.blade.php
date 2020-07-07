@@ -245,18 +245,18 @@
             $($tp1).html(tp1)
             $($tp2).html(tp2)
             $input = $($tp2).children('input')
-            $input.addClass(`qty_${data[18][0]}`)
-            $input.val(data[18][1])
+            $input.addClass(`qty_${data[19][0]}`)
+            $input.val(data[19][1])
             $input.on('change blur keyup', function (e) {
                 e.preventDefault()
                 countQty($(this))
             })
             $check = $($tp1).children('.check_pr')
-            $check.attr('id', `check_${data[18][0]}`)
-            $check.val(data[18][0])
+            $check.attr('id', `check_${data[19][0]}`)
+            $check.val(data[19][0])
             $pr = $($tp1).children('.qty_pr')
-            $pr.val(data[18][1])
-            $($tp1).children('label').attr('for', `check_${data[18][0]}`)
+            $pr.val(data[19][1])
+            $($tp1).children('label').attr('for', `check_${data[19][0]}`)
         },
         searchDelay: 750,
         order: [[0, 'desc']],

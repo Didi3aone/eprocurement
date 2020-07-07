@@ -540,11 +540,11 @@ class VendorController extends Controller
     {
         $vendor = Vendor::where('code', $request->code)->get();
 
-        $data = [];
-        foreach( $vendor as $row ) {
-            $data[$row->code] = $row->code." - ".$row->name;
-        }
+        // $data = [];
+        // foreach( $vendor as $row ) {
+        //     $data[$row->code] = $row->code." - ".$row->name;
+        // }
 
-        return \response()->json($data, 200);
+        return \response()->json($vendor, 200);
     }
 }

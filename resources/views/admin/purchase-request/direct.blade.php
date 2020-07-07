@@ -301,15 +301,52 @@
     function getVendor(code)
     {
         const url = '{{ route('admin.get-vendors') }}'
-        const $vendor = $("#vendor_id");
-        $.getJSON(url, {'code' : code}, function (items) {
-            let newOptions = ''
+        const $vendor_id = $("#vendor_id")
+        $.ajax({
+            url: url,
+            method: 'get',
+            cache: false,
+            data: {
+                code: code
+            },
+            success: function (data) {
+                $vendor_id.empty();
+                for (var i = 0; i < data.length; i++) {
+                    $vendor_id.append('<option value=' + data[i].code + ' data-payment='+data[i].payment_terms+'>'+data[i].code+' - '+ data[i].name +' </option>');
+                }
 
-            for (var id in items) {
-                newOptions += '<option value="'+ id +'">'+ items[id] +'</option>'
+                $vendor_id.change();
             }
-            $vendor.html(newOptions)
-            $('.select2').select2()
+        });
+        oncange()
+    }
+
+    function getPayment(pay)
+    {
+        const url = '{{ route('admin.quotation-payment') }}'
+        const $payment_term = $("#payment_term")
+        $.getJSON(url, function(items) {
+            let newOptions = ''
+            $("#payment_term").attr('disabled',false);
+
+             for (var id in items) {
+                let selected = ''
+                if( pay == id ) {
+                    selected = 'selected'
+                    console.log('yes')
+                }
+                newOptions += '<option value="'+ id +'" '+selected+'>'+ items[id] +'</option>';
+            }
+
+            $('#image_loading').hide()
+            $payment_term.html(newOptions)
+        });
+    }
+
+    function oncange() {
+        $("#vendor_id").change(function() {
+            let pay = $('#vendor_id option:selected').data('payment')
+            getPayment(pay)
         })
     }
 

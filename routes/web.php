@@ -218,6 +218,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::get('quotation/repeat/approve/ass/{ids}', 'QuotationRepeatController@repeatpproveAss')->name('quotation.repeat.approve.ass');
     Route::get('quotation/repeat/approve/head/{ids}', 'QuotationRepeatController@repeatApproveHead')->name('quotation.repeat.approve.head');
     Route::get('quotation-currency','QuotationRepeatController@getCurrency')->name('quotation-currency');
+    Route::get('quotation-payment','QuotationRepeatController@getPaymentTerm')->name('quotation-payment');
     Route::resource('quotation-repeat', 'QuotationRepeatController');
 
     // rfq

@@ -594,13 +594,12 @@ class QuotationRepeatController extends Controller
 
     public function getPaymentTerm(Request $request)
     {
-        $currency = \App\Models\PaymentTerm::get();
+        $paymentTerm = \App\Models\PaymentTerm::get();
 
         $data = [];
-        foreach( $currency as $rows ) {
-            $data[$rows->currency] = $rows->currency;
+        foreach( $paymentTerm as $rows ) {
+            $data[$rows->payment_terms] = $rows->own_explanation;
         }
-
         return \Response::json($data);
     }
 }

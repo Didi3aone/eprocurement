@@ -124,7 +124,7 @@ class PurchaseRequestController extends Controller
                         return [
                             ($key+1) + $start,
                             $value->PR_NO,
-                            $value->doc_type,
+                            $value->doc_type, 
                             $value->preq_item,
                             $value->release_date,
                             $value->material_id,
