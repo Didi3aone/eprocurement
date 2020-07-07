@@ -31,7 +31,7 @@
                                 </tr>
                                 <tr>
                                     <th>Payment Terms</th>
-                                    <td>{{ $quotation->payment_terms." days" }}</td>
+                                    <td>{{ $quotation->getTerm['own_explanation'] }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -47,6 +47,7 @@
                             <th>Material</th>
                             <th>Unit</th>
                             <th>Qty</th>
+                            <th>Currency</th>
                             <th>Price</th>
                         </tr>
                     </thead>
@@ -56,6 +57,7 @@
                                 <td>{{ $value->material." - ".$value->description }}</td>
                                 <td>{{ $value->unit }}</td>
                                 <td>{{ $value->qty }}</td>
+                                <td>{{ $value->currency }}</td>
                                 <td>{{ $value->price }}</td>
                             </tr>
                         @endforeach

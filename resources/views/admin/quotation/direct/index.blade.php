@@ -34,7 +34,7 @@
                                             <td>{{ $val->name }}</td>
                                             <td>{{ \App\Models\Vendor\Quotation::TypeStatusApproval[$val->approval_status] }}</td>
                                             <td>
-                                                <a class="btn btn-primary" href="{{ route('admin.quotation-repeat.show', $val->id) }}">
+                                                <a class="btn btn-primary" href="{{ route('admin.quotation-direct.show', $val->id) }}">
                                                     <i class="fa fa-eye"></i> {{ trans('global.view') }}
                                                 </a>
                                             </td>
