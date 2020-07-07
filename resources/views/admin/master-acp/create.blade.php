@@ -85,7 +85,7 @@
                     </div>
                     <div class="form-group">
                         <label>Upload File</label>
-                        <input type="file" class="mdate form-control form-control-line {{ $errors->has('upload_file') ? 'is-invalid' : '' }}" multiple name="upload_file[]" value=""> 
+                        <input type="file" class="form-control form-control-line {{ $errors->has('upload_file') ? 'is-invalid' : '' }}" multiple name="upload_file[]" value=""> 
                     </div>
                     <hr style="margin: 30px 0">
                     <div class="form-group">
