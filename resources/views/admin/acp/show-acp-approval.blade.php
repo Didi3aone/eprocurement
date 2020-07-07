@@ -65,7 +65,7 @@
                                     <th style="text-align:center;">Material</th>
                                     <th style="text-align:center;">Description</th>
                                     <th style="text-align:center;">Unit</th>
-                                    <th style="text-align:center;">Qty</th>
+                                    <th style="text-align:center;">Per</th>
                                     <th style="text-align:center;">Currency</th>
                                     <th style="text-align:center;">Price</th>
                                 </tr>

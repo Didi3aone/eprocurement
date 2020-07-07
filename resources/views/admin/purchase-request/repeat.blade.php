@@ -143,13 +143,15 @@
                                         <option> -- Select --</option>
                                         @if( !empty($hist['header']->item) )
                                             @foreach($hist['header']->item as $key => $rows)
-                                                @if(!empty($rows->EBELN))
-                                                    <option value="{{ $rows->EBELN }}"
-                                                        data-price="{{ $hist['detail']->item[$key]->NETPR }}"
-                                                        data-vendor="{{ substr($rows->LIFNR,3) }}"
-                                                        data-currency="{{ $rows->WAERS }}">
-                                                        {{ $rows->EBELN."/".$rows->LIFRE }}
-                                                    </option>
+                                                @if(!empty($hist['detail']->item[$key]->NETPR))
+                                                    @if(!empty($rows->EBELN))
+                                                        <option value="{{ $rows->EBELN }}"
+                                                            data-price="{{ $hist['detail']->item[$key]->NETPR }}"
+                                                            data-vendor="{{ substr($rows->LIFNR,3) }}"
+                                                            data-currency="{{ $rows->WAERS }}">
+                                                            {{ $rows->EBELN."/".$rows->LIFRE }}
+                                                        </option>
+                                                    @endif
                                                 @endif
                                             @endforeach
                                         @endif
@@ -197,7 +199,6 @@
             <div class="form-actions">
                 <input type="hidden" name="quantities" value="{{ $uri['quantities'] }}">
                 <button type="submit" class="btn btn-success click" id="save"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
-                {{-- <a href="{{ route('admin.purchase-request.index') }}" class="btn btn-danger"><i class="fa fa-times"></i> Cancel</a> --}}
                 <img id="image_loading" src="{{ asset('img/ajax-loader.gif') }}" alt="" style="display: none">
             </div>
         </div>
@@ -303,6 +304,27 @@
             $currency.html(newOptions)
         });
     }
+
+    /**function getPayment(currency)
+    {
+        const url = '{{ route('admin.quotation-currency') }}'
+        const $currency = $("#currency")
+        $.getJSON(url, function(items) {
+            let newOptions = ''
+            $("#currency").attr('disabled',false);
+
+             for (var id in items) {
+                let selected = ''
+                if( currency == items[id] ) {
+                    selected = 'selected'
+                }
+                newOptions += '<option value="'+ id +'" '+selected+'>'+ items[id] +'</option>';
+            }
+
+            $('#image_loading').hide()
+            $currency.html(newOptions)
+        });
+    }**/
 
     function getVendors(code)
     {
