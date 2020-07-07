@@ -70,4 +70,9 @@ class Quotation extends Model
     {
         return $this->hasOne(\App\Models\Vendor::class, 'code','vendor_id');
     }
+
+    public function getTerm() 
+    {
+        return $this->hasOne(\App\Models\PaymentTerm::class,'payment_terms','payment_term');
+    }
 }

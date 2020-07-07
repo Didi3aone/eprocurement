@@ -219,9 +219,10 @@ class QuotationDirectController extends Controller
      */
     public function show($id)
     {
-        //
-    }
+        $quotation = Quotation::find($id);
 
+        return view('admin.quotation.direct.show',compact('quotation'));
+    }
     /**
      * Show the form for editing the specified resource.
      *
