@@ -211,7 +211,7 @@ class RfqController extends Controller
     {
         // $getRfq = \App\Models\AcpTableDetail::where('vendor_code',)
         $data = MasterRfqDetail::where('purchasing_document', $request->purchasing_document)
-                // ->where('plant', $request->plant)
+                ->where('material', $request->material)
                 ->first();
 
         return response()->json($data, 200);

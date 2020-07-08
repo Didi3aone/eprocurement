@@ -150,7 +150,7 @@ class SapHelper {
                     'GR_PR_TIME'        => 0,
                     'C_AMT_BAPI'        => '0.0000',
                     'PRICE_UNIT'        => 0,
-                    'ACCTASSCAT'        => $data[$i]['ACCTASSCAT'], // 'A',
+                    'ACCTASSCAT'        => $data[$i]['ACCTASSCAT'] == 'H' ? '' : $data[$i]['ACCTASSCAT'], // 'A',
                     'DISTRIB'           => '',
                     'PART_INV'          => '',
                     'GR_IND'            => 'X',
@@ -405,7 +405,7 @@ class SapHelper {
                 $REQUISITION_ITEMS_item = [
                     'PREQ_NO'           => '',
                     'PREQ_ITEM'         => $data[$i]['PREQ_ITEM'],//('000'.(10+($i*10))),
-                    'DOC_TYPE'          => 'Z104', // 'Z101',
+                    'DOC_TYPE'          => $data[$i]['DOC_TYPE'],//'Z104', // 'Z101',
                     'PUR_GROUP'         => $data[$i]['PUR_GROUP'], // 'S03',
                     'CREATED_BY'        => '',
                     'PREQ_NAME'         => $data[$i]['PREQ_NAME'], // 'PROD PL 3',
@@ -427,7 +427,7 @@ class SapHelper {
                     'C_AMT_BAPI'        => '0.0000',
                     'ITEM_CAT'          => '9',
                     'PRICE_UNIT'        => '0',
-                    'ACCTASSCAT'        => $data[$i]['ACCTASSCAT'], // 'A',
+                    'ACCTASSCAT'        => $data[$i]['ACCTASSCAT'] == 'H' ? '' : $data[$i]['ACCTASSCAT'], // 'A',
                     'DISTRIB'           => '',
                     'PART_INV'          => '',
                     'GR_IND'            => 'X',
@@ -692,6 +692,7 @@ class SapHelper {
 
         try {
             $result = $client->__soapCall("ZFM_WS_PR", $params, NULL, $header);
+            // dd($result);
             return $result;
         } catch (\Exception $e){
             throw new \Exception("Soup request failed! Response: ".$client->__getLastResponse());
@@ -726,6 +727,9 @@ class SapHelper {
         $params[0]['RETURN'] = [];
         $POITEM = [];
         $POITEMX = [];
+        $POACCOUNT = [];
+        $POSERVICES = [];
+        $POSRVACCESSVALUES = [];
 
         $POHEADER = [
             'PO_NUMBER' => '',
@@ -1328,6 +1332,7 @@ class SapHelper {
                     "HANDOVERTIME" => "",
                 ];
             } elseif( $quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::SERVICE ) {
+                // dd('iya kesini');
                 $POITEM = [
                     'PO_ITEM' => $poItem,//LINE
                     'DELETE_IND' => '',
@@ -1772,8 +1777,8 @@ class SapHelper {
                 ];
 
                 $POACCOUNT = [
-                    'PO_ITEM' => '',//00010
-                    'SERIAL_NO' => '',//01
+                    'PO_ITEM' => $poItem,//00010
+                    'SERIAL_NO' => '01',//01
                     'DELETE_IND' => '',
                     'CREAT_DATE' => '',
                     'QUANTITY' => '',
@@ -1907,6 +1912,9 @@ class SapHelper {
                 $params[0]['POITEMX']['item'][$i] = $POITEMX;
                 $params[0]['POSCHEDULE']['item'][$i] = $POSCHEDULE;
                 $params[0]['POSCHEDULEX']['item'][$i] = $POSCHEDULEX;
+                $params[0]['POACCOUNT']['item'][$i] = $POACCOUNT;
+                $params[0]['POSERVICES']['item'][$i] = $POSERVICES;
+                $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
             } else {
                 $params[0]['POITEM']['item'] = $POITEM;
                 $params[0]['POITEMX']['item'] = $POITEMX;
@@ -1934,8 +1942,8 @@ class SapHelper {
         ];
 
         $params[0]['RETURN'] = $RETURN;
-        // dd($params);
         $result = $client->__soapCall('ZFM_WS_PO', $params, NULL, $header);
+        dd($params);
         
         if( $result->EXPPURCHASEORDER) {
             \App\Models\employeeApps\SapLogSoap::create([

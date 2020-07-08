@@ -207,10 +207,12 @@ class MasterAcpController extends Controller
                         $cMo->purchasing_group_code == 'S09' ||
                         $cMo->purchasing_group_code == 'W09' ||
                         $cMo->purchasing_group_code == 'M03' ) {
-                            $isCmo = true;
-                        }
+                        $isCmo = true;
+                    }
                 } else {
-                    $cMo = \App\Models\PurchaseRequestsDetail::where('description',$val['material'])->first();
+                    $cMo = \App\Models\PurchaseRequestsDetail::where('description',$val['material'])
+                            ->orWhere('material_id', $val['material'])
+                            ->first();
                     if( $cMo->purchasing_group_code == 'S03' ||
                         $cMo->purchasing_group_code == 'H09' ||
                         $cMo->purchasing_group_code == 'M09' ||
