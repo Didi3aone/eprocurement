@@ -84,11 +84,9 @@
                                 <div class="form-group col-lg-4">
                                     <label>Nominal Invoice Sesudah PPN <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control form-control-line" name="nominal_inv_after_ppn" id="nominal_inv_after_ppn" value="{{ old('nominal_inv_after_ppn', '') }}" readonly> 
-                                    
                                 </div>
                                 <div class="form-group col-lg-4">
                                     <label>No. Rekening <span class="text-danger">*</span></label>
-                                    {{-- <input type="text" class="form-control form-control-line {{ $errors->has('no_rekening') ? 'is-invalid' : '' }}" name="no_rekening" value="{{ old('no_rekening', $rekening->account_no) }}">  --}}
                                      <select class="form-control select2" name="no_rekening" id="no_rekening" placeholder="Choose">
                                         <option value=""> Choose </option>
                                         @foreach($rekening as $id => $account_no )
@@ -110,15 +108,6 @@
                                         </div>
                                     @endif
                                 </div>
-                                {{-- <div class="form-group col-lg-4">
-                                    <label>TGL. Surat Jalan <span class="text-danger">*</span></label>
-                                    <input type="text" id="" class="form-control mdate form-control-line {{ $errors->has('tgl_surat_jalan') ? 'is-invalid' : '' }}" name="tgl_surat_jalan" value="{{ old('tgl_surat_jalan', '') }}"> 
-                                    @if($errors->has('tgl_surat_jalan'))
-                                        <div class="invalid-feedback">
-                                            {{ $errors->first('tgl_surat_jalan') }}
-                                        </div>
-                                    @endif
-                                </div> --}}
                                 <div class="form-group col-lg-4">
                                     <label>Keterangan PO</label>
                                     <textarea class="form-control form-control-line" name="keterangan_po"></textarea>
@@ -149,89 +138,6 @@
                                     <input type="file" class="form-control form-control-line" name="file_faktur" value="{{ old('file_faktur', '') }}"> 
                                 </div>
                             </div>
-                            
-                                {{-- <div class="form-group col-lg-3">
-                                    <label>{{ trans('cruds.billing.fields.proposal_id') }}</label>
-                                    <input type="text" class="form-control form-control-line {{ $errors->has('proposal_id') ? 'is-invalid' : '' }}" name="proposal_id" value="{{ $billing->proposal_id ?? old('proposal_id', '') }}" required> 
-                                    @if($errors->has('proposal_id'))
-                                        <div class="invalid-feedback">
-                                            {{ $errors->first('proposal_id') }}
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="form-group col-lg-3">
-                                    <label>{{ trans('cruds.billing.fields.document_no') }}</label>
-                                    <input type="text" class="form-control form-control-line {{ $errors->has('document_no') ? 'is-invalid' : '' }}" name="document_no" value="{{ $billing->document_no ?? old('document_no', '') }}" required> 
-                                    @if($errors->has('document_no'))
-                                        <div class="invalid-feedback">
-                                            {{ $errors->first('document_no') }}
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="form-group col-lg-3">
-                                    <label>{{ trans('cruds.billing.fields.title') }}</label>
-                                    <input type="text" class="form-control form-control-line {{ $errors->has('title') ? 'is-invalid' : '' }}" name="title" value="{{ $billing->title ?? old('title', '') }}" required> 
-                                    @if($errors->has('title'))
-                                        <div class="invalid-feedback">
-                                            {{ $errors->first('title') }}
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="form-group col-lg-3">
-                                    <label>{{ trans('cruds.billing.fields.proposal_date') }}</label>
-                                    <input type="text" class="form-control form-control-line {{ $errors->has('proposal_date') ? 'is-invalid' : '' }}" name="proposal_date" value="{{ $billing->proposal_date ?? old('proposal_date', '') }}" required> 
-                                    @if($errors->has('proposal_date'))
-                                        <div class="invalid-feedback">
-                                            {{ $errors->first('proposal_date') }}
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="form-group col-lg-3">
-                                    <label>{{ trans('cruds.billing.fields.division') }}</label>
-                                    <input type="text" class="form-control form-control-line {{ $errors->has('division') ? 'is-invalid' : '' }}" name="division" value="{{ $billing->division ?? old('division', '') }}" required> 
-                                    @if($errors->has('division'))
-                                        <div class="invalid-feedback">
-                                            {{ $errors->first('division') }}
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="form-group col-lg-3">
-                                    <label>{{ trans('cruds.billing.fields.vendor_id') }}</label>
-                                    <input type="text" class="form-control form-control-line {{ $errors->has('vendor_id') ? 'is-invalid' : '' }}" name="vendor_id" value="{{ $billing->vendor_id ?? old('vendor_id', '') }}" required> 
-                                    @if($errors->has('vendor_id'))
-                                        <div class="invalid-feedback">
-                                            {{ $errors->first('vendor_id') }}
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="form-group col-lg-3">
-                                    <label>{{ trans('cruds.billing.fields.region') }}</label>
-                                    <input type="text" class="form-control form-control-line {{ $errors->has('region') ? 'is-invalid' : '' }}" name="region" value="{{ $billing->region ?? old('region', '') }}" required> 
-                                    @if($errors->has('region'))
-                                        <div class="invalid-feedback">
-                                            {{ $errors->first('region') }}
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="form-group col-lg-3">
-                                    <label>{{ trans('cruds.billing.fields.status') }}</label>
-                                    <input type="text" class="form-control form-control-line {{ $errors->has('status') ? 'is-invalid' : '' }}" name="status" value="{{ $billing->status ?? old('status', '') }}" required> 
-                                    @if($errors->has('status'))
-                                        <div class="invalid-feedback">
-                                            {{ $errors->first('status') }}
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="form-group col-lg-3">
-                                    <label>{{ trans('cruds.billing.fields.po_no') }}</label>
-                                    <select class="form-control select2 form-control-line {{ $errors->has('po_no') ? 'is-invalid' : '' }}" id="po_no" name="po_no" value="{{ $billing->po_no ?? old('po_no', '') }}" required> 
-                                    @if($errors->has('po_no'))
-                                        <div class="invalid-feedback">
-                                            {{ $errors->first('po_no') }}
-                                        </div>
-                                    @endif
-                                </div>
-                            </div> --}}
                         </div>
                     </div>
                     <div class="card">

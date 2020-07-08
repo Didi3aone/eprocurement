@@ -20,6 +20,7 @@ class Quotation extends Model
         'created_at',
         'updated_at',
         'upload_file',
+        'total_price'
         
     ];
 

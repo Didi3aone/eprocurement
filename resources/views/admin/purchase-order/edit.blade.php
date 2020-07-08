@@ -27,7 +27,7 @@
                     </div>
                     <div class="form-group">
                         <label>Term Of Payment Desciption</label>
-                        <textarea type="text" class="form-control form-control-line" name="notes">{{ $purchaseOrder->notes ?? old('notes', '') }}</textarea>
+                        <textarea type="text" disabled class="form-control form-control-line" name="notes">{{ $purchaseOrder->notes ?? old('notes', '') }}</textarea>
                         @if($errors->has('notes'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('notes') }}
@@ -38,7 +38,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="">Currency</label>
-                                <input type="text" class="form-control form-control-line exchange_rate" name="currency" value="{{ $purchaseOrder->currency }}"> 
+                                <input type="text" class="form-control form-control-line exchange_rate" name="currency" value="{{ $purchaseOrder->currency }}" readonly> 
                                 {{-- <select name="currency" id="currency" class="form-control select2" required>
                                     @foreach($currency as $key => $value)
                                         <option value="{{ $value->currency }}" @if($value->currency == $purchaseOrder->currency) selected @endif>
@@ -90,6 +90,7 @@
                                     <th style="width: 20%">Net Price</th>
                                     <th style="width: 14%">Delivery Date</th>
                                     <th style="width: 64%">Tax</th>
+                                    <th style="width: 64%">Delivery Complete</th>
                                     <th style="width: 64%">
                                         {{-- <button type="button" id="add_item" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add Item</button> --}}
                                     </th>
@@ -109,6 +110,10 @@
                                             <input type="checkbox" class="" id="check_{{ $value->id }}" name="tax_code[]" value="1"
                                                 @if($value->tax_code == 1) checked @endif>
                                             <label for="check_{{ $value->id }}">&nbsp;</label>
+                                       </td>
+                                       <td>
+                                            <input type="checkbox" class="" id="checks_{{ $key }}" name="delivery_complete[]" value="1">
+                                            <label for="checks_{{ $key }}">&nbsp;</label>
                                        </td>
                                        <td>
                                             <a href="javascript:;" data-id="{{ $value->id }}" class="remove-item btn btn-danger btn-xs">

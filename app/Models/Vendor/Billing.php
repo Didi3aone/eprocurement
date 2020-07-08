@@ -63,6 +63,7 @@ class Billing extends Model
     public const Submitted = 4;
     public const Payment = 5;
     public const Payed = 6;
+    public const sendToSpv = 1;
 
     protected static function boot()
     {

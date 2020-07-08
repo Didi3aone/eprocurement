@@ -74,7 +74,7 @@
                         </div>
                         <div class="form-group col-lg-4">
                             <label>Nominal Invoice Sesudah PPN</label>
-                            <input type="text" class="form-control form-control-line" name="nominal_inv_after_ppn" value="{{ $billing->nominal_inv_after_ppn ?? old('nominal_inv_after_ppn', '') }}" readonly> 
+                            <input type="text" class="form-control form-control-line" name="nominal_inv_after_ppn" value="{{ $billing->nominal_inv_after_ppn }}" id="nominal_inv_after_ppn"> 
                         </div>
                         <div class="form-group col-lg-4">
                             <label>PPN</label>
@@ -126,10 +126,6 @@
                                 </div>
                             @endif
                         </div>
-                        {{-- <div class="form-group col-lg-4">
-                            <label>Nominal PPN</label>
-                            <input type="number" class="form-control form-control-line" name="nominal_pajak" value="{{ $billing->nominal_pajak ?? old('nominal_pajak', '') }}" required> 
-                        </div> --}}
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.payment_term_claim') }}</label>
                             <select class="form-control select2 form-control-line {{ $errors->has('payment_term_claim') ? 'is-invalid' : '' }}" name="payment_term_claim" value="{{ $billing->payment_term_claim ?? old('payment_term_claim', '') }}" required> 
@@ -150,10 +146,6 @@
                             <label>{{ trans('cruds.billing.fields.jumlah_pph') }}</label>
                             <input type="text" class="form-control form-control-line" name="jumlah_pph" id="jumlah_pph" value="" readonly> 
                         </div>
-                        {{-- <div class="form-group col-lg-4">
-                            <label>{{ trans('cruds.billing.fields.total_invoice') }}</label>
-                            <input type="number" class="form-control form-control-line" name="total_invoice" value="" required> 
-                        </div> --}}
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.currency') }}</label>
                             <select class="form-control select2 form-control-line" name="currency" value=""> 
@@ -163,8 +155,10 @@
                             </select>
                         </div>
                         <div class="form-group col-lg-4">
-                            <label>{{ trans('cruds.billing.fields.perihal_claim') }}</label>
-                            <input type="text" class="form-control form-control-line " name="perihal_claim" value="{{ $billing->perihal_claim ?? old('perihal_claim', '') }}"> 
+                            <label>{{ 'Tax Amount' }}</label>
+                            <input type="text" class="form-control form-control-line " name="tax_amount" value="" id="taxAmount"> 
+                            <input type="checkbox" class="" id="check_1" name="calculate_tax" value="1">
+                            <label for="check_1">&nbsp; Calculate Tax</label>
                         </div>
                         <div class="form-group col-lg-4">
                             <label>Bank House</label>
@@ -177,6 +171,10 @@
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.exchange_rate') }}</label>
                             <input type="text" class="form-control form-control-line" name="exchange_rate" value=""> 
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>{{ trans('cruds.billing.fields.perihal_claim') }}</label>
+                            <input type="text" class="form-control form-control-line " name="perihal_claim" value="{{ $billing->perihal_claim ?? old('perihal_claim', '') }}"> 
                         </div>
                     </div>
                 </div>
@@ -213,11 +211,11 @@
                                         <td>{{ $val->qty }}</td>
                                         <td><input type="text" class="amount" name="amount[]" value="{{ $val->amount }}"/></td>
                                         <td>{{ $val->material_id." - ".$val->material->description }}</td>
-                                        <td><input type="text" class="" name="po_no" value="{{ $val->po_no }}" readonly></td>
-                                        <td><input type="text" class="" name="po_item[]" value="{{ $val->PO_ITEM }}" readonly></td>
-                                        <td><input type="text" class="" name="doc_gr[]" value="{{ $val->doc_gr }}" readonly/></td>
-                                        <td><input type="text" class="" name="item_gr[]" value="{{ $val->item_gr }}" readonly/></td>
-                                        <td><input type="text" class="" name="posting_date[]" value="{{ $val->gr_date }}" readonly/></td>
+                                        <td>{{ $val->po_no }}</td>
+                                        <td>{{ $val->PO_ITEM }}</td>
+                                        <td>{{ $val->doc_gr }}</td>
+                                        <td>{{ $val->item_gr }}</td>
+                                        <td>{{ $val->gr_date }}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -227,32 +225,10 @@
                     <br>
                     <br>
                     <div class="form-actions">
-                        @php
-                            $disabled = false;
-
-                            if ($billing->status == 2)
-                                $disabled = true;
-                            elseif ($billing->status == 3)
-                                $disabled = true;
-                            else
-                                $disabled = false;
-                        @endphp
-                        @if ($disabled == false)
-                            @can('accounting_staff')
-                                <a href="javascript:;" id="approval" type="button" class="btn btn-warning"> <i class="fa fa-check"></i> {{ trans('global.approve') }}</a>
-                                <a href="javascript:;" id="reject" data-toggle="modal" data-id="{{ $billing->id }}" data-target="#modal_rejected_reason" type="button" class="btn btn-danger"> 
-                                <i class="fa fa-times"></i> {{ trans('global.reject') }}</a>
-                            @endcan
-                            @can('accounting_spv')
-                                <a href="javascript:;" id="reject" data-toggle="modal" data-id="{{ $billing->id }}" data-target="#modal_rejected_reason" type="button" class="btn btn-danger"> 
-                                <i class="fa fa-times"></i> {{ trans('global.reject') }}</a>
-                            @endcan
-                        @elseif ($disabled == true)
-                            @can('accounting_spv')
-                                <a href="javascript:;" id="submit" type="button" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.submit') }}</a>
-                            @endcan
-                        @endif
-                        <a href="{{ route('admin.billing') }}" type="button" class="btn btn-inverse">Back To List</a>
+                        <a href="javascript:;" id="approval" type="button" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.approve') }}</a>
+                        <a href="javascript:;" id="reject" data-toggle="modal" data-id="{{ $billing->id }}" data-target="#modal_rejected_reason" type="button" class="btn btn-danger"> 
+                        <i class="fa fa-times"></i> {{ trans('global.reject') }}</a>
+                        <a href="{{ route('admin.billing') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i> Back To List</a>
                     </div>
                 </div>
             </div>
@@ -277,8 +253,8 @@
                     <textarea name="reason" id="reason" cols="30" rows="10"></textarea>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-trash"></i> Close</button>
-                    <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Save</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
                 </div>
             </form>
         </div>
@@ -322,6 +298,18 @@
         $form = $('.form-material')
         $form.attr('action', '{{ route('admin.billing-store') }}')
         $form.submit()
+    })
+
+    $("#check_1").click(function() {
+        if(this.checked) {
+            if( this.value == 1) {
+                $("#taxAmount").attr('readonly',true)
+                $("#nominal_inv_after_ppn").attr('readonly',true)
+            } 
+        } else {
+            $("#nominal_inv_after_ppn").attr('readonly',false)
+            $("#taxAmount").attr('readonly',false)
+        }
     })
 </script>
 @endsection

@@ -87,21 +87,24 @@ class BillingController extends Controller
     public function storeApproved(Request $request)
     {
         $billing = Billing::find($request->id);
-        $billing->status = Billing::Approved;
-        $billing->assignment = $request->assignment;
-        $billing->payment_term_claim  = $request->payment_term_claim;
-        $billing->tipe_pph = $request->tipe_pph;
-        $billing->jumlah_pph = $request->jumlah_pph;
-        $billing->currency = $request->currency;
-        $billing->perihal_claim = $request->perihal_claim;
-        $billing->house_bank = $request->house_bank;
-        $billing->exchange_rate  = $request->exchange_rate   ;
-        $billing->base_line_date  = $request->base_line_date   ;
-        $billing->is_spv = 1;
+        $billing->status                = Billing::Approved;
+        $billing->assignment            = $request->assignment;
+        $billing->payment_term_claim    = $request->payment_term_claim;
+        $billing->tipe_pph              = $request->tipe_pph;
+        $billing->jumlah_pph            = $request->jumlah_pph;
+        $billing->currency              = $request->currency;
+        $billing->perihal_claim         = $request->perihal_claim;
+        $billing->house_bank            = $request->house_bank;
+        $billing->exchange_rate         = $request->exchange_rate;
+        $billing->base_line_date        = $request->base_line_date;
+        $billing->calculate_tax         = $request->calculate_tax;
+        $billing->tax_amount            = $request->tax_amount ?? '';
+        $billing->nominal_inv_after_ppn = $request->nominal_inv_after_ppn;
+        $billing->is_spv                = Billing::sendToSpv;//approve spv
         $billing->update();
 
         foreach( $request->iddetail as $key => $rows ) {
-            $detail = BillingDetail::find($rows);
+            $detail         = BillingDetail::find($rows);
             $detail->amount = $request->amount[$key];
 
             $detail->update();
@@ -113,9 +116,9 @@ class BillingController extends Controller
     
     public function storeRejected(Request $request)
     {
-        $billing = Billing::find($request->id);
-        $billing->status = Billing::Rejected;
-        $billing->reason_rejected = $request->reason;
+        $billing                    = Billing::find($request->id);
+        $billing->status            = Billing::Rejected;
+        $billing->reason_rejected   = $request->reason;
         $billing->update();
 
         \Session::flash('status','Billing has been rejected');
