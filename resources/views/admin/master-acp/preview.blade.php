@@ -59,6 +59,7 @@
                                             <dd class="col-sm-9">No</dd>
                                         @endif
                                     </dl>
+                                    @if(isset($data['material_'.$vendor->code]))
                                     <table class="table table-bordered">
                                         <thead>
                                             <tr>
@@ -79,6 +80,7 @@
                                             @endforeach
                                         </tbody>
                                     </table>
+                                    @endif
                                 </div>
                             </div>
                         </div>
