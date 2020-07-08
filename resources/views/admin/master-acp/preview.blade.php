@@ -19,72 +19,74 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-sm-12 col-md-3">
-                        <h4>Upload File</h4>
-                        @foreach($images as $image)
-                            <img src="{{ $image }}" class="rounded img-responsive"/>
-                        @endforeach
-                    </div>
-                    <div class="col-sm-12 col-md-9">
-                        <dl class="row mt-4">
-                            <dt class="col-sm-3">Material From PR</dt>
-                            <dd class="col-sm-9">{{ $data['is_from_pr'] ? 'Yes' : 'No' }}</dd>
-                            <dt class="col-sm-3">Project</dt>
-                            <dd class="col-sm-9">{{ $data['is_project'] ? 'Yes' : 'No' }}</dd>
-                            <dt class="col-sm-3">Reference Acp No</dt>
-                            <dd class="col-sm-9">{{ $data['reference_acp_no'] }}</dd>
-                            <dt class="col-sm-3">Start Date</dt>
-                            <dd class="col-sm-9">{{ $data['start_date'] }}</dd>
-                            <dt class="col-sm-3">End Date</dt>
-                            <dd class="col-sm-9">{{ $data['end_date'] }}</dd>
-                        </dl>
+                    <div class="col-lg-12">
+                        <table class="table table-bordered table-striped">
+                            <tbody>
+                                <tr>
+                                    <th>ACP No.</th>
+                                    <td>{{ $data['reference_acp_no'] }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Project</th>
+                                    <td>{{ $data['is_project'] ? 'Project' : '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>File</th>
+                                    @foreach($images as $image)
+                                        <td>
+                                            <a href="{{ $image ?? ''}}" target="_blank" download>
+                                                {{ $image ??'' }}
+                                            </a>
+                                            <br>
+                                        </td>
+                                    @endforeach
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <div class="row mt-4">
-                    @foreach($vendors as $vendor)
-                        <div class="col-12 mb-2">
-                            <div class="card">
-                                <div class="card-body">
-                                    <dl class="row">
-                                        <dt class="col-sm-3">Vendor Code</dt>
-                                        <dd class="col-sm-9">{{ $vendor->code }}</dd>
-                                        <dt class="col-sm-3">Vendor Name</dt>
-                                        <dd class="col-sm-9">{{ $vendor->name }}</dd>
-                                        <dt class="col-sm-3">Email</dt>
-                                        <dd class="col-sm-9">{{ $vendor->email }}</dd>
-                                        <dt class="col-sm-3">Winner</dt>
-                                        @if(isset($data['winner_'.$vendor->code]))
-                                            <dd class="col-sm-9">{{ $data['winner_'.$vendor->code] ? 'Yes' : 'No' }}</dd>
-                                        @else
-                                            <dd class="col-sm-9">No</dd>
-                                        @endif
-                                    </dl>
-                                    @if(isset($data['material_'.$vendor->code]))
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>Material Code</th>
-                                                <th>Currency</th>
-                                                <th>Price</th>
-                                                <th>Per</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($data['material_'.$vendor->code] as $key => $material)
-                                            <tr>
-                                                <td>{{ \App\Models\MasterMaterial::where('code', $material)->first()->description ?? 'Undefined' }}</td>
-                                                <td>{{ $data['currency_'.$vendor->code][$key] }}</td>
-                                                <td>{{ $data['price_'.$vendor->code][$key] }}</td>
-                                                <td>{{ $data['qty_'.$vendor->code][$key] }}</td>
-                                            </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
+                <br>
+                <div class="row">
+                    <table class="table table-bordered table-condesed">
+                        <thead>
+                            <tr>
+                                <th><b>Vendor</b></th>
+                                <th><b>Winner</b></th>
+                                <th style="text-align:center;">Material</th>
+                                <th style="text-align:center;">Description</th>
+                                <th style="text-align:center;">Unit</th>
+                                <th style="text-align:center;">Per</th>
+                                <th style="text-align:center;">Currency</th>
+                                <th style="text-align:center;">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($vendors as $vendor)
+                            @php
+                                $count = count($data['material_'.$vendor->code]);
+                            @endphp
+                            <tr>
+                                <td rowspan={{ $count }}>{{ $vendor->name }}</td>
+                                @if(isset($data['winner_'.$vendor->code]))
+                                    <td rowspan={{ $count }}>{!! $data['winner_'.$vendor->code] ? '<span class="badge badge-primary">Winner</span>' : '<span class="badge badge-danger">Lose</span>' !!}</td>
+                                @else
+                                    <td rowspan={{ $count }}><span class="badge badge-danger">Lose</span></td>
+                                @endif
+                                @foreach($data['material_'.$vendor->code] as $key => $material)
+                                    @php
+                                        $row = \App\Models\MasterMaterial::where('code', $material)->first();
+                                    @endphp
+                                    <td>{{ $row->code ?? '-'}}</td>
+                                    <td>{{ $row->description ?? $row->code  }}</td>
+                                    <td>{{ $row->uom_code }}</td>
+                                    <td>{{ $data['qty_'.$vendor->code][$key] }}</td>
+                                    <td>{{ $data['currency_'.$vendor->code][$key] }}</td>
+                                    <td>{{ number_format($data['price_'.$vendor->code][$key], 2) }}</td>
+                            </tr>
+                            @endforeach
+                        @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div class="card-footer">
