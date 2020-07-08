@@ -623,4 +623,8 @@ class PurchaseRequestController extends Controller
             
         return \Response::json($data);
     }
+
+    public function confirmation(Request $request) {
+        dd($request->all());
+    }
 }
