@@ -2651,125 +2651,128 @@ class SapHelper {
         $params[0]['ITEMDATA'] = [];
         $params[0]['RETURN'] = [];
 
+        $compCode = "";
+        if( $billingDetail[0]->plant_code == '1101' ) {
+            $compCode = '1100';
+        } else if( $billingDetail[0]->plant_code == '1201' ) {
+            $compCode = '1200';
+        } else if( $billingDetail[0]->plant_code == '2101' ) {
+            $compCode = '2100';
+        }
         // Z300 PO RM PM
-        if ($docType == 'Z300') {
-        } else if ($docType == 'Z301') { // indirect
-            $HEADER = [
-                'INVOICE_IND' => 'X',
-                'DOC_TYPE' => 'RE',
-                'DOC_DATE' => $billing->tgl_invoice,
-                'PSTNG_DATE' => date('Y-m-d'),
-                'REF_DOC_NO' => $billing->billing_no,
-                'COMP_CODE' => '1100',
-                'DIFF_INV' => '',
-                'CURRENCY' => $billing->currency,
-                'CURRENCY_ISO' => '',
-                'EXCH_RATE' =>'',// $billing->exchange_rate,
-                'EXCH_RATE_V' => '',
-                'GROSS_AMOUNT' => $billing->nominal_inv_after_ppn,
-                'CALC_TAX_IND' => '',
-                'PMNTTRMS' => $billing->payment_term_claim,//'Z003',
-                'BLINE_DATE' => $billing->base_line_date,//'2020-05-01',
-                'DSCT_DAYS1' => '',
-                'DSCT_DAYS2' => '',
-                'NETTERMS' => '',
-                'DSCT_PCT1' => '',
-                'DSCT_PCT2' => '',
-                'IV_CATEGORY' => '',
-                'HEADER_TXT' => '',
-                'PMNT_BLOCK' => '',
-                'DEL_COSTS' => '',
-                'DEL_COSTS_TAXC' => '',
-                'DEL_COSTS_TAXJ' => '',
-                'PERSON_EXT' => '',
-                'PYMT_METH' => 'T',
-                'PMTMTHSUPL' => '',
-                'INV_DOC_NO' => '',
-                'SCBANK_IND' => '',
-                'SUPCOUNTRY' => '',
-                'BLLSRV_IND' => '',
-                'REF_DOC_NO_LONG' => '',
-                'DSCT_AMOUNT' => '',
-                'PO_SUB_NO' => '',
-                'PO_CHECKDG' => '',
-                'PO_REF_NO' => '',
-                'PAYEE_PAYER' => '',
-                'PARTNER_BK' => '0001',
-                'HOUSEBANKID' => $billing->house_bank,
-                'ALLOC_NMBR' => '',
-                'PAYMT_REF' => '',
-                'INV_REF_NO' => '',
-                'INV_YEAR' => '',
-                'INV_REC_DATE' => '',
-                'PLANNING_LEVEL' => '',
-                'PLANNING_DATE' => '',
-                'FIXEDTERMS' => '',
-                'BUS_AREA' => '',
-                'LOT_NUMBER' => '',
-                'ITEM_TEXT' => $billing->perihal_claim,
-                'J_1BNFTYPE' => '',
-                'EU_TRIANG_DEAL' => '',
-                'REPCOUNTRY' => '',
-                'VAT_REG_NO' => '',
-                'BUSINESS_PLACE' => '',
-                'TAX_EXCH_RATE' => '',
-                'GOODS_AFFECTED' => '',
-                'RET_DUE_PROP' => '',
-                'DELIV_POSTING' => '',
-                'RETURN_POSTING' => '',
-                'INV_TRAN' => '',
-                'SIMULATION' => '',
-                'J_1TPBUPL' => '',
-                'SECCO' => '',
-                'VATDATE' => '',
-                'DE_CRE_IND' => '',
-                'TRANS_DATE' => '',
-            ];
-            foreach( $billingDetail as $key => $rows ) {
-                $i = $key + 1;
-                $invDocItem = ('0000'.(10+($i*10)));
-                $ITEMDATA = [
-                    'INVOICE_DOC_ITEM' => '000010',//$invDocItem,//'000010',20
-                    'PO_NUMBER' => $rows->po_no,//'3010002673',
-                    'PO_ITEM' => $rows->PO_ITEM,//'00010',
-                    'REF_DOC' => $rows->reference_document,//'5000042639',
-                    'REF_DOC_YEAR' => $rows->tahun_gr,//'2020',
-                    'REF_DOC_IT' => '000'.$rows->item_gr,
-                    'DE_CRE_IND' => '',
-                    'TAX_CODE' => $billing->ppn,//'V0',
-                    'TAXJURCODE' => '',
-                    'ITEM_AMOUNT' => $rows->amount,//20000
-                    'QUANTITY' => $rows->qty,//20
-                    'PO_UNIT' => $rows->unit,//ST
-                    'PO_UNIT_ISO' => '',
-                    'PO_PR_QNT' => '',
-                    'PO_PR_UOM' => '',
-                    'PO_PR_UOM_ISO' => '',
-                    'COND_TYPE' => '',
-                    'COND_ST_NO' => '',
-                    'COND_COUNT' => '',
-                    'SHEET_NO' => '',
-                    'ITEM_TEXT' => '',
-                    'FINAL_INV' => '',
-                    'SHEET_ITEM' => '',
-                    'GRIR_CLEAR_SRV' => '',
-                    'FREIGHT_VEN' => '',
-                    'CSHDIS_IND' => '',
-                    'RETENTION_DOCU_CURRENCY' => '',
-                    'RETENTION_PERCENTAGE' => '',
-                    'RETENTION_DUE_DATE' => '',
-                    'NO_RETENTION' => '',
-                    'VALUATION_TYPE' => '',
-                    'INV_RELATION' => '',
-                    'INV_ITM_ORIGIN' => '',
-                    'COND_COUNT_LONG' => '',
-                    'DEL_CREATE_DATE' => '',
-                ];
+        $HEADER = [ 
+            'INVOICE_IND' => 'X',
+            'DOC_TYPE' => 'RE',
+            'DOC_DATE' => $billing->tgl_invoice,
+            'PSTNG_DATE' => date('Y-m-d'),
+            'REF_DOC_NO' => $billing->billing_no,
+            'COMP_CODE' => $compCode,
+            'DIFF_INV' => '',
+            'CURRENCY' => $billing->currency,
+            'CURRENCY_ISO' => '',
+            'EXCH_RATE' =>'',// $billing->exchange_rate,
+            'EXCH_RATE_V' => '',
+            'GROSS_AMOUNT' => $billing->nominal_inv_after_ppn,
+            'CALC_TAX_IND' => $billing->ppn == 'V1' ? 'X' : '',
+            'PMNTTRMS' => $billing->payment_term_claim,//'Z003',
+            'BLINE_DATE' => $billing->base_line_date,//'2020-05-01',
+            'DSCT_DAYS1' => '',
+            'DSCT_DAYS2' => '',
+            'NETTERMS' => '',
+            'DSCT_PCT1' => '',
+            'DSCT_PCT2' => '',
+            'IV_CATEGORY' => '',
+            'HEADER_TXT' => '',
+            'PMNT_BLOCK' => '',
+            'DEL_COSTS' => '',
+            'DEL_COSTS_TAXC' => '',
+            'DEL_COSTS_TAXJ' => '',
+            'PERSON_EXT' => '',
+            'PYMT_METH' => 'T',
+            'PMTMTHSUPL' => '',
+            'INV_DOC_NO' => '',
+            'SCBANK_IND' => '',
+            'SUPCOUNTRY' => '',
+            'BLLSRV_IND' => '',
+            'REF_DOC_NO_LONG' => '',
+            'DSCT_AMOUNT' => '',
+            'PO_SUB_NO' => '',
+            'PO_CHECKDG' => '',
+            'PO_REF_NO' => '',
+            'PAYEE_PAYER' => '',
+            'PARTNER_BK' => '0001',
+            'HOUSEBANKID' => $billing->house_bank,
+            'ALLOC_NMBR' => '',
+            'PAYMT_REF' => '',
+            'INV_REF_NO' => '',
+            'INV_YEAR' => '',
+            'INV_REC_DATE' => '',
+            'PLANNING_LEVEL' => '',
+            'PLANNING_DATE' => '',
+            'FIXEDTERMS' => '',
+            'BUS_AREA' => '',
+            'LOT_NUMBER' => '',
+            'ITEM_TEXT' => $billing->perihal_claim,
+            'J_1BNFTYPE' => '',
+            'EU_TRIANG_DEAL' => '',
+            'REPCOUNTRY' => '',
+            'VAT_REG_NO' => '',
+            'BUSINESS_PLACE' => '',
+            'TAX_EXCH_RATE' => '',
+            'GOODS_AFFECTED' => '',
+            'RET_DUE_PROP' => '',
+            'DELIV_POSTING' => '',
+            'RETURN_POSTING' => '',
+            'INV_TRAN' => '',
+            'SIMULATION' => '',
+            'J_1TPBUPL' => '',
+            'SECCO' => '',
+            'VATDATE' => '',
+            'DE_CRE_IND' => '',
+            'TRANS_DATE' => '',
+        ];
 
-                $params[0]['ITEMDATA'][$key] = $ITEMDATA;
-            }
-        } else if ($docType == 'Z302') { // service
-        } else if ($docType == 'Z303') { // asset prod march
+        foreach( $billingDetail as $key => $rows ) {
+            $i = $key + 1;
+            $invDocItem = ('0000'.(0+($i*10)));
+            $ITEMDATA = [
+                'INVOICE_DOC_ITEM' => $invDocItem,//$invDocItem,//'000010',20
+                'PO_NUMBER' => $rows->po_no,//'3010002673',
+                'PO_ITEM' => $rows->PO_ITEM,//'00010',
+                'REF_DOC' => $rows->reference_document,//'5000042639',
+                'REF_DOC_YEAR' => $rows->tahun_gr,//'2020',
+                'REF_DOC_IT' => $rows->item_gr,
+                'DE_CRE_IND' => '',
+                'TAX_CODE' => $billing->ppn,//'V0',
+                'TAXJURCODE' => '',
+                'ITEM_AMOUNT' => $rows->amount,//20000
+                'QUANTITY' => $rows->qty,//20
+                'PO_UNIT' => $rows->unit,//ST
+                'PO_UNIT_ISO' => '',
+                'PO_PR_QNT' => '',
+                'PO_PR_UOM' => '',
+                'PO_PR_UOM_ISO' => '',
+                'COND_TYPE' => '',
+                'COND_ST_NO' => '',
+                'COND_COUNT' => '',
+                'SHEET_NO' => '',
+                'ITEM_TEXT' => '',
+                'FINAL_INV' => '',
+                'SHEET_ITEM' => '',
+                'GRIR_CLEAR_SRV' => '',
+                'FREIGHT_VEN' => '',
+                'CSHDIS_IND' => '',
+                'RETENTION_DOCU_CURRENCY' => '',
+                'RETENTION_PERCENTAGE' => '',
+                'RETENTION_DUE_DATE' => '',
+                'NO_RETENTION' => '',
+                'VALUATION_TYPE' => '',
+                'INV_RELATION' => '',
+                'INV_ITM_ORIGIN' => '',
+                'COND_COUNT_LONG' => '',
+                'DEL_CREATE_DATE' => '',
+            ];
+            $params[0]['ITEMDATA'][$key] = $ITEMDATA;
         }
 
         $RETURN = [
@@ -2790,7 +2793,6 @@ class SapHelper {
         ];
         $params[0]['HEADERDATA'] = $HEADER;
         $params[0]['RETURN'] = $RETURN;
-        // dd($params);
         $result = $client->__soapCall('ZFM_WS_MIRO', $params, null, $header);
         dd($result);
     }

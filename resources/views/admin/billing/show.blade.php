@@ -205,14 +205,15 @@
                                     @foreach ($billing->detail as $val)
                                     <tr>
                                         <input type="hidden" value="{{ $val->id }}" name="iddetail[]">
+                                        <input type="hidden" name="po_no" value="{{ $val->po_no }}">
                                         <td>{{ $val->qty }}</td>
-                                        <td><input type="text" class="amount" name="amount[]" value="{{ $val->amount }}"/></td>
+                                        <td>{{ $val->amount }}</td>
                                         <td>{{ $val->material_id." - ".$val->material->description }}</td>
-                                        <td><input type="text" class="" name="po_no" value="{{ $val->po_no }}" readonly></td>
-                                        <td><input type="text" class="" name="po_item[]" value="{{ $val->PO_ITEM }}" readonly></td>
-                                        <td><input type="text" class="" name="doc_gr[]" value="{{ $val->doc_gr }}" readonly/></td>
-                                        <td><input type="text" class="" name="item_gr[]" value="{{ $val->item_gr }}" readonly/></td>
-                                        <td><input type="text" class="" name="posting_date[]" value="{{ $val->gr_date }}" readonly/></td>
+                                        <td>{{ $val->po_no }}</td>
+                                        <td>{{ $val->PO_ITEM }}</td>
+                                        <td>{{ $val->doc_gr }}</td>
+                                        <td>{{ $val->item_gr }}</td>
+                                        <td>{{ $val->gr_date }}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -223,7 +224,7 @@
                     <br>
                     <div class="form-actions">
                         <a href="javascript:;" id="submit" type="button" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.submit') }}</a>
-                        <a href="{{ route('admin.billing') }}" type="button" class="btn btn-inverse">Back To List</a>
+                        <a href="{{ route('admin.billing-spv-list') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i>Back To List</a>
                     </div>
                 </div>
             </div>
