@@ -225,6 +225,7 @@
         dom: 'Bfrtip',
         processing: true,
         serverSide: true,
+        pageLength: 50,
         ajax: "/admin/purchase-request",
         "createdRow": function( row, data, dataIndex ) {
             var tp1 = $('#hidden_input').html()

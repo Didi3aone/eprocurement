@@ -294,7 +294,23 @@ class PurchaseRequestController extends Controller
         $vendor = $return['vendor'];
         $top = $return['top'];
 
-        $docTypes = DocumentType::where('type', '2')->get();
+        $docType = $docs[0];
+        $type = '';
+        if( $docType == 'SY01' || $docType == 'SY02' || $docType == 'Z102' ) {
+            $type = 'Z300';
+        } else if( $docType == 'Z100' ) {
+            $type = 'Z301';
+        } else if( $docType == 'Z104' ) {
+            $type = 'Z302';
+        } else if( $docType == 'Z101' ) {
+            $type = 'Z303';
+        } else if( $docType == 'Z107' ) {
+            $type = 'Z304';
+        }
+
+        $docTypes = DocumentType::where('type', '2')
+                ->where('code',$type)
+                ->get();
         $currency = Currency::all();
 
         $uri = [
@@ -339,7 +355,24 @@ class PurchaseRequestController extends Controller
         $vendor = $return['vendor'];
         $top = $return['top'];
 
-        $docTypes = DocumentType::where('type', '2')->get();
+        $docType = $docs[0];
+        $type = '';
+        if( $docType == 'SY01' || $docType == 'SY02' || $docType == 'Z102' ) {
+            $type = 'Z300';
+        } else if( $docType == 'Z100' ) {
+            $type = 'Z301';
+        } else if( $docType == 'Z104' ) {
+            $type = 'Z302';
+        } else if( $docType == 'Z101' ) {
+            $type = 'Z303';
+        } else if( $docType == 'Z107' ) {
+            $type = 'Z304';
+        }
+
+        $docTypes = DocumentType::where('type', '2')
+                ->where('code',$type)
+                ->get();
+
         $currency = Currency::all();
 
         $uri = [
