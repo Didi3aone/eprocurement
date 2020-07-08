@@ -7,9 +7,11 @@ use Gate;
 use App\Models\Vendor;
 use App\Models\UserMap;
 use App\Models\Currency;
+use App\Models\PaymentTerm;
 use App\Models\DocumentType;
 use Illuminate\Http\Request;
 use App\Models\PurchaseRequest;
+use App\Models\Vendor\Quotation;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -68,26 +70,26 @@ class PurchaseRequestController extends Controller
                 $query->where('purchase_requests.status_approval', PurchaseRequest::ApprovedDept)
                     ->orWhere('purchase_requests.status_approval', PurchaseRequest::ApprovedProc);
             });
-            // ->orderBy('purchase_requests.created_at', 'asc');
+        // ->orderBy('purchase_requests.created_at', 'asc');
         if (\request()->ajax()) {
             $q = \collect($request->all())->forget('draw')->forget('_')->toJson();
-            $result = \Cache::remember($q, 60, function() use($request, $materials, $q) {
+            $result = \Cache::remember($q, 60, function () use ($request, $materials, $q) {
                 $columns = [
-                    0 =>'id', 
-                    1 =>'PR_NO',
-                    2=> 'preq_item',
-                    3=> 'release_date',
-                    4=> 'material_id',
-                    5=> 'short_text',
+                    0 => 'id',
+                    1 => 'PR_NO',
+                    2 => 'preq_item',
+                    3 => 'release_date',
+                    4 => 'material_id',
+                    5 => 'short_text',
                 ];
                 $totalData = $materials->count();
-            
+
                 $totalFiltered = $materials
-                    ->when($request->input('search.value'), function($q) use($request){
+                    ->when($request->input('search.value'), function ($q) use ($request) {
                         $search = $request->input('search.value');
-                        $q->where('PR_NO','ILIKE',"%{$search}%")
-                            ->orWhere('material_id','ILIKE',"%{$search}%")
-                            ->orWhere('short_text','ILIKE',"%{$search}%");
+                        $q->where('PR_NO', 'ILIKE', "%{$search}%")
+                            ->orWhere('material_id', 'ILIKE', "%{$search}%")
+                            ->orWhere('short_text', 'ILIKE', "%{$search}%");
                     })->count();
 
                 $limit = $request->input('length');
@@ -95,35 +97,36 @@ class PurchaseRequestController extends Controller
                 $order = $columns[$request->input('order.0.column')];
                 $dir = $request->input('order.0.dir');
                 $items = $materials
-                    ->when($request->input('search.value'), function($q) use($request){
+                    ->when($request->input('search.value'), function ($q) use ($request) {
                         $search = $request->input('search.value');
-                        $q->where('PR_NO','ILIKE',"%{$search}%")
-                            ->orWhere('material_id','ILIKE',"%{$search}%")
-                            ->orWhere('short_text','ILIKE',"%{$search}%");
+                        $q->where('PR_NO', 'ILIKE', "%{$search}%")
+                            ->orWhere('material_id', 'ILIKE', "%{$search}%")
+                            ->orWhere('short_text', 'ILIKE', "%{$search}%");
                     })
                     ->offset($start)
                     ->limit($limit)
-                    ->orderBy($order,$dir)
+                    ->orderBy($order, $dir)
                     ->get();
                 // $paginate = $materials->paginate(10,['*'],'draw');
-                 // $paginate = $materials->paginate(10,['*'],'draw');
-                 $result = [
-                    'draw' => (int)\request()->get('draw'),
+                // $paginate = $materials->paginate(10,['*'],'draw');
+                $result = [
+                    'draw' => (int) \request()->get('draw'),
                     'recordsTotal' => $totalData,
                     'recordsFiltered' => $totalFiltered,
                     'request' => \collect($request->all())->forget('draw')->forget('_'),
                     'q' => $q,
-                    'data' => \collect($items)->map(function ($value, $key) use($start) {
+                    'data' => \collect($items)->map(function ($value, $key) use ($start) {
                         $other = \App\Models\PurchaseRequestApprovalHistory::getHistoryApproval($value->uuid);
-                        $other = $other->map(function($row) {
+                        $other = $other->map(function ($row) {
                             return [
-                                $row->nik.\App\Models\employeeApps\User::getUser($row->nik)->name,
+                                $row->nik.(\App\Models\employeeApps\User::getUser($row->nik)->name ?? ''),
                                 $row->action,
-                                \Carbon\Carbon::parse($row->created_at)->format('d-m-Y')
+                                \Carbon\Carbon::parse($row->created_at)->format('d-m-Y'),
                             ];
                         });
+
                         return [
-                            ($key+1) + $start,
+                            ($key + 1) + $start,
                             $value->PR_NO,
                             $value->doc_type,
                             $value->preq_item,
@@ -145,17 +148,20 @@ class PurchaseRequestController extends Controller
                             [
                                 $value->id,
                                 $value->qty,
-                                $value->doc_type
+                                $value->doc_type,
                             ],
-                            $other
+                            $other,
                         ];
                     }),
                 ];
+
                 return $result;
             });
-            $result['draw'] = (int)\request()->get('draw');
+            $result['draw'] = (int) \request()->get('draw');
+
             return \response()->json($result);
         }
+
         return view('admin.purchase-request.index');
     }
 
@@ -191,8 +197,10 @@ class PurchaseRequestController extends Controller
     public function show($id)
     {
         $prProject = PurchaseRequest::find($id);
+
         return view('admin.purchase-request.show', compact('prProject'));
     }
+
     /**
      * resource for create po.
      *
@@ -272,19 +280,20 @@ class PurchaseRequestController extends Controller
      *
      * @param mixed $ids
      * @param mixed $quantities
+     * @param mixed $docs
      *
      * @return \Illuminate\Http\Response
      */
-    public function repeat(Request $request, $ids, $quantities,$docs)
+    public function repeat(Request $request, $ids, $quantities, $docs)
     {
-        $ids        = base64_decode($ids);
+        $ids = base64_decode($ids);
         $quantities = base64_decode($quantities);
-        $docs       = base64_decode($docs);
-        $docs       = explode(',', $docs);
+        $docs = base64_decode($docs);
+        $docs = explode(',', $docs);
 
         $checkDoc = checkArraySame($docs);
-        if( $checkDoc == false ) {
-            return redirect()->route('admin.purchase-request.index')->with('error','Doc type. must be the same');
+        if (false == $checkDoc) {
+            return redirect()->route('admin.purchase-request.index')->with('error', 'Doc type. must be the same');
         }
 
         $return = $this->createPrPo($ids, $quantities);
@@ -296,20 +305,20 @@ class PurchaseRequestController extends Controller
 
         $docType = $docs[0];
         $type = '';
-        if( $docType == 'SY01' || $docType == 'SY02' || $docType == 'Z102' ) {
+        if ('SY01' == $docType || 'SY02' == $docType || 'Z102' == $docType) {
             $type = 'Z300';
-        } else if( $docType == 'Z100' ) {
+        } elseif ('Z100' == $docType) {
             $type = 'Z301';
-        } else if( $docType == 'Z104' ) {
+        } elseif ('Z104' == $docType) {
             $type = 'Z302';
-        } else if( $docType == 'Z101' ) {
+        } elseif ('Z101' == $docType) {
             $type = 'Z303';
-        } else if( $docType == 'Z107' ) {
+        } elseif ('Z107' == $docType) {
             $type = 'Z304';
         }
 
         $docTypes = DocumentType::where('type', '2')
-                ->where('code',$type)
+                ->where('code', $type)
                 ->get();
         $currency = Currency::all();
 
@@ -334,19 +343,20 @@ class PurchaseRequestController extends Controller
      *
      * @param mixed $ids
      * @param mixed $quantities
+     * @param mixed $docs
      *
      * @return \Illuminate\Http\Response
      */
-    public function direct(Request $request, $ids, $quantities,$docs)
+    public function direct(Request $request, $ids, $quantities, $docs)
     {
         $ids = base64_decode($ids);
         $quantities = base64_decode($quantities);
-        $docs       = base64_decode($docs);
-        $docs       = explode(',', $docs);
+        $docs = base64_decode($docs);
+        $docs = explode(',', $docs);
 
         $checkDoc = checkArraySame($docs);
-        if( $checkDoc == false ) {
-            return redirect()->route('admin.purchase-request.index')->with('error','Doc type. must be the same');
+        if (false == $checkDoc) {
+            return redirect()->route('admin.purchase-request.index')->with('error', 'Doc type. must be the same');
         }
         $return = $this->createPrPo($ids, $quantities);
 
@@ -357,20 +367,20 @@ class PurchaseRequestController extends Controller
 
         $docType = $docs[0];
         $type = '';
-        if( $docType == 'SY01' || $docType == 'SY02' || $docType == 'Z102' ) {
+        if ('SY01' == $docType || 'SY02' == $docType || 'Z102' == $docType) {
             $type = 'Z300';
-        } else if( $docType == 'Z100' ) {
+        } elseif ('Z100' == $docType) {
             $type = 'Z301';
-        } else if( $docType == 'Z104' ) {
+        } elseif ('Z104' == $docType) {
             $type = 'Z302';
-        } else if( $docType == 'Z101' ) {
+        } elseif ('Z101' == $docType) {
             $type = 'Z303';
-        } else if( $docType == 'Z107' ) {
+        } elseif ('Z107' == $docType) {
             $type = 'Z304';
         }
 
         $docTypes = DocumentType::where('type', '2')
-                ->where('code',$type)
+                ->where('code', $type)
                 ->get();
 
         $currency = Currency::all();
@@ -595,7 +605,7 @@ class PurchaseRequestController extends Controller
         return response()->json($message);
     }
 
-     /**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response\Json
@@ -603,9 +613,9 @@ class PurchaseRequestController extends Controller
     public function getMaterialPr(Request $request)
     {
         $data = PurchaseRequestsDetail::where(function ($query) use ($request) {
-            $query->where('material_id', 'like', '%' . $request->query('q') . '%')
-                ->orWhere('description', 'like', '%' . $request->query('q') . '%');
-            })->select(
+            $query->where('material_id', 'like', '%'.$request->query('q').'%')
+                ->orWhere('description', 'like', '%'.$request->query('q').'%');
+        })->select(
                 'id',
                 'material_id as code',
                 'description',
@@ -620,7 +630,19 @@ class PurchaseRequestController extends Controller
                 'plant_code',
             )
             ->get();
-            
+
         return \Response::json($data);
+    }
+
+    public function confirmation(Request $request)
+    {
+        $data = $request->all();
+        $docType = DocumentType::where('code', $request->input('doc_type'))->first();
+        $paymentTerm = PaymentTerm::where('payment_terms', $request->input('payment_term'))->first();
+        $max = Quotation::select(\DB::raw('count(id) as id'))->first()->id;
+        $poNo = 'PO/'.date('m').'/'.date('Y').'/'.sprintf('%07d', ++$max);
+        $vendor = Vendor::where('code', $request->input('vendor_id'))->first();
+        // dd($request->all());
+        return \view('admin.purchase-request.confirmation', \compact('data', 'poNo', 'vendor', 'docType', 'paymentTerm'));
     }
 }

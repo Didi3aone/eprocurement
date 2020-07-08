@@ -3,6 +3,7 @@ yarn-error.log
 
 # Laravel 6
 public/xls/*
+public/files/*
 public/quotation/*
 vendor/*.*
 vendor/*

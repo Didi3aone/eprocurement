@@ -11,9 +11,9 @@ Route::get('/home', function () {
 
 Auth::routes();
 
-Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'middleware' => [ 'auth' ] ], function () {
+Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'middleware' => ['auth']], function () {
     Route::get('/', 'HomeController@index')->name('home');
-    
+
     // Permissions
     Route::delete('permissions/destroy', 'PermissionsController@massDestroy')->name('permissions.massDestroy');
     Route::resource('permissions', 'PermissionsController');
@@ -28,7 +28,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::get('vendors/download', 'VendorController@download')->name('vendors.download');
     Route::get('vendors/migrate', 'VendorController@migrate')->name('vendors.migrate');
     Route::post('vendors/set-password', 'VendorController@setPassword')->name('vendors.set-password');
-    Route::get('get-vendors','VendorController@getVendor')->name('get-vendors');
+    Route::get('get-vendors', 'VendorController@getVendor')->name('get-vendors');
     Route::resource('vendors', 'VendorController');
 
     // GLs
@@ -129,24 +129,25 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::resource('mapping', 'MappingController');
 
     // purchase request
-    Route::get('purchase-request-create-from-rn/{id}','PurchaseRequestController@create_from_rn')->name('purchase-request-create-from-rn');
-    Route::get('purchase-request-list-approval','PurchaseRequestController@listApproval')->name('purchase-request-list-approval');
-    Route::get('purchase-request-list-validate','PurchaseRequestController@listValidate')->name('purchase-request-list-validate');
-    Route::post('purchase-request-save-from-rn','PurchaseRequestController@save_from_rn')->name('purchase-request-save-from-rn');
-    Route::post('purchase-request-save-validate-pr','PurchaseRequestController@saveValidate')->name('purchase-request-save-validate-pr');
-    Route::put('purchase-request-approval/{id}','PurchaseRequestController@approvalPr')->name('purchase-request-approval');
-    Route::get('purchase-request-show/{id}','PurchaseRequestController@showDetail')->name('purchase-request-show');
-    Route::get('purchase-request-online/{ids}/{quantities}','PurchaseRequestController@online')->name('purchase-request-online');
-    Route::get('purchase-request-repeat/{ids}/{quantities}/{docs}','PurchaseRequestController@repeat')->name('purchase-request-repeat');
-    Route::get('purchase-request-direct/{ids}/{quantities}/{docs}','PurchaseRequestController@direct')->name('purchase-request-direct');
-    Route::get('purchase-request-project','PurchaseRequestController@approvalProject')->name('purchase-request-project');
-    Route::put('purchase-request-project-approval','PurchaseRequestController@approvalPrStaffPurchasing')->name('purchase-request-project-approval');
-    Route::put('purchase-request-project-rejected','PurchaseRequestController@rejectedPr')->name('purchase-request-project-rejected');
-    Route::get('get-material-pr','PurchaseRequestController@getMaterialPr')->name('get-material-pr');
+    Route::get('purchase-request-create-from-rn/{id}', 'PurchaseRequestController@create_from_rn')->name('purchase-request-create-from-rn');
+    Route::get('purchase-request-list-approval', 'PurchaseRequestController@listApproval')->name('purchase-request-list-approval');
+    Route::get('purchase-request-list-validate', 'PurchaseRequestController@listValidate')->name('purchase-request-list-validate');
+    Route::post('purchase-request-save-from-rn', 'PurchaseRequestController@save_from_rn')->name('purchase-request-save-from-rn');
+    Route::post('purchase-request-save-validate-pr', 'PurchaseRequestController@saveValidate')->name('purchase-request-save-validate-pr');
+    Route::put('purchase-request-approval/{id}', 'PurchaseRequestController@approvalPr')->name('purchase-request-approval');
+    Route::get('purchase-request-show/{id}', 'PurchaseRequestController@showDetail')->name('purchase-request-show');
+    Route::get('purchase-request-online/{ids}/{quantities}', 'PurchaseRequestController@online')->name('purchase-request-online');
+    Route::get('purchase-request-repeat/{ids}/{quantities}/{docs}', 'PurchaseRequestController@repeat')->name('purchase-request-repeat');
+    Route::get('purchase-request-direct/{ids}/{quantities}/{docs}', 'PurchaseRequestController@direct')->name('purchase-request-direct');
+    Route::get('purchase-request-project', 'PurchaseRequestController@approvalProject')->name('purchase-request-project');
+    Route::put('purchase-request-project-approval', 'PurchaseRequestController@approvalPrStaffPurchasing')->name('purchase-request-project-approval');
+    Route::put('purchase-request-project-rejected', 'PurchaseRequestController@rejectedPr')->name('purchase-request-project-rejected');
+    Route::get('get-material-pr', 'PurchaseRequestController@getMaterialPr')->name('get-material-pr');
+    Route::post('purchase-request-repeat/confirmation', 'PurchaseRequestController@confirmation')->name('purchase-request-repeat-confirmation');
     Route::resource('purchase-request', 'PurchaseRequestController');
 
     // request note
-    Route::get('request-note','RequestNoteController@index')->name('request-note');
+    Route::get('request-note', 'RequestNoteController@index')->name('request-note');
     Route::get('rn-get-material', 'RequestNoteController@getMaterial')->name('rn-get-material');
     Route::get('rn-get-plant', 'RequestNoteController@getPlant')->name('rn-get-plant');
     Route::get('rn-get-unit', 'RequestNoteController@getUnit')->name('rn-get-unit');
@@ -168,7 +169,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::delete('quotation/destroy', 'QuotationController@massDestroy')->name('quotation.massDestroy');
     Route::post('quotation/import', 'QuotationController@import')->name('quotation.import');
     Route::get('quotation/online', 'QuotationController@online')->name('quotation.online');
-    
+
     // repeat
     // Route::get('quotation/repeat', 'QuotationController@repeat')->name('quotation.repeat');
     // Route::get('quotation/repeat/approve/{ids}', 'QuotationController@repeat_approve')->name('quotation.repeat.approve');
@@ -177,13 +178,13 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     // Route::post('quotation-approve-repeat', 'QuotationController@approveRepeat')->name('quotation-approve-repeat');
     // Route::post('quotation-save-repeat', 'QuotationController@saveRepeat')->name('quotation-save-repeat');
     // Route::get('quotation-edit-repeat/{id}', 'QuotationController@editRepeat')->name('quotation-edit-repeat');
-    
+
     // direct
     // Route::get('quotation/direct', 'QuotationController@direct')->name('quotation.direct');
     // Route::get('quotation-show-direct/{id}', 'QuotationController@showDirect')->name('quotation-show-direct');
     // Route::post('quotation-preview-direct', 'QuotationController@previewDirect')->name('quotation-preview-direct');
     // Route::post('quotation-approve-direct', 'QuotationController@approveDirect')->name('quotation-approve-direct');
-   // Route::post('quotation-save-direct', 'QuotationController@saveDirect')->name('quotation-save-direct');
+    // Route::post('quotation-save-direct', 'QuotationController@saveDirect')->name('quotation-save-direct');
     // Route::get('quotation-edit-direct/{id}', 'QuotationController@editDirect')->name('quotation-edit-direct');
 
     // bidding
@@ -199,26 +200,26 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::put('quotation/remove-vendor/{quotation_id}/{vendor_id}', 'QuotationController@removeVendor')->name('quotation.remove-vendor');
     Route::resource('quotation', 'QuotationController');
 
-    Route::get('quotation-direct-approval-head','QuotationDirectController@approvalListHead')->name('quotation-direct-approval-head');
-    Route::get('quotation-direct-approval-ass','QuotationDirectController@approvalListAss')->name('quotation-direct-approval-ass');
-    Route::get('quotation-direct-show-approval/{id}','QuotationDirectController@showApproval')->name('quotation-direct-show-approval');
-    Route::get('quotation-direct-show-approval-head/{id}','QuotationDirectController@showApprovalHead')->name('quotation-direct-show-approval-head');
-    Route::put('quotation-direct-rejected','QuotationDirectController@directRejected')->name('quotation-direct-rejected');
-    Route::put('quotation-direct-rejected-head','QuotationDirectController@directRejectedHead')->name('quotation-direct-rejected-head');
+    Route::get('quotation-direct-approval-head', 'QuotationDirectController@approvalListHead')->name('quotation-direct-approval-head');
+    Route::get('quotation-direct-approval-ass', 'QuotationDirectController@approvalListAss')->name('quotation-direct-approval-ass');
+    Route::get('quotation-direct-show-approval/{id}', 'QuotationDirectController@showApproval')->name('quotation-direct-show-approval');
+    Route::get('quotation-direct-show-approval-head/{id}', 'QuotationDirectController@showApprovalHead')->name('quotation-direct-show-approval-head');
+    Route::put('quotation-direct-rejected', 'QuotationDirectController@directRejected')->name('quotation-direct-rejected');
+    Route::put('quotation-direct-rejected-head', 'QuotationDirectController@directRejectedHead')->name('quotation-direct-rejected-head');
     Route::get('quotation/direct/approve/ass/{ids}', 'QuotationDirectController@directApproveAss')->name('quotation.direct.approve.ass');
     Route::get('quotation/direct/approve/head/{ids}', 'QuotationDirectController@directApproveHead')->name('quotation.direct.approve.head');
     Route::resource('quotation-direct', 'QuotationDirectController');
 
-    Route::get('quotation-repeat-approval-head','QuotationRepeatController@approvalListHead')->name('quotation-repeat-approval-head');
-    Route::get('quotation-repeat-approval-ass','QuotationRepeatController@approvalListAss')->name('quotation-repeat-approval-ass');
-    Route::get('quotation-repeat-show-approval/{id}','QuotationRepeatController@showApproval')->name('quotation-repeat-show-approval');
-    Route::get('quotation-repeat-show-approval-head/{id}','QuotationRepeatController@showApprovalHead')->name('quotation-repeat-show-approval-head');
-    Route::put('quotation-repeat-rejected','QuotationRepeatController@repeatRejected')->name('quotation-repeat-rejected');
-    Route::put('quotation-repeat-rejected-head','QuotationRepeatController@repeatRejectedHead')->name('quotation-repeat-rejected-head');
+    Route::get('quotation-repeat-approval-head', 'QuotationRepeatController@approvalListHead')->name('quotation-repeat-approval-head');
+    Route::get('quotation-repeat-approval-ass', 'QuotationRepeatController@approvalListAss')->name('quotation-repeat-approval-ass');
+    Route::get('quotation-repeat-show-approval/{id}', 'QuotationRepeatController@showApproval')->name('quotation-repeat-show-approval');
+    Route::get('quotation-repeat-show-approval-head/{id}', 'QuotationRepeatController@showApprovalHead')->name('quotation-repeat-show-approval-head');
+    Route::put('quotation-repeat-rejected', 'QuotationRepeatController@repeatRejected')->name('quotation-repeat-rejected');
+    Route::put('quotation-repeat-rejected-head', 'QuotationRepeatController@repeatRejectedHead')->name('quotation-repeat-rejected-head');
     Route::get('quotation/repeat/approve/ass/{ids}', 'QuotationRepeatController@repeatpproveAss')->name('quotation.repeat.approve.ass');
     Route::get('quotation/repeat/approve/head/{ids}', 'QuotationRepeatController@repeatApproveHead')->name('quotation.repeat.approve.head');
-    Route::get('quotation-currency','QuotationRepeatController@getCurrency')->name('quotation-currency');
-    Route::get('quotation-payment','QuotationRepeatController@getPaymentTerm')->name('quotation-payment');
+    Route::get('quotation-currency', 'QuotationRepeatController@getCurrency')->name('quotation-currency');
+    Route::get('quotation-payment', 'QuotationRepeatController@getPaymentTerm')->name('quotation-payment');
     Route::resource('quotation-repeat', 'QuotationRepeatController');
 
     // rfq
@@ -228,36 +229,36 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::post('rfq-save-detail', 'RfqController@saveDetail')->name('rfq-save-detail');
     Route::get('rfq-show/{code}', 'RfqController@show')->name('rfq-show');
     Route::get('rfq-add-detail/{code}', 'RfqController@addDetail')->name('rfq-add-detail');
-    Route::get('rfq-get-by-vendor','RfqController@getRfq')->name('rfq-get-by-vendor');
-    Route::get('rfq-get','RfqController@getRfq')->name('rfq-get');
-    Route::get('rfq-get-net-price','RfqController@getRfqNetPrice')->name('rfq-get-net-price');
+    Route::get('rfq-get-by-vendor', 'RfqController@getRfq')->name('rfq-get-by-vendor');
+    Route::get('rfq-get', 'RfqController@getRfq')->name('rfq-get');
+    Route::get('rfq-get-net-price', 'RfqController@getRfqNetPrice')->name('rfq-get-net-price');
     Route::resource('rfq', 'RfqController');
 
-    // Billings 
-    Route::get('billing','BillingController@index')->name('billing');
-    Route::get('billing-spv-list','BillingController@listSpv')->name('billing-spv-list');
-    Route::get('billing-create','BillingController@create')->name('billing-create');
-    Route::get('billing-edit/{id}','BillingController@edit')->name('billing-edit');
-    Route::put('billing-store','BillingController@store')->name('billing-store');
-    Route::get('billing-show/{id}','BillingController@show')->name('billing-show');
-    Route::put('billing-post-approved','BillingController@storeApproved')->name('billing-post-approved');
-    Route::put('billing-post-rejected','BillingController@storeRejected')->name('billing-post-rejected');
-    
-    // ACP 
-    Route::get('acp-direct','AcpController@directAcp')->name('acp-direct');
-    Route::get('acp-bidding','AcpController@biddingAcp')->name('acp-bidding');
-    Route::get('acp-approval','AcpController@acpApproval')->name('acp-approval');
-    Route::post('acp-post-rejected','AcpController@acpApprovalReject')->name('acp-post-rejected');
-    Route::get('show-acp-direct/{id}','AcpController@showDirect')->name('show-acp-direct');
-    Route::get('show-acp-approval/{id}','AcpController@showAcpApproval')->name('show-acp-approval');
-    Route::get('show-acp-bidding/{id}','AcpController@showBidding')->name('show-acp-bidding');
-    Route::post('post-acp-direct','AcpController@approvalDirectAcp')->name('post-acp-direct');
-    Route::post('post-acp-approval','AcpController@approvalAcp')->name('post-acp-approval');
+    // Billings
+    Route::get('billing', 'BillingController@index')->name('billing');
+    Route::get('billing-spv-list', 'BillingController@listSpv')->name('billing-spv-list');
+    Route::get('billing-create', 'BillingController@create')->name('billing-create');
+    Route::get('billing-edit/{id}', 'BillingController@edit')->name('billing-edit');
+    Route::put('billing-store', 'BillingController@store')->name('billing-store');
+    Route::get('billing-show/{id}', 'BillingController@show')->name('billing-show');
+    Route::put('billing-post-approved', 'BillingController@storeApproved')->name('billing-post-approved');
+    Route::put('billing-post-rejected', 'BillingController@storeRejected')->name('billing-post-rejected');
+
+    // ACP
+    Route::get('acp-direct', 'AcpController@directAcp')->name('acp-direct');
+    Route::get('acp-bidding', 'AcpController@biddingAcp')->name('acp-bidding');
+    Route::get('acp-approval', 'AcpController@acpApproval')->name('acp-approval');
+    Route::post('acp-post-rejected', 'AcpController@acpApprovalReject')->name('acp-post-rejected');
+    Route::get('show-acp-direct/{id}', 'AcpController@showDirect')->name('show-acp-direct');
+    Route::get('show-acp-approval/{id}', 'AcpController@showAcpApproval')->name('show-acp-approval');
+    Route::get('show-acp-bidding/{id}', 'AcpController@showBidding')->name('show-acp-bidding');
+    Route::post('post-acp-direct', 'AcpController@approvalDirectAcp')->name('post-acp-direct');
+    Route::post('post-acp-approval', 'AcpController@approvalAcp')->name('post-acp-approval');
 
     // Master ACP
     Route::get('master-acp-material', 'MasterAcpController@getMaterial')->name('master-acp-material');
     Route::post('master-acp-confirmation', 'MasterAcpController@confirmation')->name('master-acp-confirmation');
-    Route::get('master-acp-currency','MasterAcpController@getCurrency')->name('master-acp-currency');
+    Route::get('master-acp-currency', 'MasterAcpController@getCurrency')->name('master-acp-currency');
     Route::resource('master-acp', 'MasterAcpController');
 
     // SOAP
@@ -273,7 +274,7 @@ Route::post('vendor/register', '\App\Http\Controllers\AuthVendor\LoginController
 Route::post('vendor/login', '\App\Http\Controllers\AuthVendor\LoginController@login')->name('vendor.login');
 Route::get('vendor/set-password/{code}', '\App\Http\Controllers\AuthVendor\LoginController@setPassword')->name('vendor.set-password');
 
-Route::group([ 'prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor', 'middleware' => [ 'auth:vendor' ] ], function () {
+Route::group(['prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor', 'middleware' => ['auth:vendor']], function () {
     Route::get('/', 'VendorController@index')->name('home');
 
     // po
@@ -282,7 +283,7 @@ Route::group([ 'prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor',
     Route::get('purchase-order-make-quotation/{id}', 'PurchaseOrderController@makeQuotation')->name('purchase-order-make-quotation');
     Route::post('purchase-order-save-quotation', 'PurchaseOrderController@saveQuotation')->name('purchase-order-save-quotation');
     Route::get('purchase-order/bidding', 'PurchaseOrderController@bidding')->name('purchase-order.bidding');
-    
+
     // bidding
     Route::get('quotation', 'QuotationController@index')->name('quotation');
     Route::get('quotation-edit/{id}', 'QuotationController@edit')->name('quotation-edit');
@@ -307,15 +308,15 @@ Route::group([ 'prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor',
     Route::get('purchase-order-direct-detail/{id}', 'PurchaseOrderController@directDetail')->name('purchase-order-direct-detail');
     // Route::get('quotation-direct', 'QuotationController@direct')->name('quotation-direct');
     // Route::post('quotation-approve-direct', 'QuotationController@approveDirect')->name('quotation-approve-direct');
-    
+
     // billing
-    Route::get('billing-create','BillingController@create')->name('billing-create');
-    Route::get('billing','BillingController@index')->name('billing');
-    Route::get('billing-show/{id}','BillingController@show')->name('billing-show');
-    Route::get('billing-po-gr/{po_no}','BillingController@poGR')->name('billing-po-gr');
-    Route::get('billing-edit/{id}','BillingController@edit')->name('billing-edit');
-    Route::post('billing-post','BillingController@store')->name('billing-post');
-    Route::post('billing-post-update/{id}','BillingController@store')->name('billing-post-update');
+    Route::get('billing-create', 'BillingController@create')->name('billing-create');
+    Route::get('billing', 'BillingController@index')->name('billing');
+    Route::get('billing-show/{id}', 'BillingController@show')->name('billing-show');
+    Route::get('billing-po-gr/{po_no}', 'BillingController@poGR')->name('billing-po-gr');
+    Route::get('billing-edit/{id}', 'BillingController@edit')->name('billing-edit');
+    Route::post('billing-post', 'BillingController@store')->name('billing-post');
+    Route::post('billing-post-update/{id}', 'BillingController@store')->name('billing-post-update');
 
     // logout
     Route::post('logout', '\App\Http\Controllers\AuthVendor\LoginController@logout')->name('logout');
