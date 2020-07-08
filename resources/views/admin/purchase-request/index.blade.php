@@ -54,7 +54,6 @@
                                         <th>Purchasing Group</th>
                                         <th>Requisitioner</th>
                                         <th>Req Tracking Number</th>
-                                        <th>Purch. Organization</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -108,6 +107,9 @@
 </script>
 <script id="hidden_qty" type="text-x-custom-template">
     <input type="text" class="money form-control qty" name="qty[]" style="width: 70%;">
+</script>
+<script id="hidden_doc" type="text-x-custom-template">
+    <input type="text" class="form-control doctype" readonly name="doctype[]" style="width: 70%;">
 </script>
 <script id="hidden_dialog" type="text-x-custom-template">
 <a 
@@ -190,24 +192,27 @@
         let ids = []
         let quantities = []
         let prices = []
+        let docs = []
         
         for (let i = 0; i < check_pr.length; i++) {
             let id = check_pr[i].value
             ids.push(id)
             // quantities.push($('.qty_pr_' + id).val())
             quantities.push($('.qty_' + id).val())
+            docs.push($('.docs_' + id).val())
             // quantities.push($('.qty_open_' + id).val())
         }
-        console.log('ids', ids, 'quantities', quantities)
+        console.log('ids', ids, 'quantities', quantities,'docs',docs)
 
         ids = btoa(ids)
         quantities = btoa(quantities)
+        docs = btoa(docs)
 
         $('.bidding-online').attr('href', '{{ url("admin/purchase-request-online") }}/' + ids + '/' + quantities)
 
         if (check_pr.length > 0) {
-            $('.bidding-repeat').attr('href', '{{ url("admin/purchase-request-repeat") }}/' + ids + '/' + quantities)
-            $('.bidding-direct').attr('href', '{{ url("admin/purchase-request-direct") }}/' + ids + '/' + quantities)
+            $('.bidding-repeat').attr('href', '{{ url("admin/purchase-request-repeat") }}/' + ids + '/' + quantities +'/'+ docs)
+            $('.bidding-direct').attr('href', '{{ url("admin/purchase-request-direct") }}/' + ids + '/' + quantities +'/'+ docs)
         } else {
             alert('Please check your material!')
             $('#modal_create_po').modal('hide')
@@ -225,6 +230,7 @@
             var tp1 = $('#hidden_input').html()
             var tp2 = $('#hidden_qty').html()
             var tp3 = $('#hidden_dialog').html()
+            var tp4 = $("#hidden_doc").html()
 
             // console.log(row,data,dataIndex)
             $modal = $(row).children('td')[1]
@@ -239,14 +245,19 @@
                 $(this).parent().children('.modal').modal('toggle')
             })
             $tp1 = $(row).children('td')[0]
-            $tp2 = $(row).children('td')[10]
-            $open = $(row).children('td')[11]
+            $tp2 = $(row).children('td')[11]
+            $tp4 = $(row).children('td')[2]
+            $open = $(row).children('td')[12]
             $($open).addClass('qty_open_text')
             $($tp1).html(tp1)
             $($tp2).html(tp2)
+            $($tp4).html(tp4)
             $input = $($tp2).children('input')
+            $inputs = $($tp4).children('input')
             $input.addClass(`qty_${data[19][0]}`)
             $input.val(data[19][1])
+            $inputs.addClass(`docs_${data[19][0]}`)
+            $inputs.val(data[19][2])
             $input.on('change blur keyup', function (e) {
                 e.preventDefault()
                 countQty($(this))

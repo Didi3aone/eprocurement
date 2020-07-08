@@ -106,7 +106,8 @@ class PurchaseRequestController extends Controller
                     ->orderBy($order,$dir)
                     ->get();
                 // $paginate = $materials->paginate(10,['*'],'draw');
-                $result = [
+                 // $paginate = $materials->paginate(10,['*'],'draw');
+                 $result = [
                     'draw' => (int)\request()->get('draw'),
                     'recordsTotal' => $totalData,
                     'recordsFiltered' => $totalFiltered,
@@ -124,7 +125,7 @@ class PurchaseRequestController extends Controller
                         return [
                             ($key+1) + $start,
                             $value->PR_NO,
-                            $value->doc_type, 
+                            $value->doc_type,
                             $value->preq_item,
                             $value->release_date,
                             $value->material_id,
@@ -143,25 +144,19 @@ class PurchaseRequestController extends Controller
                             '0000',
                             [
                                 $value->id,
-                                $value->qty
+                                $value->qty,
+                                $value->doc_type
                             ],
                             $other
                         ];
                     }),
                 ];
-
                 return $result;
             });
             $result['draw'] = (int)\request()->get('draw');
             return \response()->json($result);
         }
-        $materials = $materials->limit(1)->get();
-
-        foreach ($materials as $row) {
-            $row->uuid = $row->getAttributes()['id'];
-        }
-
-        return view('admin.purchase-request.index', compact('materials'));
+        return view('admin.purchase-request.index');
     }
 
     /**
@@ -280,10 +275,18 @@ class PurchaseRequestController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function repeat(Request $request, $ids, $quantities)
+    public function repeat(Request $request, $ids, $quantities,$docs)
     {
-        $ids = base64_decode($ids);
+        $ids        = base64_decode($ids);
         $quantities = base64_decode($quantities);
+        $docs       = base64_decode($docs);
+        $docs       = explode(',', $docs);
+
+        $checkDoc = checkArraySame($docs);
+        if( $checkDoc == false ) {
+            return redirect()->route('admin.purchase-request.index')->with('error','Doc type. must be the same');
+        }
+
         $return = $this->createPrPo($ids, $quantities);
 
         $data = $return['data'];
@@ -318,10 +321,17 @@ class PurchaseRequestController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function direct(Request $request, $ids, $quantities)
+    public function direct(Request $request, $ids, $quantities,$docs)
     {
         $ids = base64_decode($ids);
         $quantities = base64_decode($quantities);
+        $docs       = base64_decode($docs);
+        $docs       = explode(',', $docs);
+
+        $checkDoc = checkArraySame($docs);
+        if( $checkDoc == false ) {
+            return redirect()->route('admin.purchase-request.index')->with('error','Doc type. must be the same');
+        }
         $return = $this->createPrPo($ids, $quantities);
 
         $data = $return['data'];
