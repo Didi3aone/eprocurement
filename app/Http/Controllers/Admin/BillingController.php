@@ -76,6 +76,7 @@ class BillingController extends Controller
     {
         $postSap = \sapHelp::sendBillingToSap($request);
         if( $postSap ) {
+            // $billing = Billing::find();
             \Session::flash('status','Billing has been approved');
         } else {
             \Session::flash('error','Internal server error !!!');
@@ -98,7 +99,7 @@ class BillingController extends Controller
         $billing->exchange_rate         = $request->exchange_rate;
         $billing->base_line_date        = $request->base_line_date;
         $billing->calculate_tax         = $request->calculate_tax;
-        $billing->tax_amount            = $request->tax_amount ?? '';
+        $billing->tax_amount            = $request->tax_amount ?? '00.00';
         $billing->nominal_inv_after_ppn = $request->nominal_inv_after_ppn;
         $billing->is_spv                = Billing::sendToSpv;//approve spv
         $billing->update();
