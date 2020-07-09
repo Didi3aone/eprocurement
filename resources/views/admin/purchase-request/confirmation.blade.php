@@ -68,7 +68,7 @@
                 </table>
             </div>
             <div class="card-footer">
-                <button type="button" class="btn btn-success pull-right approve">Approve</button>
+                <button type="button" class="btn btn-success pull-right approve">Confirm</button>
             </div>
         </div>
     </div>
