@@ -69,7 +69,7 @@
                             <input type="text" id="mdate" class="form-control form-control-line" name="tgl_faktur" value="{{ $billing->tgl_faktur ?? old('tgl_faktur', '') }}" readonly> 
                         </div>
                         <div class="form-group col-lg-4">
-                            <label>No. Invoice After PPN</label>
+                            <label>No. Invoice</label>
                             <input type="text" class="form-control form-control-line" name="no_invoice" value="{{ $billing->no_invoice ?? old('no_invoice', '') }}" readonly> 
                         </div>
                         <div class="form-group col-lg-4">
@@ -77,8 +77,8 @@
                             <input type="text" class="form-control mdate2 form-control-line" name="tgl_invoice" value="{{ $billing->tgl_invoice ?? old('tgl_invoice', '') }}" readonly> 
                         </div>
                         <div class="form-group col-lg-4">
-                            <label>Nominal Invoice</label>
-                            <input type="text" class="form-control form-control-line" name="nominal_inv_after_ppn" value="{{ $billing->nominal_inv_after_ppn }}" id="nominal_inv_after_ppn"> 
+                            <label>Nominal Invoice After PPN</label>
+                            <input type="text" class="form-control form-control-line" name="nominal_inv_after_ppn" value="{{ $billing->nominal_inv_after_ppn }}" id="nominal_inv_after_ppn" readonly> 
                         </div>
                         <div class="form-group col-lg-4">
                             <label>PPN</label>
