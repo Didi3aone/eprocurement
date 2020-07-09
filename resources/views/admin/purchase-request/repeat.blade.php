@@ -202,7 +202,7 @@
                 <input type="hidden" name="quantities" value="{{ $uri['quantities'] }}">
                 <button type="submit" class="btn btn-success click" id="save"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
                 <img id="image_loading" src="{{ asset('img/ajax-loader.gif') }}" alt="" style="display: none">
-                <button type="button" class="btn btn-success preview" id="save"> <i class="fa fa-eye"></i> Preview</button>
+                <button type="button" class="btn btn-warning preview" id="save"> <i class="fa fa-eye"></i> Preview</button>
             </div>
         </div>
     </div>

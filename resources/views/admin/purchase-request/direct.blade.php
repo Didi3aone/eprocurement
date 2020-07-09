@@ -194,6 +194,7 @@
                     <div class="form-actions">
                         <button type="submit" class="btn btn-success click" id="save"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
                         <img id="image_loading" src="{{ asset('img/ajax-loader.gif') }}" alt="" style="display: none">
+                        <button type="button" class="btn btn-warning preview" id="save"> <i class="fa fa-eye"></i> Preview</button>
                     </div>
                 </div>
 
@@ -223,6 +224,16 @@
 
     $(".exchange_rate").on('keyup change', function(e) {
         handleChange()
+    })
+    $('.preview').on('click', function() {
+        var $form = $('.form-rn')
+        var link = $form.attr('action')
+        var target = '{{ route('admin.purchase-request-repeat-confirmation') }}'
+        $form.attr('target', '_blank')
+        $form.attr('action', target)
+        $form.submit()
+        $form.attr('action', link)
+        $form.removeAttr('target')
     })
 
     function handleChange() {
