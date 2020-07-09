@@ -65,6 +65,11 @@ class PurchaseOrder extends Model
         return $this->hasOne(\App\Models\Vendor::class, 'id', 'vendor_id');
     }
 
+    public function paymentTerm ()
+    {
+        return $this->hasOne(\App\Models\PaymentTerm::class, 'payment_terms', 'payment_term');
+    }
+
     public function vendors()
     {
         return $this->belongsTo(\App\Models\Vendor::class,'vendor_id','code');

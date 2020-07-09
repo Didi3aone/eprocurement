@@ -73,6 +73,9 @@
                                         <a class="btn btn-xs btn-primary" href="{{ route('admin.purchase-order.show', $q->id) }}">
                                             <i class="fa fa-eye"></i> {{ trans('global.view') }}
                                         </a>
+                                        <a class="btn btn-xs btn-info" href="{{ route('admin.purchase-order-print', $q->id) }}" target="_blank">
+                                            <i class="fa fa-print"></i> {{ 'print' }}
+                                        </a>
                                         <a class="btn btn-xs btn-success" href="{{ route('admin.purchase-order.edit', $q->id) }}">
                                             <i class="fa fa-edit"></i> {{ trans('global.edit') }}
                                         </a>

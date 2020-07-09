@@ -418,4 +418,11 @@ class PurchaseOrderController extends Controller
             ], 200);
         }
     }
+
+    public function printPo($id)
+    {
+        $po = PurchaseOrder::find($id);
+
+        return view('admin.purchase-order.print',compact('po'));
+    }
 }

@@ -188,6 +188,11 @@ return [
          */
         Yajra\DataTables\DataTablesServiceProvider::class,
 
+        /**
+         * terbilang
+         */
+        Riskihajar\Terbilang\TerbilangServiceProvider::class,
+
     ],
 
     /*
@@ -250,6 +255,11 @@ return [
          * Datatables
          */
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
+
+        /**
+         * terbilang
+         */
+        'Terbilang' => Riskihajar\Terbilang\Facades\Terbilang::class,
 
     ],
 

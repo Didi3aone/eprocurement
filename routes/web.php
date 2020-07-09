@@ -162,6 +162,7 @@ Route::group([ 'prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'm
     Route::get('purchase-order/release', 'PurchaseOrderController@release')->name('purchase-order.release');
     Route::get('purchase-order/direct', 'PurchaseOrderController@direct')->name('purchase-order.direct');
     Route::put('purchase-order-destroy', 'PurchaseOrderController@destroyItem')->name('purchase-order-destroy');
+    Route::get('purchase-order-print/{id}','PurchaseOrderController@printPo')->name('purchase-order-print');
     Route::resource('purchase-order', 'PurchaseOrderController');
 
     // quotation
