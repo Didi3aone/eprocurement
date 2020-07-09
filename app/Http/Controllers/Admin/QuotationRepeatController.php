@@ -376,7 +376,7 @@ class QuotationRepeatController extends Controller
         //update lagi qty ke awal 
         foreach( $quotationDetail as $key => $rows ) {
             $poDetail = PurchaseRequestsDetail::where('id', $rows->request_detail_id)->first();
-            dd($poDetail);
+            // dd($poDetail);
             if( $poDetail != null ) {
                 $poDetail->qty += $rows->qty;
                 $poDetail->update();
