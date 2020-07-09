@@ -26,7 +26,7 @@ class BillingController extends Controller
     public function index()
     {
         $spv = 0;
-        $billing = Billing::where('is_spv', $spv)->get();
+        $billing = Billing::all();
 
         return view('admin.billing.index', compact('billing'));
     }
@@ -40,7 +40,7 @@ class BillingController extends Controller
     {
         $spv = 1;
 
-        $billing = Billing::where('is_spv', $spv)->get();
+        $billing = Billing::where('is_spv', $spv)->where('status',1)->get();
 
         return view('admin.billing.index-spv', compact('billing'));
     }
@@ -92,7 +92,6 @@ class BillingController extends Controller
     {
         $postSap = \sapHelp::sendBillingToSap($request);
         if( $postSap ) {
-            // $billing = Billing::find();
             \Session::flash('status','Billing has been approved');
         } else {
             \Session::flash('error','Internal server error !!!');
@@ -108,21 +107,26 @@ class BillingController extends Controller
         $billing->assignment            = $request->assignment;
         $billing->payment_term_claim    = $request->payment_term_claim;
         $billing->tipe_pph              = $request->tipe_pph;
-        $billing->jumlah_pph            = $request->jumlah_pph;
+        $billing->jumlah_pph            = str_replace(',', '.',$request->jumlah_pph);
         $billing->currency              = $request->currency;
         $billing->perihal_claim         = $request->perihal_claim;
         $billing->house_bank            = $request->house_bank;
-        $billing->exchange_rate         = $request->exchange_rate;
+        $billing->exchange_rate         = str_replace(',', '.',$request->exchange_rate);
         $billing->base_line_date        = $request->base_line_date;
         $billing->calculate_tax         = $request->calculate_tax ?? 0;
-        $billing->tax_amount            = $request->tax_amount ?? '00.00';
-        $billing->nominal_inv_after_ppn = $request->nominal_inv_after_ppn;
+        $billing->tax_amount            = $request->tax_amount ? str_replace(',', '.',$request->tax_amount) : '00.00';
+        // $billing->nominal_inv_after_ppn = $request->nominal_inv_after_ppn;
+        $billing->nominal_invoice_staff = str_replace(',', '.',$request->nominal_invoice_staff);
         $billing->is_spv                = Billing::sendToSpv;//approve spv
         $billing->update();
 
         foreach( $request->iddetail as $key => $rows ) {
+            if( str_replace(',', '.',$request->dpp) !=  str_replace(',', '.',$request->amount[$key]) ) {
+                \Session::flash('error','Dpp and amount not balance');
+                return redirect()->route('admin.billing-edit', $request->id);
+            } 
             $detail         = BillingDetail::find($rows);
-            $detail->amount = $request->amount[$key];
+            $detail->amount = str_replace(',', '.',$request->amount[$key]);
 
             $detail->update();
         }

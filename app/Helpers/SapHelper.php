@@ -1943,7 +1943,6 @@ class SapHelper {
 
         $params[0]['RETURN'] = $RETURN;
         $result = $client->__soapCall('ZFM_WS_PO', $params, NULL, $header);
-        dd($params);
         
         if( $result->EXPPURCHASEORDER) {
             \App\Models\employeeApps\SapLogSoap::create([
@@ -2667,12 +2666,15 @@ class SapHelper {
         } else if( $billingDetail[0]->plant_code == '2101' ) {
             $compCode = '2100';
         }
-        // Z300 PO RM PM
+
+        $TAXDATA = [];
+        $WITHTAXDATA = [];
+
         $HEADER = [ 
             'INVOICE_IND' => 'X',
             'DOC_TYPE' => 'RE',
             'DOC_DATE' => $billing->tgl_invoice,
-            'PSTNG_DATE' => date('Y-m-d'),
+            'PSTNG_DATE' => date('Y-06-d'),
             'REF_DOC_NO' => $billing->billing_no,
             'COMP_CODE' => $compCode,
             'DIFF_INV' => '',
@@ -2743,6 +2745,7 @@ class SapHelper {
         foreach( $billingDetail as $key => $rows ) {
             $i = $key + 1;
             $invDocItem = ('0000'.(0+($i*10)));
+            // like 1 0 9x = sheetno di isi
             $ITEMDATA = [
                 'INVOICE_DOC_ITEM' => $invDocItem,//$invDocItem,//'000010',20
                 'PO_NUMBER' => $rows->po_no,//'3010002673',
@@ -2763,7 +2766,7 @@ class SapHelper {
                 'COND_TYPE' => '',
                 'COND_ST_NO' => '',
                 'COND_COUNT' => '',
-                'SHEET_NO' => '',
+                'SHEET_NO' => '',//ketika po service $rows->reference_document
                 'ITEM_TEXT' => '',
                 'FINAL_INV' => '',
                 'SHEET_ITEM' => '',
@@ -2783,26 +2786,32 @@ class SapHelper {
             $params[0]['ITEMDATA'][$key] = $ITEMDATA;
         }
 
-        $TAXDATA = [
-            'TAX_CODE' => 'V1',
-            'TAX_AMOUNT' => '1184055',
-            'TAX_BASE_AMOUNT' => '81315945',
-            'COND_TYPE' => '',
-            'TAXJURCODE' => '',
-            'TAXJURCODE_DEEP'=>'',
-            'ITEMNO_TAX' => '',
-            'TAX_AMOUNT_LOCAL' => '',
-            'TAX_BASE_AMOUNT_LOCAL '=>'',
-        ];
+        if( $billing->calculate_tax == 0 ) {
+            $TAXDATA = [
+                'TAX_CODE' => $billing->ppn,
+                'TAX_AMOUNT' => $billing->tax_amount,
+                'TAX_BASE_AMOUNT' => $billing->dpp,
+                'COND_TYPE' => '',
+                'TAXJURCODE' => '',
+                'TAXJURCODE_DEEP'=>'',
+                'ITEMNO_TAX' => '',
+                'TAX_AMOUNT_LOCAL' => '',
+                'TAX_BASE_AMOUNT_LOCAL '=>'',
+            ];
+            
+        }
 
-        $WITHTAXDATA = [
-            'SPLIT_KEY' => '00001',
-            'WI_TAX_TYPE' =>'I3',
-            'WI_TAX_CODE' => 'CW',
-            'WI_TAX_BASE' => '',
-            'WI_TAX_AMT' => '81315945',
-            'WI_TAX_WITHHELD_AMT' => '1626319'
-        ];
+        if( $billing->tipe_pph != '' ) {
+            $taxType = \App\Models\MasterPph::getPphById($billing->tipe_pph);
+            $WITHTAXDATA = [
+                'SPLIT_KEY' => '00001',//klo tipe pa 0,1
+                'WI_TAX_TYPE' => $taxType->withholding_tax_type,//dari master pph
+                'WI_TAX_CODE' => $taxType->withholding_tax_code,//dari master pph
+                'WI_TAX_BASE' => $billing->dpp,//
+                'WI_TAX_AMT' => '',
+                'WI_TAX_WITHHELD_AMT' => ''
+            ];
+        }
 
         $RETURN = [
             'TYPE' => '',
@@ -2820,9 +2829,20 @@ class SapHelper {
             'FIELD' => '',
             'SYSTEM' => '',
         ];
+
         $params[0]['HEADERDATA'] = $HEADER;
+        $params[0]['TAXDATA'] = $TAXDATA;
+        $params[0]['WITHTAXDATA'] = $WITHTAXDATA;
         $params[0]['RETURN'] = $RETURN;
         $result = $client->__soapCall('ZFM_WS_MIRO', $params, null, $header);
-        dd($result);
+        if( $result->INVOICEDOCNUMBER != '' ) {
+            $billing->document_no = $result->INVOICEDOCNUMBER;
+            $billing->fiscal_year = $result->FISCALYEAR;
+            $billing->status      = \App\Models\Vendor\Billing::ApprovedSpv;
+            $billing->update();
+            return true;
+        } else {
+            return false;
+        }
     }
 }

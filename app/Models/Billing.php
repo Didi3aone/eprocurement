@@ -23,6 +23,11 @@ class Billing extends Model
 
     public function gr ()
     {
-        return $this->hasOne(\App\Models\PurchaseOrderGr::class, 'po_no', 'po_no');
+        return $this>hasOne(\App\Models\PurchaseOrderGr::class, 'po_no', 'po_no');
+    }
+
+    public function pph() 
+    {
+        return $this>hasOne(\App\Models\MasterPph::class, 'tipe_pph','id');
     }
 }

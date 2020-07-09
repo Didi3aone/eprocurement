@@ -65,7 +65,7 @@
                             <input type="text" id="mdate" class="form-control form-control-line" name="tgl_faktur" value="{{ $billing->tgl_faktur ?? old('tgl_faktur', '') }}" readonly> 
                         </div>
                         <div class="form-group col-lg-4">
-                            <label>No. Invoice</label>
+                            <label>No. Invoice After PPN</label>
                             <input type="text" class="form-control form-control-line" name="no_invoice" value="{{ $billing->no_invoice ?? old('no_invoice', '') }}" readonly> 
                         </div>
                         <div class="form-group col-lg-4">
@@ -73,12 +73,12 @@
                             <input type="text" class="form-control mdate2 form-control-line" name="tgl_invoice" value="{{ $billing->tgl_invoice ?? old('tgl_invoice', '') }}" readonly> 
                         </div>
                         <div class="form-group col-lg-4">
-                            <label>Nominal Invoice Sesudah PPN</label>
+                            <label>Nominal Invoice</label>
                             <input type="text" class="form-control form-control-line" name="nominal_inv_after_ppn" value="{{ $billing->nominal_inv_after_ppn }}" id="nominal_inv_after_ppn"> 
                         </div>
                         <div class="form-group col-lg-4">
                             <label>PPN</label>
-                            <input type="text" class="form-control form-control-line" name="ppn" value="{{ $billing->ppn ?? old('ppn', '') }}" readonly> 
+                            <input type="text" class="form-control form-control-line" id="ppn" name="ppn" value="{{ $billing->ppn ?? old('ppn', '') }}" readonly> 
                         </div>
                         <div class="form-group col-lg-4">
                             <label>DPP</label>
@@ -137,8 +137,9 @@
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.tipe_pph') }}</label>
                             <select class="form-control select2 form-control-line" name="tipe_pph" id="tipe_pph">
+                                <option value=""> -Select-</option>
                                 @foreach ($tipePphs as $tipe)
-                                    <option value="{{ $tipe->withholding_tax_rate }}">{{ $tipe->withholding_tax_code }} - {{ $tipe->name }}</option>
+                                    <option value="{{ $tipe->id }}" data-rate="{{ $tipe->withholding_tax_rate }}">{{ $tipe->withholding_tax_code }} - {{ $tipe->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -171,6 +172,10 @@
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.exchange_rate') }}</label>
                             <input type="text" class="form-control form-control-line" name="exchange_rate" value=""> 
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>Nominal Invoice</label>
+                            <input type="text" class="form-control form-control-line " name="nominal_invoice_staff" value="" id="nominal_invoice_staff"> 
                         </div>
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.perihal_claim') }}</label>
@@ -209,7 +214,7 @@
                                     <tr>
                                         <input type="hidden" value="{{ $val->id }}" name="iddetail[]">
                                         <td>{{ $val->qty }}</td>
-                                        <td><input type="text" class="amount" name="amount[]" value="{{ $val->amount }}"/></td>
+                                        <td><input type="text" class="amount" name="amount[]" id="amount" value="{{ $val->amount }}"/></td>
                                         <td>{{ $val->material_id." - ".$val->material->description }}</td>
                                         <td>{{ $val->po_no }}</td>
                                         <td>{{ $val->PO_ITEM }}</td>
@@ -273,14 +278,27 @@
     });
 
     $("#tipe_pph").change(function() {
-        var dpp = $("#dpp").val();
+        let rates = $('#tipe_pph option:selected').data('rate')
+
+        //dpp * rate
+        // rumus nominal invoice 
+        // dpp * ppn (1.1) - nominal pph
+        var dpp = $("#dpp").val()
+        var ppn = $("#ppn").val()
+        var ppns = ''
+        if( ppn == 'V1' ) {
+            ppns = 1.1
+        }
+
         tt = dpp.replace(/,/g, '.');
-        var count = parseFloat(tt) * 1.1;
+        var count = parseFloat(tt) * rates;
         var roundedString = count.toFixed(2);
         var cm = roundedString.replace(".", ",");
 
+        var nomInv = parseFloat(tt) * ppns - roundedString;
         $("#jumlah_pph").val(cm)
-    }).trigger('change')
+        $("#nominal_invoice_staff").val(nomInv.toFixed(2))
+    })
 
     $(document).on('click', '#approval', function (result) {
         $form = $('.form-material')
@@ -304,12 +322,17 @@
         if(this.checked) {
             if( this.value == 1) {
                 $("#taxAmount").attr('readonly',true)
-                $("#nominal_inv_after_ppn").attr('readonly',true)
+                $("#nominal_invoice_staff").attr('readonly',true)
             } 
         } else {
-            $("#nominal_inv_after_ppn").attr('readonly',false)
+            $("#nominal_invoice_staff").attr('readonly',false)
             $("#taxAmount").attr('readonly',false)
         }
     })
+
+    $(function() {
+     
+    })
+
 </script>
 @endsection

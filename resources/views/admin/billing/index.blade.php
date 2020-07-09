@@ -40,7 +40,9 @@
                                     <td>{{ App\Models\Vendor\Billing::TypeStatus[$rows->status] }}</td>
                                     <td>
                                         <a href="{{ route('admin.billing-show-staff',$rows->id) }}" class="btn btn-info btn-xs"><i class="fa fa-eye"></i> Show</a>
+                                        @if($rows->status != \App\Models\Vendor\Billing::ApprovedSpv)
                                         <a href="{{ route('admin.billing-edit',$rows->id) }}" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> Edit</a>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
