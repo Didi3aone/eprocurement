@@ -136,7 +136,7 @@
         <div style="position: fixed;margin-top: 19mm;margin-left: 160mm;">
             <p style="max-width:120mm;">
                 PO NO &nbsp;&nbsp;&nbsp;: {{ $po->PO_NUMBER }}<br>
-                Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ date('Y-m-d') }} <br>
+                Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ date('d.m.Y') }} <br>
                 Revisi &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ '0000' }} <br>
             </p>
             <p></p>
@@ -149,11 +149,11 @@
             </p>
         </div>
         <div style="position: fixed;margin-top: 34mm;margin-left: 10mm;width: 50mm;overflow: hidden;height: 14mm;">
-             <p class="" style="width: 200mm;">
+             <p class="" style="width: 200mm;margint-left:40mm;">
                 <span style="">TO : </span> 
-                    {{ $po->vendors['name'] }} <br>
-                    {{ $po->vendors['street'] }} <br/>
-                    Telp. {{ $po->vendors['office_telephone'] }} <br/>
+                    &nbsp;&nbsp;&nbsp;{{ $po->vendors['name'] }} <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $po->vendors['street'] }} <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Telp. {{ $po->vendors['office_telephone'] }} <br/>
                 </span>
             </p>
         </div> 
