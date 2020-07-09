@@ -338,7 +338,7 @@ class BillingController extends Controller
     }
 
     public function poGR ($po_no)
-    {
+    { 
         $model = PurchaseOrderGr::where('po_no', $po_no)->first();
 
         $material_description = $model->material ? $model->material->description : '';
