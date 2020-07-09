@@ -242,6 +242,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('billing-edit/{id}', 'BillingController@edit')->name('billing-edit');
     Route::put('billing-store', 'BillingController@store')->name('billing-store');
     Route::get('billing-show/{id}', 'BillingController@show')->name('billing-show');
+    Route::get('billing-show-staff/{id}', 'BillingController@showStaff')->name('billing-show-staff');
     Route::put('billing-post-approved', 'BillingController@storeApproved')->name('billing-post-approved');
     Route::put('billing-post-rejected', 'BillingController@storeRejected')->name('billing-post-rejected');
 

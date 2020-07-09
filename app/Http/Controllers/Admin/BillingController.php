@@ -61,6 +61,22 @@ class BillingController extends Controller
         return view('admin.billing.show', compact('billing', 'bankHouse','payments', 'tipePphs','currency'));
     }
 
+     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function showStaff($id)
+    {
+        $billing = Billing::find($id);
+        $payments = PaymentTerm::all();
+        $tipePphs = MasterPph::all();
+        $currency = Currency::all();
+        $bankHouse = MasterBankHouse::all();
+
+        return view('admin.billing.show-staff', compact('billing', 'bankHouse','payments', 'tipePphs','currency'));
+    }
+
     public function edit ($id)
     {
         $billing = Billing::find($id);
