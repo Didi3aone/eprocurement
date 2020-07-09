@@ -124,10 +124,11 @@
                                             <td>
                                                 <select name="rfq[]" id="rfq" class="select2 rfq {{ $errors->has('rfq') ? 'is-invalid' : '' }}" required style="width:100%;">
                                                     <option value=""> Select </option>
-                                                    @foreach(\App\Models\Rfq::getRFQ($value->material_id) as $key => $valus)
+                                                    @foreach(\App\Models\Rfq::getRFQ($value->material_id,$value->description) as $key => $valus)
                                                     <option value="{{ $valus->purchasing_document }}" 
                                                         data-code="{{ $valus->code }}" 
                                                         data-currency="{{ $valus->currency }}" 
+                                                        data-material="{{ $valus->material_id }}" 
                                                         data-acp="{{ $valus->acp_id }}">
                                                         {{ $valus->acp_no ." - ".$valus->purchasing_document." - ". $valus->name }}
                                                     </option>
@@ -277,6 +278,7 @@
         const code = row.find('.rfq option:selected').data('code')
         const acp_id = row.find('.rfq option:selected').data('acp')
         const ori_curr = row.find('.rfq option:selected').data('currency')
+        const materials = row.find('.rfq option:selected').data('material')
 
         row.find(".acp_id").val(acp_id)
         row.find('.original_currency').val(ori_curr)
@@ -284,11 +286,11 @@
         getVendor(code)
         getCurrency(ori_curr)
 
-        $.getJSON(url,{'purchasing_document': purchasing_document }, function (items) {
+        $.getJSON(url,{'purchasing_document': purchasing_document ,'material' : materials}, function (items) {
             $("#image_loading").hide()
             if(items.purchasing_document) {
                 let nets = items.net_order_price ? items.net_order_price : '0'
-               
+                console.log(items)
                 net.val(nets)
                 ori.val(nets)
             } else {

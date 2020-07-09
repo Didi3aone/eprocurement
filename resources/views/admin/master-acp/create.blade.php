@@ -130,8 +130,10 @@
                         </div>
                     </div>
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-success" id="saves"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
-                        <a href="{{ route('admin.master-acp.index') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i> Cancel</a>
+                        <button type="submit" class="d-none">Submit</button>
+                        <button type="button" class="btn btn-success" id="saves"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
+                        <button type="button" class="btn btn-success preview" id="preview"> <i class="fa fa-eye"></i> Preview</button>
+                        <a href="{{ route('admin.master-acp.index') }}" type="button" class="btn btn-inverse pull-right"><i class="fa fa-arrow-left"></i> Cancel</a>
                     </div>
                 </form>
             </div>
@@ -144,20 +146,28 @@
 <script>
     const base_url = '{{ url('/') }}'
     $(".preview").click(function() {
-        $.ajax({
-            type: "POST",
-            url: "{{ route('admin.master-acp-confirmation') }}",
-            headers: {
-                'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
-            },
-            data: {
-                _token: "{{ csrf_token() }}",
-                data : $("form").serialize()
-            },
-            success: function (data) {
+        var $form = $('.card-body form')
+        $form.attr('target','_blank')
+        var link = $form.attr('action')
+        var target = '{{ route('admin.master-acp-confirmation') }}'
+        $form.attr('action', target)
+        $form.submit();
+        $form.removeAttr('target')
+        $form.attr('action', link)
+        // $.ajax({
+        //     type: "POST",
+        //     url: "{{ route('admin.master-acp-confirmation') }}",
+        //     headers: {
+        //         'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+        //     },
+        //     data: {
+        //         _token: "{{ csrf_token() }}",
+        //         data : $("form").serialize()
+        //     },
+        //     success: function (data) {
             
-            }
-        });
+        //     }
+        // });
     })
 
     $('#saves').click(function() {

@@ -18,89 +18,79 @@
                 </a>
             </div>
             <div class="card-body">
-                <form action="{{ route('admin.post-acp-approval') }}" method="post">
-                    @csrf
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <input type="hidden" name="quotation_id" value="{{ $acp->id }}">
-                            <table class="table table-bordered table-striped">
-                                <tbody>
-                                    <tr>
-                                        <th>ACP No.</th>
-                                        <td>{{ $acp->acp_no }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Currency</th>
-                                        <td>{{ $acp->currency }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>File</th>
-                                        @if(isset($acp->upload_file))
-                                            <td>
-                                                @php
-                                                    $files = @unserialize($acp->upload_file);
-                                                @endphp
-                                                @if( is_array($files))
-                                                    @foreach( unserialize((string)$acp->upload_file) as $fileUpload)
-                                                        <a href="{{ asset('/files/uploads/'.$fileUpload) ??''}}" target="_blank" download>
-                                                            {{ $fileUpload ??'' }}
-                                                        </a>
-                                                        <br>
-                                                    @endforeach
-                                                @endif
-                                            </td>
-                                        @endif
-                                    </tr>
-                                </div>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div><br>
-                    <div class="row">
-                        <table class="table table-bordered table-condesed">
-                            <thead>
-                                <tr>
-                                    <th><b>Vendor</b></th>
-                                    <th><b>Winner</b></th>
-                                    <th style="text-align:center;">Material</th>
-                                    <th style="text-align:center;">Unit</th>
-                                    <th style="text-align:center;">Qty</th>
-                                    <th style="text-align:center;">Price</th>
-                                </tr>
-                            </thead>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <table class="table table-bordered table-striped">
                             <tbody>
-                            @foreach($acp->detail as $rows)
-                                @php
-                                    $winner = '<span class="badge badge-danger">Lose</span>';
-                                    if( $rows->is_winner == \App\Models\AcpTableDetail::Winner ) {
-                                        $winner = '<span class="badge badge-primary">Winner</span>';
-                                    }
-                                    $rowSpan = count(\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id));
-                                @endphp
                                 <tr>
-                                    <td rowspan={{ $rowSpan }}>{{ $rows->vendor['name'] }}</td>
-                                    <td rowspan={{ $rowSpan }}>{!! $winner !!}</td>
-                                    @foreach (\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id) as $row)
-                                        <td>{{ $row->material_id." - ".$row->description }}</td>
-                                        <td>{{ $row->uom_code }}</td>
-                                        <td>{{ $row->qty }}</td>
-                                        <td>{{ number_format($row->price,2) }}</td>
+                                    <th>ACP No.</th>
+                                    <td>{{ $data['reference_acp_no'] }}</td>
                                 </tr>
-                                @endforeach
-                            @endforeach
+                                <tr>
+                                    <th>Project</th>
+                                    <td>{{ $data['is_project'] ? 'Project' : '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>File</th>
+                                    @foreach($images as $image)
+                                        <td>
+                                            <a href="{{ $image ?? ''}}" target="_blank" download>
+                                                {{ $image ??'' }}
+                                            </a>
+                                            <br>
+                                        </td>
+                                    @endforeach
+                                </tr>
                             </tbody>
                         </table>
                     </div>
-
-                    {{-- <div class="row" style="margin-top: 20px">
-                        <div class="col-lg-12">
-                            <div class="form-actions">
-                                <button type="submit" class="btn btn-success click" id="save"> <i class="fa fa-check"></i> Approve</button>
-                                <a class="btn btn-danger reject" href="#"> <i class="fa fa-times"></i> Reject </a>
-                            </div>
-                        </div>
-                    </div> --}}
-                </form>
+                </div>
+                <br>
+                <div class="row">
+                    <table class="table table-bordered table-condesed">
+                        <thead>
+                            <tr>
+                                <th><b>Vendor</b></th>
+                                <th><b>Winner</b></th>
+                                <th style="text-align:center;">Material</th>
+                                <th style="text-align:center;">Description</th>
+                                <th style="text-align:center;">Unit</th>
+                                <th style="text-align:center;">Per</th>
+                                <th style="text-align:center;">Currency</th>
+                                <th style="text-align:center;">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($vendors as $vendor)
+                            @php
+                                $count = count($data['material_'.$vendor->code]);
+                            @endphp
+                            <tr>
+                                <td rowspan={{ $count }}>{{ $vendor->name }}</td>
+                                @if(isset($data['winner_'.$vendor->code]))
+                                    <td rowspan={{ $count }}>{!! $data['winner_'.$vendor->code] ? '<span class="badge badge-primary">Winner</span>' : '<span class="badge badge-danger">Lose</span>' !!}</td>
+                                @else
+                                    <td rowspan={{ $count }}><span class="badge badge-danger">Lose</span></td>
+                                @endif
+                                @foreach($data['material_'.$vendor->code] as $key => $material)
+                                    @php
+                                        $row = \App\Models\MasterMaterial::where('code', $material)->first();
+                                    @endphp
+                                    <td>{{ $row->code ?? '-'}}</td>
+                                    <td>{{ $row->description ?? $row->code  }}</td>
+                                    <td>{{ $row->uom_code }}</td>
+                                    <td>{{ $data['qty_'.$vendor->code][$key] }}</td>
+                                    <td>{{ $data['currency_'.$vendor->code][$key] }}</td>
+                                    <td>{{ number_format($data['price_'.$vendor->code][$key], 2) }}</td>
+                            </tr>
+                            @endforeach
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="button" class="btn btn-success pull-right approve">Approve</button>
             </div>
         </div>
     </div>
@@ -109,6 +99,9 @@
 @section('scripts')
 @parent 
     <script>
+    $('.approve').on('click', function(){
+        window.close();
+    })
     $('.reject').click(function(e){
         e.preventDefault();
         let id = $(this).data('id');
