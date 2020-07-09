@@ -209,7 +209,7 @@
                     <select name="currency_${vendor}[]" id="" class="choose-currency form-control select2"></select>
                 </td>
                 <td class="price">
-                    <input type="text" name="price_${vendor}[]" class="money form-control"/>
+                    <input type="text" name="price_${vendor}[]" class="prices form-control"/>
                 </td>
                 <td class="qty">
                     <input type="text" name="qty_${vendor}[]" class="form-control" required/>
@@ -224,7 +224,6 @@
                 </td>
             </tr>
         `
-        $('.money').mask('#.##0', { reverse: true })
     }
 
     $(document).on('click', '#btn-search-vendor', function (e) {
@@ -294,9 +293,16 @@
 
     $(document).on('click', '.add_material', function (e) {
         e.preventDefault()
+        $('.money').mask('#.##0', { reverse: true })
+
+        $(document).on('keyup', '.prices input', function(e){
+            // ...
+            alert()
+        });
 
         const $tr = $(this).closest('tr').parent()
         const vendor = $(this).data('vendor')
+        
 
         $(document).find('.list-material-' + vendor).append(rowMaterial(vendor))
         $('.select2').select2()
