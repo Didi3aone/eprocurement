@@ -53,12 +53,10 @@
             font-weight: bold;
         }
         .list-product {
-            height: 62mm;
             overflow: hidden;
             padding-top:19px;
         }
         .list-product p {
-            margin: 0;
         }
         table {
             border-collapse: collapse;
@@ -196,7 +194,13 @@
                         @endphp
                         @foreach($po->orderDetail as $key => $value)
                             @php
+                                $totalRows = count($po->orderDetail);
                                 $total += $value->price;
+
+                                $cols = "";
+                                if( $totalRows == $key+1 ){
+                                    $cols = "10";
+                                }
                             @endphp
                         <tr>
                             <td>{{ $value->key + 1 }}</td>

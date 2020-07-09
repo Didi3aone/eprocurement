@@ -2783,6 +2783,27 @@ class SapHelper {
             $params[0]['ITEMDATA'][$key] = $ITEMDATA;
         }
 
+        $TAXDATA = [
+            'TAX_CODE' => 'V1',
+            'TAX_AMOUNT' => '1184055',
+            'TAX_BASE_AMOUNT' => '81315945',
+            'COND_TYPE' => '',
+            'TAXJURCODE' => '',
+            'TAXJURCODE_DEEP'=>'',
+            'ITEMNO_TAX' => '',
+            'TAX_AMOUNT_LOCAL' => '',
+            'TAX_BASE_AMOUNT_LOCAL '=>'',
+        ];
+
+        $WITHTAXDATA = [
+            'SPLIT_KEY' => '00001',
+            'WI_TAX_TYPE' =>'I3',
+            'WI_TAX_CODE' => 'CW',
+            'WI_TAX_BASE' => '',
+            'WI_TAX_AMT' => '81315945',
+            'WI_TAX_WITHHELD_AMT' => '1626319'
+        ];
+
         $RETURN = [
             'TYPE' => '',
             'ID' => '',
