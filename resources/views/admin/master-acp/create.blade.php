@@ -132,7 +132,7 @@
                     <div class="form-actions">
                         <button type="submit" class="d-none">Submit</button>
                         <button type="button" class="btn btn-success" id="saves"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
-                        <button type="button" class="btn btn-success preview" id="preview"> <i class="fa fa-eye"></i> Preview</button>
+                        <button type="button" class="btn btn-warning preview" id="preview"> <i class="fa fa-eye"></i> Preview</button>
                         <a href="{{ route('admin.master-acp.index') }}" type="button" class="btn btn-inverse pull-right"><i class="fa fa-arrow-left"></i> Cancel</a>
                     </div>
                 </form>
