@@ -38,6 +38,10 @@
                                 <th>{{ trans('cruds.billing.fields.file_skp') }}</th>
                                 <td><a href="{{ asset('file/uploads/'.$billing->surat_ket_bebas_pajak) }}">{{ $billing->surat_ket_bebas_pajak }}</a></td>
                             </tr>
+                            <tr>
+                                <th>No Surat jalan</th>
+                                <td><a href="{{ asset('file/uploads/'.$billing->no_surat_jalan) }}">{{ $billing->no_surat_jalan }}</a></td>
+                            </tr>
                         </table>
                     </div>
                 </div>
@@ -115,7 +119,12 @@
                         </div> --}}
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.base_line_date') }} *</label>
-                            <input type="text" class="form-control form-control-line mdate" name="base_line_date" value="" required> 
+                            <input type="text" class="form-control form-control-line mdate {{ $errors->has('base_line_date') ? 'is-invalid' : '' }}" name="base_line_date" value="" required>
+                            @if($errors->has('base_line_date'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('base_line_date') }}
+                                </div>
+                            @endif
                         </div>
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.assignment') }} *</label>

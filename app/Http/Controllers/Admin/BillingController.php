@@ -14,6 +14,7 @@ use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\MasterBankHouse;
+use App\Http\Requests\UpdateBillingRequest;
 use Symfony\Component\HttpFoundation\Response;
 
 class BillingController extends Controller
@@ -100,23 +101,22 @@ class BillingController extends Controller
         return \redirect()->route('admin.billing-spv-list');
     }
 
-    public function storeApproved(Request $request)
+    public function storeApproved(UpdateBillingRequest $request)
     {
         $billing = Billing::find($request->id);
         $billing->status                = Billing::Approved;
         $billing->assignment            = $request->assignment;
         $billing->payment_term_claim    = $request->payment_term_claim;
         $billing->tipe_pph              = $request->tipe_pph;
-        $billing->jumlah_pph            = str_replace(',', '.',$request->jumlah_pph);
+        $billing->jumlah_pph            = $request->jumlah_pph ? str_replace(',', '.',$request->jumlah_pph) : "00.00";
         $billing->currency              = $request->currency;
         $billing->perihal_claim         = $request->perihal_claim;
         $billing->house_bank            = $request->house_bank;
-        $billing->exchange_rate         = str_replace(',', '.',$request->exchange_rate);
+        $billing->exchange_rate         = $request->exchange_rate ? str_replace(',', '.',$request->exchange_rate) : "00.00";
         $billing->base_line_date        = $request->base_line_date;
         $billing->calculate_tax         = $request->calculate_tax ?? 0;
         $billing->tax_amount            = $request->tax_amount ? str_replace(',', '.',$request->tax_amount) : '00.00';
-        // $billing->nominal_inv_after_ppn = $request->nominal_inv_after_ppn;
-        $billing->nominal_invoice_staff = str_replace(',', '.',$request->nominal_invoice_staff);
+        $billing->nominal_invoice_staff = $request->nominal_invoice_staff ? str_replace(',', '.',$request->nominal_invoice_staff) : "00.00";
         $billing->is_spv                = Billing::sendToSpv;//approve spv
         $billing->update();
 
