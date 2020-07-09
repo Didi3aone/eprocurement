@@ -175,7 +175,7 @@
                         <li>
                             <a href="{{ route('admin.billing-spv-list') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
-                                List Billing
+                                List Billing Spv
                             </a>
                         </li>
                         @endcan
