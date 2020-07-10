@@ -988,7 +988,7 @@ class SapHelper {
                 'MINREMLIFE' => '',
                 'RFQ_NO' => '',
                 'RFQ_ITEM' => '',
-                'PREQ_NO' => (string) $quotationDetail[0]->PR_NO,
+                'PREQ_NO' => (string) $quotationDetail[$i]->PR_NO,
                 'PREQ_ITEM' => $quotationDetail[$i]->PREQ_ITEM,
                 'REF_DOC' => '',
                 'REF_ITEM' => '',
