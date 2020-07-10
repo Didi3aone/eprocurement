@@ -27,6 +27,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('vendors/import', 'VendorController@import')->name('vendors.import');
     Route::get('vendors/download', 'VendorController@download')->name('vendors.download');
     Route::get('vendors/migrate', 'VendorController@migrate')->name('vendors.migrate');
+    Route::get('vendors/migrate_bank', 'VendorController@migrate_bank')->name('vendors.migrate_bank');
     Route::post('vendors/set-password', 'VendorController@setPassword')->name('vendors.set-password');
     Route::get('get-vendors', 'VendorController@getVendor')->name('get-vendors');
     Route::resource('vendors', 'VendorController');
