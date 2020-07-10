@@ -143,5 +143,6 @@ class BillingController extends Controller
         $billing->update();
 
         \Session::flash('status','Billing has been rejected');
+        return \redirect()->route('admin.billing');
     }
 }

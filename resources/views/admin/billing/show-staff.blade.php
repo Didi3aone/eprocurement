@@ -38,6 +38,10 @@
                                 <th>{{ trans('cruds.billing.fields.file_skp') }}</th>
                                 <td><a href="{{ asset('file/uploads/'.$billing->surat_ket_bebas_pajak) }}">{{ $billing->surat_ket_bebas_pajak }}</a></td>
                             </tr>
+                            <tr>
+                                <th>No Surat jalan</th>
+                                <td><a href="{{ asset('file/uploads/'.$billing->no_surat_jalan) }}">{{ $billing->no_surat_jalan }}</a></td>
+                            </tr>
                         </table>
                     </div>
                 </div>
