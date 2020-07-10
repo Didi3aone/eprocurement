@@ -154,7 +154,7 @@
                         </div>
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.jumlah_pph') }}</label>
-                            <input type="text" class="form-control form-control-line" name="jumlah_pph" id="jumlah_pph" value="" readonly> 
+                            <input type="text" class="form-control money form-control-line" name="jumlah_pph" id="jumlah_pph" value=""> 
                         </div>
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.currency') }}</label>
@@ -285,6 +285,8 @@
         "bInfo": false,
         "ordering": false
     });
+
+    $('.money').mask('#.##0', { reverse: true });
 
     $("#tipe_pph").change(function() {
         let rates = $('#tipe_pph option:selected').data('rate')
