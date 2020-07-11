@@ -326,34 +326,30 @@ class QuotationRepeatController extends Controller
      */
     public function repeatApproveHead($ids)
     {
-        \DB::beginTransaction();
         try {
             $ids = base64_decode($ids);
             $ids = explode(',', $ids);
             
             foreach( $ids as $id ) {
                 $quotation = Quotation::find($id);
-                $quotation->approval_status = Quotation::ApprovalHead;
-                $quotation->approved_head   = \Auth::user()->user_id;
-                $quotation->save();
 
                 $quotationDetail = QuotationDetail::where('quotation_order_id', $id)->get();
                 $quotationDeliveryDate = QuotationDelivery::where('quotation_id', $id)->get();
 
                 $sendSap = \sapHelp::sendPoToSap($quotation, $quotationDetail,$quotationDeliveryDate);
-
                 if( $sendSap ) {
                     $this->_clone_purchase_orders($quotation, $quotationDetail, $sendSap);
-                    \DB::commit();
+                    $quotation->approval_status = Quotation::ApprovalHead;
+                    $quotation->approved_head   = \Auth::user()->user_id;
+                    $quotation->save();
                 } else {
-                    // \DB::rollback();
                     return redirect()->route('admin.quotation-repeat-approval-head')->with('error', 'Internal server error');
                 }
             }
+
             return redirect()->route('admin.quotation-repeat-approval-head')->with('status', 'Direct Order has been approved!');
         } catch (\Throwable $th) {
             throw $th;
-            \DB::rollback();
         }
     }
 
@@ -432,7 +428,8 @@ class QuotationRepeatController extends Controller
                 'payment_term' => $header->payment_term,
                 'currency'     => $header->currency,
                 'PO_NUMBER'    => $poNumber ?? 0,
-                'doc_type'     => $header->doc_type
+                'doc_type'     => $header->doc_type,
+                'total_price'  => $header->total_price
             ]);
 
             foreach ($detail as $rows) {

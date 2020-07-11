@@ -260,17 +260,18 @@ class PurchaseOrderController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $purchaseOrder                      = PurchaseOrder::findOrFail($id);
-        $purchaseOrder->notes               = $request->get('notes');
-        $purchaseOrder->payment_term        = $request->get('payment_term');
-        $purchaseOrder->save();
+        $purchaseOrder                 = PurchaseOrder::findOrFail($id);
+        $purchaseOrder->notes          = $request->get('notes');
+        $purchaseOrder->payment_term   = $request->get('payment_term');
         
         $service        = '';
         $packageParent  = '000000000';
         $subpackgparent = '000000000';
         $noLine         = '';
         $sched          = "";
+        $totalPrice = 0;
         foreach ($request->idDetail as $key => $rows) {
+            $totalPrice += $request->price[$key];
             $poDetail = PurchaseOrdersDetail::find($rows);
             // if( $poDetail !='' ) {
             if( $poDetail->qty != $request->qty[$key] ) {
@@ -359,13 +360,21 @@ class PurchaseOrderController extends Controller
             //     ]);
             // }
         }
-        $poChange = \sapHelp::sendPOchangeToSap($purchaseOrder->PO_NUMBER);
 
-        if( $poChange ) {
-            return redirect()->route('admin.purchase-order.index')->with('status', 'Purchase order has been updated');
+        if( $purchaseOrder->total_price != $totalPrice ) {
+            $purchaseOrder->status_approval = PurchaseOrder::Rejected;
+            $purchaseOrder->save();
+            return redirect()->route('admin.purchase-order.index')->with('status', 'Purchase order has been updated & waiting approval');
         } else {
-            return redirect()->route('admin.purchase-order.index');
-            \Session::flash('error','Internal server error');
+            $poChange = \sapHelp::sendPOchangeToSap($purchaseOrder->PO_NUMBER);
+            if( $poChange ) {
+                $purchaseOrder->status_approval = PurchaseOrder::Approved;
+                $purchaseOrder->save();
+                return redirect()->route('admin.purchase-order.index')->with('status', 'Purchase order has been updated');
+            } else {
+                return redirect()->route('admin.purchase-order.index');
+                \Session::flash('error','Internal server error');
+            }
         }
         
     }

@@ -154,6 +154,14 @@
                                 List PO
                             </a>
                         </li>
+                        @can('purchase_order_approval_access')
+                        <li>
+                            <a href="{{ route('admin.purchase-order.index') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> 
+                                Approval PO Change
+                            </a>
+                        </li>
+                        @endcan
                     </ul>
                 </li>
                 @endcan

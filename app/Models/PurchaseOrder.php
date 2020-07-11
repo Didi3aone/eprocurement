@@ -30,6 +30,8 @@ class PurchaseOrder extends Model
     public const POrepeat  = 0;
     public const POdirect  = 1;
     public const PObidding = 2;
+    public const Approved  = 1;
+    public const Rejected  = 0;
 
     public static function boot()
     {
