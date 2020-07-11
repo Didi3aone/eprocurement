@@ -104,16 +104,24 @@ class BillingController extends Controller
     public function storeApproved(UpdateBillingRequest $request)
     {
         $billing = Billing::find($request->id);
+        //get partner bank
+        $vendor     = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
+        $vendorBank = \App\Models\Vendor\VendorBankDetails::where('vendor_id',$vendor->id)->first();
+        
         $billing->status                = Billing::Approved;
         $billing->assignment            = $request->assignment;
         $billing->payment_term_claim    = $request->payment_term_claim;
         $billing->tipe_pph              = $request->tipe_pph;
         $billing->jumlah_pph            = $request->jumlah_pph ? str_replace(',', '.',$request->jumlah_pph) : "00.00";
+        $billing->base_pph              = $request->base_pph ? str_replace(',', '.',$request->base_pph) : "00.00";
         $billing->currency              = $request->currency;
         $billing->perihal_claim         = $request->perihal_claim;
         $billing->house_bank            = $request->house_bank;
         $billing->exchange_rate         = $request->exchange_rate ? str_replace(',', '.',$request->exchange_rate) : "00.00";
         $billing->base_line_date        = $request->base_line_date;
+        $billing->ref_key_3             = $request->ref_key_3;
+        $billing->ref_key_1             = $request->ref_key_1;
+        $billing->partner_bank          = $vendorBank->partner_bank;
         $billing->calculate_tax         = $request->calculate_tax ?? 0;
         $billing->tax_amount            = $request->tax_amount ? str_replace(',', '.',$request->tax_amount) : '00.00';
         $billing->nominal_invoice_staff = $request->nominal_invoice_staff ? str_replace(',', '.',$request->nominal_invoice_staff) : "00.00";

@@ -153,6 +153,10 @@
                             </select>
                         </div>
                         <div class="form-group col-lg-4">
+                            <label>Base PPH</label>
+                            <input type="text" class="form-control form-control-line" name="base_pph" value="{{ $billing->dpp }}"> 
+                        </div>
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.jumlah_pph') }}</label>
                             <input type="text" class="form-control money form-control-line" name="jumlah_pph" id="jumlah_pph" value=""> 
                         </div>
@@ -189,6 +193,14 @@
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.perihal_claim') }}</label>
                             <input type="text" class="form-control form-control-line " name="perihal_claim" value="{{ $billing->perihal_claim ?? old('perihal_claim', '') }}"> 
+                        </div>
+                        <div class="form-group col-lg-6">
+                            <label>Ref Key 3</label>
+                            <input type="text" class="form-control form-control-line " name="ref_key_3" value=""> 
+                        </div>
+                        <div class="form-group col-lg-6">
+                            <label>Ref Key 1</label>
+                            <input type="text" class="form-control form-control-line " name="ref_key_1" value=""> 
                         </div>
                     </div>
                 </div>
