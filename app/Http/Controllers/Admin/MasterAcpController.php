@@ -112,13 +112,14 @@ class MasterAcpController extends Controller
             }
 
             $acp = new AcpTable();
-            $acp->acp_no = $acp_no;
-            $acp->is_project = $request->get('is_project') ?? 0;
-            $acp->is_from_pr = $request->get('is_from_pr') ?? 0;
-            $acp->start_date = $request->get('start_date');
-            $acp->end_date = $request->get('end_date');
-            $acp->reference_acp_no = $request->get('reference_acp_no') ?? '';
-            $acp->upload_file = $file_upload;
+            $acp->acp_no            = $acp_no;
+            $acp->is_project        = $request->get('is_project') ?? 0;
+            $acp->is_from_pr        = $request->get('is_from_pr') ?? 0;
+            $acp->start_date        = $request->get('start_date');
+            $acp->end_date          = $request->get('end_date');
+            $acp->description       = $request->get('description');
+            $acp->reference_acp_no  = $request->get('reference_acp_no') ?? '';
+            $acp->upload_file       = $file_upload;
             $acp->save();
 
             $result = [];
@@ -148,10 +149,10 @@ class MasterAcpController extends Controller
                     }
                     $rfq = new MasterRfq();
                     $rfq->purchasing_document = (int) $max + 1;
-                    $rfq->company_code = '1200';
-                    $rfq->vendor = $value;
-                    $rfq->language_key = 'EN';
-                    $rfq->acp_id = $acp->id;
+                    $rfq->company_code        = '1200';
+                    $rfq->vendor              = $value;
+                    $rfq->language_key        = 'EN';
+                    $rfq->acp_id              = $acp->id;
                     $rfq->save();
                 }
 

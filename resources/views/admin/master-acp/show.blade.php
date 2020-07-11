@@ -51,6 +51,10 @@
                                             </td>
                                         @endif
                                     </tr>
+                                    <tr>
+                                        <th>Description</th>
+                                        <td>{{ $acp->description }}</td>
+                                    </tr>
                                 </div>
                                 </tbody>
                             </table>

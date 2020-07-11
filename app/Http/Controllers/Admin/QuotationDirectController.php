@@ -495,7 +495,7 @@ class QuotationDirectController extends Controller
                 if( $i == 0 ) {
                     $noLine = $lineNo;
                 } else {
-                    if( $i == 1 ) {
+                    if( $i == 1 ) { //komen
                         $noLine = $lineNo - 1;
                     } else {
                         $noLine = $lineNo - $i;
