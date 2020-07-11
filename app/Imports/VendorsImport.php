@@ -37,19 +37,27 @@ class VendorsImport implements ToModel
             'payment_terms' => $row[17],
             'email' => $row[18]
         ]);
-        /* BANK
-        return new UserVendorsImportBank([
-            'vendor' => $row[0],
-            'bank_country' => $row[1],
-            'bank_key' => $row[2],
-            'bank_account' => $row[3],
-            'bank_control_key' => $row[4],
-            'bank_type' => $row[5],
-            'collection_authorization' => $row[6],
-            'reference_details' => $row[7],
-            'account_holder' => $row[8]
-        ]);
-        */
+        // BANK
+        // return new UserVendorsImportBank([
+        //     'vendor' => $row[0],
+        //     'bank_country' => $row[1],
+        //     'bank_key' => $row[2],
+        //     'bank_account' => $row[3],
+        //     'bank_control_key' => $row[4],
+        //     'bank_type' => $row[5],
+        //     'collection_authorization' => $row[6],
+        //     'reference_details' => $row[7],
+        //     'account_holder' => $row[8]
+        // ]);
+        // return new UserVendorsImportBank([
+        //     'vendor' => $row[0],
+        //     'bank_country' => $row[1],
+        //     'bank_key' => $row[2],
+        //     'partner_bank' => $row[3],
+        //     'bank_account' => $row[4],
+        //     'bank_details' => $row[5],
+        //     'account_holder' => $row[6]
+        // ]);
         /* OLD
         return new Vendor([
             'code' => $row[0],

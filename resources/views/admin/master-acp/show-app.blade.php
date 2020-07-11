@@ -13,7 +13,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <a class="btn btn-primary" href="{{ route('admin.master-acp.index') }}">
+                <a class="btn btn-primary" href="{{ url()->previous() }}">
                     <i class="fa fa-arrow-left"></i> Back To list
                 </a>
             </div>

@@ -115,6 +115,10 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label>Description</label>
+                        <textarea type="text" class="form-control form-control-line" name="description"></textarea>
+                    </div>
+                    <div class="form-group">
                         <div class="table-responsive">
                             <table class="table">
                                 <thead>
@@ -130,8 +134,8 @@
                         </div>
                     </div>
                     <div class="form-actions">
-                        <button type="submit" class="d-none">Submit</button>
-                        <button type="button" class="btn btn-success" id="saves"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
+                        {{-- <button type="submit" class="d-none">Submit</button> --}}
+                        <button type="submit" class="btn btn-success" id="saves"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
                         <button type="button" class="btn btn-warning preview" id="preview"> <i class="fa fa-eye"></i> Preview</button>
                         <a href="{{ route('admin.master-acp.index') }}" type="button" class="btn btn-inverse pull-right"><i class="fa fa-arrow-left"></i> Cancel</a>
                     </div>

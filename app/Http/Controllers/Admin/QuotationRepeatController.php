@@ -487,7 +487,9 @@ class QuotationRepeatController extends Controller
     {
         $i = 0;
         $lineNo = 1;
+        $totalPrice = 0;
         foreach ($details as $detail) {
+            $totalPrice += $detail['price'];
             $schedLine  = sprintf('%05d', (1+$i));
             $indexes    = $i+1;
             $poItem     = ('000'.(10+($i*10)));//sprintf('%05d', (10*$indexes));;
@@ -564,6 +566,10 @@ class QuotationRepeatController extends Controller
 
             $i++;
         }
+
+        $quotation = Quotation::find($id);
+        $quotation->total_price = $totalPrice;
+        $quotation->save();
     }
 
     public function fileUpload($request)

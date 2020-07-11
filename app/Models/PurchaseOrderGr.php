@@ -53,4 +53,10 @@ class PurchaseOrderGr extends Model
     {
         return $this->hasOne(\App\Models\MasterMaterial::class, 'code', 'material_no');
     }
+
+    public static function getPoItemGr($id)
+    {
+        return PurchaseOrderGr::where('purchase_order_detail_id',$id)
+            ->count();
+    }
 }

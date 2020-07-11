@@ -44,7 +44,7 @@
                                     <td>{{ $acp->created_at }}</td>
                                     <td>
                                         @can('master_acp_show')
-                                            <a class="btn btn-primary" href="{{ route('admin.master-acp.show', $acp->id) }}">
+                                            <a class="btn btn-primary btn-xs" href="{{ route('admin.master-acp.show', $acp->id) }}">
                                                 <i class="fa fa-eye"></i> {{ trans('global.view') }}
                                             </a>
                                         @endcan

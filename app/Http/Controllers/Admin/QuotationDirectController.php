@@ -64,6 +64,7 @@ class QuotationDirectController extends Controller
                     ->whereIn('quotation_details.purchasing_group_code', $userMapping)
                     ->select(
                         'quotation.id',
+                        'quotation.acp_id',
                         'quotation.po_no',
                         'quotation.approval_status',
                         'vendors.name'
@@ -88,6 +89,7 @@ class QuotationDirectController extends Controller
                     ->where('quotation.approval_status',Quotation::ApprovalAss)
                     ->select(
                         'quotation.id',
+                        'quotation.acp_id',
                         'quotation.po_no',
                         'quotation.approval_status',
                         'vendors.name'
@@ -324,9 +326,6 @@ class QuotationDirectController extends Controller
 
             foreach( $ids as $id ) {
                 $quotation = Quotation::find($id);
-                $quotation->approval_status = Quotation::ApprovalHead;
-                $quotation->approved_head   = \Auth::user()->user_id;
-                $quotation->save();
 
                 $quotationDetail = QuotationDetail::where('quotation_order_id', $id)
                                 ->orderBy('PO_ITEM','asc')
@@ -340,6 +339,9 @@ class QuotationDirectController extends Controller
                 
                 if( $sendSap ) {
                     $this->_clone_purchase_orders($quotation, $quotationDetail, $sendSap);
+                    $quotation->approval_status = Quotation::ApprovalHead;
+                    $quotation->approved_head   = \Auth::user()->user_id;
+                    $quotation->save();
                     \DB::commit();
                 } else {
                     return redirect()->route('admin.quotation-direct-approval-head')->with('error', 'Internal server error');
@@ -426,7 +428,8 @@ class QuotationDirectController extends Controller
                 'payment_term' => $header->payment_term,
                 'currency'     => $header->currency,
                 'PO_NUMBER'    => $poNumber ?? 0,
-                'doc_type'     => $header->doc_type
+                'doc_type'     => $header->doc_type,
+                'total_price'  => $header->total_price
             ]);
 
             foreach ($detail as $rows) {
@@ -472,7 +475,7 @@ class QuotationDirectController extends Controller
                     'subpackage_no'             => $rows->subpackage_no,
                     'line_no'                   => $rows->line_no,
                     'SCHED_LINE'                => $sched->SCHED_LINE,
-                    'request_detail_id'         => $rows->request_detail_id
+                    'request_detail_id'         => $rows->request_detail_id,
                 ]);
             }
     }
@@ -481,7 +484,9 @@ class QuotationDirectController extends Controller
     {
         $i = 0;
         $lineNo = 1;
+        $totalPrice = 0;
         foreach ($details as $detail) {
+            $totalPrice += $detail['price'];
             $schedLine  = sprintf('%05d', (1+$i));
             $indexes    = $i+1;
             $poItem     = ('000'.(10+($i*10)));//sprintf('%05d', (10*$indexes));;
@@ -490,145 +495,49 @@ class QuotationDirectController extends Controller
             $packageParent  = '000000000';
             $subpackgparent = '000000000';
             $noLine         = '';
-            if( $detail['item_category'] == QuotationDetail::SERVICE ) {
-                $packageParent  = '0000000001';
-                $subpackgparent = '0000000002';
+            $packageParent  = '0000000001';
+            $subpackgparent = '0000000002';
 
-                $quotationDetail = new QuotationDetail;
-                $quotationDetail->quotation_order_id        = $id;
-                $quotationDetail->qty                       = $detail['qty'];
-                $quotationDetail->unit                      = $detail['unit'];
-                $quotationDetail->material                  = $detail['material_id'];
-                $quotationDetail->description               = $detail['description'];
-                $quotationDetail->notes                     = $detail['notes'];
-                $quotationDetail->plant_code                = $detail['plant_code'];
-                $quotationDetail->price                     = $detail['price'];
-                $quotationDetail->orginal_price             = $detail['original_price'];
-                $quotationDetail->is_assets                 = $detail['is_assets'];
-                $quotationDetail->assets_no                 = $detail['assets_no'];
-                $quotationDetail->short_text                = $detail['short_text'];
-                $quotationDetail->text_id                   = $detail['text_id'];
-                $quotationDetail->text_form                 = $detail['text_form'];
-                $quotationDetail->text_line                 = $detail['text_line'];
-                $quotationDetail->delivery_date_category    = $detail['delivery_date_category'];
-                $quotationDetail->account_assignment        = $detail['account_assignment'];
-                $quotationDetail->purchasing_group_code     = $detail['purchasing_group_code'];
-                $quotationDetail->preq_name                 = $detail['preq_name'];
-                $quotationDetail->gl_acct_code              = $detail['gl_acct_code'];
-                $quotationDetail->cost_center_code          = $detail['cost_center_code'];
-                $quotationDetail->profit_center_code        = $detail['profit_center_code'];
-                $quotationDetail->storage_location          = $detail['storage_location'];
-                $quotationDetail->material_group            = $detail['material_group'];
-                $quotationDetail->PREQ_ITEM                 = $detail['preq_item'];
-                $quotationDetail->PR_NO                     = $detail['PR_NO'];
-                $quotationDetail->PO_ITEM                   = $poItem;
-                $quotationDetail->purchasing_document       = $detail['rfq'];
-                $quotationDetail->acp_id                    = $detail['acp_id'];
-                $quotationDetail->delivery_date             = $detail['delivery_date'];
-                $quotationDetail->currency                  = $detail['original_currency'];
-                $quotationDetail->request_no                = $detail['request_no'];
-                $quotationDetail->item_category             = $detail['item_category'];
-                $quotationDetail->tax_code                  = $detail['tax_code'] == 1 ? 'V1' : 'V0';
-                $quotationDetail->package_no                = $packageParent;
-                $quotationDetail->subpackage_no             = $subpackgparent;
-                $quotationDetail->line_no                   = '0000000001';
-                $quotationDetail->request_detail_id         = $detail['request_detail_id'];
-                $quotationDetail->save();
-
-                QuotationDelivery::create([
-                    'quotation_id'          => $id,
-                    'quotation_detail_id'   => $quotationDetail->id,
-                    'SCHED_LINE'            => $schedLine,
-                    'PO_ITEM'               => $poItem,
-                    'DELIVERY_DATE'         => $detail['delivery_date_new'] ?? $detail['delivery_date'] ,
-                    'PREQ_NO'               => $detail['PR_NO'],
-                    'PREQ_ITEM'             => $detail['preq_item'],
-                    'QUANTITY'              => $detail['qty']
-                ]);
-
-                $quotationDetail = new QuotationDetail;
-                $quotationDetail->quotation_order_id        = $id;
-                $quotationDetail->qty                       = $detail['qty'];
-                $quotationDetail->unit                      = $detail['unit'];
-                $quotationDetail->material                  = $detail['material_id'];
-                $quotationDetail->description               = $detail['description'];
-                $quotationDetail->notes                     = $detail['notes'];
-                $quotationDetail->plant_code                = $detail['plant_code'];
-                $quotationDetail->price                     = $detail['price'];
-                $quotationDetail->orginal_price             = $detail['original_price'];
-                $quotationDetail->is_assets                 = $detail['is_assets'];
-                $quotationDetail->assets_no                 = $detail['assets_no'];
-                $quotationDetail->short_text                = $detail['short_text'];
-                $quotationDetail->text_id                   = $detail['text_id'];
-                $quotationDetail->text_form                 = $detail['text_form'];
-                $quotationDetail->text_line                 = $detail['text_line'];
-                $quotationDetail->delivery_date_category    = $detail['delivery_date_category'];
-                $quotationDetail->account_assignment        = $detail['account_assignment'];
-                $quotationDetail->purchasing_group_code     = $detail['purchasing_group_code'];
-                $quotationDetail->preq_name                 = $detail['preq_name'];
-                $quotationDetail->gl_acct_code              = $detail['gl_acct_code'];
-                $quotationDetail->cost_center_code          = $detail['cost_center_code'];
-                $quotationDetail->profit_center_code        = $detail['profit_center_code'];
-                $quotationDetail->storage_location          = $detail['storage_location'];
-                $quotationDetail->material_group            = $detail['material_group'];
-                $quotationDetail->PREQ_ITEM                 = $detail['preq_item'];
-                $quotationDetail->PR_NO                     = $detail['PR_NO'];
-                $quotationDetail->PO_ITEM                   = $poItem;
-                $quotationDetail->purchasing_document       = $detail['rfq'];
-                $quotationDetail->acp_id                    = $detail['acp_id'];
-                $quotationDetail->delivery_date             = $detail['delivery_date'];
-                $quotationDetail->currency                  = $detail['original_currency'];
-                $quotationDetail->request_no                = $detail['request_no'];
-                $quotationDetail->item_category             = $detail['item_category'];
-                $quotationDetail->tax_code                  = $detail['tax_code'] == 1 ? 'V1' : 'V0';
-                $quotationDetail->package_no                = $packageParent;
-                $quotationDetail->subpackage_no             = $subpackgparent;
-                $quotationDetail->line_no                   = '0000000002';
-                $quotationDetail->request_detail_id         = $detail['request_detail_id'];
-                $quotationDetail->save();
-            } else {
-                $quotationDetail = new QuotationDetail;
-                $quotationDetail->quotation_order_id        = $id;
-                $quotationDetail->qty                       = $detail['qty'];
-                $quotationDetail->unit                      = $detail['unit'];
-                $quotationDetail->material                  = $detail['material_id'];
-                $quotationDetail->description               = $detail['description'];
-                $quotationDetail->notes                     = $detail['notes'];
-                $quotationDetail->plant_code                = $detail['plant_code'];
-                $quotationDetail->price                     = $detail['price'];
-                $quotationDetail->orginal_price             = $detail['original_price'];
-                $quotationDetail->is_assets                 = $detail['is_assets'];
-                $quotationDetail->assets_no                 = $detail['assets_no'];
-                $quotationDetail->short_text                = $detail['short_text'];
-                $quotationDetail->text_id                   = $detail['text_id'];
-                $quotationDetail->text_form                 = $detail['text_form'];
-                $quotationDetail->text_line                 = $detail['text_line'];
-                $quotationDetail->delivery_date_category    = $detail['delivery_date_category'];
-                $quotationDetail->account_assignment        = $detail['account_assignment'];
-                $quotationDetail->purchasing_group_code     = $detail['purchasing_group_code'];
-                $quotationDetail->preq_name                 = $detail['preq_name'];
-                $quotationDetail->gl_acct_code              = $detail['gl_acct_code'];
-                $quotationDetail->cost_center_code          = $detail['cost_center_code'];
-                $quotationDetail->profit_center_code        = $detail['profit_center_code'];
-                $quotationDetail->storage_location          = $detail['storage_location'];
-                $quotationDetail->material_group            = $detail['material_group'];
-                $quotationDetail->PREQ_ITEM                 = $detail['preq_item'];
-                $quotationDetail->PR_NO                     = $detail['PR_NO'];
-                $quotationDetail->PO_ITEM                   = $poItem;
-                $quotationDetail->purchasing_document       = $detail['rfq'];
-                $quotationDetail->acp_id                    = $detail['acp_id'];
-                $quotationDetail->delivery_date             = $detail['delivery_date'];
-                $quotationDetail->currency                  = $detail['original_currency'];
-                $quotationDetail->request_no                = $detail['request_no'];
-                $quotationDetail->item_category             = $detail['item_category'];
-                $quotationDetail->tax_code                  = $detail['tax_code'] == 1 ? 'V1' : 'V0';
-                $quotationDetail->package_no                = $packageParent.$noLine;
-                $quotationDetail->subpackage_no             = $subpackgparent.$noLine;
-                $quotationDetail->line_no                   = '000000000'.$noLine;
-                $quotationDetail->request_detail_id         = $detail['request_detail_id'];
-
-                $quotationDetail->save();
-            }
+            $quotationDetail = new QuotationDetail;
+            $quotationDetail->quotation_order_id        = $id;
+            $quotationDetail->qty                       = $detail['qty'];
+            $quotationDetail->unit                      = $detail['unit'];
+            $quotationDetail->material                  = $detail['material_id'];
+            $quotationDetail->description               = $detail['description'];
+            $quotationDetail->notes                     = $detail['notes'];
+            $quotationDetail->plant_code                = $detail['plant_code'];
+            $quotationDetail->price                     = $detail['price'];
+            $quotationDetail->orginal_price             = $detail['original_price'];
+            $quotationDetail->is_assets                 = $detail['is_assets'];
+            $quotationDetail->assets_no                 = $detail['assets_no'];
+            $quotationDetail->short_text                = $detail['short_text'];
+            $quotationDetail->text_id                   = $detail['text_id'];
+            $quotationDetail->text_form                 = $detail['text_form'];
+            $quotationDetail->text_line                 = $detail['text_line'];
+            $quotationDetail->delivery_date_category    = $detail['delivery_date_category'];
+            $quotationDetail->account_assignment        = $detail['account_assignment'];
+            $quotationDetail->purchasing_group_code     = $detail['purchasing_group_code'];
+            $quotationDetail->preq_name                 = $detail['preq_name'];
+            $quotationDetail->gl_acct_code              = $detail['gl_acct_code'];
+            $quotationDetail->cost_center_code          = $detail['cost_center_code'];
+            $quotationDetail->profit_center_code        = $detail['profit_center_code'];
+            $quotationDetail->storage_location          = $detail['storage_location'];
+            $quotationDetail->material_group            = $detail['material_group'];
+            $quotationDetail->PREQ_ITEM                 = $detail['preq_item'];
+            $quotationDetail->PR_NO                     = $detail['PR_NO'];
+            $quotationDetail->PO_ITEM                   = $poItem;
+            $quotationDetail->purchasing_document       = $detail['rfq'];
+            $quotationDetail->acp_id                    = $detail['acp_id'];
+            $quotationDetail->delivery_date             = $detail['delivery_date'];
+            $quotationDetail->currency                  = $detail['original_currency'];
+            $quotationDetail->request_no                = $detail['request_no'];
+            $quotationDetail->item_category             = $detail['item_category'];
+            $quotationDetail->tax_code                  = $detail['tax_code'] == 1 ? 'V1' : 'V0';
+            $quotationDetail->package_no                = $packageParent;
+            $quotationDetail->subpackage_no             = $subpackgparent;
+            $quotationDetail->line_no                   = '0000000001';
+            $quotationDetail->request_detail_id         = $detail['request_detail_id'];
+            $quotationDetail->save();
 
             QuotationDelivery::create([
                 'quotation_id'          => $id,
@@ -640,9 +549,11 @@ class QuotationDirectController extends Controller
                 'PREQ_ITEM'             => $detail['preq_item'],
                 'QUANTITY'              => $detail['qty']
             ]);
-
-            $i++;
         }
+
+        $quotation = Quotation::find($id);
+        $quotation->total_price = $totalPrice;
+        $quotation->save();
     }
 
     public function fileUpload($request)
