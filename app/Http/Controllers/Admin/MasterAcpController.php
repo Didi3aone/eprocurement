@@ -328,4 +328,14 @@ class MasterAcpController extends Controller
 
         return view('admin.master-acp.preview', compact('data', 'images', 'vendors'));
     }
+
+    public function getNetPrice(Request $request)
+    {
+        // $getRfq = \App\Models\AcpTableDetail::where('vendor_code',)
+        $data = MasterRfqDetail::where('purchasing_document', $request->purchasing_document)
+                ->where('material', $request->material)
+                ->first();
+
+        return response()->json($data, 200);
+    }
 }
