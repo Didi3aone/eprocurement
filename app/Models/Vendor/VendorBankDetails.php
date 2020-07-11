@@ -17,6 +17,7 @@ class VendorBankDetails extends Model
         'account_no',
         'iban',
         'bank_details',
-        'account_holder_name'
+        'account_holder_name',
+        'partner_bank'
     ];
 }

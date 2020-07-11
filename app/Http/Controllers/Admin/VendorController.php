@@ -198,8 +198,10 @@ class VendorController extends Controller
                     'bank_country_key' => $row->bank_country,
                     'bank_keys' => $row->bank_key,
                     'account_no' => $row->bank_account,
-                    'bank_details' => $row->reference_details,
+                    // 'bank_details' => $row->reference_details,
+                    'bank_details' => $row->bank_details,
                     'account_holder_name' => $row->account_holder,
+                    'partner_bank' => $row->partner_bank,
                 ]);
 
                 UserVendorsImportBank::where('id', $row->id)->update(['has_migrate' => 1]);

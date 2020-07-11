@@ -20,6 +20,8 @@ class UserVendorsImportBank extends Model
         'collection_authorization',
         'reference_details',
         'account_holder',
+        'partner_bank',
+        'bank_details',
         'has_migrate'
     ];
 }
