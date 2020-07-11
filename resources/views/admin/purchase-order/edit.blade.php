@@ -95,20 +95,21 @@
                                         {{-- <button type="button" id="add_item" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add Item</button> --}}
                                     </th>
                                 </tr>
-                            </thead>
+                             </thead>
                             <tbody id="poItem">
                                 @foreach($purchaseOrder->orderDetail as $key => $value) 
-                                    <tr>
+                                    @if($value->is_active == 1 )
+                                    <tr id="item_{{ $key }}">
                                         <input type="hidden" class="id" name="idDetail[]" id="id" value="{{ $value->id }}">
                                         <input type="hidden" class="id" name="idPrDetail[]" id="idPrDetail" value="">
                                        <td>{{ $value->material_id." - ". $value->description }}</td>
                                        <td>{{ $value->unit }}</td>
                                        <td><input type="text" class="qty" name="qty[]" id="qty" value="{{ $value->qty }}"></td>
                                        <td><input type="text" class="price" name="price[]" id="price" value="{{ $value->price }}"</td>
-                                       <td><input type="text" class="delivery_date mdate" name="delivery_date[]" id="delivery_date" value="{{ $value->delivery_date }}"></td>
+                                       <td><input type="text" class="delivery_date mdate" disabled name="delivery_date[]" id="delivery_date" value="{{ $value->delivery_date }}"></td>
                                        <td>
                                             <input type="checkbox" class="" id="check_{{ $value->id }}" name="tax_code[]" value="1"
-                                                @if($value->tax_code == 1) checked @endif>
+                                                @if($value->tax_code == 'V1') checked @endif>
                                             <label for="check_{{ $value->id }}">&nbsp;</label>
                                        </td>
                                        <td>
@@ -116,11 +117,12 @@
                                             <label for="checks_{{ $key }}">&nbsp;</label>
                                        </td>
                                        <td>
-                                            <a href="javascript:;" data-id="{{ $value->id }}" class="remove-item btn btn-danger btn-xs">
+                                            <a href="javascript:;" data-key="{{ $key }}" data-id="{{ $value->id }}" data-po="{{ $purchaseOrder->PO_NUMBER }}"  class="remove-item btn btn-danger btn-xs">
                                                 <i class="fa fa-trash"></i> Delete
                                             </a>
                                        </td>
                                     </tr>
+                                    @endif
                                 @endforeach
                             </tbody>
                         </table>
@@ -224,9 +226,9 @@
         e.preventDefault()
         let id = $(this).data('id');
         let deleteFile = confirm("Do you really want to Delete?");
+        const $key = $(this).data('key')
 
         if (deleteFile == true) {
-            $(this).parent().parent().remove()
             $.ajax({
                 url: '{{ route("admin.purchase-order-destroy") }}',
                 type: 'PUT',
@@ -235,7 +237,11 @@
                     id:id
                 },
                 success: function(response){
-                    
+                    if( response.success == true ) {
+                        $("#item_" + $key).remove()
+                    } else {
+                        swal('Oops',response.message,'error')
+                    }
                 }
             });
         }

@@ -1567,7 +1567,6 @@ class SapHelper {
                 'log_response_sap' => \json_encode($result),
                 'status' => 'FAILED',
             ]); 
-            // dd($result);
             return false;
         }
     }
@@ -1755,6 +1754,11 @@ class SapHelper {
             $itemDelete = "";
             if( $poDetail[$i]->is_active == 0 ) {
                 $itemDelete = 'X';
+            }
+
+            $deliveryComplete = "";
+            if( $poDetail[$i]->delivery_complete == 1 ) {
+                $deliveryComplete = 'X';
             }
             $POITEM = [
                 'PO_ITEM' => $poDetail[$i]->PO_ITEM,//LINE
@@ -2281,7 +2285,7 @@ class SapHelper {
             'DOC_TYPE' => 'RE',
             'DOC_DATE' => $billing->tgl_invoice,
             'PSTNG_DATE' => date('Y-06-d'),
-            'REF_DOC_NO' => $billing->billing_no,
+            'REF_DOC_NO' => $billing->invoice_no,
             'COMP_CODE' => $compCode,
             'DIFF_INV' => '',
             'CURRENCY' => $billing->currency,

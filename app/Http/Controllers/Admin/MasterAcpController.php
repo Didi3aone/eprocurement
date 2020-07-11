@@ -278,6 +278,15 @@ class MasterAcpController extends Controller
         return view('admin.master-acp.show', compact('acp', 'approval'));
     }
 
+    public function showApproval($acp_id)
+    {
+        $acp = AcpTable::find($acp_id);
+        $approval = QuotationApproval::where('acp_id', $acp_id)
+                    ->orderBy('approval_position', 'asc')->get();
+
+        return view('admin.master-acp.show-app', compact('acp', 'approval'));
+    }
+
     public function edit($id)
     {
         $model = AcpTable::find($id);

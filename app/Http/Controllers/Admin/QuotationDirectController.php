@@ -64,6 +64,7 @@ class QuotationDirectController extends Controller
                     ->whereIn('quotation_details.purchasing_group_code', $userMapping)
                     ->select(
                         'quotation.id',
+                        'quotation.acp_id',
                         'quotation.po_no',
                         'quotation.approval_status',
                         'vendors.name'
@@ -88,6 +89,7 @@ class QuotationDirectController extends Controller
                     ->where('quotation.approval_status',Quotation::ApprovalAss)
                     ->select(
                         'quotation.id',
+                        'quotation.acp_id',
                         'quotation.po_no',
                         'quotation.approval_status',
                         'vendors.name'
@@ -324,9 +326,6 @@ class QuotationDirectController extends Controller
 
             foreach( $ids as $id ) {
                 $quotation = Quotation::find($id);
-                $quotation->approval_status = Quotation::ApprovalHead;
-                $quotation->approved_head   = \Auth::user()->user_id;
-                $quotation->save();
 
                 $quotationDetail = QuotationDetail::where('quotation_order_id', $id)
                                 ->orderBy('PREQ_ITEM','asc')
@@ -340,6 +339,9 @@ class QuotationDirectController extends Controller
                 
                 if( $sendSap ) {
                     $this->_clone_purchase_orders($quotation, $quotationDetail, $sendSap);
+                    $quotation->approval_status = Quotation::ApprovalHead;
+                    $quotation->approved_head   = \Auth::user()->user_id;
+                    $quotation->save();
                     \DB::commit();
                 } else {
                     return redirect()->route('admin.quotation-direct-approval-head')->with('error', 'Internal server error');
@@ -426,7 +428,8 @@ class QuotationDirectController extends Controller
                 'payment_term' => $header->payment_term,
                 'currency'     => $header->currency,
                 'PO_NUMBER'    => $poNumber ?? 0,
-                'doc_type'     => $header->doc_type
+                'doc_type'     => $header->doc_type,
+                'total_price'  => $header->total_price
             ]);
 
             foreach ($detail as $rows) {
@@ -472,7 +475,7 @@ class QuotationDirectController extends Controller
                     'subpackage_no'             => $rows->subpackage_no,
                     'line_no'                   => $rows->line_no,
                     'SCHED_LINE'                => $sched->SCHED_LINE,
-                    'request_detail_id'         => $rows->request_detail_id
+                    'request_detail_id'         => $rows->request_detail_id,
                 ]);
             }
     }
@@ -481,7 +484,9 @@ class QuotationDirectController extends Controller
     {
         $i = 0;
         $lineNo = 1;
+        $totalPrice = 0;
         foreach ($details as $detail) {
+            $totalPrice += $detail['price'];
             $schedLine  = sprintf('%05d', (1+$i));
             $indexes    = $i+1;
             $poItem     = ('000'.(10+($i*10)));//sprintf('%05d', (10*$indexes));;
@@ -558,6 +563,10 @@ class QuotationDirectController extends Controller
 
             $i++;
         }
+
+        $quotation = Quotation::find($id);
+        $quotation->total_price = $totalPrice;
+        $quotation->save();
     }
 
     public function fileUpload($request)

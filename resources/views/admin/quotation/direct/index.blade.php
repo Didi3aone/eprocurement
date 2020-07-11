@@ -37,6 +37,7 @@
                                                 <a class="btn btn-primary btn-xs" href="{{ route('admin.quotation-direct.show', $val->id) }}">
                                                     <i class="fa fa-eye"></i> {{ trans('global.view') }}
                                                 </a>
+
                                             </td>
                                         </tr>
                                     @endforeach

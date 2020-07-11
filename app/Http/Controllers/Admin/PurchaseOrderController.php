@@ -285,11 +285,12 @@ class PurchaseOrderController extends Controller
                 $prDetail->save();
 
             }
-            $poDetail->qty            = $request->qty[$key];
-            $poDetail->price          = $request->price[$key];
-            $poDetail->currency       = $request->currency[$key];
-            $poDetail->delivery_date  = $request->delivery_date[$key];
-            $poDetail->tax_code       = $request->tax_code[$key] == 1 ? 'V1' : 'V0';
+            $poDetail->qty                  = $request->qty[$key];
+            $poDetail->price                = $request->price[$key];
+            $poDetail->currency             = $request->currency[$key];
+            $poDetail->delivery_date        = $request->delivery_date[$key];
+            $poDetail->delivery_complete    = $request->delivery_complete[$key];
+            $poDetail->tax_code             = $request->tax_code[$key] == 1 ? 'V1' : 'V0';
             $poDetail->update();
             // } else {
             //     $prDetail = PurchaseRequestsDetail::find($request->idPrDetail[$key]);
@@ -358,7 +359,7 @@ class PurchaseOrderController extends Controller
             //     ]);
             // }
         }
-        $poChange = true;//\sapHelp::sendPOchangeToSap($purchaseOrder->PO_NUMBER);
+        $poChange = \sapHelp::sendPOchangeToSap($purchaseOrder->PO_NUMBER);
 
         if( $poChange ) {
             return redirect()->route('admin.purchase-order.index')->with('status', 'Purchase order has been updated');
@@ -409,12 +410,23 @@ class PurchaseOrderController extends Controller
 
         
         if( isset($request->id) ) {
-            $delete = PurchaseOrdersDetail::findOrFail($request->id);
-            $delete->is_active = 0;
-            $delete->update();
+            $checkGr = \App\Models\PurchaseOrderGr::getPoItemGr($request->id);
+
+            if( $checkGr > 0 ) {
+                $success = false;
+                $message = 'Material has been gr !!!';
+            } else {
+                $delete = PurchaseOrdersDetail::findOrFail($request->id);
+                $delete->is_active = 0;//not active
+                $delete->update();
+
+                $success = true;
+                $message = '';
+            }
 
             return response()->json([
-                'success' => true
+                'success' => $success,
+                'message' => $message
             ], 200);
         }
     }
