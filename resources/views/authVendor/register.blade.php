@@ -18,14 +18,14 @@
                     <center><img src="{{ asset('images/ene-group.jpg') }}" width="200"></center>
                     <div class="row">
                         <div class="col-lg-6">
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <div class="col-xs-12">
                                     <input class="form-control" type="text" name="name" required="" placeholder="Name" value="{{ old('name') }}">
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="form-group">
                                 <div class="col-xs-12">
-                                    <select class="form-control" name="vendor_title_id" required="">
+                                    <select class="form-control" name="vendor_title_id" required>
                                         <option value="" selected="" disabled="">Select Title</option>
                                         @foreach($vendor_title as $row)
                                         <option value="{{ $row->id }}">{{ $row->name }}</option>
@@ -35,7 +35,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-xs-12">
-                                    <select class="form-control" name="vendor_bp_group_id" required="">
+                                    <select class="form-control" name="vendor_bp_group_id" required>
                                         <option value="" selected="" disabled="">Select BP Group</option>
                                         @foreach($vendor_bp_group as $row)
                                         <option value="{{ $row->id }}">{{ $row->name }}</option>
@@ -45,7 +45,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-xs-12">
-                                    <select class="form-control" name="specialize" required="">
+                                    <select class="form-control" name="specialize" required>
                                         <option value="" selected="" disabled="">Specialization of Business</option>
                                         <option value="INDIRECT">Indirect</option>
                                         <option value="RAW">Raw Material</option>
@@ -60,7 +60,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-xs-12">
-                                    <input class="form-control" type="text" name="street" required="" placeholder="Address">
+                                    <input class="form-control" type="text" name="street" required placeholder="Address">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -83,19 +83,19 @@
                                     <input class="form-control" type="text" name="street_5" placeholder="Address 5">
                                 </div>
                             </div>
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <div class="col-xs-12">
                                     <input class="form-control" type="text" name="different_city" required="" placeholder="Different City">
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="form-group">
                                 <div class="col-xs-12">
-                                    <input class="form-control" type="text" name="postal_code" required="" placeholder="Postal Code">
+                                    <input class="form-control" type="text" name="postal_code" required placeholder="Postal Code">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-xs-12">
-                                    <input class="form-control" type="text" name="city" required="" placeholder="City">
+                                    <input class="form-control" type="text" name="city" required placeholder="City">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -121,7 +121,7 @@
                             </div> -->
                             <div class="form-group">
                                 <div class="col-xs-12">
-                                    <input class="form-control" type="text" name="office_telephone" required="" placeholder="Telephone">
+                                    <input class="form-control" type="text" name="office_telephone" required placeholder="Telephone">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -146,7 +146,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-xs-12">
-                                    <select class="form-control" name="bank_country_id" required="">
+                                    <select class="form-control" name="bank_country_id" required>
                                         <option value="" selected="" disabled="">Select Bank Country</option>
                                         @foreach($vendor_bank_country as $row)
                                         <option value="{{ $row->id }}">{{ $row->name }}</option>
@@ -156,7 +156,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-xs-12">
-                                    <select class="form-control" name="bank_keys_id" required="">
+                                    <select class="form-control" name="bank_keys_id" required>
                                         <option value="" selected="" disabled="">Select Bank</option>
                                         @foreach($vendor_bank_keys as $row)
                                         <option value="{{ $row->id }}">{{ $row->name }}</option>
@@ -166,12 +166,12 @@
                             </div>
                             <div class="form-group ">
                                 <div class="col-xs-12">
-                                    <input class="form-control" type="text" name="bank_account_no" required="" placeholder="Bank Account No">
+                                    <input class="form-control" type="text" name="bank_account_no" required placeholder="Bank Account No">
                                 </div>
                             </div>
                             <div class="form-group ">
                                 <div class="col-xs-12">
-                                    <input class="form-control" type="text" name="bank_account_holder_name" required="" placeholder="Bank Account Holder Name">
+                                    <input class="form-control" type="text" name="bank_account_holder_name" required placeholder="Bank Account Holder Name">
                                 </div>
                             </div>
                             <div class="form-group ">

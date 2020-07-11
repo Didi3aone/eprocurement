@@ -161,7 +161,7 @@ class LoginController extends Controller
         $specialize = $request->input('specialize'); // search_term_1
         $company_name = $request->input('company_name'); // search_term_2
         $street = $request->input('street');
-        $different_city = $request->input('different_city');
+        $different_city = $request->input('different_city') ?? "-";
         $city = $request->input('city');
         $country = $request->input('country');
         $postalCode = $request->input('postal_code');
