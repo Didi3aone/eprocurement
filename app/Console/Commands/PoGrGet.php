@@ -92,6 +92,7 @@ class PoGrGet extends Command
                                                 ->first();
                                     
                                     $poDetail->qty_gr           = $value[$i]->MENGE;
+                                    $poDetail->is_gr            = \App\Models\PurchaseOrdersDetail::YesGr;
                                     $poDetail->qty_outstanding  = $poDetail->qty - $value[$i]->MENGE;
                                     $poDetail->update();
                                 }
@@ -135,8 +136,9 @@ class PoGrGet extends Command
                                         ->where('PO_ITEM',$value->EBELP)
                                         ->first();
                             
-                            $poDetail->qty_gr =  $value->MENGE;
-                            $poDetail->qty_outstanding = $poDetail->qty - $value->MENGE;
+                            $poDetail->qty_gr           =  $value->MENGE;
+                            $poDetail->is_gr            = \App\Models\PurchaseOrdersDetail::YesGr;
+                            $poDetail->qty_outstanding  = $poDetail->qty - $value->MENGE;
                             $poDetail->update();
                         }
 

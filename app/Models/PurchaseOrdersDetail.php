@@ -57,6 +57,8 @@ class PurchaseOrdersDetail extends Model
 
     public const SERVICE = 9;
 
+    public const YesGr = 1;
+
     public function po()
     {
         return $this->belongsTo(\App\Models\PurchaseOrder::class,'purchase_order_id');

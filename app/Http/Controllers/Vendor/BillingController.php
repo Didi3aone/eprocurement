@@ -313,7 +313,7 @@ class BillingController extends Controller
                         ->where('material_no', $material_no)
                         ->first();
 
-                // $po_pr->qty_billing = $qty;
+                $po_gr->qty_billing = $qty;
                 $po_gr->qty = $qty_old - $qty;
                 $po_gr->save();
             }
@@ -343,22 +343,22 @@ class BillingController extends Controller
 
         $material_description = $model->material ? $model->material->description : '';
         
-        $data['po_no']                  = $model->po_no;
-        $data['po_item']                = $model->po_item;
-        $data['material']               = $model->material_no;
-        $data['qty']                    = $model->qty;
-        $data['doc_gr']                 = $model->doc_gr;
-        $data['item_gr']                = $model->item_gr;
-        $data['posting_date']           = $model->posting_date;
-        $data['reference_document']     = $model->reference_document;
-        $data['description']            = $material_description;
-        $data['debet_credit']           = $model->debet_credit;
-        $data['currency']               = $model->currency;
-        $data['plant']                  = $model->plant;
-        $data['gl_account']             = $model->gl_account;
-        $data['profit_center']          = $model->profit_center;
-        $data['amount']                 = $model->amount;
-        $data['material_document']      = $model->material_document;
+        $data['po_no']                      = $model->po_no;
+        $data['po_item']                    = $model->po_item;
+        $data['material']                   = $model->material_no;
+        $data['qty']                        = $model->qty;
+        $data['doc_gr']                     = $model->doc_gr;
+        $data['item_gr']                    = $model->item_gr;
+        $data['posting_date']               = $model->posting_date;
+        $data['reference_document']         = $model->reference_document;
+        $data['description']                = $material_description;
+        $data['debet_credit']               = $model->debet_credit;
+        $data['currency']                   = $model->currency;
+        $data['plant']                      = $model->plant;
+        $data['gl_account']                 = $model->gl_account;
+        $data['profit_center']              = $model->profit_center;
+        $data['amount']                     = $model->amount;
+        $data['material_document']          = $model->material_document;
         $data['reference_document_item']    = $model->reference_document_item;
         $data['doc_gr']                     = $model->doc_gr;
         $data['storage_location']           = $model->storage_location;
