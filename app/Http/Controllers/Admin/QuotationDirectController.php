@@ -199,6 +199,7 @@ class QuotationDirectController extends Controller
             $quotation->payment_term    = $request->get('payment_term') ?? $payVendor;
             $quotation->vendor_id       = $request->vendor_id;
             $quotation->exchange_rate   = $request->exchange_rate;
+            $quotation->approved_head   = 'PROCUREMENT01';
             $quotation->acp_id          = $request->acp_id[0];
             $quotation->approval_status = Quotation::Waiting;
             $quotation->save();
@@ -300,8 +301,9 @@ class QuotationDirectController extends Controller
 
             foreach( $ids as $id ) {
                 $quotation = Quotation::find($id);
-                $quotation->approval_status = Quotation::ApprovalAss;
-                $quotation->approved_asspro = \Auth::user()->user_id;
+                $quotation->approval_status     = Quotation::ApprovalAss;
+                $quotation->approved_asspro     = \Auth::user()->user_id;
+                $quotation->approved_date_ass   = date('Y-m-d');
                 $quotation->save();
             }
 
@@ -338,8 +340,9 @@ class QuotationDirectController extends Controller
                 
                 if( $sendSap ) {
                     $this->_clone_purchase_orders($quotation, $quotationDetail, $sendSap);
-                    $quotation->approval_status = Quotation::ApprovalHead;
-                    $quotation->approved_head   = \Auth::user()->user_id;
+                    $quotation->approval_status     = Quotation::ApprovalHead;
+                    $quotation->approved_head       = \Auth::user()->user_id;
+                    $quotation->approved_date_head  = date('Y-m-d');
                     $quotation->save();
                 } else {
                     return redirect()->route('admin.quotation-direct-approval-head')->with('error', 'Internal server error');
@@ -360,9 +363,10 @@ class QuotationDirectController extends Controller
     public function directRejected(Request $request)
     {
         $quotation = Quotation::find($request->id);
-        $quotation->approval_status = Quotation::Rejected;
-        $quotation->approved_asspro = \Auth::user()->user_id;
-        $quotation->reason_reject   = $request->reason;
+        $quotation->approval_status     = Quotation::Rejected;
+        $quotation->approved_asspro     = \Auth::user()->user_id;
+        $quotation->reason_reject       = $request->reason;
+        $quotation->approved_date_ass   = date('Y-m-d');
         $quotation->save();
 
         $quotationDetail = QuotationDetail::where('quotation_order_id', $quotation->id)
@@ -388,9 +392,10 @@ class QuotationDirectController extends Controller
     public function directRejectedHead(Request $request)
     {
         $quotation = Quotation::find($id);
-        $quotation->approval_status = Quotation::Rejected;
-        $quotation->approved_head   = \Auth::user()->user_id;
-        $quotation->reason_reject   = $request->reason;
+        $quotation->approval_status     = Quotation::Rejected;
+        $quotation->approved_head       = \Auth::user()->user_id;
+        $quotation->reason_reject       = $request->reason;
+        $quotation->approved_date_head  = date('Y-m-d');
         $quotation->save();
 
         $quotationDetail = QuotationDetail::where('quotation_order_id', $quotation->id)
@@ -482,6 +487,7 @@ class QuotationDirectController extends Controller
         $i = 0;
         $lineNo = 1;
         $totalPrice = 0;
+        $assProc    = "";
         foreach ($details as $detail) {
             $totalPrice += $detail['price'];
             $schedLine  = sprintf('%05d', (1+$i));
@@ -546,10 +552,13 @@ class QuotationDirectController extends Controller
                 'PREQ_ITEM'             => $detail['preq_item'],
                 'QUANTITY'              => $detail['qty']
             ]);
+
+            $assProc = \App\Models\UserMap::getAssProc($detail['purchasing_group_code']);
         }
 
         $quotation = Quotation::find($id);
-        $quotation->total_price = $totalPrice;
+        $quotation->total_price     = $totalPrice;
+        $quotation->approved_asspro = $assProc;
         $quotation->save();
     }
 

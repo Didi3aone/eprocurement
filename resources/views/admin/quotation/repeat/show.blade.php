@@ -65,6 +65,57 @@
                 </table>
             </div>
         </div>
+        <div class="card">
+            <div class="card-header">
+                <h4>History Approval</h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>User ID</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>{{ $quotation->approved_asspro }}</td>
+                            <td>
+                                @php
+                                    if( $quotation->status_approval == \App\Models\Vendor\Quotation::Waiting ) {
+                                        echo "Waiting For Approval";
+                                    } else if( $quotation->status_approval == \App\Models\Vendor\Quotation::ApprovalAss ) {
+                                        echo "Approved";
+                                    } else if( $quotation->status_approval == \App\Models\Vendor\Quotation::Rejected ) {
+                                        echo 'Rejected';
+                                    }
+                                @endphp
+                            </td>
+                            <td>{{ $quotation->approved_date_ass ?? '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>PROCUREMENT01</td>
+                            <td>
+                                @php
+                                    if( $quotation->status_approval == \App\Models\Vendor\Quotation::Waiting ) {
+                                        echo "Waiting For Approval";
+                                    } else if( $quotation->status_approval == \App\Models\Vendor\Quotation::ApprovalHead ) {
+                                        echo "Approved";
+                                    } else if( $quotation->status_approval == \App\Models\Vendor\Quotation::Rejected ) {
+                                        echo 'Rejected';
+                                    }
+                                @endphp
+                            </td>
+                            <td>{{ $quotation->approved_date_head ?? '-' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 @endsection

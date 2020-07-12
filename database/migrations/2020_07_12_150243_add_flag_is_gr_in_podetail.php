@@ -20,6 +20,10 @@ class AddFlagIsGrInPodetail extends Migration
         Schema::table('purchase_order_gr', function (Blueprint $table) {
             $table->integer('is_send_email')->default(0);
         });
+        Schema::table('quotation', function (Blueprint $table) {
+            $table->date('approved_date_ass')->nullable();
+            $table->date('approved_date_head')->nullable();
+        });
     }
 
     /**

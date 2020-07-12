@@ -307,8 +307,9 @@ class QuotationRepeatController extends Controller
 
             foreach( $ids as $id ) {
                 $quotation = Quotation::find($id);
-                $quotation->approval_status = Quotation::ApprovalAss;
-                $quotation->approved_asspro = \Auth::user()->user_id;
+                $quotation->approval_status    = Quotation::ApprovalAss;
+                $quotation->approved_asspro    = \Auth::user()->user_id;
+                $quotation->approved_date_ass  = date('Y-m-d');
                 $quotation->save();
             }
 
@@ -339,8 +340,9 @@ class QuotationRepeatController extends Controller
                 $sendSap = \sapHelp::sendPoToSap($quotation, $quotationDetail,$quotationDeliveryDate);
                 if( $sendSap ) {
                     $this->_clone_purchase_orders($quotation, $quotationDetail, $sendSap);
-                    $quotation->approval_status = Quotation::ApprovalHead;
-                    $quotation->approved_head   = \Auth::user()->user_id;
+                    $quotation->approval_status     = Quotation::ApprovalHead;
+                    $quotation->approved_head       = \Auth::user()->user_id;
+                    $quotation->approved_date_head  = date('Y-m-d');
                     $quotation->save();
                 } else {
                     return redirect()->route('admin.quotation-repeat-approval-head')->with('error', 'Internal server error');
@@ -362,9 +364,10 @@ class QuotationRepeatController extends Controller
     public function repeatRejected(Request $request)
     {
         $quotation = Quotation::find($request->id);
-        $quotation->approval_status = Quotation::Rejected;
-        $quotation->approved_asspro = \Auth::user()->user_id;
-        $quotation->reason_reject   = $request->reason;
+        $quotation->approval_status     = Quotation::Rejected;
+        $quotation->approved_asspro     = \Auth::user()->user_id;
+        $quotation->approved_date_ass   = date('Y-m-d');
+        $quotation->reason_reject       = $request->reason;
         $quotation->save();
 
         $quotationDetail = QuotationDetail::where('quotation_order_id', $quotation->id)
@@ -391,9 +394,10 @@ class QuotationRepeatController extends Controller
     public function repeatRejectedHead(Request $request)
     {
         $quotation = Quotation::find($id);
-        $quotation->approval_status = Quotation::Rejected;
-        $quotation->approved_head   = \Auth::user()->user_id;
-        $quotation->reason_reject   = $request->reason;
+        $quotation->approval_status     = Quotation::Rejected;
+        $quotation->approved_head       = \Auth::user()->user_id;
+        $quotation->reason_reject       = $request->reason;
+        $quotation->approved_date_head  = date('Y-m-d');
         $quotation->save();
 
         $quotationDetail = QuotationDetail::where('quotation_order_id', $quotation->id)
@@ -483,8 +487,9 @@ class QuotationRepeatController extends Controller
     private function _insert_details($details, $id)
     {
         $i = 0;
-        $lineNo = 1;
+        $lineNo     = 1;
         $totalPrice = 0;
+        $assProc    = "";
         foreach ($details as $detail) {
             $totalPrice += $detail['price'];
             $schedLine  = sprintf('%05d', (1+$i));
@@ -562,10 +567,12 @@ class QuotationRepeatController extends Controller
             ]);
 
             $i++;
+            $assProc = \App\Models\UserMap::getAssProc($detail['purchasing_group_code']);
         }
 
         $quotation = Quotation::find($id);
-        $quotation->total_price = $totalPrice;
+        $quotation->total_price     = $totalPrice;
+        $quotation->approved_asspro = $assProc;
         $quotation->save();
     }
 
