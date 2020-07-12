@@ -16,6 +16,10 @@ class AddFlagIsGrInPodetail extends Migration
         Schema::table('purchase_orders_details', function (Blueprint $table) {
             $table->integer('is_gr')->default(0);
         });
+
+        Schema::table('purchase_order_gr', function (Blueprint $table) {
+            $table->integer('is_send_email')->default(0);
+        });
     }
 
     /**

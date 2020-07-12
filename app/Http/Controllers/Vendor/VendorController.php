@@ -19,7 +19,25 @@ class VendorController extends Controller
      */
     public function index()
     {
-        return view('vendor.home');
+        $poRepeat = \App\Models\PurchaseOrder::where('vendor_id',\Auth::user()->code)
+            ->where('status',\App\Models\PurchaseOrder::POrepeat)->count();
+        $poDirect = \App\Models\PurchaseOrder::where('vendor_id',\Auth::user()->code)
+            ->where('status',\App\Models\PurchaseOrder::POdirect)->count();
+
+        $poRepeatChart =  \App\Models\PurchaseOrder::where('vendor_id',\Auth::user()->code)
+                    ->select(\DB::raw("COUNT(*) as count"))
+                    ->where('status',\App\Models\PurchaseOrder::POrepeat)
+                    ->whereYear('created_at', date('Y'))
+                    ->groupBy(\DB::raw("EXTRACT(MONTH FROM created_at)"))
+                    ->pluck('count');
+        $poDirectChart =  \App\Models\PurchaseOrder::where('vendor_id',\Auth::user()->code)
+                    ->select(\DB::raw("COUNT(*) as count"))
+                    ->where('status',\App\Models\PurchaseOrder::POdirect)
+                    ->whereYear('created_at', date('Y'))
+                    ->groupBy(\DB::raw("EXTRACT(MONTH FROM created_at)"))
+                    ->pluck('count');
+
+        return view('vendor.home',\compact('poRepeat','poDirect','poRepeatChart','poDirectChart'));
     }
 
     /**

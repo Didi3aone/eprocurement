@@ -198,6 +198,7 @@ class BillingController extends Controller
     public function create() 
     {
         $po_gr = PurchaseOrderGr::where('vendor_id', \Auth::user()->code)
+            ->where('qty','>',0)
             ->get();
         $rekening =  VendorBankDetails::where('vendor_id', \Auth::user()->id)
             ->get()
