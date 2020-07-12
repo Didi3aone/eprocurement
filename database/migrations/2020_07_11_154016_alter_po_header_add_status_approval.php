@@ -15,6 +15,7 @@ class AlterPoHeaderAddStatusApproval extends Migration
     {
         Schema::table('purchase_orders', function (Blueprint $table) {
             $table->integer('status_approval')->default(1);
+            $table->integer('is_approve_head')->default(1);
         });
     }
 

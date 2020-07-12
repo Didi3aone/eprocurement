@@ -32,6 +32,8 @@ class PurchaseOrder extends Model
     public const PObidding = 2;
     public const Approved  = 1;
     public const Rejected  = 0;
+    public const ApproveAss = 0;
+    public const ApproveHead = 1;
 
     public static function boot()
     {

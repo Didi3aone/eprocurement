@@ -421,7 +421,7 @@ class QuotationDirectController extends Controller
             'notes'        => $header->notes,
             'po_date'      => \Carbon\Carbon::now(),
             'vendor_id'    => $header->vendor_id,
-            'status'       => 1,
+            'status'       => Quotation::QuotationDirect,
             'payment_term' => $header->payment_term,
             'currency'     => $header->currency,
             'PO_NUMBER'    => $poNumber ?? 0,

@@ -154,11 +154,19 @@
                                 List PO
                             </a>
                         </li>
-                        @can('purchase_order_approval_access')
+                        @can('purchase_order_approval_change_ass_access')
                         <li>
-                            <a href="{{ route('admin.purchase-order.index') }}" class="">
+                            <a href="{{ route('admin.purchase-order-change-ass') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
-                                Approval PO Change
+                                Approval Change (ASS)
+                            </a>
+                        </li>
+                        @endcan
+                        @can('purchase_order_approval_change_head_access')
+                        <li>
+                            <a href="{{ route('admin.purchase-order-change-head') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> 
+                                Approval Change (HEAD)
                             </a>
                         </li>
                         @endcan

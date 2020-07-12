@@ -18,6 +18,8 @@ use App\Models\PurchaseOrderInvoice;
 use App\Models\Vendor\Quotation;
 use App\Models\Vendor\QuotationDetail;
 use App\Imports\PurchaseOrderImport;
+use App\Models\PurchaseOrderChangeHistoryDetail;
+use App\Models\PurchaseOrderChangeHistory;
 use App\Mail\PurchaseOrderMail;
 
 class PurchaseOrderController extends Controller
@@ -59,6 +61,61 @@ class PurchaseOrderController extends Controller
                 ->orderBy('purchase_orders_details.created_at', 'desc')->get();
 
         return view('admin.purchase-order.index', compact('po'));
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function approvalPoChange()
+    {
+        abort_if(Gate::denies('purchase_order_approval_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $userMapping = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first();
+
+        $userMapping = explode(',', $userMapping->purchasing_group_code);
+
+        $po = PurchaseOrdersDetail::join('purchase_orders','purchase_orders.id','=','purchase_orders_details.purchase_order_id')
+                ->leftJoin('vendors','vendors.code','=','purchase_orders.vendor_id')
+                ->whereIn('purchase_orders_details.purchasing_group_code', $userMapping)
+                ->where('status_approval', PurchaseOrder::Rejected)
+                ->where('is_approve_head', PurchaseOrder::ApproveAss)
+                ->select(
+                    'purchase_orders_details.purchasing_group_code',
+                    'purchase_orders.po_date',
+                    'purchase_orders.id',
+                    'vendors.name as vendor'
+                )
+                ->orderBy('purchase_orders_details.created_at', 'desc')->get();
+
+        return view('admin.purchase-order.approval-po-change', compact('po'));
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function approvalPoChangeHead()
+    {
+        abort_if(Gate::denies('purchase_order_approval_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $userMapping = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first();
+
+        $userMapping = explode(',', $userMapping->purchasing_group_code);
+
+        $po = PurchaseOrdersDetail::join('purchase_orders','purchase_orders.id','=','purchase_orders_details.purchase_order_id')
+                ->leftJoin('vendors','vendors.code','=','purchase_orders.vendor_id')
+                ->whereIn('purchase_orders_details.purchasing_group_code', $userMapping)
+                ->where('is_approve_head', PurchaseOrder::ApproveHead)
+                ->select(
+                    'purchase_orders_details.purchasing_group_code',
+                    'purchase_orders.po_date',
+                    'purchase_orders.id',
+                    'vendors.name as vendor'
+                )
+                ->orderBy('purchase_orders_details.created_at', 'desc')->get();
+
+        return view('admin.purchase-order.approval-po-change-head', compact('po'));
     }
 
     /**
@@ -263,6 +320,15 @@ class PurchaseOrderController extends Controller
         $purchaseOrder                 = PurchaseOrder::findOrFail($id);
         $purchaseOrder->notes          = $request->get('notes');
         $purchaseOrder->payment_term   = $request->get('payment_term');
+
+        $poChangeHeader = new PurchaseOrderChangeHistory;
+        $poChangeHeader->po_id                  = $purchaseOrder->id;
+        $poChangeHeader->vendor_old             = $purchaseOrder->vendor_id;
+        $poChangeHeader->vendor_change          = $request->get('payment_term') ?? '';
+        $poChangeHeader->notes_old              = $purchaseOrder->notes;
+        $poChangeHeader->notes_change           = $request->get('notes');
+        $poChangeHeader->peyment_term_old       = $purchaseOrder->payment_term;
+        $poChangeHeader->save();
         
         $service        = '';
         $packageParent  = '000000000';
@@ -292,6 +358,16 @@ class PurchaseOrderController extends Controller
             $poDetail->delivery_date        = $request->delivery_date[$key];
             $poDetail->delivery_complete    = $request->delivery_complete[$key];
             $poDetail->tax_code             = $request->tax_code[$key] == 1 ? 'V1' : 'V0';
+            
+            $poChangeDetail = new PurchaseOrderChangeHistory;
+            $poChangeDetail->qty_old        = $poDetail->qty;
+            $poChangeDetail->qty_change     = $request->qty[$key];
+            $poChangeDetail->po_detail_id   = $poDetail->id;
+            $poChangeDetail->po_history_id  = $poChangeHeader->id;
+            $poChangeDetail->price_old      = $poDetail->price;
+            $poChangeDetail->price_change   = $request->price[$key];
+            $poChangeDetail->save();
+
             $poDetail->update();
             // } else {
             //     $prDetail = PurchaseRequestsDetail::find($request->idPrDetail[$key]);

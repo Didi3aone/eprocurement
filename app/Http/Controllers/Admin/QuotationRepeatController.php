@@ -420,64 +420,64 @@ class QuotationRepeatController extends Controller
     private function _clone_purchase_orders($header, $detail, $poNumber)
     {
         $poId = PurchaseOrder::create([
-                'quotation_id' => $header->id,
-                'notes'        => $header->notes,
-                'po_date'      => \Carbon\Carbon::now(),
-                'vendor_id'    => $header->vendor_id,
-                'status'       => 1,
-                'payment_term' => $header->payment_term,
-                'currency'     => $header->currency,
-                'PO_NUMBER'    => $poNumber ?? 0,
-                'doc_type'     => $header->doc_type,
-                'total_price'  => $header->total_price
+            'quotation_id' => $header->id,
+            'notes'        => $header->notes,
+            'po_date'      => \Carbon\Carbon::now(),
+            'vendor_id'    => $header->vendor_id,
+            'status'       => Quotation::QuotationRepeat,
+            'payment_term' => $header->payment_term,
+            'currency'     => $header->currency,
+            'PO_NUMBER'    => $poNumber ?? 0,
+            'doc_type'     => $header->doc_type,
+            'total_price'  => $header->total_price
+        ]);
+
+        foreach ($detail as $rows) {
+            $sched = QuotationDelivery::where('quotation_detail_id', $rows->id)->first();
+
+            PurchaseOrdersDetail::create([
+                'purchase_order_id'         => $poId->id,
+                'description'               => $rows->description ?? '-',
+                'qty'                       => $rows->qty,
+                'unit'                      => $rows->unit,
+                'notes'                     => $rows->notes ?? '-',
+                'price'                     => $rows->price ?? 0,
+                'material_id'               => $rows->material,
+                'assets_no'                 => $rows->assets_no,
+                'material_group'            => $rows->material_group,
+                'preq_item'                 => $rows->PREQ_ITEM,
+                'purchasing_document'       => $rows->purchasing_document ?? 0,
+                'PR_NO'                     => $rows->PR_NO,
+                'assets_no'                 => $rows->assets_no,
+                'acp_id'                    => $rows->acp_id,
+                'short_text'                => $rows->short_text,
+                'text_id'                   => $rows->text_id,
+                'text_form'                 => $rows->text_form,
+                'text_line'                 => $rows->text_line,
+                'delivery_date_category'    => $rows->delivery_date_category,
+                'account_assignment'        => $rows->account_assignment,
+                'purchasing_group_code'     => $rows->purchasing_group_code,
+                'gl_acct_code'              => $rows->gl_acct_code,
+                'cost_center_code'          => $rows->cost_center_code,
+                'profit_center_code'        => $rows->profit_center_code,
+                'storage_location'          => $rows->storage_location,
+                'PO_ITEM'                   => $rows->PO_ITEM,
+                'request_no'                => $rows->request_no,
+                'original_price'            => $rows->orginal_price,
+                'currency'                  => $rows->currency,
+                'preq_name'                 => $rows->preq_name,
+                'delivery_date'             => $sched->DELIVERY_DATE,
+                'item_category'             => $rows->item_category,
+                'request_no'                => $rows->request_no,
+                'plant_code'                => $rows->plant_code,
+                'tax_code'                  => $rows->tax_code == 1 ? 'V1' : 'V0',
+                'package_no'                => $rows->package_no,
+                'subpackage_no'             => $rows->subpackage_no,
+                'line_no'                   => $rows->line_no,
+                'SCHED_LINE'                => $sched->SCHED_LINE,
+                'request_detail_id'         => $rows->request_detail_id
             ]);
-
-            foreach ($detail as $rows) {
-                $sched = QuotationDelivery::where('quotation_detail_id', $rows->id)->first();
-
-                PurchaseOrdersDetail::create([
-                    'purchase_order_id'         => $poId->id,
-                    'description'               => $rows->description ?? '-',
-                    'qty'                       => $rows->qty,
-                    'unit'                      => $rows->unit,
-                    'notes'                     => $rows->notes ?? '-',
-                    'price'                     => $rows->price ?? 0,
-                    'material_id'               => $rows->material,
-                    'assets_no'                 => $rows->assets_no,
-                    'material_group'            => $rows->material_group,
-                    'preq_item'                 => $rows->PREQ_ITEM,
-                    'purchasing_document'       => $rows->purchasing_document ?? 0,
-                    'PR_NO'                     => $rows->PR_NO,
-                    'assets_no'                 => $rows->assets_no,
-                    'acp_id'                    => $rows->acp_id,
-                    'short_text'                => $rows->short_text,
-                    'text_id'                   => $rows->text_id,
-                    'text_form'                 => $rows->text_form,
-                    'text_line'                 => $rows->text_line,
-                    'delivery_date_category'    => $rows->delivery_date_category,
-                    'account_assignment'        => $rows->account_assignment,
-                    'purchasing_group_code'     => $rows->purchasing_group_code,
-                    'gl_acct_code'              => $rows->gl_acct_code,
-                    'cost_center_code'          => $rows->cost_center_code,
-                    'profit_center_code'        => $rows->profit_center_code,
-                    'storage_location'          => $rows->storage_location,
-                    'PO_ITEM'                   => $rows->PO_ITEM,
-                    'request_no'                => $rows->request_no,
-                    'original_price'            => $rows->orginal_price,
-                    'currency'                  => $rows->currency,
-                    'preq_name'                 => $rows->preq_name,
-                    'delivery_date'             => $sched->DELIVERY_DATE,
-                    'item_category'             => $rows->item_category,
-                    'request_no'                => $rows->request_no,
-                    'plant_code'                => $rows->plant_code,
-                    'tax_code'                  => $rows->tax_code == 1 ? 'V1' : 'V0',
-                    'package_no'                => $rows->package_no,
-                    'subpackage_no'             => $rows->subpackage_no,
-                    'line_no'                   => $rows->line_no,
-                    'SCHED_LINE'                => $sched->SCHED_LINE,
-                    'request_detail_id'         => $rows->request_detail_id
-                ]);
-            }
+        }
     }
 
     private function _insert_details($details, $id)
