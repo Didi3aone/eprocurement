@@ -315,7 +315,6 @@
     <script src="{{ asset('plugins/toast-master/js/jquery.toast.js') }}"></script>
     <script src="{{ asset('js/global.js') }}"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
-
     <script>
         $('#save').on('click', function () {
             $("form").submit(function (e) {
@@ -361,98 +360,6 @@
             });
         @endif
 
-        var poRepeatChart =  <?php echo json_encode($poRepeatChart) ?>;
-        var poDirectChart =  <?php echo json_encode($poDirectChart) ?>;
-   
-        Highcharts.chart('container', {
-            title: {
-                text: 'PO Repeat Monthly'
-            },
-            subtitle: {
-                text: 'E-PROCUREMENT enesis'
-            },
-            xAxis: {
-                categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-            },
-            yAxis: {
-                title: {
-                    text: 'Number of New PO'
-                }
-            },
-            legend: {
-                layout: 'vertical',
-                align: 'right',
-                verticalAlign: 'middle'
-            },
-            plotOptions: {
-                series: {
-                    allowPointSelect: true
-                }
-            },
-            series: [{
-                name: 'Po Repeat',
-                data: poRepeatChart
-            }],
-            responsive: {
-                rules: [{
-                    condition: {
-                        maxWidth: 500
-                    },
-                    chartOptions: {
-                        legend: {
-                            layout: 'horizontal',
-                            align: 'center',
-                            verticalAlign: 'bottom'
-                        }
-                    }
-                }]
-            }
-        });
-
-        Highcharts.chart('containers', {
-            title: {
-                text: 'PO Direct Monthly'
-            },
-            subtitle: {
-                text: 'E-PROCUREMENT enesis'
-            },
-            xAxis: {
-                categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-            },
-            yAxis: {
-                title: {
-                    text: 'Number of New PO'
-                }
-            },
-            legend: {
-                layout: 'vertical',
-                align: 'right',
-                verticalAlign: 'middle'
-            },
-            plotOptions: {
-                series: {
-                    allowPointSelect: true
-                }
-            },
-            series: [{
-                name: 'Po Direct',
-                data: poDirectChart
-            }],
-            responsive: {
-                rules: [{
-                    condition: {
-                        maxWidth: 500
-                    },
-                    chartOptions: {
-                        legend: {
-                            layout: 'horizontal',
-                            align: 'center',
-                            verticalAlign: 'bottom'
-                        }
-                    }
-                }]
-            }
-        });
     </script>
     
     @yield('scripts')

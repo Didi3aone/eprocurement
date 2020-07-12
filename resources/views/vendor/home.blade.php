@@ -101,5 +101,98 @@
 @endsection
 @section('scripts')
 @parent
+<script>
+    var poRepeatChart =  <?php echo json_encode($poDirect) ?>;
+    var poDirectChart =  <?php echo json_encode($poDirectChart ?? '') ?>;
 
+    Highcharts.chart('container', {
+        title: {
+            text: 'PO Repeat Monthly'
+        },
+        subtitle: {
+            text: 'E-PROCUREMENT enesis'
+        },
+        xAxis: {
+            categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+        },
+        yAxis: {
+            title: {
+                text: 'Number of New PO'
+            }
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle'
+        },
+        plotOptions: {
+            series: {
+                allowPointSelect: true
+            }
+        },
+        series: [{
+            name: 'Po Repeat',
+            data: poRepeatChart
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 500
+                },
+                chartOptions: {
+                    legend: {
+                        layout: 'horizontal',
+                        align: 'center',
+                        verticalAlign: 'bottom'
+                    }
+                }
+            }]
+        }
+    });
+
+    Highcharts.chart('containers', {
+        title: {
+            text: 'PO Direct Monthly'
+        },
+        subtitle: {
+            text: 'E-PROCUREMENT enesis'
+        },
+        xAxis: {
+            categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+        },
+        yAxis: {
+            title: {
+                text: 'Number of New PO'
+            }
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle'
+        },
+        plotOptions: {
+            series: {
+                allowPointSelect: true
+            }
+        },
+        series: [{
+            name: 'Po Direct',
+            data: poDirectChart
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 500
+                },
+                chartOptions: {
+                    legend: {
+                        layout: 'horizontal',
+                        align: 'center',
+                        verticalAlign: 'bottom'
+                    }
+                }
+            }]
+        }
+    });
+</script>
 @endsection
