@@ -24,6 +24,16 @@ class AddFlagIsGrInPodetail extends Migration
             $table->date('approved_date_ass')->nullable();
             $table->date('approved_date_head')->nullable();
         });
+
+        Schema::table('purchase_orders', function (Blueprint $table) {
+            $table->string('approved_asspro')->nullable();
+            $table->string('approved_head')->nullable();
+        });
+
+        Schema::table('vendors', function (Blueprint $table) {
+            $table->string('swift_code')->nullable();
+            $table->integer('is_export')->default(0);
+        });
     }
 
     /**
