@@ -19,15 +19,9 @@
 			<h3 style="font-size: 14px; margin: 0;">Dear {{ $name }}
 			</h3>
 
-            @if($pr->status ==  \App\Models\PurchaseRequest::Rejected)
-			<p style="font-size: 13px;">
-                Berikut ini adalah informasi purchase requesition telah ditolak
-			</p>
-            @else 
             <p style="font-size: 13px;">
                 Berikut ini adalah informasi purchase requesition telah disetujui
 			</p>
-            @endif
 			<p style="font-size: 13px;">
                 Pembuat : {{ \getProfileLocal($pr->created_by)->name }} <br>
                 No Dok  : {{  $pr->request_no }} <br>
@@ -61,8 +55,8 @@
 					</tr>
 					</thead>
 					<tbody>
-					@foreach($pr->purchaseDetail as $key => $value)
-					<tr>
+					{{-- @foreach($pr->purchaseDetail as $key => $value) --}}
+					{{-- <tr>
 						<td style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
                             <div>
 								{{ $key + 1 }} 	
@@ -83,23 +77,15 @@
 								{{ $value->unit }} 	
 							</div>
 						</td>
-					</tr>
-					@endforeach
+					</tr> --}}
+					{{-- @endforeach --}}
 					</tbody>
 				</table>
 			</div>
             <p style="font-size: 13px;">
-                Untuk info detail <a href='https://employee.enesis.com'>link</a>
+                {{-- Untuk info detail <a href='https://employee.enesis.com'>link</a> --}}
             </p>
 		</td>
-	</tr>
-	<tr>
-		<!-- <td style="width: 55%;padding: 10px; line-height: 1.5; font-size: 12px; border-top: 1px solid #ddd; border-right: 1px dashed #ddd;">
-		<b>
-			<img src="https://www.tiketux.com/images/email/v2/phone.png" alt="email" style="position: relative; top: 3px; margin-left: 5px;"> 0812-3456-789
-			<img src="https://www.tiketux.com/images/email/v2/mail.png" alt="phone" style="position: relative; top: 3px; margin-left: 5px;"> info@email.com
-		</b>
-		</td> -->
 	</tr>
 	<tr>
 		<td colspan="2" style="padding: 10px; line-height: 1.5; font-size: 12px; background:#196A39; text-align: center; color:#fff;">
