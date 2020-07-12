@@ -34,6 +34,10 @@ class AddFlagIsGrInPodetail extends Migration
             $table->string('swift_code')->nullable();
             $table->integer('is_export')->default(0);
         });
+
+        Schema::table('master_acp_materials', function (Blueprint $table) {
+            $table->decimal('price',16,2);
+        });
     }
 
     /**

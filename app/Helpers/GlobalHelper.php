@@ -3,6 +3,10 @@
     use App\Models\employeeApps\User as u;
     use App\Models\employeeApps\ConfigurationApp;
     use App\Models\Vendor\QuotationApproval;
+    use App\Mail\enesisApprovalAcpMail;
+    use App\Models\AcpTable;
+    use App\Models\AcpTableDetail;
+    use App\Models\AcpTableMaterials;
 
     function configEmailNotification()
     {
@@ -127,9 +131,13 @@
         }
         return true;
     }
-
+    
+    //metode approval barbar
+    // biar cpet kelar dibayar 
+    // puyeng aink
     function saveApprovals($assProc, $quotation_id, $tingkat,$type, $isPlant, $isCmo = false)
     {
+        $acp   = AcpTable::find($quotation_id);
 
         if( $tingkat == 'STAFF' ) {
             if( $isPlant ) {
@@ -142,6 +150,9 @@
                     'acp_type'              => $type,
                     'acp_id'                => $quotation_id
                 ]);
+                $email = "diditriawan13@gmail.com";
+                $name  = "didi";
+                \Mail::to($email)->send(new enesisApprovalAcpMail($acp, $name));
 
                 QuotationApproval::create([
                     'nik'                   => $assProc,
@@ -172,6 +183,10 @@
                     'acp_type'              => $type,
                     'acp_id'                => $quotation_id
                 ]);
+
+                $email = "diditriawan13@gmail.com";
+                $name  = "didi";
+                \Mail::to($email)->send(new enesisApprovalAcpMail($acp, $name));
     
                 QuotationApproval::create([
                     'nik'                   => 'PROCUREMENT01',
@@ -195,6 +210,9 @@
                     'acp_type'              => $type,
                     'acp_id'                => $quotation_id
                 ]);
+                $email = "diditriawan13@gmail.com";
+                $name  = "didi";
+                \Mail::to($email)->send(new enesisApprovalAcpMail($acp, $name));
 
                 QuotationApproval::create([
                     'nik'                   => $assProc,
@@ -250,7 +268,11 @@
                     'acp_type'              => $type,
                     'acp_id'                => $quotation_id
                 ]);
-    
+                    
+                $email = "diditriawan13@gmail.com";
+                $name  = "didi";
+                \Mail::to($email)->send(new enesisApprovalAcpMail($acp, $name));
+
                 QuotationApproval::create([
                     'nik'                   => 'PROCUREMENT01',
                     'approval_position'     => 2,
@@ -297,6 +319,10 @@
                     'acp_type'              => $type,
                     'acp_id'                => $quotation_id
                 ]);
+
+                $email = "diditriawan13@gmail.com";
+                $name  = "didi";
+                \Mail::to($email)->send(new enesisApprovalAcpMail($acp, $name));
 
                 QuotationApproval::create([
                     'nik'                   => $assProc,
@@ -360,6 +386,10 @@
                     'acp_type'              => $type,
                     'acp_id'                => $quotation_id
                 ]);
+
+                $email = "diditriawan13@gmail.com";
+                $name  = "didi";
+                \Mail::to($email)->send(new enesisApprovalAcpMail($acp, $name));
     
                 QuotationApproval::create([
                     'nik'                   => 'PROCUREMENT01',

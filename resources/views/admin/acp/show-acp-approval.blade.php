@@ -94,7 +94,7 @@
                                         <td>{{ $row->uom_code }}</td>
                                         <td>{{ $row->qty }}</td>
                                         <td>{{ $row->currency }}</td>
-                                        <td>{{ number_format($row->price,2) }}</td>
+                                        <td>{{ $row->price }}</td>
                                 </tr>
                                 @endforeach
                             @endforeach

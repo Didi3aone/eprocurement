@@ -103,8 +103,16 @@ class MasterAcpController extends Controller
     public function store(Request $request)
     {
         \DB::beginTransaction();
-        $max = AcpTable::select(\DB::raw('count(id) as id'))->first()->id;
-        $acp_no = 'ACP/'.date('m').'/'.date('Y').'/'.sprintf('%07d', ++$max);
+        $max = AcpTable::select('acp_no')
+                ->orderBy('id', 'desc')
+                ->limit(1)
+                ->first();
+        if (empty($max)) {
+            $max = 10000000;
+        } else {
+            $max = $max->acp_no;
+        }
+        
         try {
             $file_upload = '';
             if ($request->upload_file) {
@@ -112,7 +120,7 @@ class MasterAcpController extends Controller
             }
 
             $acp = new AcpTable();
-            $acp->acp_no            = $acp_no;
+            $acp->acp_no            = (int) $max + 1;
             $acp->is_project        = $request->get('is_project') ?? 0;
             $acp->is_from_pr        = $request->get('is_from_pr') ?? 0;
             $acp->start_date        = $request->get('start_date');
@@ -172,13 +180,13 @@ class MasterAcpController extends Controller
                         $file->move($path, $filename);
                     }
 
-                    $temp['purchasing_document'] = $rfq->purchasing_document ?? 0;
-                    $temp['vendor'] = $value;
-                    $temp['material'] = $row;
-                    $temp['price'] = $request['price_'.$value][$i];
-                    $temp['qty'] = $request['qty_'.$value][$i];
-                    $temp['currency'] = $request['currency_'.$value][$i];
-                    $temp['file_attachment'] = $filename;
+                    $temp['purchasing_document']    = $rfq->purchasing_document ?? 0;
+                    $temp['vendor']                 = $value;
+                    $temp['material']               = $row;
+                    $temp['price']                  = $request['price_'.$value][$i];
+                    $temp['qty']                    = $request['qty_'.$value][$i];
+                    $temp['currency']               = $request['currency_'.$value][$i];
+                    $temp['file_attachment']        = $filename;
                     $result[] = $temp;
                 }
             }
@@ -188,13 +196,13 @@ class MasterAcpController extends Controller
             $assProc = '';
             foreach ($result as $key => $val) {
                 $material = new AcpTableMaterial();
-                $material->master_acp_id = $acp->id;
+                $material->master_acp_id        = $acp->id;
                 $material->master_acp_vendor_id = $val['vendor'];
-                $material->material_id = $val['material'];
-                $material->price = $val['price'];
-                $material->qty = $val['qty'];
-                $material->currency = $val['currency'] ?? 'IDR';
-                $material->file_attachment = $val['file_attachment'];
+                $material->material_id          = $val['material'];
+                $material->price                = str_replace(',','.',$val['price']);
+                $material->qty                  = $val['qty'];
+                $material->currency             = $val['currency'] ?? 'IDR';
+                $material->file_attachment      = $val['file_attachment'];
                 $material->save();
 
                 //get material cmo
@@ -232,8 +240,8 @@ class MasterAcpController extends Controller
                     // insert to rfq detail
                     $rfqDetail = new MasterRfqDetail();
                     $rfqDetail->purchasing_document = $val['purchasing_document'];
-                    $rfqDetail->material = $val['material'];
-                    $rfqDetail->net_order_price = $val['price'];
+                    $rfqDetail->material            = $val['material'];
+                    $rfqDetail->net_order_price     = str_replace(',','.',$val['price']);
                     $rfqDetail->save();
                 }
             }

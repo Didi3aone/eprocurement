@@ -87,6 +87,10 @@
                         <label>Upload File</label>
                         <input type="file" class="form-control form-control-line {{ $errors->has('upload_file') ? 'is-invalid' : '' }}" multiple name="upload_file[]" value=""> 
                     </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea type="text" class="form-control form-control-line" name="description"></textarea>
+                    </div>
                     <hr style="margin: 30px 0">
                     <div class="form-group">
                         <label for="">{{ trans('cruds.master-acp.invite_vendor') }}</label>
@@ -113,10 +117,6 @@
                                 <button id="btn-search-vendor" class="btn btn-info"><i class="fa fa-check"></i> Add Vendor</button>
                             </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea type="text" class="form-control form-control-line" name="description"></textarea>
                     </div>
                     <div class="form-group">
                         <div class="table-responsive">
@@ -158,20 +158,6 @@
         $form.submit();
         $form.removeAttr('target')
         $form.attr('action', link)
-        // $.ajax({
-        //     type: "POST",
-        //     url: "{{ route('admin.master-acp-confirmation') }}",
-        //     headers: {
-        //         'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
-        //     },
-        //     data: {
-        //         _token: "{{ csrf_token() }}",
-        //         data : $("form").serialize()
-        //     },
-        //     success: function (data) {
-            
-        //     }
-        // });
     })
 
     $('#saves').click(function() {
