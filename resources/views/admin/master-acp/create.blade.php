@@ -87,10 +87,6 @@
                         <label>Upload File</label>
                         <input type="file" class="form-control form-control-line {{ $errors->has('upload_file') ? 'is-invalid' : '' }}" multiple name="upload_file[]" value=""> 
                     </div>
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea type="text" class="form-control form-control-line" name="description"></textarea>
-                    </div>
                     <hr style="margin: 30px 0">
                     <div class="form-group">
                         <label for="">{{ trans('cruds.master-acp.invite_vendor') }}</label>
@@ -132,6 +128,10 @@
                                 <tbody id="vendors"></tbody>
                             </table>
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Reason</label>
+                        <textarea type="text" class="form-control form-control-line" name="description"></textarea>
                     </div>
                     <div class="form-actions">
                         {{-- <button type="submit" class="d-none">Submit</button> --}}
