@@ -265,6 +265,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('master-acp-confirmation', 'MasterAcpController@confirmation')->name('master-acp-confirmation');
     Route::get('master-acp-currency', 'MasterAcpController@getCurrency')->name('master-acp-currency');
     Route::get('master-acp-show/{acp_id}', 'MasterAcpController@showApproval')->name('master-acp-show');
+    Route::get('acp-net-price', 'MasterAcpController@getNetPrice')->name('acp-net-price');
     Route::resource('master-acp', 'MasterAcpController');
 
     // SOAP

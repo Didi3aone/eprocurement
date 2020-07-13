@@ -2443,8 +2443,8 @@ class SapHelper {
                 'SPLIT_KEY' => '00001',//klo tipe pa 0,1
                 'WI_TAX_TYPE' => $taxType->withholding_tax_type,//dari master pph
                 'WI_TAX_CODE' => $taxType->withholding_tax_code,//dari master pph
-                'WI_TAX_BASE' => $billing->dpp,//
-                'WI_TAX_AMT' => '',
+                'WI_TAX_BASE' => $billing->base_pph,//
+                'WI_TAX_AMT' => $billing->nominal_pph,
                 'WI_TAX_WITHHELD_AMT' => ''
             ];
         }

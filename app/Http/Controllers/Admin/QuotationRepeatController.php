@@ -572,7 +572,7 @@ class QuotationRepeatController extends Controller
 
         $quotation = Quotation::find($id);
         $quotation->total_price     = $totalPrice;
-        $quotation->approved_asspro = $assProc;
+        $quotation->approved_asspro = $assProc->user_id;
         $quotation->save();
     }
 

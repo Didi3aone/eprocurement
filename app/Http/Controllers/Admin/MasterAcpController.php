@@ -350,8 +350,9 @@ class MasterAcpController extends Controller
     public function getNetPrice(Request $request)
     {
         // $getRfq = \App\Models\AcpTableDetail::where('vendor_code',)
-        $data = MasterRfqDetail::where('purchasing_document', $request->purchasing_document)
-                ->where('material', $request->material)
+        $data = AcpTableMaterial::where('master_acp_id', $request->master_acp_id)
+                ->where('master_acp_vendor_id',$request->vendor_id)
+                ->where('material_id', $request->material)
                 ->first();
 
         return response()->json($data, 200);
