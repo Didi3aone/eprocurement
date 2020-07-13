@@ -30,12 +30,16 @@
                         <tbody>
                             @foreach($po as $key => $q)
                                 <tr>
-                                    <td>-</td>
-                                    <td>-</td>
-                                    <td>-</td>
-                                    <td>-</td>
-                                    <td>-</td>
-                                    <td>-</td>
+                                    <td>{{ $q->id }}</td>
+                                    <td>{{ $q->PO_NUMBER }}</td>
+                                    <td>{{ $q->vendor }}</td>
+                                    <td>{{ $q->created_at }}</td>
+                                    <td>{{ $q->notes }}</td>
+                                    <td>
+                                        <a href="{{ route('admin.purchase-order-show-ass', $q->id) }}" class="btn btn-xs btn-primary">
+                                            Show
+                                        </a>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

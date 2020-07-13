@@ -65,7 +65,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="">Payment Term</label>
-                                <select name="payment_term" id="payment_term" class="form-control select2" required>
+                                <select name="payment_term" id="payment_term" class="form-control select2" disabled>
                                     <option>-- Select --</option>
                                     @foreach ($top as $val)
                                     <option value="{{ $val->payment_terms }}" @if($val->payment_terms == $purchaseOrder->payment_term) selected @endif>

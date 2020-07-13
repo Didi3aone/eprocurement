@@ -36,6 +36,7 @@ class PurchaseOrderController extends Controller
         $po = PurchaseOrdersDetail::join('purchase_orders','purchase_orders.id','=','purchase_orders_details.purchase_order_id')
                 ->leftJoin('master_acps','master_acps.id','=','purchase_orders_details.acp_id')
                 ->leftJoin('vendors','vendors.code','=','purchase_orders.vendor_id')
+                ->where('purchase_orders.status_approval',PurchaseOrder::Approved)
                 ->select(
                     'purchase_orders_details.purchasing_document',
                     'purchase_orders_details.PO_ITEM',
@@ -71,22 +72,20 @@ class PurchaseOrderController extends Controller
     public function approvalPoChange()
     {
         abort_if(Gate::denies('purchase_order_approval_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-        $userMapping = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first();
-
-        $userMapping = explode(',', $userMapping->purchasing_group_code);
-
-        $po = PurchaseOrdersDetail::join('purchase_orders','purchase_orders.id','=','purchase_orders_details.purchase_order_id')
-                ->leftJoin('vendors','vendors.code','=','purchase_orders.vendor_id')
-                ->whereIn('purchase_orders_details.purchasing_group_code', $userMapping)
-                ->where('status_approval', PurchaseOrder::Rejected)
+        
+        $po = PurchaseOrder::leftJoin('vendors','vendors.code','=','purchase_orders.vendor_id')
+                ->where('purchase_orders.approved_asspro', \Auth::user()->nik)
+                ->where('status_approval', PurchaseOrder::Change)
                 ->where('is_approve_head', PurchaseOrder::ApproveAss)
                 ->select(
-                    'purchase_orders_details.purchasing_group_code',
                     'purchase_orders.po_date',
                     'purchase_orders.id',
-                    'vendors.name as vendor'
+                    'purchase_orders.created_at',
+                    'purchase_orders.PO_NUMBER',
+                    'purchase_orders.notes',
+                    'vendors.name as vendor',
                 )
-                ->orderBy('purchase_orders_details.created_at', 'desc')->get();
+                ->orderBy('purchase_orders.created_at', 'desc')->get();
 
         return view('admin.purchase-order.approval-po-change', compact('po'));
     }
@@ -99,21 +98,20 @@ class PurchaseOrderController extends Controller
     public function approvalPoChangeHead()
     {
         abort_if(Gate::denies('purchase_order_approval_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-        $userMapping = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first();
 
-        $userMapping = explode(',', $userMapping->purchasing_group_code);
-
-        $po = PurchaseOrdersDetail::join('purchase_orders','purchase_orders.id','=','purchase_orders_details.purchase_order_id')
-                ->leftJoin('vendors','vendors.code','=','purchase_orders.vendor_id')
-                ->whereIn('purchase_orders_details.purchasing_group_code', $userMapping)
-                ->where('is_approve_head', PurchaseOrder::ApproveHead)
-                ->select(
-                    'purchase_orders_details.purchasing_group_code',
-                    'purchase_orders.po_date',
-                    'purchase_orders.id',
-                    'vendors.name as vendor'
-                )
-                ->orderBy('purchase_orders_details.created_at', 'desc')->get();
+        $po = PurchaseOrder::leftJoin('vendors','vendors.code','=','purchase_orders.vendor_id')
+            // ->where('purchase_orders.approved_asspro', \Auth::user()->nik)
+            ->where('status_approval', PurchaseOrder::Change)
+            ->where('is_approve_head', PurchaseOrder::ApproveHead)
+            ->select(
+                'purchase_orders.po_date',
+                'purchase_orders.id',
+                'purchase_orders.created_at',
+                'purchase_orders.PO_NUMBER',
+                'purchase_orders.notes',
+                'vendors.name as vendor',
+            )
+            ->orderBy('purchase_orders.created_at', 'desc')->get();
 
         return view('admin.purchase-order.approval-po-change-head', compact('po'));
     }
@@ -291,6 +289,20 @@ class PurchaseOrderController extends Controller
         return view('admin.purchase-order.show',compact('purchaseOrder'));   
     }
 
+    public function showApprovalAss($id)
+    {
+        $purchaseOrder = PurchaseOrder::find($id);
+
+        return view('admin.purchase-order.show-change-ass',compact('purchaseOrder'));   
+    }
+
+    public function showApprovalHead($id)
+    {
+        $purchaseOrder = PurchaseOrder::find($id);
+
+        return view('admin.purchase-order.show-change-head',compact('purchaseOrder'));   
+    }
+    
     /**
      * Show the form for editing the specified resource.
      *
@@ -327,7 +339,7 @@ class PurchaseOrderController extends Controller
         $poChangeHeader->vendor_change          = $request->get('payment_term') ?? '';
         $poChangeHeader->notes_old              = $purchaseOrder->notes;
         $poChangeHeader->notes_change           = $request->get('notes');
-        $poChangeHeader->peyment_term_old       = $purchaseOrder->payment_term;
+        // $poChangeHeader->peyment_term_old       = $purchaseOrder->payment_term;
         $poChangeHeader->save();
         
         $service        = '';
@@ -352,14 +364,7 @@ class PurchaseOrderController extends Controller
                 $prDetail->save();
 
             }
-            $poDetail->qty                  = $request->qty[$key];
-            $poDetail->price                = $request->price[$key];
-            $poDetail->currency             = $request->currency[$key];
-            $poDetail->delivery_date        = $request->delivery_date[$key];
-            $poDetail->delivery_complete    = $request->delivery_complete[$key];
-            $poDetail->tax_code             = $request->tax_code[$key] == 1 ? 'V1' : 'V0';
-            
-            $poChangeDetail = new PurchaseOrderChangeHistory;
+            $poChangeDetail = new PurchaseOrderChangeHistoryDetail;
             $poChangeDetail->qty_old        = $poDetail->qty;
             $poChangeDetail->qty_change     = $request->qty[$key];
             $poChangeDetail->po_detail_id   = $poDetail->id;
@@ -367,6 +372,14 @@ class PurchaseOrderController extends Controller
             $poChangeDetail->price_old      = $poDetail->price;
             $poChangeDetail->price_change   = $request->price[$key];
             $poChangeDetail->save();
+
+            $poDetail->qty                  = $request->qty[$key];
+            $poDetail->price                = $request->price[$key];
+            $poDetail->currency             = $request->currency[$key];
+            $poDetail->delivery_date        = $request->delivery_date[$key];
+            $poDetail->delivery_complete    = $request->delivery_complete[$key];
+            $poDetail->tax_code             = $request->tax_code[$key] == 1 ? 'V1' : 'V0';
+            
 
             $poDetail->update();
             // } else {
@@ -439,6 +452,8 @@ class PurchaseOrderController extends Controller
 
         if( $purchaseOrder->total_price != $totalPrice ) {
             $purchaseOrder->status_approval = PurchaseOrder::Rejected;
+            $purchaseOrder->approved_asspro = \App\Models\Vendor\Quotation::getQuotationById($purchaseOrder->quotation_id)->approved_asspro;
+            $purchaseOrder->approved_head   = 'PROCUREMENT01';
             $purchaseOrder->save();
             return redirect()->route('admin.purchase-order.index')->with('status', 'Purchase order has been updated & waiting approval');
         } else {
@@ -453,6 +468,63 @@ class PurchaseOrderController extends Controller
             }
         }
         
+    }
+
+     /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function approvalChangeAss(Request $request)
+    {
+        $purchaseOrder = PurchaseOrder::findOrFail($request->id);
+
+        if( $request->is_approve == 1 ) {
+            $purchaseOrder->is_approve_head = PurchaseOrder::ApproveHead;
+            $purchaseOrder->save();
+
+            \Session::flash('status','Po change Has been approved');
+
+            return \redirect()->route('admin.purchase-order-change-ass');
+        } else {
+            $purchaseOrder->is_approve_head = PurchaseOrder::ApproveAss;
+            $purchaseOrder->reject_reason   = $request->reason;
+            $purchaseOrder->status_approval = PurchaseOrder::Rejected;
+            $purchaseOrder->save();
+            \Session::flash('status','Po change Has been rejected');
+        }
+    }
+
+     /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function approvalChangeHead(Request $request)
+    {
+        $purchaseOrder = PurchaseOrder::findOrFail($request->id);
+
+        if( $request->is_approve == 1 ) {
+            $purchaseOrder->is_approve_head = PurchaseOrder::ApproveHead;
+            $purchaseOrder->status_approval = PurchaseOrder::Approved;
+            $purchaseOrder->save();
+
+            $poChange = \sapHelp::sendPOchangeToSap($purchaseOrder->PO_NUMBER);
+            
+            \Session::flash('status','Po change Has been approved');
+
+            return \redirect()->route('admin.purchase-order-change-head');
+        } else {
+            $purchaseOrder->is_approve_head = PurchaseOrder::ApproveHead;
+            $purchaseOrder->reject_reason   = $request->reason;
+            $purchaseOrder->status_approval = PurchaseOrder::Rejected;
+            $purchaseOrder->save();
+            \Session::flash('status','Po change Has been rejected');
+        }
     }
 
     /**

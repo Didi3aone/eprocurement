@@ -68,4 +68,9 @@ class PurchaseOrdersDetail extends Model
     {
         return $this->hasOne(\App\Models\AcpTable::class, 'acp_id');
     }
+
+    public function getChangeDetail()
+    {
+        return $this->hasOne(\App\Models\PurchaseOrderChangeHistoryDetail::class, 'po_detail_id','id');
+    }
 }

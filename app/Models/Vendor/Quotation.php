@@ -71,6 +71,11 @@ class Quotation extends Model
         });
     }
 
+    public static function getQuotationById($id)
+    {
+        return Quotation::where('id',$id)->first();
+    }
+
     public function detail ()
     {
         return $this->hasMany(QuotationDetail::class, 'quotation_order_id', 'id');

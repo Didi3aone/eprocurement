@@ -28,6 +28,7 @@ class AddFlagIsGrInPodetail extends Migration
         Schema::table('purchase_orders', function (Blueprint $table) {
             $table->string('approved_asspro')->nullable();
             $table->string('approved_head')->nullable();
+            $table->string('reject_reason')->nullable();
         });
 
         Schema::table('vendors', function (Blueprint $table) {

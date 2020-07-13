@@ -24,16 +24,21 @@ class PurchaseOrder extends Model
         'updated_by',
         'created_at',
         'updated_at',
-        'total_price'
+        'total_price',
+        'approved_asspro',
+        'approved_head',
+        'status_approval',
+        'reject_reason'
     ];
 
     public const POrepeat  = 0;
     public const POdirect  = 2;
     public const PObidding = 1;
     public const Approved  = 1;
-    public const Rejected  = 0;
-    public const ApproveAss = 0;
-    public const ApproveHead = 1;
+    public const Rejected  = 3;
+    public const Change   = 0;
+    public const ApproveAss = 1;
+    public const ApproveHead = 2;
 
     public static function boot()
     {
@@ -41,7 +46,7 @@ class PurchaseOrder extends Model
         static::creating(function ($model) {
             try {
                 $user              = \Auth::user();
-                $model->created_by = $user->nik;
+                // $model->created_by = $user->nik;
                 $model->updated_by = $user->nik;
             } catch (UnsatisfiedDependencyException $e) {
                 abort(500, $e->getMessage());
@@ -51,7 +56,6 @@ class PurchaseOrder extends Model
         static::updating(function ($model) {
             try {
                 $user              = \Auth::user();
-                $model->created_by = $user->nik;
                 $model->updated_by = $user->nik;
             } catch (UnsatisfiedDependencyException $e) {
                 abort(500, $e->getMessage());

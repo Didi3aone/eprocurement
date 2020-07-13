@@ -431,7 +431,9 @@ class QuotationDirectController extends Controller
             'currency'     => $header->currency,
             'PO_NUMBER'    => $poNumber ?? 0,
             'doc_type'     => $header->doc_type,
-            'total_price'  => $header->total_price
+            'total_price'  => $header->total_price,
+            'created_by'   => $header->created_by,
+            'updated_by'   => $header->updated_by,
         ]);
 
         foreach ($detail as $rows) {
