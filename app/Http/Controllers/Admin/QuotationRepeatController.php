@@ -566,8 +566,8 @@ class QuotationRepeatController extends Controller
                 'QUANTITY'              => $detail['qty']
             ]);
 
-            $i++;
             $assProc = \App\Models\UserMap::getAssProc($detail['purchasing_group_code']);
+            $i++;
         }
 
         $quotation = Quotation::find($id);

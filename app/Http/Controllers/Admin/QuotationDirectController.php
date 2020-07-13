@@ -492,7 +492,7 @@ class QuotationDirectController extends Controller
             $totalPrice += $detail['price'];
             $schedLine  = sprintf('%05d', (1+$i));
             $indexes    = $i+1;
-            $poItem     = ('000'.(10+($i*10)));//sprintf('%05d', (10*$indexes));;
+            $poItem     =  ('000'.(10+($i*10)));
             
             $service        = '';
             $packageParent  = '000000000';
@@ -554,6 +554,8 @@ class QuotationDirectController extends Controller
             ]);
 
             $assProc = \App\Models\UserMap::getAssProc($detail['purchasing_group_code']);
+
+            $i++;
         }
 
         $quotation = Quotation::find($id);
