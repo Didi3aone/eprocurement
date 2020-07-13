@@ -90,4 +90,14 @@ class Quotation extends Model
     {
         return $this->hasOne(\App\Models\PaymentTerm::class,'payment_terms','payment_term');
     }
+
+    public function getUserAss()
+    {
+        return $this->hasOne(\App\Models\User::class,'approved_asspro','nik');
+    }
+
+    public function getUserHead()
+    {
+        return $this->hasOne(\App\Models\User::class,'approved_head','nik');
+    }
 }

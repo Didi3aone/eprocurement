@@ -109,7 +109,7 @@
                     <tbody>
                         <tr>
                             <td>1</td>
-                            <td>{{ $quotation->approved_asspro }}</td>
+                            <td>{{ $quotation->getUserAss['name'] }}</td>
                             <td>
                                 @php
                                     if( $quotation->status_approval == \App\Models\Vendor\Quotation::Waiting ) {
@@ -125,7 +125,7 @@
                         </tr>
                         <tr>
                             <td>2</td>
-                            <td>PROCUREMENT01</td>
+                            <td>{{ $quotation->getUserHead['name'] }}</td>
                             <td>
                                 @php
                                     if( $quotation->status_approval == \App\Models\Vendor\Quotation::Waiting ) {

@@ -233,7 +233,11 @@ class MasterAcpController extends Controller
                         }
                 }
                 $assProc = \App\Models\UserMap::getAssProc($cMo->purchasing_group_code)->user_id;
-
+                // if( $assProc == null ) {
+                //     \Session::flash('error','For this '.$cMo->purchasing_group_code.' no approval was found ');
+                //     \DB::rollBack();
+                //     return redirect()->route('admin.master-acp.index');
+                // }
                 if (1 == $val['winner']) {
                     $price += $val['price'];
                     $isAcp = true;
