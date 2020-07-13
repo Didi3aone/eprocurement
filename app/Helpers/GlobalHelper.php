@@ -308,7 +308,6 @@
                 ]);
             }
         } else if ($tingkat == 'COO') {
-            
             if( $isPlant ) {
                 QuotationApproval::create([
                     'nik'                   => 190256,
