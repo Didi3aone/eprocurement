@@ -194,14 +194,14 @@
                             <label>{{ trans('cruds.billing.fields.perihal_claim') }}</label>
                             <input type="text" class="form-control form-control-line " name="perihal_claim" value="{{ $billing->perihal_claim ?? old('perihal_claim', '') }}"> 
                         </div>
-                        <div class="form-group col-lg-6">
+                        {{-- <div class="form-group col-lg-6">
                             <label>Ref Key 3</label>
                             <input type="text" class="form-control form-control-line " name="ref_key_3" maxlength="16" value=""> 
                         </div>
                         <div class="form-group col-lg-6">
                             <label>Ref Key 1</label>
                             <input type="text" class="form-control form-control-line " name="ref_key_1" maxlength="16" value=""> 
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>
