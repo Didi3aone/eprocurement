@@ -14,6 +14,7 @@ use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\MasterBankHouse;
+use App\Models\PurchaseOrderGr;
 use App\Http\Requests\UpdateBillingRequest;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -148,8 +149,19 @@ class BillingController extends Controller
         $billing                    = Billing::find($request->id);
         $billing->status            = Billing::Rejected;
         $billing->reason_rejected   = $request->reason;
+
         $billing->update();
 
+        foreach( $billing->detail as $key => $rows ) {
+            $poGr = PurchaseOrderGr::where('po_no', $rows->po_no)
+                ->where('po_item', $rows->PO_ITEM)
+                ->where('material_no', $rows->material_id)
+                ->first();
+
+            $poGr->qty += $rows->qty;
+
+            $poGr->save();
+        }
         \Session::flash('status','Billing has been rejected');
         return \redirect()->route('admin.billing');
     }
