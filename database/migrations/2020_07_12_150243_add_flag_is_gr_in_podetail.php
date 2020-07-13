@@ -33,6 +33,7 @@ class AddFlagIsGrInPodetail extends Migration
         Schema::table('vendors', function (Blueprint $table) {
             $table->string('swift_code')->nullable();
             $table->integer('is_export')->default(0);
+            $table->integer('is_approve_proc')->default(0);
         });
 
         Schema::table('master_acp_materials', function (Blueprint $table) {

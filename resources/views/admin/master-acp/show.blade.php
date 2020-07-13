@@ -122,7 +122,7 @@
                     <tbody>
                         @foreach($approval as $key => $value)
                             <tr>
-                                <td>{{ $value->nik }}</td>
+                                <td>{{ $value->getUser['name'] }}</td>
                                 <td>{{ $value->status == 0 ? 'Waiting For Approval' : 'Approved' }}</td>
                                 <td>{{ $value->approve_date ?? '-' }}</td>
                             </tr>

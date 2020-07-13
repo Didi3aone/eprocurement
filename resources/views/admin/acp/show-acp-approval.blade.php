@@ -55,7 +55,8 @@
                                     </tr>
                                     <tr>
                                         <th>Description</th>
-                                        <td>{{ $acp->description }}</td>
+                                        <td>{{ $acp->description }}</td> 
+                                        {{-- komen --}}
                                     </tr>
                                 </div>
                                 </tbody>

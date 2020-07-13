@@ -12,6 +12,9 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
+            <div class="card-header">
+                <a href="{{ route('admin.quotation-direct.index') }}" class="btn btn-primary btn-xs">Back To List</a>
+            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-lg-12">

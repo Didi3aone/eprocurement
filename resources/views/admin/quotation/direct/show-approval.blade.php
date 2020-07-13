@@ -12,6 +12,9 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
+            <div class="card-header">
+                <a href="{{ route('admin.quotation-direct.index') }}" class="btn btn-primary btn-xs">Back To List</a>
+            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-lg-12">
@@ -32,6 +35,26 @@
                                 <tr>
                                     <th>Payment Terms</th>
                                     <td>{{ $quotation->getTerm['own_explanation'] }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Attachment</th>
+                                    @if(isset($quotation->upload_file))
+                                        <td>
+                                            @php
+                                                $files = @unserialize($quotation->upload_file);
+                                            @endphp
+                                            @if( is_array($files))
+                                                @foreach( unserialize((string)$quotation->upload_file) as $fileUpload)
+                                                    <a href="{{ asset('/files/uploads/'.$fileUpload) ??''}}" target="_blank" download>
+                                                        {{ $fileUpload ??'' }}
+                                                    </a>
+                                                    <br>
+                                                @endforeach
+                                            @else 
+                                                {{-- No file found --}}
+                                            @endif
+                                        </td>
+                                    @endif
                                 </tr>
                             </tbody>
                         </table>

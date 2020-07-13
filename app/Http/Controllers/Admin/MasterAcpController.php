@@ -172,7 +172,7 @@ class MasterAcpController extends Controller
 
                     $filename = '';
                     if ($request['file_attachment_'.$value[$i]]) {
-                        dd('iya');
+                        //dd('iya');
                         $path = public_path().'files/uploads/';
                         $file = $request['file_attachment_'.$value[$i]];
                         $filename = 'acp_'.strtolower($file->getClientOriginalName());
