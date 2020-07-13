@@ -128,7 +128,7 @@
         return true;
     }
 
-    function saveApprovals($assProc, $quotation_id, $tingkat,$type, $isPlant, $isCmo = false)
+    function saveApprovals($assProc, $quotation_id, $tingkat,$type, $isPlant, $isCmo = null)
     {
 
         if( $tingkat == 'STAFF' ) {
@@ -286,7 +286,6 @@
                 ]);
             }
         } else if ($tingkat == 'COO') {
-            
             if( $isPlant ) {
                 QuotationApproval::create([
                     'nik'                   => 190256,
