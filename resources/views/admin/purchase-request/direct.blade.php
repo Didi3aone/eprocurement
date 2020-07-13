@@ -339,7 +339,7 @@
         const $payment_term = $("#payment_term")
         $.getJSON(url, function(items) {
             let newOptions = ''
-            $("#payment_term").attr('disabled',false);
+            $("#payment_term").attr('disabled',true);
 
              for (var id in items) {
                 let selected = ''
