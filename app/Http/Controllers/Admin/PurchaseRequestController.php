@@ -462,6 +462,7 @@ class PurchaseRequestController extends Controller
 
                     //for sap
                     $param_sap[$key]['DOC_TYPE'] = $prHeader->doc_type;
+                    $param_sap[$key]['HEADER_ID'] = $prHeader->id;
                     $param_sap[$key]['PUR_GROUP'] = $prDetail->purchasing_group_code;
                     $param_sap[$key]['PREQ_NAME'] = strtoupper(split_name($prDetail->preq_name));
                     $param_sap[$key]['SHORT_TEXT'] = $prDetail->short_text ?? 'tes';
