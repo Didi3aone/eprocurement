@@ -93,11 +93,11 @@ class Quotation extends Model
 
     public function getUserAss()
     {
-        return $this->hasOne(\App\Models\User::class,'approved_asspro','nik');
+        return $this->hasOne(\App\Models\User::class,'nik','approved_asspro');
     }
 
     public function getUserHead()
     {
-        return $this->hasOne(\App\Models\User::class,'approved_head','nik');
+        return $this->hasOne(\App\Models\User::class,'nik','approved_head');
     }
 }
