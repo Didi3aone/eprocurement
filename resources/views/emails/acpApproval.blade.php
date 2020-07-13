@@ -15,7 +15,7 @@
 	</tr> --}}
 	<tr>
 		<td colspan="2" style="padding: 10px; line-height: 1.5; background: #196A39; text-align: center; color: #fff; border-bottom: 3px solid #ddd;">
-			<h1 style="font-size: 20px; margin: 0;">Purchase Request</h1>
+			<h1 style="font-size: 20px; margin: 0;">Approval Comparasion Price</h1>
 		</td>
 	</tr>
 
@@ -31,17 +31,22 @@
 					<tr>
 						<th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
                             <div>
-								No 	
+								Vendor
 							</div>
 						</th>
 						<th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
                             <div>
-								Item 	
+								Winner 	
 							</div>
 						</th>
                         <th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
                             <div>
-								Qty 	
+								Material 	
+							</div>
+						</th>
+						<th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+                            <div>
+								Description 	
 							</div>
 						</th>
 						<th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
@@ -49,14 +54,45 @@
 								Unit 	
 							</div>
 						</th>
+						<th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+                            <div>
+								Price 	
+							</div>
+						</th>
+						<th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+                            <div>
+								Per 	
+							</div>
+						</th>
 					</tr>
 					</thead>
 					<tbody>
+						@foreach($acp->detail as $rows)
+							@php
+								$winner = '<span class="badge badge-danger">Lose</span>';
+								if( $rows->is_winner == \App\Models\AcpTableDetail::Winner ) {
+									$winner = '<span class="badge badge-primary">Winner</span>';
+								}
+								$rowSpan = count(\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id));
+							@endphp
+							<tr>
+								<td rowspan={{ $rowSpan }}>{{ $rows->vendor['name'] }}</td>
+								<td rowspan={{ $rowSpan }}>{!! $winner !!}</td>
+								@foreach (\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id) as $row)
+									<td>{{ $row->material_id ?? '-'}}</td>
+									<td>{{ \App\Models\MasterMaterial::getMaterialName($row->material_id)->description ?? $row->material_id  }}</td>
+									<td>{{ $row->uom_code }}</td>
+									<td>{{ $row->qty }}</td>
+									<td>{{ $row->currency }}</td>
+									<td>{{ $row->price }}</td>
+							</tr>
+							@endforeach
+						@endforeach
 					</tbody>
 				</table>
 			</div>
             <p style="font-size: 13px;">
-                Untuk info detail <a href='https://employee.enesis.com'>link</a>
+                Untuk info detail <a href='https://eprocurement.enesis.com'>link</a>
             </p>
 		</td>
 	</tr>

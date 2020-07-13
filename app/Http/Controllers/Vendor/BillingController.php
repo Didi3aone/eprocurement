@@ -254,7 +254,7 @@ class BillingController extends Controller
             $nominal_inv_after_ppn =  str_replace(',', '.', $request->nominal_inv_after_ppn);
 
             $billing = new Billing;
-            $billing->billing_no            = '10'.substr(time(),14)."".time();
+            $billing->billing_no            = '20'.substr(time(),14)."".time();
             $billing->tgl_faktur            = $request->tgl_faktur;
             $billing->no_faktur             = $request->no_faktur;
             $billing->no_invoice            = $request->no_invoice;

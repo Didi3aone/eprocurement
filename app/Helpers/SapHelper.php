@@ -39,6 +39,12 @@ class SapHelper {
         return $soapUrl;
     }
 
+    /**
+     * get history PO
+     * @author didi
+     * @param bigint $materialCode
+     * @return \Illuminate\Http\Response
+     */
     public static function getHistoryPo($materialCode)
     {
         $wsdl = public_path()."/xml/zbn_eproc_histpo.xml";
@@ -699,6 +705,13 @@ class SapHelper {
         }
     }
 
+    /**
+     * Send po  to sap
+     * @version V1
+     * @author didi
+     * @param string $poNumber
+     * @return void
+     */
     public static function sendPoToSap($quotation, $quotationDetail, $quotationDeliveryDate)
     {
         $wsdl = public_path() . "/xml/zbn_eproc_po.xml";
@@ -1570,6 +1583,13 @@ class SapHelper {
         }
     }
 
+    /**
+     * Send po change to sap
+     * @version V1
+     * @author didi
+     * @param string $poNumber
+     * @return void
+     */
     public static function sendPOchangeToSap($poNumber)
     {
         $wsdl = public_path() . "/xml/zbn_eproc_pochange.xml";
@@ -2239,6 +2259,13 @@ class SapHelper {
         return $result;
     }
 
+    /**
+     * Send Billing to sap
+     * @version V1
+     * @author didi
+     * @param array $data
+     * @return void
+     */
     public static function sendBillingToSap($data = [])
     {
         $purchaseOrder = PurchaseOrder::where('PO_NUMBER', $data['po_no'])->first();
@@ -2416,8 +2443,8 @@ class SapHelper {
                 'SPLIT_KEY' => '00001',//klo tipe pa 0,1
                 'WI_TAX_TYPE' => $taxType->withholding_tax_type,//dari master pph
                 'WI_TAX_CODE' => $taxType->withholding_tax_code,//dari master pph
-                'WI_TAX_BASE' => $billing->dpp,//
-                'WI_TAX_AMT' => '',
+                'WI_TAX_BASE' => $billing->base_pph,//
+                'WI_TAX_AMT' => $billing->nominal_pph,
                 'WI_TAX_WITHHELD_AMT' => ''
             ];
         }

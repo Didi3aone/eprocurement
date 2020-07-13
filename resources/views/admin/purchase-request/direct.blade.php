@@ -124,13 +124,13 @@
                                             <td>
                                                 <select name="rfq[]" id="rfq" class="select2 rfq {{ $errors->has('rfq') ? 'is-invalid' : '' }}" required style="width:100%;">
                                                     <option value=""> Select </option>
-                                                    @foreach(\App\Models\Rfq::getRFQ($value->material_id,$value->description) as $key => $valus)
-                                                    <option value="{{ $valus->purchasing_document }}" 
+                                                    @foreach(\App\Models\AcpTableMaterial::getAcp($value->material_id) as $key => $valus)
+                                                    <option value="{{ $valus->acp_no }}" 
                                                         data-code="{{ $valus->code }}" 
                                                         data-currency="{{ $valus->currency }}" 
                                                         data-material="{{ $valus->material_id }}" 
                                                         data-acp="{{ $valus->acp_id }}">
-                                                        {{ $valus->acp_no ." - ".$valus->purchasing_document." - ". $valus->name }}
+                                                        {{ $valus->acp_no ." - ". $valus->name }}
                                                     </option>
                                                     @endforeach
                                                     @if($errors->has('rfq'))
@@ -170,7 +170,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="">Payment Term</label>
-                                <select name="payment_term" id="payment_term" class="form-control select2" readonly>
+                                <select name="payment_term" id="payment_term" class="form-control select2" disabled>
                                     <option value="">-- Select --</option>
                                     @foreach ($top as $val)
                                     <option value="{{ $val->payment_terms }}">
@@ -282,7 +282,7 @@
         const row = $(this).closest('tr')
         const net = row.find('.net_price')
         const ori = row.find('.original_price')
-        const url = '{{ route('admin.rfq-get-net-price') }}'
+        const url = '{{ route('admin.acp-net-price') }}'
         const materialId = row.find('.material_id')
         const qty  = row.find('.qty')
         const plant_code = $("#plant_code").val()
@@ -297,16 +297,15 @@
         getVendor(code)
         getCurrency(ori_curr)
 
-        $.getJSON(url,{'purchasing_document': purchasing_document ,'material' : materials}, function (items) {
+        $.getJSON(url,{'master_acp_id': acp_id ,'material' : materials,'vendor_id' : code}, function (items) {
             $("#image_loading").hide()
-            if(items.purchasing_document) {
-                let nets = items.net_order_price ? items.net_order_price : '0'
-                console.log(items)
+            if(items.master_acp_id) {
+                let nets = items.price ? items.price : '0.00'
                 net.val(nets)
                 ori.val(nets)
             } else {
-                net.val('0')
-                ori.val('0')
+                net.val('0.00')
+                ori.val('0.00')
             }
         })
     })

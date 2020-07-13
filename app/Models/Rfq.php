@@ -32,8 +32,8 @@ class Rfq extends Model
     {
         // echo $material_id; die;
         return MasterRfq::join('vendors','vendors.code','=','master_rfqs.vendor')
-                ->leftJoin('master_acps','master_acps.id','=','master_rfqs.acp_id')
-                ->leftJoin('master_acp_materials','master_acp_materials.master_acp_id','=','master_acps.id')
+                ->join('master_acps','master_acps.id','=','master_rfqs.acp_id')
+                ->join('master_acp_materials','master_acp_materials.master_acp_id','=','master_acps.id')
                 ->leftJoin('purchase_requests_details','purchase_requests_details.description','=','master_acp_materials.material_id')
                 ->select(
                     'vendors.name',
