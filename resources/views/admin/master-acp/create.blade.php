@@ -160,7 +160,7 @@
         $form.attr('action', link)
     })
 
-    $('#saves').click(function() {
+    $('#save').click(function() {
         checked = $("input[type=checkbox]:checked").length;
 
         if(!checked) {
