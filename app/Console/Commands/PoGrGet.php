@@ -169,7 +169,7 @@ class PoGrGet extends Command
                             'profit_center'             => $value->PRCTR ?? '',
                             'purchase_order_detail_id'  => $poDetail->id ?? 0,
                             'price_per_pc'              => ($value->DMBTR/$value->MENGE) * 100,
-                            'cost_center_code'          => $value[$i]->KOSTL,
+                            'cost_center_code'          => $value[$i]->KOSTL ?? '',
                             'posting_date'              => $value[$i]->BUDAT, 
                         ]);
                     }
