@@ -17,7 +17,7 @@
                     <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                             <tr>
-                                <th>Release Indicator</th>
+                                {{-- <th>Release Indicator</th> --}}
                                 <th>Purchasing Document</th>
                                 <th>Item Po Line</th>
                                 <th>Rfq/ACP Document</th>
@@ -47,7 +47,7 @@
                         <tbody>
                             @foreach($po as $key => $q)
                                 <tr>
-                                    <td>-</td>
+                                    {{-- <td>-</td> --}}
                                     <td>{{ $q->purchasing_document ?? 0 }}</td>
                                     <td>{{ $q->PO_ITEM }}</td>
                                     <td>{{ $q->acp_no ?? $q->purchasing_document }}</td>

@@ -316,9 +316,11 @@ class PurchaseOrderController extends Controller
         $purchaseOrder = PurchaseOrder::findOrFail($id);
         $currency = \App\Models\Currency::all();
         $top    = \App\Models\PaymentTerm::all();
+        $poDetail = PurchaseOrdersDetail::where('purchase_order_id', $id)->get();
 
-        return view('admin.purchase-order.edit', compact('purchaseOrder','currency','top'));
+        return view('admin.purchase-order.edit', compact('purchaseOrder','currency','top','poDetail'));
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -333,7 +335,7 @@ class PurchaseOrderController extends Controller
         $purchaseOrder->notes          = $request->get('notes');
         $purchaseOrder->payment_term   = $request->get('payment_term');
 
-        $poChangeHeader = new PurchaseOrderChangeHistory;
+        $poChangeHeader                         = new PurchaseOrderChangeHistory;
         $poChangeHeader->po_id                  = $purchaseOrder->id;
         $poChangeHeader->vendor_old             = $purchaseOrder->vendor_id;
         $poChangeHeader->vendor_change          = $request->get('payment_term') ?? '';

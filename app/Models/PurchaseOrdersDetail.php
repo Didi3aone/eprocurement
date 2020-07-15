@@ -58,6 +58,7 @@ class PurchaseOrdersDetail extends Model
     public const SERVICE = 9;
 
     public const YesGr = 1;
+    public const NoGr  = 0;
 
     public function po()
     {

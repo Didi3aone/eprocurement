@@ -79,6 +79,7 @@
                                         <th style="width: 16%">Currency</th>
                                         <th style="width: 16%">Net Price</th>
                                         <th style="width: 16%">Original Price</th>
+                                        <th style="width: 14%">Delivery Date PR</th>
                                         <th style="width: 14%">Delivery Date</th>
                                         <th style="width: 34%">Tax</th>
                                     </tr>
@@ -150,6 +151,7 @@
                                             <td><input type="text" class="original_currency" name="original_currency[]" id="original_currency" value="" readonly></td>
                                             <td><input type="text" class="net_price" name="price[]" id="net_price" value="" readonly></td>
                                             <td><input type="text" class="original_price" name="original_price[]" id="original_price" value="" readonly></td>
+                                             <td>{{ $value->delivery_date }}</td>
                                             <td><input type="text" class="mdate" name="delivery_date_new[]" id="delivery_date_new" value="{{ $value->delivery_date }}"></td>
                                             <td><input type="checkbox" class="" id="check_{{ $value->id }}" name="tax_code[]" value="1">
                                                 <label for="check_{{ $value->id }}">&nbsp;</label>
@@ -177,14 +179,16 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="">Payment Term</label>
-                                <select name="payment_term" id="payment_term" class="form-control select2" disabled>
+                                <input type="text" class="payment_term form-control" name="payment_terms" id="payment_terms" value="" readonly>
+                                <input type="hidden" class="payment_term form-control" name="payment_term" id="payment_term" value="" readonly>
+                                {{-- <select name="payment_term" id="payment_term" class="form-control select2" disabled>
                                     <option value="">-- Select --</option>
                                     @foreach ($top as $val)
                                     <option value="{{ $val->payment_terms }}">
                                         {{ $val->no_of_days ." days" }}
                                     </option>
                                     @endforeach
-                                </select>
+                                </select> --}}
                             </div>
                         </div>
                     </div>
@@ -346,12 +350,14 @@
         const $payment_term = $("#payment_term")
         $.getJSON(url, function(items) {
             let newOptions = ''
-            $("#payment_term").attr('disabled',true);
+           // $("#payment_term").attr('disabled',true);
 
              for (var id in items) {
                 let selected = ''
                 if( pay == id ) {
                     selected = 'selected'
+                    $("#payment_terms").val(items[id])
+                    $("#payment_term").val(id)
                     console.log('yes')
                 }
                 newOptions += '<option value="'+ id +'" '+selected+'>'+ items[id] +'</option>';
@@ -365,6 +371,7 @@
     function oncange() {
         $("#vendor_id").change(function() {
             let pay = $('#vendor_id option:selected').data('payment')
+            //$("#payment_term").val(pay)
             getPayment(pay)
         })
     }

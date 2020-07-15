@@ -173,6 +173,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('purchase-order-change-head','PurchaseOrderController@approvalPoChangeHead')->name('purchase-order-change-head');
     Route::resource('purchase-order', 'PurchaseOrderController');
 
+    Route::resource('purchase-order-detail', 'PurchaseOrderDetailController');
+
     // quotation
     Route::delete('quotation/destroy', 'QuotationController@massDestroy')->name('quotation.massDestroy');
     Route::post('quotation/import', 'QuotationController@import')->name('quotation.import');
