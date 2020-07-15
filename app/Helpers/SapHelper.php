@@ -11,6 +11,8 @@ use App\Models\Vendor\BillingDetail;
 use App\Models\PurchaseOrdersDetail;
 use App\Models\PurchaseRequestDetail;
 use App\Models\Materials;
+use App\Models\RequestNotesDetail;
+use App\Models\RequestNotes;
 
 /**
  * Sap Helper
@@ -127,14 +129,14 @@ class SapHelper {
         $is_array = (count($data)>1)?true:false;
         $i = 0;
         foreach( $data as $row ) {
-            if($row['CATEGORY'] == \App\Models\RequestNoteDetail::Material
-            OR $row['CATEGORY'] == \App\Models\RequestNoteDetail::MaterialText) {
-                $category = \App\Models\RequestNoteDetail::Material;
+            if($row['CATEGORY'] == \App\Models\RequestNotesDetail::Material
+            OR $row['CATEGORY'] == \App\Models\RequestNotesDetail::MaterialText) {
+                $category = \App\Models\RequestNotesDetail::Material;
             }
             
             //check category
             if($row['CATEGORY'] == PurchaseRequest::STANDART 
-                OR $row['CATEGORY'] == \App\Models\RequestNoteDetail::MaterialText) {
+                OR $row['CATEGORY'] == \App\Models\RequestNotesDetail::MaterialText) {
                 
                 $unit = '';
                 if( $row['MATERIAL'] != '' ) {
