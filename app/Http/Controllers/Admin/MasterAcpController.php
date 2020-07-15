@@ -31,8 +31,9 @@ class MasterAcpController extends Controller
         $material = MasterMaterial::orderBy('description')->get();
         $acpNo = AcpTable::get();
         $currency = \App\Models\Currency::get();
+        $plant = \App\Models\Plant::all()->pluck('description','code');
 
-        return view('admin.master-acp.create', compact('vendor', 'material', 'acpNo', 'currency'));
+        return view('admin.master-acp.create', compact('vendor', 'material', 'acpNo', 'currency','plant'));
     }
 
     public function getMaterial(Request $request)
@@ -128,6 +129,7 @@ class MasterAcpController extends Controller
             $acp->description       = $request->get('description');
             $acp->reference_acp_no  = $request->get('reference_acp_no') ?? '';
             $acp->upload_file       = $file_upload;
+            $acp->plant_id          = $request->get('plant_id');
             $acp->save();
 
             $result = [];
@@ -234,8 +236,7 @@ class MasterAcpController extends Controller
                 }
                 $assProc = \App\Models\UserMap::getAssProc($cMo->purchasing_group_code)->user_id;
                 // if( $assProc == null ) {
-                //     \Session::flash('error','For this '.$cMo->purchasing_group_code.' no approval was found ');
-                //     \DB::rollBack();
+                //     // \Session::flash('error','or this k no approval was found '.$cMo->purchasing_group_code)
                 //     return redirect()->route('admin.master-acp.index');
                 // }
                 if (1 == $val['winner']) {
@@ -256,7 +257,7 @@ class MasterAcpController extends Controller
                     if (1 == $request->get('is_project')) {
                         $isPlant = true;
                     }
-                    \saveApprovals($assProc, $acp->id, 'STAFF', 'ACP', $isPlant);
+                    \saveApprovals($assProc, $acp->id, 'STAFF', 'ACP', $isPlant,false);
                 } elseif ($price > 25000000 && $price <= 100000000) {
                     $isPlant = false;
                     if (1 == $request->get('is_project')) {

@@ -24,6 +24,15 @@
                             </div>
                         @endif
                     </div> --}}
+                    <div class="form-group">
+                        <label>Plant</label>
+                        <select class="form-control select2 form-control-line" name="plant_id" required> 
+                            <option value="">-- Select --</option>
+                            @foreach($plant ?? '' as $code => $name)
+                                <option value="{{ $code }}">{{ $code." - ".$name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     <label>Material From PR</label>
                     <div class="form-group">
                         <div class="form-check form-check-inline">

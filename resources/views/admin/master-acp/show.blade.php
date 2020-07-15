@@ -51,10 +51,6 @@
                                             </td>
                                         @endif
                                     </tr>
-                                    <tr>
-                                        <th>Description</th>
-                                        <td>{{ $acp->description }}</td>
-                                    </tr>
                                 </div>
                                 </tbody>
                             </table>
@@ -100,14 +96,16 @@
                         </table>
                     </div>
 
-                    {{-- <div class="row" style="margin-top: 20px">
+                    <div class="row" style="margin-top: 20px">
                         <div class="col-lg-12">
                             <div class="form-actions">
-                                <button type="submit" class="btn btn-success click" id="save"> <i class="fa fa-check"></i> Approve</button>
-                                <a class="btn btn-danger reject" href="#"> <i class="fa fa-times"></i> Reject </a>
+                                <tr>
+                                    <th>Description</th>
+                                    <td>{{ $acp->description }}</td>
+                                </tr>
                             </div>
                         </div>
-                    </div> --}}
+                    </div>
                 </form>
             </div>
             <div class="card-body">

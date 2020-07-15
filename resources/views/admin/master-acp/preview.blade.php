@@ -76,9 +76,9 @@
                                     @php
                                         $row = \App\Models\MasterMaterial::where('code', $material)->first();
                                     @endphp
-                                    <td>{{ $row->code ?? '-'}}</td>
-                                    <td>{{ $row->description ?? $row->code  }}</td>
-                                    <td>{{ $row->uom_code }}</td>
+                                    <td>{{ $row->code ?? $material }}</td>
+                                    <td>{{ $row->description ?? $material  }}</td>
+                                    <td>{{ $row->uom_code ?? '-' }}</td>
                                     <td>{{ $data['qty_'.$vendor->code][$key] }}</td>
                                     <td>{{ $data['currency_'.$vendor->code][$key] }}</td>
                                     <td>{{ number_format($data['price_'.$vendor->code][$key], 2) }}</td>

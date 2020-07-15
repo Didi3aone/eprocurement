@@ -138,11 +138,19 @@
     function saveApprovals($assProc, $quotation_id, $tingkat,$type, $isPlant, $isCmo = false)
     {
         $acp   = AcpTable::find($quotation_id);
+        
+        if( $acp->plant_id == '1101' OR $acp->plant_id == '2101' ) {
+            $plantHead = '120049';
+        } else if( $acp->plant_id == '1201') {
+            $plantHead = '020300';
+        } else if( $acp->plant_id == '1202' ) {
+            $plantHead = '130639';
+        }
 
         if( $tingkat == 'STAFF' ) {
             if( $isPlant ) {
                 QuotationApproval::create([
-                    'nik'                   => 190256,
+                    'nik'                   => $plantHead,
                     'approval_position'     => 1,
                     'status'                => QuotationApproval::waitingApproval,
                     'quotation_id'          => $quotation_id,
@@ -202,7 +210,7 @@
         } else if ($tingkat == 'CFO') {
             if( $isPlant ) {
                 QuotationApproval::create([
-                    'nik'                   => 190256,
+                    'nik'                   => $plantHead,
                     'approval_position'     => 1,
                     'status'                => QuotationApproval::waitingApproval,
                     'quotation_id'          => $quotation_id,
@@ -239,7 +247,7 @@
                 if( $isCmo ) {
                     $nexturutan = 5;
                     QuotationApproval::create([
-                        'nik'                   => 190256,
+                        'nik'                   => 190026,
                         'approval_position'     => 4,
                         'status'                => QuotationApproval::waitingApproval,
                         'quotation_id'          => $quotation_id,
@@ -287,7 +295,7 @@
                 if( $isCmo ) {
                     $nexturutan = 4;
                     QuotationApproval::create([
-                        'nik'                   => 190256,
+                        'nik'                   => 190026,
                         'approval_position'     => 3,
                         'status'                => QuotationApproval::waitingApproval,
                         'quotation_id'          => $quotation_id,
@@ -310,7 +318,7 @@
         } else if ($tingkat == 'COO') {
             if( $isPlant ) {
                 QuotationApproval::create([
-                    'nik'                   => 190256,
+                    'nik'                   => $plantHead,
                     'approval_position'     => 1,
                     'status'                => QuotationApproval::waitingApproval,
                     'quotation_id'          => $quotation_id,
@@ -347,7 +355,7 @@
                 if( $isCmo ) {
                     $nexturutan = 5;
                     QuotationApproval::create([
-                        'nik'                   => 190256,
+                        'nik'                   => 190026,
                         'approval_position'     => 4,
                         'status'                => QuotationApproval::waitingApproval,
                         'quotation_id'          => $quotation_id,
@@ -404,7 +412,7 @@
                 if( $isCmo ) {
                     $nexturutan = 4;
                     QuotationApproval::create([
-                        'nik'                   => 190256,
+                        'nik'                   => 190026,
                         'approval_position'     => 3,
                         'status'                => QuotationApproval::waitingApproval,
                         'quotation_id'          => $quotation_id,

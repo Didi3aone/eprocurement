@@ -53,11 +53,6 @@
                                             </td>
                                         @endif
                                     </tr>
-                                    <tr>
-                                        <th>Description</th>
-                                        <td>{{ $acp->description }}</td> 
-                                        {{-- komen --}}
-                                    </tr>
                                 </div>
                                 </tbody>
                             </table>
@@ -101,6 +96,10 @@
                             @endforeach
                             </tbody>
                         </table>
+                    </div>
+                    <div class="form-group">
+                        <label>Reason</label>
+                        <textarea type="text" class="form-control form-control-line" name="description" disabled>{{ $acp->description }}</textarea>
                     </div>
 
                     <div class="row" style="margin-top: 20px">
