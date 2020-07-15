@@ -87,4 +87,9 @@ class PurchaseOrder extends Model
     {
         return $this->hasMany(\App\Models\PurchaseOrdersDetail::class,'purchase_order_id','id');
     }
+
+    public function orderGrDetail()
+    {
+        return $this->hasMany(\App\Models\PurchaseOrderGr::class,'po_no','PO_NUMBER');
+    }
 }

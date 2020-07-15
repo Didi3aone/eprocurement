@@ -51,7 +51,7 @@ class PoGrGet extends Command
     public function handle()
     {
         echo "Start ..... \n";
-        $wsdl = public_path() . "/xml/zbn_eproc_pogr_v2.xml";
+        $wsdl = public_path() . "/xml/zbn_eproc_pogr_v3.xml";
 
         $username = "IT_02";
         $password = "ademsari";
@@ -80,23 +80,30 @@ class PoGrGet extends Command
                 echo "get po gr \n";
                 $params[0]['EBELN'] = $row->PO_NUMBER;
                 $result = $client->__soapCall("ZFM_WS_POGR", $params, NULL, $header);
+                // dd($result->ITAB);
                 foreach( $result->ITAB as $value ) {
                     if( is_array($value) ) {
                         for ($i = 0; $i <= count($value); $i++) {
                             if( !empty($value[$i]) ) {
                                 $poHeader = \App\Models\PurchaseOrder::where('PO_NUMBER', $value[$i]->EBELN)->first();
-    
+                                
+                                $qty = '0.00';
                                 if( !empty($poHeader) ) {
                                     $poDetail = \App\Models\PurchaseOrdersDetail::where('purchase_order_id', $poHeader->id)
                                                 ->where('PO_ITEM', $value[$i]->EBELP)
                                                 ->first();
-                                    
-                                    $poDetail->qty_gr           = $value[$i]->MENGE;
+                                    if($poDetail->item_category == 9 OR $poDetail->item_category == 99) {
+                                        $qty = $value[$i]->ERFMG;
+                                    } else {
+                                        $qty = $value[$i]->MENGE;
+                                    }
+
+                                    $poDetail->qty_gr           = $qty;
                                     $poDetail->is_gr            = \App\Models\PurchaseOrdersDetail::YesGr;
-                                    $poDetail->qty_outstanding  = $poDetail->qty - $value[$i]->MENGE;
+                                    $poDetail->qty_outstanding  = $poDetail->qty - $qty;
                                     $poDetail->update();
+
                                 }
-        
             
                                 $insertGr = \App\Models\PurchaseOrderGr::create([
                                     'po_no'                     => $value[$i]->EBELN,
@@ -105,12 +112,12 @@ class PoGrGet extends Command
                                     'movement_type'             => $value[$i]->EBELP,
                                     'debet_credit'              => $value[$i]->SHKZG ?? '',//s itu debit h itu kredit
                                     'material_no'               => str_replace('00000000000','',$value[$i]->MATNR),
-                                    'qty'                       => $value[$i]->MENGE,
+                                    'qty'                       => $qty,
                                     'amount'                    => $value[$i]->WRBTR,
                                     'plant'                     => $value[$i]->WERKS,
                                     'storage_location'          => $value[$i]->LGORT,
                                     'batch'                     => $value[$i]->CHARG ?? '',
-                                    'satuan'                    => $value[$i]->MEINS,
+                                    'satuan'                    => $value[$i]->MEINS ?? $value->ERFME,
                                     'currency'                  => $value[$i]->WAERS,
                                     'doc_gr'                    => $value[$i]->MBLNR,
                                     'tahun_gr'                  => $value[$i]->MJAHR,
@@ -123,7 +130,7 @@ class PoGrGet extends Command
                                     'gl_account'                => $value[$i]->SAKTO ?? '',
                                     'profit_center'             => $value[$i]->PRCTR ?? '',
                                     'purchase_order_detail_id'  => $poDetail->id ?? 0,
-                                    'price_per_pc'              => ($value[$i]->DMBTR/$value[$i]->MENGE) * 100,
+                                    // 'price_per_pc'              => ($value[$i]->WRBTR/$value[$i]->MENGE) * 100,
                                     'cost_center_code'          => $value[$i]->KOSTL, 
                                     'posting_date'              => $value[$i]->BUDAT, 
                                 ]);
@@ -135,12 +142,23 @@ class PoGrGet extends Command
                             $poDetail = \App\Models\PurchaseOrdersDetail::where('purchase_order_id', $poHeader->id)
                                         ->where('PO_ITEM',$value->EBELP)
                                         ->first();
-                            
-                            $poDetail->qty_gr           =  $value->MENGE;
+                            if($poDetail->item_category == 9 OR $poDetail->item_category == 99) {
+                                $qty = $value->ERFMG;
+                            } else {
+                                $qty = $value->MENGE;
+                            }
+
+                            $poDetail->qty_gr           = $qty;
                             $poDetail->is_gr            = \App\Models\PurchaseOrdersDetail::YesGr;
-                            $poDetail->qty_outstanding  = $poDetail->qty - $value->MENGE;
+                            $poDetail->qty_outstanding  = $poDetail->qty - $qty;
                             $poDetail->update();
                         }
+
+                        // if( $value->MENGE != ''  && $value[$i]->MENGE !='0') {
+                        //     $pricePerPC = ($value->WRBTR/$value->MENGE) * 100;
+                        // } else {
+                        //     $pricePerPC = '0.00';
+                        // }
 
     
                         $insertGr = \App\Models\PurchaseOrderGr::create([
@@ -150,12 +168,12 @@ class PoGrGet extends Command
                             'movement_type'             => $value->EBELP,
                             'debet_credit'              => $value->SHKZG ?? '',//s itu debit h itu kredit
                             'material_no'               => str_replace('00000000000','',$value->MATNR),
-                            'qty'                       => $value->MENGE,
+                            'qty'                       => $qty,
                             'amount'                    => $value->WRBTR,
                             'plant'                     => $value->WERKS,
                             'storage_location'          => $value->LGORT,
                             'batch'                     => $value->CHARG ?? '',
-                            'satuan'                    => $value->MEINS,
+                            'satuan'                    => $value->MEINS ?? $value->ERFME,
                             'currency'                  => $value->WAERS,
                             'doc_gr'                    => $value->MBLNR,
                             'tahun_gr'                  => $value->MJAHR,
@@ -168,7 +186,7 @@ class PoGrGet extends Command
                             'gl_account'                => $value->SAKTO ?? '',
                             'profit_center'             => $value->PRCTR ?? '',
                             'purchase_order_detail_id'  => $poDetail->id ?? 0,
-                            'price_per_pc'              => ($value->DMBTR/$value->MENGE) * 100,
+                            // 'price_per_pc'              => ($value->WRBTR/$value->MENGE) * 100,
                             'cost_center_code'          => $value->KOSTL ?? '',
                             'posting_date'              => $value->BUDAT, 
                         ]);
