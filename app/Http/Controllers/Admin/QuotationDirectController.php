@@ -126,7 +126,7 @@ class QuotationDirectController extends Controller
             } else {
                 $requestNo = $request->get('rn_no')[$i];
             }
-
+            // dd($request);
             $data = [
                 'request_detail_id'         => $request->idDetail[$i],
                 'request_no'                => $request->get('rn_no')[$i],
@@ -162,7 +162,7 @@ class QuotationDirectController extends Controller
                 'delivery_date'             => $request->get('delivery_date')[$i],
                 'delivery_date_new'         => $request->get('delivery_date_new')[$i],
                 'rfq'                       => $request->get('rfq')[$i],
-                'tax_code'                  => $request->get('tax_code')[$i],
+                'tax_code'                  => $request->get('tax_code')[$i] ?? "",
                 'vendor_id'                 => $request->vendor_id,
                 'request_no'                => $requestNo,
                 'acp_id'                    => $request->get('acp_id')[$i],
