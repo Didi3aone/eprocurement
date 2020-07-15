@@ -61,16 +61,16 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $this->validate($request,[
-            'email' => 'required:email',
+            'code' => 'required:code',
             'password' => 'required'
         ]);
 
         $credential = [
-            'email' => $request->email,
+            'code' => $request->code,
             'password' => $request->password
         ];
 
-        $model = Vendor::where('email', $request->email)->first();
+        $model = Vendor::where('code', $request->code)->first();
 
         if (empty($model))
             return redirect()->route('vendor.login')->with('error', trans('global.vendor_not_found'));
@@ -78,11 +78,11 @@ class LoginController extends Controller
         if ($model->status == 0)
             return redirect()->route('vendor.login')->with('error', trans('validation.vendor_not_validate'));
 
-        if (Auth::guard('vendor')->attempt($request->only('email', 'password'))) {
+        if (Auth::guard('vendor')->attempt($request->only('code', 'password'))) {
             return redirect()->intended(route('vendor.home'));
         }
 
-        return redirect()->back()->withInputs($request->only('email'));
+        return redirect()->back()->withInputs($request->only('code'));
     }
 
     public function showRegisterForm ()

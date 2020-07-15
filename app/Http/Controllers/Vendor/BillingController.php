@@ -199,6 +199,7 @@ class BillingController extends Controller
     {
         $po_gr = PurchaseOrderGr::where('vendor_id', \Auth::user()->code)
             ->where('qty','>',0)
+            ->where('debet_credit','S')
             ->get();
         $rekening =  VendorBankDetails::where('vendor_id', \Auth::user()->id)
             ->get()
@@ -340,36 +341,37 @@ class BillingController extends Controller
 
     public function poGR ($po_no)
     { 
-        $model = PurchaseOrderGr::where('po_no', $po_no)->first();
+        $model = PurchaseOrderGr::with('material')->where('doc_gr', $po_no)
+            ->where('debet_credit','S')->get();
 
-        $material_description = $model->material ? $model->material->description : '';
+        // $material_description = $model->material ? $model->material->description : '';
         
-        $data['po_no']                      = $model->po_no;
-        $data['po_item']                    = $model->po_item;
-        $data['material']                   = $model->material_no;
-        $data['qty']                        = $model->qty;
-        $data['doc_gr']                     = $model->doc_gr;
-        $data['item_gr']                    = $model->item_gr;
-        $data['posting_date']               = $model->posting_date;
-        $data['reference_document']         = $model->reference_document;
-        $data['description']                = $material_description;
-        $data['debet_credit']               = $model->debet_credit;
-        $data['currency']                   = $model->currency;
-        $data['plant']                      = $model->plant;
-        $data['gl_account']                 = $model->gl_account;
-        $data['profit_center']              = $model->profit_center;
-        $data['amount']                     = $model->amount;
-        $data['material_document']          = $model->material_document;
-        $data['reference_document_item']    = $model->reference_document_item;
-        $data['doc_gr']                     = $model->doc_gr;
-        $data['storage_location']           = $model->storage_location;
-        $data['satuan']                     = $model->satuan;
-        $data['material_doc_item']          = $model->material_doc_item;
-        $data['price_per_pc']               = $model->price_per_pc;
-        $data['cost_center_code']           = $model->cost_center_code;
-        $data['tahun_gr']                   = $model->tahun_gr;
+        // $data['po_no']                      = $model->po_no;
+        // $data['po_item']                    = $model->po_item;
+        // $data['material']                   = $model->material_no;
+        // $data['qty']                        = $model->qty;
+        // $data['doc_gr']                     = $model->doc_gr;
+        // $data['item_gr']                    = $model->item_gr;
+        // $data['posting_date']               = $model->posting_date;
+        // $data['reference_document']         = $model->reference_document;
+        // $data['description']                = $material_description;
+        // $data['debet_credit']               = $model->debet_credit;
+        // $data['currency']                   = $model->currency;
+        // $data['plant']                      = $model->plant;
+        // $data['gl_account']                 = $model->gl_account;
+        // $data['profit_center']              = $model->profit_center;
+        // $data['amount']                     = $model->amount;
+        // $data['material_document']          = $model->material_document;
+        // $data['reference_document_item']    = $model->reference_document_item;
+        // $data['doc_gr']                     = $model->doc_gr;
+        // $data['storage_location']           = $model->storage_location;
+        // $data['satuan']                     = $model->satuan;
+        // $data['material_doc_item']          = $model->material_doc_item;
+        // $data['price_per_pc']               = $model->price_per_pc;
+        // $data['cost_center_code']           = $model->cost_center_code;
+        // $data['tahun_gr']                   = $model->tahun_gr;
         
 
-        return response()->json($data);
+        return response()->json($model);
     }
 }

@@ -24,18 +24,24 @@
                     <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                             <tr>
+                                <th>Billing ID</th>
                                 <th>Faktur No.</th>
                                 <th>Invoice No.</th>
                                 <th>Status</th>
+                                <th>Approved Date</th>
+                                <th>Document No.</th>
                                 <th>&nbsp;</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($billing as $key => $rows)
                                 <tr>
+                                    <td>{{ $rows->billing_no }}</td>
                                     <td>{{ $rows->no_faktur }}</td>
                                     <td>{{ $rows->no_invoice }}</td>
                                     <td>{{ App\Models\Vendor\Billing::TypeStatus[$rows->status] }}</td>
+                                    <td>{{ $rows->updated_at }}</td>
+                                    <td>{{ $rows->document_no }}</td>
                                     <td>
                                         @if($rows->status != \App\Models\Vendor\Billing::Approved)
                                         {{-- <a href="{{ route('vendor.billing-edit',$rows->id) }}" class="btn btn-primary btn-xs"><i class="fa fa-eye"></i> Show</a> --}}

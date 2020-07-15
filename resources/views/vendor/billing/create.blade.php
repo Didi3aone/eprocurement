@@ -152,7 +152,7 @@
                                             <div class="form-group">
                                                 <select name="search-po" class="choose-po form-control select2">
                                                     @foreach ($po_gr as $gr)
-                                                        <option value="{{ $gr->po_no }}">{{ $gr->po_no }}</option>
+                                                        <option value="{{ $gr->doc_gr }}">{{ $gr->doc_gr }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -221,43 +221,50 @@
 
         if (PO_GR != '') {
             $.get(base_url + '/vendor/billing-po-gr/' + PO_GR, function (result) {
-                const template = `
-                    <tr>
-                        <input type="hidden"name="currency[]" value="${result.currency}">
-                        <input type="hidden"name="plant_code[]" value="${result.plant}">
-                        <input type="hidden"name="gl_account[]" value="${result.gl_account}">
-                        <input type="hidden"name="profit_center[]" value="${result.profit_center}">
-                        <input type="hidden"name="amount[]" value="${result.amount}">
-                        <input type="hidden"name="material_document[]" value="${result.material_document}">
-                        <input type="hidden"name="reference_document_item[]" value="${result.reference_document_item}">
-                        <input type="hidden"name="doc_gr[]" value="${result.doc_gr}">
-                        <input type="hidden" name="debet_credit[]" value="${result.debet_credit}"/>
-                        <input type="hidden" name="item_gr[]" value="${result.item_gr}"/>
-                        <input type="hidden" name="storage_location[]" value="${result.storage_location}"/>
-                        <input type="hidden" name="unit[]" value="${result.satuan}"/>
-                        <input type="hidden" name="reference_document[]" value="${result.reference_document}"/>
-                        <input type="hidden" name="material_doc_item[]" value="${result.material_doc_item}"/>
-                        <input type="hidden" name="cost_center_code[]" value="${result.cost_center_code}"/>
-                        <input type="hidden" name="tahun_gr[]" value="${result.tahun_gr}"/>
-                        <input type="hidden" name="price_per_pc[]" value="${result.price_per_pc}"/>
-                        <td><input type="number" class="qty-old form-control" name="qty_old[]" value="${result.qty}" readonly></td>
-                        <td><input type="number" class="qty form-control" name="qty[]" value="${result.qty}" required/></td>
-                        <td><input type="text" class="material form-control" name="material[]" value="${result.material}" readonly></select></td>
-                        <td><input type="text" class="description form-control" name="description[]" value="${result.description}" readonly/></td>
-                        <td><input type="text" class="po_no form-control" name="po_no[]" value="${result.po_no}" readonly></td>
-                        <td><input type="text" class="po_item form-control" name="PO_ITEM[]" value="${result.po_item}" readonly/></td>
-                        <td><input type="text" class="doc_gr form-control" name="doc_gr[]" value="${result.doc_gr}" readonly/></td>
-                        <td><input type="text" class="item_gr form-control" name="item_gr[]" value="${result.item_gr}" readonly/></td>
-                        <td><input type="text" class="posting_date form-control" name="posting_date[]" value="${result.posting_date}" readonly/></td>
-                        <td>
-                            <a href="javascript:;" class="remove-item btn btn-danger btn-xs">
-                                <i class="fa fa-trash"></i> Remove
-                            </a>
-                        </td>
-                    </tr>
-                `
+                var template = ''
+                //console.log(result)
+                $.each(result,function(k,v) {
+                   // console.log(v.material.description)
+                    let material = v.material_no ?  v.material_no : '-'
+                    let desc = v.material.description ? v.material.description : '-'
+                    template += `
+                        <tr>
+                            <input type="hidden"name="currency[]" value="${v.currency}">
+                            <input type="hidden"name="plant_code[]" value="${v.plant}">
+                            <input type="hidden"name="gl_account[]" value="${v.gl_account}">
+                            <input type="hidden"name="profit_center[]" value="${v.profit_center}">
+                            <input type="hidden"name="amount[]" value="${v.amount}">
+                            <input type="hidden"name="material_document[]" value="${v.material_document}">
+                            <input type="hidden"name="reference_document_item[]" value="${v.reference_document_item}">
+                            <input type="hidden"name="doc_gr[]" value="${v.doc_gr}">
+                            <input type="hidden" name="debet_credit[]" value="${v.debet_credit}"/>
+                            <input type="hidden" name="item_gr[]" value="${v.item_gr}"/>
+                            <input type="hidden" name="storage_location[]" value="${v.storage_location}"/>
+                            <input type="hidden" name="unit[]" value="${v.satuan}"/>
+                            <input type="hidden" name="reference_document[]" value="${v.reference_document}"/>
+                            <input type="hidden" name="material_doc_item[]" value="${v.material_doc_item}"/>
+                            <input type="hidden" name="cost_center_code[]" value="${v.cost_center_code}"/>
+                            <input type="hidden" name="tahun_gr[]" value="${v.tahun_gr}"/>
+                            <input type="hidden" name="price_per_pc[]" value="${v.price_per_pc}"/>
+                            <td><input type="number" class="qty-old form-control" name="qty_old[]" value="${v.qty}" readonly></td>
+                            <td><input type="number" class="qty form-control" name="qty[]" value="${v.qty}" required/></td>
+                            <td><input type="text" class="material form-control" name="material[]" value="${material}" readonly></select></td>
+                            <td><input type="text" class="description form-control" name="description[]" value="${desc}" readonly/></td>
+                            <td><input type="text" class="po_no form-control" name="po_no[]" value="${v.po_no}" readonly></td>
+                            <td><input type="text" class="po_item form-control" name="PO_ITEM[]" value="${v.po_item}" readonly/></td>
+                            <td><input type="text" class="doc_gr form-control" name="doc_gr[]" value="${v.doc_gr}" readonly/></td>
+                            <td><input type="text" class="item_gr form-control" name="item_gr[]" value="${v.item_gr}" readonly/></td>
+                            <td><input type="text" class="posting_date form-control" name="posting_date[]" value="${v.posting_date}" readonly/></td>
+                            <td>
+                                <a href="javascript:;" class="remove-item btn btn-danger btn-xs">
+                                    <i class="fa fa-trash"></i> Remove
+                                </a>
+                            </td>
+                        </tr>
+                    `
+                });
+                $(document).find('#billing-detail').html(template)
 
-                $(document).find('#billing-detail').append(template)
             })
         }
     })
