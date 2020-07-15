@@ -30,6 +30,7 @@
                                 <th>Status</th>
                                 <th>Approved Date</th>
                                 <th>Document No.</th>
+                                <th>Transfer Date</th>
                                 <th>&nbsp;</th>
                             </tr>
                         </thead>
@@ -42,6 +43,7 @@
                                     <td>{{ App\Models\Vendor\Billing::TypeStatus[$rows->status] }}</td>
                                     <td>{{ $rows->updated_at }}</td>
                                     <td>{{ $rows->document_no }}</td>
+                                    <td>{{ '-' }}</td>
                                     <td>
                                         @if($rows->status != \App\Models\Vendor\Billing::Approved)
                                         {{-- <a href="{{ route('vendor.billing-edit',$rows->id) }}" class="btn btn-primary btn-xs"><i class="fa fa-eye"></i> Show</a> --}}

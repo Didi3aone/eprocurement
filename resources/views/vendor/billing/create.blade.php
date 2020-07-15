@@ -246,6 +246,7 @@
                             <input type="hidden" name="cost_center_code[]" value="${v.cost_center_code}"/>
                             <input type="hidden" name="tahun_gr[]" value="${v.tahun_gr}"/>
                             <input type="hidden" name="price_per_pc[]" value="${v.price_per_pc}"/>
+                            <input type="hidden" name="purchase_order_detail_id[]" value="${v.purchase_order_detail_id}"/>
                             <td><input type="number" class="qty-old form-control" name="qty_old[]" value="${v.qty}" readonly></td>
                             <td><input type="number" class="qty form-control" name="qty[]" value="${v.qty}" required/></td>
                             <td><input type="text" class="material form-control" name="material[]" value="${material}" readonly></select></td>

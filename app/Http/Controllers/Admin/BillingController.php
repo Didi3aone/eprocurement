@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Gate, Artisan;
 use App\Models\Vendor\Billing;
 use App\Models\Vendor\BillingDetail;
+use App\Models\PurchaseOrdersDetail;
 use App\Models\PurchaseOrderGr;
 use App\Models\PaymentTerm;
 use App\Models\MasterPph;
@@ -160,6 +161,11 @@ class BillingController extends Controller
             $poGr->qty += $rows->qty;
 
             $poGr->save();
+
+            $poDetail = PurchaseOrdersDetail::where('id', $rows->purchase_order_detail_id)
+                        ->first();
+            $poDetail->qty_billing -= $rows->qty;
+            $poDetail->save();
         }
         \Session::flash('status','Billing has been rejected');
         return \redirect()->route('admin.billing');

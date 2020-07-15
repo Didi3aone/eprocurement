@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBillingRequest;
 use Illuminate\Http\Request;
 use App\Models\PurchaseOrder;
+use App\Models\PurchaseOrdersDetail;
 use App\Models\Vendor\Billing;
 use App\Models\Vendor\BillingDetail;
 use App\Models\Vendor\VendorTaxNumbers;
@@ -255,7 +256,7 @@ class BillingController extends Controller
             $nominal_inv_after_ppn =  str_replace(',', '.', $request->nominal_inv_after_ppn);
 
             $billing = new Billing;
-            $billing->billing_no            = '20'.substr(time(),14)."".time();
+            $billing->billing_no            = date('y').substr(time(),0,-19)."".time();
             $billing->tgl_faktur            = $request->tgl_faktur;
             $billing->no_faktur             = $request->no_faktur;
             $billing->no_invoice            = $request->no_invoice;
@@ -308,6 +309,7 @@ class BillingController extends Controller
                 $billingDetail->cost_center_code            = $request->get('cost_center_code')[$key];
                 $billingDetail->tahun_gr                    = $request->get('tahun_gr')[$key];
                 $billingDetail->gr_date                     = $request->get('gr_date')[$key];
+                $billingDetail->purchase_order_detail_id    = $request->get('purchase_order_detail_id')[$key];
                 $billingDetail->save();
 
                 $po_gr = PurchaseOrderGr::where('po_no', $po_no)
@@ -318,6 +320,11 @@ class BillingController extends Controller
                 $po_gr->qty_billing = $qty;
                 $po_gr->qty = $qty_old - $qty;
                 $po_gr->save();
+
+                $poDetail = PurchaseOrdersDetail::where('id', $request->get('purchase_order_detail_id')[$key])
+                            ->first();
+                $poDetail->qty_billing = $qty;
+                $poDetail->save();
             }
 
             \DB::commit();
