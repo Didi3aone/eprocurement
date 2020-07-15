@@ -135,6 +135,14 @@ class SapHelper {
             //check category
             if($row['CATEGORY'] == PurchaseRequest::STANDART 
                 OR $row['CATEGORY'] == \App\Models\RN\RequestNoteDetail::MaterialText) {
+                
+                $unit = '';
+                if( $row['MATERIAL'] != '' ) {
+                    $unit = \App\Models\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_2;
+                } else {
+                    $unit = \App\Models\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1;
+                }
+
                 $REQUISITION_ITEMS_item = [
                     'PREQ_NO'           => '',
                     'PREQ_ITEM'         => $row['PREQ_ITEM'],
@@ -152,7 +160,7 @@ class SapHelper {
                     'MAT_GRP'           => $row['MAT_GRP'],//'T12075',, 
                     'SUPPL_PLNT'        => '',
                     'QUANTITY'          => $row['QUANTITY'], // '1.000',
-                    'UNIT'              => $row['UNIT'], // 'LOT',
+                    'UNIT'              => $unit,//$row['UNIT'], // 'LOT',
                     'DEL_DATCAT'        => '',
                     'DELIV_DATE'        => $row['DELIV_DATE'],//'2020-06-23',
                     'REL_DATE'          => $row['REL_DATE'],//'2020-03-06',//
@@ -404,12 +412,13 @@ class SapHelper {
                 ];
 
             } elseif($row['DOC_TYPE'] == 'Z104' && $row['CATEGORY'] == PurchaseRequest::SERVICE ) {
-
+                //ga dipake
                 if( $row['LINE_NO'] == '0000000001' ) {
                     $package_no = $row['PACKAGE_NO'];
                 } else {
                     $package_no = $row['SUBPACKAGE_NO'];
                 }
+                // end ga dipake
 
                 $REQUISITION_ITEMS_item = [
                     'PREQ_NO'           => '',
@@ -559,7 +568,7 @@ class SapHelper {
 
                 $sub = '0000000000';
                 $dataChild = \App\Models\RN\PurchaseRequestServiceChild::where('purchase_request_id',$row['HEADER_ID'])->get();
-                for ($k=0; $k < count($dataChild) ; $k++) {
+                for ($k=0; $k < count($dataChild); $k++) {
                     $createLine = $k + 1;
                     $REQUISITION_ITEM_SERVICE_item = [
                         "PCKG_NO"            => $dataChild[$k]->package_no,//'000000000'.$createLine,//$row['package'],//'000000000'.$createLine,//$row['PACKAGE_NO'],
@@ -689,17 +698,19 @@ class SapHelper {
                     "CONT_PERC"     => '',
                 ];
             } else if( $row['CATEGORY'] == PurchaseRequest::SERVICE ) {
+                //ga dipake
                 if( $row['LINE_NO'] == '0000000001' ) {
                     $package_no = $row['PACKAGE_NO'];
                 } else {
                     $package_no = $row['SUBPACKAGE_NO'];
                 }
-
+                
                 if( $i == 0) {
                     $package_no = '000000000';
                 } else {
                     $package_no = '0000000001';
                 }
+                // end ga dipake
 
                 $REQUISITION_ITEMS_item = [
                     'PREQ_NO'           => '',
@@ -992,11 +1003,9 @@ class SapHelper {
         // dd($params);
         try {
             $result = $client->__soapCall("ZFM_WS_PR", $params, NULL, $header);
-            // dd($result);
             return $result;
         } catch (\Exception $e){
-            echo $e;die;
-            // throw new \Exception("Soup request failed! Response: ".$client->__getLastResponse());
+            throw new \Exception("Soup request failed! Response: ".$client->__getLastResponse());
         }
     }
 
@@ -2200,7 +2209,7 @@ class SapHelper {
                         "SSC_ITEM" => "",
                         "EXT_SERV" => "",
                         "QUANTITY" => $quotationDetail[$i]->qty,//DARI PR 
-                        "BASE_UOM" => $quotationDetail[$i]->unit,     
+                        "BASE_UOM" => \App\Models\UomConvert::where('uom_2',$quotationDetail[$i]->unit)->first()->uom_1,//$quotationDetail[$i]->unit,     
                         "UOM_ISO" => "",    
                         "OVF_TOL" => "",
                         "OVF_UNLIM" => "",    
@@ -2829,7 +2838,7 @@ class SapHelper {
                         "SSC_ITEM" => "",
                         "EXT_SERV" => "",
                         "QUANTITY" => $quotationDetail[$i]->qty,//DARI PR 
-                        "BASE_UOM" => $quotationDetail[$i]->unit,     
+                        "BASE_UOM" =>  \App\Models\UomConvert::where('uom_2',$quotationDetail[$i]->unit)->first()->uom_1,//$quotationDetail[$i]->unit,     
                         "UOM_ISO" => "",    
                         "OVF_TOL" => "",
                         "OVF_UNLIM" => "",    
