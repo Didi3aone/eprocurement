@@ -95,17 +95,6 @@
                             </tbody>
                         </table>
                     </div>
-
-                    <div class="row" style="margin-top: 20px">
-                        <div class="col-lg-12">
-                            <div class="form-actions">
-                                <tr>
-                                    <th>Description</th>
-                                    <td>{{ $acp->description }}</td>
-                                </tr>
-                            </div>
-                        </div>
-                    </div>
                 </form>
             </div>
             <div class="card-body">
@@ -113,6 +102,7 @@
                     <thead>
                         <tr>
                             <th>Employee ID</th>
+                            <th>Name</th>
                             <th>Status</th>
                             <th>Approve Date</th>
                         </tr>
@@ -120,6 +110,7 @@
                     <tbody>
                         @foreach($approval as $key => $value)
                             <tr>
+                                <td>{{ $value->nik }}</td>
                                 <td>{{ $value->getUser['name'] }}</td>
                                 <td>{{ $value->status == 0 ? 'Waiting For Approval' : 'Approved' }}</td>
                                 <td>{{ $value->approve_date ?? '-' }}</td>
@@ -127,6 +118,12 @@
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label>Reason</label>
+                    <textarea type="text" class="form-control form-control-line" name="description" disabled>{{ $acp->description }}</textarea>
+                </div>
             </div>
         </div>
     </div>
