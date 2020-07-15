@@ -127,14 +127,14 @@ class SapHelper {
         $is_array = (count($data)>1)?true:false;
         $i = 0;
         foreach( $data as $row ) {
-            if($row['CATEGORY'] == \App\Models\RN\RequestNoteDetail::Material
-            OR $row['CATEGORY'] == \App\Models\RN\RequestNoteDetail::MaterialText) {
-                $category = \App\Models\RN\RequestNoteDetail::Material;
+            if($row['CATEGORY'] == \App\Models\RequestNoteDetail::Material
+            OR $row['CATEGORY'] == \App\Models\RequestNoteDetail::MaterialText) {
+                $category = \App\Models\RequestNoteDetail::Material;
             }
             
             //check category
             if($row['CATEGORY'] == PurchaseRequest::STANDART 
-                OR $row['CATEGORY'] == \App\Models\RN\RequestNoteDetail::MaterialText) {
+                OR $row['CATEGORY'] == \App\Models\RequestNoteDetail::MaterialText) {
                 
                 $unit = '';
                 if( $row['MATERIAL'] != '' ) {
@@ -437,7 +437,7 @@ class SapHelper {
                     'MAT_GRP'           => $row['MAT_GRP'],//'T12075',, 
                     'SUPPL_PLNT'        => '',
                     'QUANTITY'          => $row['QUANTITY'], // '1.000',
-                    'UNIT'              => \App\Models\RN\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1, // 'LOT',
+                    'UNIT'              => \App\Models\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1, // 'LOT',
                     'DEL_DATCAT'        => '',
                     'DELIV_DATE'        => $row['DELIV_DATE'],//'2020-06-23',
                     'REL_DATE'          => $row['REL_DATE'],//'2020-03-06',//
@@ -567,7 +567,7 @@ class SapHelper {
                 ];
 
                 $sub = '0000000000';
-                $dataChild = \App\Models\RN\PurchaseRequestServiceChild::where('purchase_request_id',$row['HEADER_ID'])->get();
+                $dataChild = \App\Models\PurchaseRequestServiceChild::where('purchase_request_id',$row['HEADER_ID'])->get();
                 for ($k=0; $k < count($dataChild); $k++) {
                     $createLine = $k + 1;
                     $REQUISITION_ITEM_SERVICE_item = [
@@ -584,7 +584,7 @@ class SapHelper {
                         "SSC_ITEM"           => '',  
                         "EXT_SERV"           => '', 
                         "QUANTITY"           => $row['QUANTITY'], 
-                        "BASE_UOM"           => \App\Models\RN\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1,//$row['UNIT'], 
+                        "BASE_UOM"           => \App\Models\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1,//$row['UNIT'], 
                         "UOM_ISO"            => '', 
                         "OVF_TOL"            => '', 
                         "OVF_UNLIM"          => '', 
@@ -729,7 +729,7 @@ class SapHelper {
                     'MAT_GRP'           => $row['MAT_GRP'],//'T12075',, 
                     'SUPPL_PLNT'        => '',
                     'QUANTITY'          => $row['QUANTITY'], // '1.000',
-                    'UNIT'              => \App\Models\RN\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1, // 'LOT',
+                    'UNIT'              => \App\Models\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1, // 'LOT',
                     'DEL_DATCAT'        => '',
                     'DELIV_DATE'        => $row['DELIV_DATE'],//'2020-06-23',
                     'REL_DATE'          => $row['REL_DATE'],//'2020-03-06',//
@@ -860,7 +860,7 @@ class SapHelper {
 
                 $sub = '0000000000';
                 $pak = '0000000000';
-                $dataChild = \App\Models\RN\PurchaseRequestServiceChild::where('purchase_request_id',$row['HEADER_ID'])->get();
+                $dataChild = \App\Models\PurchaseRequestServiceChild::where('purchase_request_id',$row['HEADER_ID'])->get();
                 for ($k=0; $k < count($dataChild); $k++) {
                     $pak ='000000000'.$k+1;
                     $REQUISITION_ITEM_SERVICE_item = [
@@ -877,7 +877,7 @@ class SapHelper {
                         "SSC_ITEM"           => '',  
                         "EXT_SERV"           => '', 
                         "QUANTITY"           => $row['QUANTITY'], 
-                        "BASE_UOM"           => \App\Models\RN\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1, 
+                        "BASE_UOM"           => \App\Models\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1, 
                         "UOM_ISO"            => '', 
                         "OVF_TOL"            => '', 
                         "OVF_UNLIM"          => '', 
