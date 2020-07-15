@@ -52,12 +52,14 @@ class PurchaseOrdersDetail extends Model
         'delivery_date',
         'plant_code',
         'SCHED_LINE',
-        'request_detail_id'
+        'request_detail_id',
+        'qty_billing'
     ];
 
     public const SERVICE = 9;
 
     public const YesGr = 1;
+    public const Active = 1;
     public const NoGr  = 0;
 
     public function po()

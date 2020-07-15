@@ -48,7 +48,7 @@
                             @foreach($po as $key => $q)
                                 <tr>
                                     {{-- <td>-</td> --}}
-                                    <td>{{ $q->purchasing_document ?? 0 }}</td>
+                                    <td>{{ $q->PO_NUMBER ?? 0 }}</td>
                                     <td>{{ $q->PO_ITEM }}</td>
                                     <td>{{ $q->acp_no ?? $q->purchasing_document }}</td>
                                     <td>{{ $q->purchasing_group_code }}</td>
@@ -60,8 +60,8 @@
                                     <td>{{ $q->storage_location }}</td>
                                     <td>{{ $q->qty }}</td>
                                     <td>{{ $q->unit }}</td>
-                                    <td>{{ '0' }}</td>
-                                    <td>{{ '0' }}</td>
+                                    <td>{{ $q->qty_gr ?? '0' }}</td>
+                                    <td>{{ $q->qty_billing ?? '0' }}</td>
                                     <td>{{ $q->original_currency }}</td>
                                     <td>{{ $q->original_price }}</td>
                                     <td>{{ $q->currency }}</td>

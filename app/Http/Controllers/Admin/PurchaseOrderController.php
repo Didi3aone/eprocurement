@@ -44,6 +44,8 @@ class PurchaseOrderController extends Controller
                     'purchase_orders_details.short_text',
                     'purchase_orders_details.storage_location',
                     'purchase_orders_details.qty',
+                    'purchase_orders_details.qty_gr',
+                    'purchase_orders_details.qty_billing',
                     'purchase_orders_details.unit',
                     'purchase_orders_details.currency as original_currency',
                     'purchase_orders_details.original_price',
@@ -55,6 +57,7 @@ class PurchaseOrderController extends Controller
                     'purchase_orders_details.plant_code',
                     'purchase_orders_details.purchasing_group_code',
                     'purchase_orders.po_date',
+                    'purchase_orders.PO_NUMBER',
                     'purchase_orders.id',
                     'master_acps.acp_no',
                     'vendors.name as vendor'

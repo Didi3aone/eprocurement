@@ -101,12 +101,12 @@
                                     @php
                                         $readonly = '';
                                         $disabled = '';
-                                        if( $value->is_gr == 1 ) {
+                                        if( $value->is_gr == \App\Models\PurchaseOrdersDetail::YesGr ) {
                                             $readonly = 'readonly';
                                             $disabled = 'disabled';
                                         }
                                     @endphp
-                                    @if($value->is_active == 1 )
+                                    @if($value->is_active == \App\Models\PurchaseOrdersDetail::Active)
                                     <tr id="item_{{ $key }}">
                                         <input type="hidden" class="id" name="idDetail[]" id="id" value="{{ $value->id }}">
                                         <input type="hidden" class="id" name="idPrDetail[]" id="idPrDetail" value="">
@@ -125,9 +125,11 @@
                                             <label for="checks_{{ $key }}">&nbsp;</label>
                                        </td>
                                        <td>
+                                            @if( $value->is_gr == \App\Models\PurchaseOrdersDetail::NoGr )
                                             <a href="javascript:;" data-key="{{ $key }}" data-id="{{ $value->id }}" data-po="{{ $purchaseOrder->PO_NUMBER }}"  class="remove-item btn btn-danger btn-xs">
                                                 <i class="fa fa-trash"></i> Delete
                                             </a>
+                                            @endif
                                        </td>
                                     </tr>
                                     @endif
