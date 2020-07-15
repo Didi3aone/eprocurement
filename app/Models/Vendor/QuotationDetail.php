@@ -24,6 +24,7 @@ class QuotationDetail extends Model
 
     public const SERVICE  = 9;
     public const STANDART = 0;
+    public const MATERIAL_TEXT = 99;
 
     public function quotation ()
     {

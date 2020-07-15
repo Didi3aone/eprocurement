@@ -11,6 +11,7 @@ use App\Models\Vendor\Quotation;
 use App\Models\Vendor\QuotationDetail;
 use App\Models\Vendor\QuotationApproval;
 use App\Models\Vendor\QuotationDelivery;
+use App\Models\Vendor\QuotationServiceChild;
 use App\Models\PurchaseRequestsDetail;
 use App\Models\PurchaseRequestHistory;
 use App\Models\PurchaseOrder;
@@ -436,10 +437,10 @@ class QuotationDirectController extends Controller
             'updated_by'   => $header->updated_by,
         ]);
 
+        
         foreach ($detail as $rows) {
             $sched = QuotationDelivery::where('quotation_detail_id', $rows->id)->first();
-
-            PurchaseOrdersDetail::create([
+            $detail = PurchaseOrdersDetail::create([
                 'purchase_order_id'         => $poId->id,
                 'description'               => $rows->description ?? '-',
                 'qty'                       => $rows->qty,
@@ -481,6 +482,23 @@ class QuotationDirectController extends Controller
                 'SCHED_LINE'                => $sched->SCHED_LINE,
                 'request_detail_id'         => $rows->request_detail_id,
             ]);
+
+            if( $rows->item_category == QuotationDetail::SERVICE ) {
+                $service = QuotationServiceChild::where('quotation_id', $header->id)->get();
+
+                foreach($service as $key => $value ) {
+                    $poServiceChild = new \App\Models\PurchaseOrderServiceChild;
+                    $poServiceChild->purchase_order_id          = $poId->id;
+                    $poServiceChild->purchase_order_detail_id   = $detail->id;
+                    $poServiceChild->preq_item                  = $value->preq_item;
+                    $poServiceChild->po_item                    = $value->po_item;
+                    $poServiceChild->package_no                 = $value->package_no;
+                    $poServiceChild->subpackage_no              = $value->subpackage_no;
+                    $poServiceChild->short_text                 = $value->short_text;
+
+                    $poServiceChild->save();
+                }
+            }
         }
     }
 
@@ -493,15 +511,42 @@ class QuotationDirectController extends Controller
         foreach ($details as $detail) {
             $totalPrice += $detail['price'];
             $schedLine  = sprintf('%05d', (1+$i));
-            $indexes    = $i+1;
             $poItem     =  ('000'.(10+($i*10)));
             
-            $service        = '';
-            $packageParent  = '000000000';
-            $subpackgparent = '000000000';
-            $noLine         = '';
-            $packageParent  = '0000000001';
-            $subpackgparent = '0000000002';
+            //khusus service 
+            //insert anak2ny
+            $child  = new QuotationServiceChild;
+            $childs = new QuotationServiceChild;
+
+            $service                = '';
+            $packageParent          = '000000000';
+            $subpackgparent         = '000000000';
+            $childPackageParent     = '000000000';
+            $noLine                 = '';
+            if( $detail['item_category'] == QuotationDetail::SERVICE ) {
+
+                $subpackgparent    .= (2+($i*2));
+                if( $i % 2 == 0 ) {
+                    //anak genap
+                    $ke3 =  $i+1;
+                    $packageParent                  .= ($i + $ke3);
+                    $child->quotation_id            = $id;
+                    $child->preq_item               = ('000'.(10+($i*10)));
+                    $child->po_item                 = $poItem;
+                    $child->package_no              = $packageParent;
+                    $child->subpackage_no           = $subpackgparent;
+                    $child->short_text              = $detail['short_text'];
+                } else {
+                    //anak ganjil
+                    $packageParent                  .= ($i + 2);
+                    $child->quotation_id            = $id;
+                    $child->preq_item               = ('000'.(10+($i*10)));
+                    $child->po_item                 = $poItem;
+                    $child->package_no              = $packageParent;
+                    $child->subpackage_no           = $subpackgparent;
+                    $child->short_text              = $detail['short_text'];
+                }
+            }
 
             $quotationDetail = new QuotationDetail;
             $quotationDetail->quotation_order_id        = $id;
@@ -540,9 +585,34 @@ class QuotationDirectController extends Controller
             $quotationDetail->tax_code                  = $detail['tax_code'] == 1 ? 'V1' : 'V0';
             $quotationDetail->package_no                = $packageParent;
             $quotationDetail->subpackage_no             = $subpackgparent;
-            $quotationDetail->line_no                   = '0000000001';
+            $quotationDetail->line_no                   = '000000000'.$i;
             $quotationDetail->request_detail_id         = $detail['request_detail_id'];
             $quotationDetail->save();
+
+            if( $detail['item_category'] == QuotationDetail::SERVICE ) {
+                $child->quotation_detail_id  = $quotationDetail->id;
+                $child->save();
+
+                // $packageParents              = $i +;
+                $childs->quotation_detail_id = $quotationDetail->id;
+
+                //anak genap
+                $childs->quotation_id    = $id;
+                $childs->preq_item       = ('000'.(10+($i*10)));
+                $childs->po_item         = $poItem;
+                $childs->package_no      = $subpackgparent;
+                $childs->subpackage_no   = '000000000';
+                $childs->short_text      = $detail['short_text'];
+                $childs->save();
+
+                $childs->quotation_id    = $id;
+                $childs->preq_item       = ('000'.(10+($i*10)));
+                $childs->po_item         = $poItem;
+                $childs->package_no      = $subpackgparent;
+                $childs->subpackage_no   = '000000000';
+                $childs->short_text      = $detail['short_text'];
+                $childs->save();
+            }
 
             QuotationDelivery::create([
                 'quotation_id'          => $id,

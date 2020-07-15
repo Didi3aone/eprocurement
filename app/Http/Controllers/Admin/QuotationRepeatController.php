@@ -12,6 +12,7 @@ use App\Models\PurchaseRequestHistory;
 use Gate, Artisan, Exception;
 use App\Models\Vendor\Quotation;
 use App\Models\Vendor\QuotationDetail;
+use App\Models\Vendor\QuotationServiceChild;
 use App\Models\Vendor\QuotationApproval;
 use App\Models\Vendor\QuotationDelivery;
 
@@ -428,7 +429,7 @@ class QuotationRepeatController extends Controller
             'notes'        => $header->notes,
             'po_date'      => \Carbon\Carbon::now(),
             'vendor_id'    => $header->vendor_id,
-            'status'       => Quotation::QuotationRepeat,
+            'status'       => Quotation::QuotationDirect,
             'payment_term' => $header->payment_term,
             'currency'     => $header->currency,
             'PO_NUMBER'    => $poNumber ?? 0,
@@ -438,10 +439,10 @@ class QuotationRepeatController extends Controller
             'updated_by'   => $header->updated_by,
         ]);
 
+        
         foreach ($detail as $rows) {
             $sched = QuotationDelivery::where('quotation_detail_id', $rows->id)->first();
-
-            PurchaseOrdersDetail::create([
+            $detail = PurchaseOrdersDetail::create([
                 'purchase_order_id'         => $poId->id,
                 'description'               => $rows->description ?? '-',
                 'qty'                       => $rows->qty,
@@ -481,37 +482,71 @@ class QuotationRepeatController extends Controller
                 'subpackage_no'             => $rows->subpackage_no,
                 'line_no'                   => $rows->line_no,
                 'SCHED_LINE'                => $sched->SCHED_LINE,
-                'request_detail_id'         => $rows->request_detail_id
+                'request_detail_id'         => $rows->request_detail_id,
             ]);
+
+            if( $rows->item_category == QuotationDetail::SERVICE ) {
+                $service = QuotationServiceChild::where('quotation_id', $header->id)->get();
+
+                foreach($service as $key => $value ) {
+                    $poServiceChild = new \App\Models\PurchaseOrderServiceChild;
+                    $poServiceChild->purchase_order_id          = $poId->id;
+                    $poServiceChild->purchase_order_detail_id   = $detail->id;
+                    $poServiceChild->preq_item                  = $value->preq_item;
+                    $poServiceChild->po_item                    = $value->po_item;
+                    $poServiceChild->package_no                 = $value->package_no;
+                    $poServiceChild->subpackage_no              = $value->subpackage_no;
+                    $poServiceChild->short_text                 = $value->short_text;
+
+                    $poServiceChild->save();
+                }
+            }
         }
     }
 
     private function _insert_details($details, $id)
     {
         $i = 0;
-        $lineNo     = 1;
+        $lineNo = 1;
         $totalPrice = 0;
         $assProc    = "";
         foreach ($details as $detail) {
             $totalPrice += $detail['price'];
             $schedLine  = sprintf('%05d', (1+$i));
-            $indexes    = $i+1;
-            $poItem     = ('000'.(10+($i*10)));//sprintf('%05d', (10*$indexes));;
+            $poItem     =  ('000'.(10+($i*10)));
             
-            $service        = '';
-            $packageParent  = '000000000';
-            $subpackgparent = '000000000';
-            $noLine         = '';
+            //khusus service 
+            //insert anak2ny
+            $child  = new QuotationServiceChild;
+            $childs = new QuotationServiceChild;
+
+            $service                = '';
+            $packageParent          = '000000000';
+            $subpackgparent         = '000000000';
+            $childPackageParent     = '000000000';
+            $noLine                 = '';
             if( $detail['item_category'] == QuotationDetail::SERVICE ) {
-                //check position parent and 
-                if( $i == 0 ) {
-                    $noLine = $lineNo;
+
+                $subpackgparent    .= (2+($i*2));
+                if( $i % 2 == 0 ) {
+                    //anak genap
+                    $ke3 =  $i+1;
+                    $packageParent                  .= ($i + $ke3);
+                    $child->quotation_id            = $id;
+                    $child->preq_item               = ('000'.(10+($i*10)));
+                    $child->po_item                 = $poItem;
+                    $child->package_no              = $packageParent;
+                    $child->subpackage_no           = $subpackgparent;
+                    $child->short_text              = $detail['short_text'];
                 } else {
-                    if( $i == 1 ) {
-                        $noLine = $lineNo - 1;
-                    } else {
-                        $noLine = $lineNo - $i;
-                    }
+                    //anak ganjil
+                    $packageParent                  .= ($i + 2);
+                    $child->quotation_id            = $id;
+                    $child->preq_item               = ('000'.(10+($i*10)));
+                    $child->po_item                 = $poItem;
+                    $child->package_no              = $packageParent;
+                    $child->subpackage_no           = $subpackgparent;
+                    $child->short_text              = $detail['short_text'];
                 }
             }
 
@@ -544,18 +579,42 @@ class QuotationRepeatController extends Controller
             $quotationDetail->PR_NO                     = $detail['PR_NO'];
             $quotationDetail->PO_ITEM                   = $poItem;
             $quotationDetail->purchasing_document       = $detail['rfq'];
-            $quotationDetail->acp_id                    = $detail['acp_id'] ?? 0;
+            $quotationDetail->acp_id                    = $detail['acp_id'];
             $quotationDetail->delivery_date             = $detail['delivery_date'];
             $quotationDetail->currency                  = $detail['original_currency'];
             $quotationDetail->request_no                = $detail['request_no'];
             $quotationDetail->item_category             = $detail['item_category'];
             $quotationDetail->tax_code                  = $detail['tax_code'] == 1 ? 'V1' : 'V0';
-            $quotationDetail->package_no                = $packageParent.$noLine;
-            $quotationDetail->subpackage_no             = $subpackgparent.$noLine;
-            $quotationDetail->line_no                   = '000000000'.$noLine;
+            $quotationDetail->package_no                = $packageParent;
+            $quotationDetail->subpackage_no             = $subpackgparent;
+            $quotationDetail->line_no                   = '000000000'.$i;
             $quotationDetail->request_detail_id         = $detail['request_detail_id'];
-
             $quotationDetail->save();
+
+            if( $detail['item_category'] == QuotationDetail::SERVICE ) {
+                $child->quotation_detail_id  = $quotationDetail->id;
+                $child->save();
+
+                // $packageParents              = $i +;
+                $childs->quotation_detail_id = $quotationDetail->id;
+
+                //anak genap
+                $childs->quotation_id    = $id;
+                $childs->preq_item       = ('000'.(10+($i*10)));
+                $childs->po_item         = $poItem;
+                $childs->package_no      = $subpackgparent;
+                $childs->subpackage_no   = '000000000';
+                $childs->short_text      = $detail['short_text'];
+                $childs->save();
+
+                $childs->quotation_id    = $id;
+                $childs->preq_item       = ('000'.(10+($i*10)));
+                $childs->po_item         = $poItem;
+                $childs->package_no      = $subpackgparent;
+                $childs->subpackage_no   = '000000000';
+                $childs->short_text      = $detail['short_text'];
+                $childs->save();
+            }
 
             QuotationDelivery::create([
                 'quotation_id'          => $id,
@@ -569,6 +628,7 @@ class QuotationRepeatController extends Controller
             ]);
 
             $assProc = \App\Models\UserMap::getAssProc($detail['purchasing_group_code']);
+
             $i++;
         }
 
