@@ -185,7 +185,7 @@
                 <div class="col-lg-6">
                     <div class="form-group">
                         <label for="">Payment Term</label>
-                        <select name="payment_term" id="payment_term" class="form-control select2">
+                        <select name="payment_term" id="payment_term" class="form-control select2" disabled>
                             {{-- <option value="">-- Select --</option> --}}
                             {{-- @foreach ($top as $val)
                             <option value="{{ $val->payment_terms }}">

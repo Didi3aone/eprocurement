@@ -52,10 +52,15 @@ class AcpTableMaterial extends Model
 
     public static function getAcp($material_id)
     {
+        // echo ($material_id);die;
+        // $acpMaterial  = AcpTableMaterial::where('material_id', strtolower($material_id))->get();
+        // print_r($acpMaterial);die;
         return AcpTableMaterial::join('master_acps','master_acps.id','=','master_acp_materials.master_acp_id')
-            ->join('master_acp_vendors','master_acp_vendors.vendor_code','=','master_acp_materials.master_acp_vendor_id')
-            ->join('vendors','vendors.code','=','master_acp_vendors.vendor_code')
-            ->leftJoin('purchase_requests_details','purchase_requests_details.description','=','master_acp_materials.material_id')
+            ->join('master_acp_vendors','master_acps.id','=','master_acp_vendors.master_acp_id')
+            ->join('vendors',function($joins) {
+                $joins->on('vendors.code','=','master_acp_vendors.vendor_code')
+                ->where('master_acp_vendors.is_winner',1);
+            })
             ->select(
                 'master_acp_materials.material_id',
                 'vendors.name',
@@ -64,12 +69,17 @@ class AcpTableMaterial extends Model
                 'master_acps.id as acp_id',
                 'master_acp_materials.currency',
             )
+            ->where('master_acp_materials.material_id','=',$material_id)
             ->where('master_acps.end_date','>=',date('Y-m-d'))
-            // ->where('master_acps.end_date','<=',date('Y-m-d'))
-            ->where('master_acp_materials.material_id', $material_id)
             ->where('master_acps.status_approval',2)
-            ->where('master_acp_vendors.is_winner',1)
-            ->distinct()
+            ->groupBy('master_acp_materials.material_id',
+                'vendors.name',
+                'vendors.code',
+                'master_acps.acp_no',
+                'master_acps.id',
+                'master_acp_materials.currency'
+            )
+            // ->distinct()
             ->get();
     }
 

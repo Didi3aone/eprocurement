@@ -122,12 +122,19 @@
                                             <td>{{ $value->unit }}</td>
                                             <td>{{ empty($value->qty) ? 0 : $value->qty }}</td>
                                             <td>
+                                                @php
+                                                    if( $value->material_id == '' ) {
+                                                        $paramM = $value->description;
+                                                    } else {
+                                                        $paramM = $value->material_id;
+                                                    }
+                                                @endphp
                                                 <select name="rfq[]" id="rfq" class="select2 rfq {{ $errors->has('rfq') ? 'is-invalid' : '' }}" required style="width:100%;">
                                                     <option value=""> Select </option>
-                                                    @foreach(\App\Models\AcpTableMaterial::getAcp($value->material_id) as $key => $valus)
+                                                    @foreach(\App\Models\AcpTableMaterial::getAcp($paramM) as $key => $valus)
                                                     <option value="{{ $valus->acp_no }}" 
                                                         data-code="{{ $valus->code }}" 
-                                                        data-currency="{{ $valus->currency }}" 
+                                                        data-currency="{{ $valus->currency }}"  
                                                         data-material="{{ $valus->material_id }}" 
                                                         data-acp="{{ $valus->acp_id }}">
                                                         {{ $valus->acp_no ." - ". $valus->name }}
