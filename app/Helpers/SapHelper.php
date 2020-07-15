@@ -88,9 +88,9 @@ class SapHelper {
         set_time_limit(0);
         $soapFile = \sapHelp::getSoapXml('PURCHASE_REQUEST');
         if( $soapFile->is_active_env == \App\Models\BaseModel::Development ) {
-            $wsdl = public_path()."/soap-xml/zbn_eproc_pr.xml";
+            $wsdl = public_path()."/xml/zbn_eproc_pr.xml";
         } else {
-            $wsdl = public_path() ."/soap-xml/". $soapFile->xml_file;
+            $wsdl = public_path() ."/xml/". $soapFile->xml_file;
         }
         
         $username = \sapHelp::Username;
@@ -3600,17 +3600,8 @@ class SapHelper {
                 "HANDOVERTIME" => "",
             ];
 
-            if ($is_array) {
-                $params[0]['POITEM']['item'][$i] = $POITEM;
-                $params[0]['POITEMX']['item'][$i] = $POITEMX;
-               // $params[0]['POSCHEDULE']['item'][$i] = $POSCHEDULE;
-                //$params[0]['POSCHEDULEX']['item'][$i] = $POSCHEDULEX;
-            } else {
-                $params[0]['POITEM']['item'] = $POITEM;
-                $params[0]['POITEMX']['item'] = $POITEMX;
-                //$params[0]['POSCHEDULE']['item'] = $POSCHEDULE;
-                //$params[0]['POSCHEDULEX']['item'] = $POSCHEDULEX;
-            }
+            $params[0]['POITEM']['item'][$i] = $POITEM;
+            $params[0]['POITEMX']['item'][$i] = $POITEMX;
         
         }
         $params[0]['PURCHASEORDER'] = $poHeader->PO_NUMBER;
