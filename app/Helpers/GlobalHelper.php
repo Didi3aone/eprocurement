@@ -138,6 +138,7 @@
     function saveApprovals($assProc, $quotation_id, $tingkat,$type, $isPlant, $isCmo = false)
     {
         $acp   = AcpTable::find($quotation_id);
+        $plantHead ='';
         
         if( $acp->plant_id == '1101' OR $acp->plant_id == '2101' ) {
             $plantHead = '120049';
