@@ -42,7 +42,7 @@ class BillingController extends Controller
     {
         $spv = 1;
 
-        $billing = Billing::where('is_spv', $spv)->where('status',1)->get();
+        $billing = Billing::where('is_spv', $spv)->where('status',2)->get();
 
         return view('admin.billing.index-spv', compact('billing'));
     }
