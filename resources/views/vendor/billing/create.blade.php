@@ -101,7 +101,7 @@
                                 </div>
                                 <div class="form-group col-lg-4">
                                     <label>NPWP</label>
-                                    <input type="text" id="" class="form-control form-control-line {{ $errors->has('npwp') ? 'is-invalid' : '' }}" name="npwp" value="{{ old('npwp', $npwp->tax_numbers) }}"> 
+                                    <input type="text" id="" class="form-control form-control-line {{ $errors->has('npwp') ? 'is-invalid' : '' }}" name="npwp" value="{{ old('npwp', $npwp->tax_numbers) }}" readonly> 
                                     @if($errors->has('npwp'))
                                         <div class="invalid-feedback">
                                             {{ $errors->first('npwp') }}
@@ -190,8 +190,8 @@
                             </div>
                             <div class="row">
                                 <div class="col-lg-12 form-group">
-                                    <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.save') }}</button>
-                                    <a href="{{ route('admin.billing') }}" type="button" class="btn btn-inverse">Cancel</a>
+                                    <button type="submit" class="btn btn-success"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
+                                    <a href="{{ route('admin.billing') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i> Back</a>
                                 </div>
                             </div>
                         </div>

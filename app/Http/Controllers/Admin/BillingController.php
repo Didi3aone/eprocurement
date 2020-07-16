@@ -120,8 +120,8 @@ class BillingController extends Controller
         $billing->house_bank            = $request->house_bank;
         $billing->exchange_rate         = $request->exchange_rate ? str_replace(',', '.',$request->exchange_rate) : "00.00";
         $billing->base_line_date        = $request->base_line_date;
-        $billing->ref_key_3             = $request->ref_key_3;
-        $billing->ref_key_1             = $request->ref_key_1;
+        $billing->ref_key_3             = $request->ref_key_3 ?? '-';
+        $billing->ref_key_1             = $request->ref_key_1 ?? '-';
         $billing->partner_bank          = $vendorBank->partner_bank;
         $billing->calculate_tax         = $request->calculate_tax ?? 0;
         $billing->tax_amount            = $request->tax_amount ? str_replace(',', '.',$request->tax_amount) : '00.00';
