@@ -452,7 +452,7 @@
 
     function toDecimal($duit)
     {
-        return number_format((float)$duit, 2, '.', '');
+        return number_format($duit, 2, ",", ".");
     }
 
 ?>
