@@ -86,7 +86,7 @@
                         </div>
                         <div class="form-group col-lg-4">
                             <label>DPP</label>
-                            <input type="text" class="form-control form-control-line" name="dpp" id="dpp" value="{{ $billing->dpp ?? old('dpp', '') }}" readonly> 
+                            <input type="text" class="form-control form-control-line" name="dpp" id="dpp" value="{{ toDecimal($billing->dpp) ?? old('dpp', '') }}" readonly> 
                         </div>
                         <div class="form-group col-lg-4">
                             <label>No. Rekening </label>
@@ -151,10 +151,10 @@
                                     <option value="{{ $tipe->id }}" data-rate="{{ $tipe->withholding_tax_rate }}">{{ $tipe->withholding_tax_code }} - {{ $tipe->name }}</option>
                                 @endforeach
                             </select>
-                        </div>
+                        </div> 
                         <div class="form-group col-lg-4">
                             <label>Base PPH</label>
-                            <input type="text" class="form-control form-control-line" name="base_pph" value="{{ $billing->dpp }}"> 
+                            <input type="text" class="form-control form-control-line" name="base_pph" value="{{ toDecimal($billing->dpp) }}"> 
                         </div>
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.jumlah_pph') }}</label>
@@ -231,7 +231,13 @@
                                     </tr>
                                 </thead>
                                 <tbody id="billing-detail">
+                                    @php
+                                        $totalSum = 0;
+                                    @endphp
                                     @foreach ($billing->detail as $val)
+                                    @php
+                                        $totalSum += $val->amount;
+                                    @endphp
                                     <tr>
                                         <input type="hidden" value="{{ $val->id }}" name="iddetail[]">
                                         <td>{{ $val->qty }}</td>
@@ -248,12 +254,21 @@
                             </table>
                         </div>
                     </div>
+                    <div class="form-group col-lg-4">
+                        <label>Nominal Balance</label>
+                        @php
+                            $balance = $billing->dpp - $totalSum;
+                        @endphp
+                        <input type="text" class="form-control form-control-line" name="nominal_balance" value="{{ toDecimal($balance) }}"> 
+                    </div>
                     <br>
                     <br>
                     <div class="form-actions">
                         <a href="javascript:;" id="approval" type="button" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.approve') }}</a>
                         <a href="javascript:;" id="reject" data-toggle="modal" data-id="{{ $billing->id }}" data-target="#modal_rejected_reason" type="button" class="btn btn-danger"> 
                         <i class="fa fa-times"></i> {{ trans('global.reject') }}</a>
+                        <a href="javascript:;" id="rejects" data-toggle="modal" data-id="{{ $billing->id }}" data-target="#modal_rejected_reasons" type="button" class="btn btn-warning"> 
+                        <i class="fa fa-times"></i> {{ 'Incomplete' }}</a>
                         <a href="{{ route('admin.billing') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i> Back To List</a>
                     </div>
                 </div>
@@ -272,6 +287,31 @@
                 </button>
             </div>
             <form action="{{ route('admin.billing-post-rejected') }}" method="post" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="billing-id" value="">
+                    <textarea name="reason" id="reason" cols="30" rows="10"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal_rejected_reasons" tabindex="-1" role="dialog" aria-labelledby="modal_rejected_reasons" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Incomplete Reason</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('admin.billing-post-incompleted') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <div class="modal-body">
@@ -331,6 +371,12 @@
 
     $(document).on('click', '#reject', function (result) {
         const $modal = $('#modal_rejected_reason')
+        $modal.find('#billing-id').val($(this).data('id'))
+        $modal.modal('show')
+    })
+
+    $(document).on('click', '#rejects', function (result) {
+        const $modal = $('#modal_rejected_reasons')
         $modal.find('#billing-id').val($(this).data('id'))
         $modal.modal('show')
     })

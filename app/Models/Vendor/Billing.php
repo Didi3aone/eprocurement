@@ -53,7 +53,8 @@ class Billing extends Model
         3 => 'Rejected',
         4 => 'Submit to SAP',
         5 => 'Payment Proposal',
-        6 => 'Payed'
+        6 => 'Payed',
+        8 => 'Incompleted'
     ];
 
     public const WaitingApprove = 1;
@@ -64,6 +65,7 @@ class Billing extends Model
     public const Payment = 5;
     public const Payed = 6;
     public const sendToSpv = 1;
+    public const Incompleted = 8;
 
     protected static function boot()
     {

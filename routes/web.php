@@ -254,6 +254,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('billing-show-staff/{id}', 'BillingController@showStaff')->name('billing-show-staff');
     Route::put('billing-post-approved', 'BillingController@storeApproved')->name('billing-post-approved');
     Route::put('billing-post-rejected', 'BillingController@storeRejected')->name('billing-post-rejected');
+    Route::put('billing-post-incompleted', 'BillingController@storeIncompleted')->name('billing-post-incompleted');
 
     // ACP
     Route::get('acp-direct', 'AcpController@directAcp')->name('acp-direct');

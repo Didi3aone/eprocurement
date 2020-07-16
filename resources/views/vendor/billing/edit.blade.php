@@ -60,7 +60,7 @@
                                 </div>
                                 <div class="form-group col-lg-4">
                                     <label>DPP <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control form-control-line {{ $errors->has('dpp') ? 'is-invalid' : '' }}" name="dpp" value="{{ old('dpp', $billing->dpp) }}" readonly> 
+                                    <input type="text" class="form-control form-control-line {{ $errors->has('dpp') ? 'is-invalid' : '' }}" name="dpp" value="{{ old('dpp', toDecimal($billing->dpp)) }}" readonly> 
                                     @if($errors->has('dpp'))
                                         <div class="invalid-feedback">
                                             {{ $errors->first('dpp') }}

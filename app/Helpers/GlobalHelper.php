@@ -450,4 +450,9 @@
         return str_replace('.','',$titik);
     }
 
+    function toDecimal($duit)
+    {
+        return number_format((float)$duit, 2, '.', '');
+    }
+
 ?>

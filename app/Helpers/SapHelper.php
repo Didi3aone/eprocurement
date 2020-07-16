@@ -3850,6 +3850,13 @@ class SapHelper {
             $billing->update();
             return true;
         } else {
+            \App\Models\employeeApps\SapLogSoap::create([
+                'log_type' => 'BILLING',
+                'log_type_id' => $quotation->id,
+                'log_params_employee' => \json_encode($params),
+                'log_response_sap' => \json_encode($result),
+                'status' => 'FAILED',
+            ]); 
             return false;
         }
     }

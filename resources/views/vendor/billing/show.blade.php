@@ -118,7 +118,7 @@
                                 {{ $billing->keterangan_po }}
                             </td>
                         </tr>
-                        @if($billing->status == \App\Models\Vendor\Billing::Rejected)
+                        @if($billing->status == \App\Models\Vendor\Billing::Rejected OR $billing->status == \App\Models\Vendor\Billing::Incompleted)
                         <tr>
                             <th>
                                 Keterangan dibatalkan
@@ -128,6 +128,33 @@
                             </td>
                         </tr>
                         @endif
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-body">
+                <p>Detail Billing</p>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th style="">Qty GR</th>
+                            <th style="">Qty</th>
+                            <th style="">Material</th>
+                            <th style="">PO No</th>
+                            <th style="">PO Item</th>
+                            <th style="">GR Doc</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($billing->detail as $key => $value)
+                            <tr>
+                                <td>{{ $value->qty_old }}</td>
+                                <td>{{ $value->qty }}</td>
+                                <td>{{ $value->material['description'] }}</td>
+                                <td>{{ $value->po_no }}</td>
+                                <td>{{ $value->PO_ITEM }}</td>
+                                <td>{{ $value->doc_gr }}</td>
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>

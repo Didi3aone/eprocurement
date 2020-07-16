@@ -308,7 +308,7 @@ class BillingController extends Controller
                 $billingDetail->material_doc_item           = $request->get('material_doc_item')[$key];
                 $billingDetail->cost_center_code            = $request->get('cost_center_code')[$key];
                 $billingDetail->tahun_gr                    = $request->get('tahun_gr')[$key];
-                $billingDetail->gr_date                     = $request->get('gr_date')[$key];
+                $billingDetail->gr_date                     = $request->get('posting_date')[$key];
                 $billingDetail->purchase_order_detail_id    = $request->get('purchase_order_detail_id')[$key];
                 $billingDetail->save();
 

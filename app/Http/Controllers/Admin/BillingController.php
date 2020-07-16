@@ -17,7 +17,7 @@ use App\Models\InvoiceItem;
 use App\Models\MasterBankHouse;
 use App\Http\Requests\UpdateBillingRequest;
 use Symfony\Component\HttpFoundation\Response;
-
+use App\Mail\billingIncompleted;
 class BillingController extends Controller
 {
     /**
@@ -179,6 +179,38 @@ class BillingController extends Controller
             $poDetail->save();
         }
         \Session::flash('status','Billing has been rejected');
+        return \redirect()->route('admin.billing');
+    }
+
+    public function storeIncompleted(Request $request)
+    {
+        $billing                    = Billing::find($request->id);
+        $billing->status            = Billing::Incompleted;
+        $billing->reason_rejected   = $request->reason;
+
+        $billing->update();
+        $name  = "didi";
+        $email = 'diditriawan13@gmail.com';
+        // $getEmailVendor = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
+
+        \Mail::to($email)->send(new billingIncompleted($billing, $name));
+
+        // foreach( $billing->detail as $key => $rows ) {
+        //     $poGr = PurchaseOrderGr::where('po_no', $rows->po_no)
+        //         ->where('po_item', $rows->PO_ITEM)
+        //         ->where('material_no', $rows->material_id)
+        //         ->first();
+
+        //     $poGr->qty += $rows->qty;
+
+        //     $poGr->save();
+
+        //     $poDetail = PurchaseOrdersDetail::where('id', $rows->purchase_order_detail_id)
+        //                 ->first();
+        //     $poDetail->qty_billing -= $rows->qty;
+        //     $poDetail->save();
+        // }
+        \Session::flash('status','Billing has been canceled');
         return \redirect()->route('admin.billing');
     }
 }

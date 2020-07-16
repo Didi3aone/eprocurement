@@ -146,6 +146,10 @@
                             </select>
                         </div>
                         <div class="form-group col-lg-4">
+                            <label>Base PPH</label>
+                            <input type="text" class="form-control form-control-line" name="base_pph" value="{{ $billing->base_pph }}"> 
+                        </div>
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.jumlah_pph') }}</label>
                             <input type="text" class="form-control form-control-line" name="jumlah_pph" id="jumlah_pph" value="{{ $billing->jumlah_pph }}" readonly> 
                         </div>
