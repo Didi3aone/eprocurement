@@ -2201,7 +2201,7 @@ class SapHelper {
                     $POSERVICES = [
                         "PCKG_NO" => $dataChild[$k]->package_no,//0 = 9X 1; CHILD = 2 DST 
                         "LINE_NO" =>  '000000000'.$createLine,//0 = 9X 1; CHILD = 2 DST
-                        "EXT_LINE" =>  "000000000".$createLine,//CHILD = 0 = 9X 1
+                        "EXT_LINE" =>  "",//CHILD = 0 = 9X 1
                         "OUTL_LEVEL" => "",
                         "OUTL_NO" => "",    
                         "OUTL_IND" => "",
@@ -2830,7 +2830,7 @@ class SapHelper {
                     $POSERVICES = [
                         "PCKG_NO" => $dataChild[$k]->package_no,//0 = 9X 1; CHILD = 2 DST 
                         "LINE_NO" =>  '000000000'.$createLine,//0 = 9X 1; CHILD = 2 DST
-                        "EXT_LINE" =>  "0000000001",//CHILD = 0 = 9X 1
+                        "EXT_LINE" =>  "",//CHILD = 0 = 9X 1
                         "OUTL_LEVEL" => "",
                         "OUTL_NO" => "",    
                         "OUTL_IND" => "",
