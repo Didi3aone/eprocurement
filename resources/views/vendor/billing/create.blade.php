@@ -22,7 +22,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="form-group col-lg-4">
-                                    <label>Faktur No</label>
+                                    <label>No Faktur Pajak</label>
                                     <input type="text" class="form-control form-control-line {{ $errors->has('no_faktur') ? 'is-invalid' : '' }}" name="no_faktur" value="{{ old('no_faktur', '') }}"> 
                                     @if($errors->has('no_faktur'))
                                         <div class="invalid-feedback">
