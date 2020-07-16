@@ -576,7 +576,7 @@ class SapHelper {
                     $REQUISITION_ITEM_SERVICE_item = [
                         "PCKG_NO"            => $dataChild[$k]->package_no,//'000000000'.$createLine,//$row['package'],//'000000000'.$createLine,//$row['PACKAGE_NO'],
                         "LINE_NO"            => '000000000'.$createLine,
-                        "EXT_LINE"           => '0000000000',
+                        "EXT_LINE"           => '',
                         "OUTL_LEVEL"         => '0',
                         "OUTL_NO"            => '',
                         "OUTL_IND"           => '',
@@ -869,7 +869,7 @@ class SapHelper {
                     $REQUISITION_ITEM_SERVICE_item = [
                         "PCKG_NO"            => $dataChild[$k]->package_no,//$row['PACKAGE_NO'],
                         "LINE_NO"            => '000000000'.$pak,
-                        "EXT_LINE"           => '0000000000',
+                        "EXT_LINE"           => '',
                         "OUTL_LEVEL"         => '0',
                         "OUTL_NO"            => '',
                         "OUTL_IND"           => '',
