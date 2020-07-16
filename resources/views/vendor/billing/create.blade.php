@@ -114,28 +114,28 @@
                                 </div>
                                 <div class="form-group col-lg-4">
                                     <label>Upload File PO <span class="text-danger">*</span> </label>
-                                    <input type="file" class="form-control form-control-line" name="po" value="{{ old('po', '') }}"> 
+                                    <input type="file" class="form-control form-control-line" id="files" name="po" value="{{ old('po', '') }}"> 
+                                    <a href="" class="" id="viewer" target="_blank" onclick="PreviewImagePo()">Preview File Po</a>
                                 </div>
                                 <div class="form-group col-lg-4">
                                     <label>Delivery orders <span class="text-danger">*</span></label>
-                                    <input type="file" class="form-control form-control-line" name="no_surat_jalan" value="{{ old('no_surat_jalan', '') }}"> 
+                                    <input type="file" class="form-control form-control-line" id="files_do" name="no_surat_jalan" value="{{ old('no_surat_jalan', '') }}"> 
+                                    <a href="" class="" id="viewer_do" target="_blank" onclick="PreviewImageDo()">Preview File DO</a>
                                 </div>
                                 <div class="form-group col-lg-4">
                                     <label>Surat Ket. Bebas Pajak</label>
-                                    <input type="file" id="" class="form-control form-control-line {{ $errors->has('surat_ket_bebas_pajak') ? 'is-invalid' : '' }}" name="surat_ket_bebas_pajak" value="{{ old('surat_ket_bebas_pajak', '') }}"> 
-                                    @if($errors->has('surat_ket_bebas_pajak'))
-                                        <div class="invalid-feedback">
-                                            {{ $errors->first('surat_ket_bebas_pajak') }}
-                                        </div>
-                                    @endif
+                                    <input type="file" id="surat" class="form-control form-control-line {{ $errors->has('surat_ket_bebas_pajak') ? 'is-invalid' : '' }}" name="surat_ket_bebas_pajak" value="{{ old('surat_ket_bebas_pajak', '') }}"> 
+                                    <a href="" class="" id="viewer_surat" target="_blank" onclick="PreviewImageSurat()">Preview File Surat Ket. Bebas Pajak</a>
                                 </div>
                                 <div class="form-group col-lg-4">
                                     <label>Upload File Invoice <span class="text-danger">*</span></label>
-                                    <input type="file" class="form-control form-control-line" name="file_invoice" value="{{ old('file_invoice', '') }}"> 
+                                    <input type="file" class="form-control form-control-line" id="files_invoice" name="file_invoice" value="{{ old('file_invoice', '') }}"> 
+                                    <a href="" class="" id="viewer_invoice" target="_blank" onclick="PreviewImageInvoice()">Preview File Invoice</a>
                                 </div>
                                 <div class="form-group col-lg-4">
                                     <label>Upload File Faktur <span class="text-danger">*</span></label>
-                                    <input type="file" class="form-control form-control-line" name="file_faktur" value="{{ old('file_faktur', '') }}"> 
+                                    <input type="file" class="form-control form-control-line" id="file_faktur" name="file_faktur" value="{{ old('file_faktur', '') }}">
+                                    <a href="" class="" id="viewer_faktur" target="_blank" onclick="PreviewImageFaktur()">Preview File Faktur</a>
                                 </div>
                             </div>
                         </div>
@@ -351,6 +351,41 @@
        }
 
    });
+
+   function PreviewImagePo() {
+        pdffile=document.getElementById("files").files[0];
+        pdffile_url=URL.createObjectURL(pdffile);
+        console.log(pdffile_url)
+        $('#viewer').attr('href',pdffile_url);
+    }
+
+    function PreviewImageDo() {
+        pdffile=document.getElementById("files_do").files[0];
+        pdffile_url=URL.createObjectURL(pdffile);
+        console.log(pdffile_url)
+        $('#viewer_do').attr('href',pdffile_url);
+    }
+
+    function PreviewImageSurat() {
+        pdffile=document.getElementById("surat").files[0];
+        pdffile_url=URL.createObjectURL(pdffile);
+        console.log(pdffile_url)
+        $('#viewer_surat').attr('href',pdffile_url);
+    }
+
+    function PreviewImageInvoice() {
+        pdffile=document.getElementById("files_invoice").files[0];
+        pdffile_url=URL.createObjectURL(pdffile);
+        console.log(pdffile_url)
+        $('#viewer_invoice').attr('href',pdffile_url);
+    }
+
+    function PreviewImageFaktur() {
+        pdffile=document.getElementById("file_faktur").files[0];
+        pdffile_url=URL.createObjectURL(pdffile);
+        console.log(pdffile_url)
+        $('#viewer_faktur').attr('href',pdffile_url);
+    }
 
 </script>
 @endsection
