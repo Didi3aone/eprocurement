@@ -86,7 +86,7 @@
                                     <input type="text" class="form-control form-control-line" name="nominal_inv_after_ppn" id="nominal_inv_after_ppn" value="{{ old('nominal_inv_after_ppn', '') }}" readonly> 
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>No. Rekening <span class="text-danger">*</span></label>
+                                    <label>Account No <span class="text-danger">*</span></label>
                                      <select class="form-control select2" name="no_rekening" id="no_rekening" placeholder="Choose">
                                         <option value=""> Choose </option>
                                         @foreach($rekening as $id => $account_no )
@@ -100,7 +100,7 @@
                                     @endif
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>NPWP</label>
+                                    <label>TAX</label>
                                     <input type="text" id="" class="form-control form-control-line {{ $errors->has('npwp') ? 'is-invalid' : '' }}" name="npwp" value="{{ old('npwp', $npwp->tax_numbers) }}" readonly> 
                                     @if($errors->has('npwp'))
                                         <div class="invalid-feedback">
@@ -109,15 +109,15 @@
                                     @endif
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>Keterangan PO</label>
+                                    <label>Description PO</label>
                                     <textarea class="form-control form-control-line" name="keterangan_po"></textarea>
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>PO <span class="text-danger">*</span> </label>
+                                    <label>Upload File PO <span class="text-danger">*</span> </label>
                                     <input type="file" class="form-control form-control-line" name="po" value="{{ old('po', '') }}"> 
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>No. Surat Jalan <span class="text-danger">*</span></label>
+                                    <label>Delivery orders <span class="text-danger">*</span></label>
                                     <input type="file" class="form-control form-control-line" name="no_surat_jalan" value="{{ old('no_surat_jalan', '') }}"> 
                                 </div>
                                 <div class="form-group col-lg-4">
@@ -258,7 +258,7 @@
                             <td><input type="text" class="posting_date form-control" name="posting_date[]" value="${v.posting_date}" readonly/></td>
                             <td>
                                 <a href="javascript:;" class="remove-item btn btn-danger btn-xs">
-                                    <i class="fa fa-trash"></i> Remove
+                                    <i class="fa fa-trash"></i> Unclaim
                                 </a>
                             </td>
                         </tr>
