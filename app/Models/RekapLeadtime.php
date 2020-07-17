@@ -14,4 +14,11 @@ class RekapLeadtime extends Model
             ->where('purchasing_group', $pg)
             ->first();
     }
+
+    public static function calculateLeadTime($material, $plant)
+    {
+        return RekapLeadtime::where('material_id', $material)
+            ->where('plant', $plant)
+            ->first();
+    }
 }

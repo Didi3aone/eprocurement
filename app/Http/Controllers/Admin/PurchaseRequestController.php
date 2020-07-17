@@ -459,19 +459,24 @@ class PurchaseRequestController extends Controller
                     $status = PurchaseRequestsDetail::ApprovedPurchasing;
                 }
 
-                $leadTime = \App\Models\RekapLeadtime::getLeadTime(
-                            $prDetail->material_id,
-                            $prDetail->plant_code,
-                            $prDetail->purchasing_group_code);
-
-                if (null != $leadTime) {
+                $leadTime = \App\Models\RN\RekapLeadtime::calculateLeadTime(
+                        $prDetail->material_id,
+                        $prDetail->plant_code
+                    );  
+                    
+                $delivery_date = date('Y-m-d', strtotime('Y-m-d + 14 days'));
+                if( $leadTime != null)  {
                     $today = \Carbon\Carbon::now();
-                    $approveDate = $today->toDateString();
-                    $finalLeadTime = $leadTime->lead_time_pr_po + $leadTime->lead_time_po_gr;
-
-                    $prDetail->release_date = date('Y-m-d', strtotime($approveDate.' + '.$finalLeadTime.' days'));
-                    $prDetail->delivery_date = date('Y-m-d', strtotime($approveDate.' + '.$finalLeadTime.' days'));
+                    $approveDate   = $today->toDateString();
+                    $finalLeadTime = $leadTime->planned_deliv_time + $leadTime->gr_processing_time;
+                    
+                    $prDetail->release_date        = date('Y-m-d');
+                    $prDetail->delivery_date       = date('Y-m-d', strtotime($approveDate. ' + '.$finalLeadTime.' days'));
+                    $delivery_date                 = date('Y-m-d', strtotime($approveDate. ' + '.$finalLeadTime.' days'));
+                } else {
+                    $prDetail->delivery_date = $delivery_date;
                 }
+
                 $prDetail->status_approval = $status;
                 $assetNo = '';
                 if (PurchaseRequestsDetail::Assets == $prDetail->is_assets) {
@@ -506,7 +511,7 @@ class PurchaseRequestController extends Controller
                     $param_sap[$key]['MAT_GRP'] = $prDetail->material_group ?? '';
                     $param_sap[$key]['QUANTITY'] = $prDetail->qty;
                     $param_sap[$key]['UNIT'] = $prDetail->unit;
-                    $param_sap[$key]['DELIV_DATE'] = $prDetail->delivery_date;
+                    $param_sap[$key]['DELIV_DATE'] = $delivery_date;
                     $param_sap[$key]['REL_DATE'] = $prDetail->release_date;
                     $param_sap[$key]['ACCTASSCAT'] = $prDetail->account_assignment;
                     $param_sap[$key]['GR_IND'] = $prDetail->gr_ind;
