@@ -33,6 +33,7 @@ class PurchaseRequestController extends Controller
 
         $userMapping = UserMap::where('user_id', Auth::user()->user_id)->first();
         $userMapping = explode(',', $userMapping->purchasing_group_code);
+        // dd($userMapping);
         $materials = PurchaseRequestsDetail::select(
             \DB::raw('purchase_requests_details.id as id'),
             'purchase_requests_details.request_id',
@@ -61,9 +62,9 @@ class PurchaseRequestController extends Controller
             ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
             ->where('purchase_requests_details.is_validate', PurchaseRequestsDetail::YesValidate)
             ->whereIn('purchase_requests_details.purchasing_group_code', $userMapping)
-            ->where('purchase_requests_details.qty', '>', 0)
-            ->where('purchase_requests_details.line_no', '0000000001')
-                ->orWhere('purchase_requests_details.line_no', '000000000')
+            ->where('purchase_requests_details.qty', '>', '0.00')
+            // ->where('purchase_requests_details.line_no', '0000000001')
+            //     ->orWhere('purchase_requests_details.line_no', '000000000')
             ->where(function ($query) {
                 $query->where('purchase_requests_details.status_approval', PurchaseRequestsDetail::Approved)
                     ->orWhere('purchase_requests_details.status_approval', PurchaseRequestsDetail::ApprovedPurchasing);
