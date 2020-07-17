@@ -11,7 +11,7 @@
 </div>
 <div class="row">
     <div class="col-12">
-        <form class="form-material m-t-40" action="{{ route("admin.billing-store") }}" enctype="multipart/form-data" method="post">
+        <form class="form-material m-t-40" action="{{ route("admin.billing-post-approved") }}" enctype="multipart/form-data" method="post">
             @csrf
             @method('put')
             <input type="hidden" name="id" value="{{ $billing->id }}">
@@ -103,87 +103,6 @@
                     </div>
                 </div>
             </div>
-            <div class="card">
-                <div class="card-header">
-                    {{-- <h3 class="title">HEADER</h3> --}}
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="form-group col-lg-4">
-                            <label>{{ trans('cruds.billing.fields.document_no') }}</label>
-                            <input type="text" class="form-control form-control-line" name="document_no" value="{{ $billing->document_no }}" readonly> 
-                        </div>
-                        {{-- <div class="form-group col-lg-4">
-                            <label>{{ trans('cruds.billing.fields.proposal_date') }}</label>
-                            <input type="text" class="form-control form-control-line " name="proposal_date" value="{{ $billing->proposal_date ?? old('proposal_date', '') }}" readonly> 
-                        </div> --}}
-                        <div class="form-group col-lg-4">
-                            <label>{{ trans('cruds.billing.fields.base_line_date') }} *</label>
-                            <input type="text" class="form-control form-control-line" name="base_line_date" value="{{ $billing->base_line_date }}" readonly> 
-                        </div>
-                        <div class="form-group col-lg-4">
-                            <label>{{ trans('cruds.billing.fields.assignment') }} *</label>
-                            <input type="text" class="form-control form-control-line" name="assignment" value="{{ $billing->assignment }}" readonly> 
-                        </div>
-                        {{-- <div class="form-group col-lg-4">
-                            <label>Nominal PPN</label>
-                            <input type="number" class="form-control form-control-line" name="nominal_pajak" value="{{ $billing->nominal_pajak ?? old('nominal_pajak', '') }}" required> 
-                        </div> --}}
-                        <div class="form-group col-lg-4">
-                            <label>{{ trans('cruds.billing.fields.payment_term_claim') }}</label>
-                            <select class="form-control select2 form-control-line" name="payment_term_claim" disabled> 
-                                @foreach ($payments as $pay)
-                                    <option value="{{ $pay->payment_terms }}" @if($billing->payment_term_claim == $pay->payment_terms) selected @endif>{{ $pay->payment_terms }} - {{ $pay->own_explanation }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group col-lg-4">
-                            <label>{{ trans('cruds.billing.fields.tipe_pph') }}</label>
-                            <select class="form-control select2 form-control-line" name="tipe_pph" id="tipe_pph" disabled>
-                                @foreach ($tipePphs as $tipe)
-                                    <option value="{{ $tipe->withholding_tax_rate }}" @if($billing->tipe_pph == $tipe->withholding_tax_rate) selected @endif>{{ $tipe->withholding_tax_code }} - {{ $tipe->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group col-lg-4">
-                            <label>Base PPH</label>
-                            <input type="text" class="form-control form-control-line" name="base_pph" value="{{ $billing->base_pph }}"> 
-                        </div>
-                        <div class="form-group col-lg-4">
-                            <label>{{ trans('cruds.billing.fields.jumlah_pph') }}</label>
-                            <input type="text" class="form-control form-control-line" name="jumlah_pph" id="jumlah_pph" value="{{ $billing->jumlah_pph }}" readonly> 
-                        </div>
-                        {{-- <div class="form-group col-lg-4">
-                            <label>{{ trans('cruds.billing.fields.total_invoice') }}</label>
-                            <input type="number" class="form-control form-control-line" name="total_invoice" value="" required> 
-                        </div> --}}
-                        <div class="form-group col-lg-4">
-                            <label>{{ trans('cruds.billing.fields.currency') }}</label>
-                            <select class="form-control select2 form-control-line" name="currency" disabled> 
-                                @foreach ($currency as $curr)
-                                    <option value="{{ $curr->currency }}" @if( $curr->currency == $billing->currency) selected @endif>{{ $curr->currency }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group col-lg-4">
-                            <label>{{ trans('cruds.billing.fields.perihal_claim') }}</label>
-                            <input type="text" class="form-control form-control-line " name="perihal_claim" value="{{ $billing->perihal_claim ?? old('perihal_claim', '') }}" readonly> 
-                        </div>
-                        <div class="form-group col-lg-4">
-                            <label>Bank House</label>
-                            <select class="form-control select2 form-control-line" name="house_bank" disabled> 
-                                @foreach ($bankHouse as $bankHouses)
-                                    <option value="{{ $bankHouses->house_bank }}" @if( $bankHouses->house_bank == $billing->house_bank) selected @endif>{{ $bankHouses->house_bank." - ".$bankHouses->description }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group col-lg-4">
-                            <label>{{ trans('cruds.billing.fields.exchange_rate') }}</label>
-                            <input type="text" class="form-control form-control-line" name="exchange_rate" value="{{ $billing->exchange_rate }}" readonly> 
-                        </div>
-                    </div>
-                </div>
-            </div>
             
             <div class="card">
                 <div class="card-header">
@@ -231,12 +150,122 @@
                     <br>
                     <br>
                     <div class="form-actions">
-                        {{-- <a href="javascript:;" id="submit" type="button" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.submit') }}</a> --}}
-                        {{-- <a href="{{ route('admin.billing-spv-list') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i>Back To List</a> --}}
+                        @if($billing->status == \App\Models\Vendor\Billing::WaitingApprove)
+                        <a href="javascript:;" id="approval" type="button" class="btn btn-success"> <i class="fa fa-check"></i> {{ 'approved' }}</a>
+                        <a href="javascript:;" id="reject" data-toggle="modal" data-id="{{ $billing->id }}" data-target="#modal_rejected_reason" type="button" class="btn btn-danger"> 
+                            <i class="fa fa-times"></i> {{ trans('global.reject') }}
+                        </a>
+                        @elseif($billing->status == \App\Models\Vendor\Billing::Approved )
+                        <a href="javascript:;" id="verify" type="button" class="btn btn-success"> <i class="fa fa-check"></i> {{ 'verify' }}</a>
+                        <a href="javascript:;" id="rejects" data-toggle="modal" data-id="{{ $billing->id }}" data-target="#modal_rejected_reasons" type="button" class="btn btn-warning"> 
+                        <i class="fa fa-times"></i> {{ 'Incomplete' }}</a>
+                        @endif
+                        <a href="{{ route('admin.billing-spv-list') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i>Back To List</a>
                     </div>
                 </div>
             </div>
         </form>
     </div>
 </div>
+<div class="modal fade" id="modal_rejected_reason" tabindex="-1" role="dialog" aria-labelledby="modal_rejected_reason" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Rejected Reason</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('admin.billing-post-rejected') }}" method="post" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="billing-id" value="">
+                    <textarea name="reason" id="reason" cols="30" rows="10"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal_rejected_reasons" tabindex="-1" role="dialog" aria-labelledby="modal_rejected_reasons" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Incomplete Reason</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('admin.billing-post-incompleted') }}" method="post" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="billing-id" value="">
+                    <textarea name="reason" id="reason" cols="30" rows="10"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endsection
+@section('scripts')
+<script>
+
+    $(document).on('click', '#approval', function (result) {
+        $form = $('.form-material')
+        $form.attr('action', '{{ route('admin.billing-post-approved') }}')
+        $form.submit()
+    })
+
+
+    $(document).on('click', '#verify', function (result) {
+        $form = $('.form-material')
+        $form.attr('action', '{{ route('admin.billing-post-verify') }}')
+        $form.submit()
+    })
+
+    $(document).on('click', '#reject', function (result) {
+        const $modal = $('#modal_rejected_reason')
+        $modal.find('#billing-id').val($(this).data('id'))
+        $modal.modal('show')
+    })
+
+    $(document).on('click', '#rejects', function (result) {
+        const $modal = $('#modal_rejected_reasons')
+        $modal.find('#billing-id').val($(this).data('id'))
+        $modal.modal('show')
+    })
+
+    $(document).on('click', '#submit', function (result) {
+        $form = $('.form-material')
+        $form.attr('action', '{{ route('admin.billing-store') }}')
+        $form.submit()
+    })
+
+    $("#check_1").click(function() {
+        if(this.checked) {
+            if( this.value == 1) {
+                $("#taxAmount").attr('readonly',true)
+                $("#nominal_invoice_staff").attr('readonly',true)
+            } 
+        } else {
+            $("#nominal_invoice_staff").attr('readonly',false)
+            $("#taxAmount").attr('readonly',false)
+        }
+    })
+
+    $(function() {
+     
+    })
+
+</script>
 @endsection

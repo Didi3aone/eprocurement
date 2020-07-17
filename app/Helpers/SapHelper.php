@@ -3817,7 +3817,7 @@ class SapHelper {
             'DSCT_PCT2' => '',
             'IV_CATEGORY' => '',
             'HEADER_TXT' => '',
-            'PMNT_BLOCK' => '',
+            'PMNT_BLOCK' => $billing->payment_block == 1 ? "B" : "",
             'DEL_COSTS' => '', 
             'DEL_COSTS_TAXC' => '',
             'DEL_COSTS_TAXJ' => '',

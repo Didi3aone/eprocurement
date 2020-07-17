@@ -148,7 +148,7 @@
                             <select class="form-control select2 form-control-line" name="tipe_pph" id="tipe_pph">
                                 <option value=""> -Select-</option>
                                 @foreach ($tipePphs as $tipe)
-                                    <option value="{{ $tipe->id }}" data-rate="{{ $tipe->withholding_tax_rate }}">{{ $tipe->withholding_tax_code }} - {{ $tipe->name }}</option>
+                                    <option value="{{ $tipe->withholding_tax_rate }}" data-rate="{{ $tipe->withholding_tax_rate }}">{{ $tipe->withholding_tax_code }} - {{ $tipe->name }}</option>
                                 @endforeach
                             </select>
                         </div> 
@@ -197,11 +197,16 @@
                         {{-- <div class="form-group col-lg-6">
                             <label>Ref Key 3</label>
                             <input type="text" class="form-control form-control-line " name="ref_key_3" maxlength="16" value=""> 
-                        </div>
-                        <div class="form-group col-lg-6">
-                            <label>Ref Key 1</label>
-                            <input type="text" class="form-control form-control-line " name="ref_key_1" maxlength="16" value=""> 
                         </div> --}}
+                        <div class="form-group col-lg-6">
+                            <input type="checkbox" class="" id="check_B" name="payment_block" value="1">
+                            <label for="check_B">&nbsp; Payment Block</label>
+                            <label>Payment Block</label>
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>Nominal Balance</label>
+                            <input type="text" class="form-control form-control-line" name="nominal_balance" id="nominal_balance" value="" readonly> 
+                        </div>
                     </div>
                 </div>
             </div>
@@ -255,75 +260,20 @@
                         </div>
                     </div>
                     <div class="form-group col-lg-4">
-                        <label>Nominal Balance</label>
                         @php
                             $balance = $billing->dpp - $totalSum;
                         @endphp
-                        <input type="text" class="form-control form-control-line" name="nominal_balance" value="{{ toDecimal($balance) }}"> 
+                        <input type="hidden" class="form-control form-control-line" name="nominal_balances" id="nominal_balances" value="{{ toDecimal($balance) }}"> 
                     </div>
                     <br>
                     <br>
                     <div class="form-actions">
-                        <a href="javascript:;" id="approval" type="button" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.approve') }}</a>
-                        <a href="javascript:;" id="reject" data-toggle="modal" data-id="{{ $billing->id }}" data-target="#modal_rejected_reason" type="button" class="btn btn-danger"> 
-                        <i class="fa fa-times"></i> {{ trans('global.reject') }}</a>
-                        <a href="javascript:;" id="rejects" data-toggle="modal" data-id="{{ $billing->id }}" data-target="#modal_rejected_reasons" type="button" class="btn btn-warning"> 
-                        <i class="fa fa-times"></i> {{ 'Incomplete' }}</a>
-                        <a href="{{ route('admin.billing') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i> Back To List</a>
+                        <button id="save" type="submit" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.submit') }}</button>
+                        {{-- <a href="{{ route('admin.billing') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i> Back To List</a> --}}
                     </div>
                 </div>
             </div>
         </form>
-    </div>
-</div>
-
-<div class="modal fade" id="modal_rejected_reason" tabindex="-1" role="dialog" aria-labelledby="modal_rejected_reason" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Rejected Reason</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form action="{{ route('admin.billing-post-rejected') }}" method="post" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
-                <div class="modal-body">
-                    <input type="hidden" name="id" id="billing-id" value="">
-                    <textarea name="reason" id="reason" cols="30" rows="10"></textarea>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
-                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modal_rejected_reasons" tabindex="-1" role="dialog" aria-labelledby="modal_rejected_reasons" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Incomplete Reason</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form action="{{ route('admin.billing-post-incompleted') }}" method="post" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
-                <div class="modal-body">
-                    <input type="hidden" name="id" id="billing-id" value="">
-                    <textarea name="reason" id="reason" cols="30" rows="10"></textarea>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
-                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
-                </div>
-            </form>
-        </div>
     </div>
 </div>
 @endsection
@@ -338,12 +288,16 @@
         "ordering": false
     });
 
+    $("#nominal_balance").val($("#nominal_balances").val())
+
     $('.money').mask('#.##0', { reverse: true });
 
     $("#tipe_pph").change(function() {
         let rates = $('#tipe_pph option:selected').data('rate')
 
         //dpp * rate
+        //rate tipe pph * base = nominal pph
+
         // rumus nominal invoice 
         // dpp * ppn (1.1) - nominal pph
         var dpp = $("#dpp").val()
@@ -351,6 +305,9 @@
         var ppns = ''
         if( ppn == 'V1' ) {
             ppns = 1.1
+            var nomInv = parseFloat(tt) * ppns - roundedString;
+        } else {
+            var nomInv = parseFloat(tt) * ppns - roundedString;
         }
 
         tt = dpp.replace(/,/g, '.');
@@ -358,7 +315,7 @@
         var roundedString = count.toFixed(2);
         var cm = roundedString.replace(".", ",");
 
-        var nomInv = parseFloat(tt) * ppns - roundedString;
+        
         $("#jumlah_pph").val(cm)
         $("#nominal_invoice_staff").val(nomInv.toFixed(2))
     })
@@ -390,12 +347,14 @@
     $("#check_1").click(function() {
         if(this.checked) {
             if( this.value == 1) {
+                //$("#payment_block").val('B') --}}
                 $("#taxAmount").attr('readonly',true)
                 $("#nominal_invoice_staff").attr('readonly',true)
             } 
         } else {
             $("#nominal_invoice_staff").attr('readonly',false)
             $("#taxAmount").attr('readonly',false)
+            //$("#payment_block").val(' ')
         }
     })
 

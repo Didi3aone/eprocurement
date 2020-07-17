@@ -92,18 +92,6 @@ class BillingController extends Controller
 
     public function store (Request $request)
     {
-        $postSap = \sapHelp::sendBillingToSap($request);
-        if( $postSap ) {
-            \Session::flash('status','Billing has been approved');
-        } else {
-            \Session::flash('error','Internal server error !!!');
-        }
-
-        return \redirect()->route('admin.billing-spv-list');
-    }
-
-    public function storeApproved(UpdateBillingRequest $request)
-    {
         \DB::beginTransaction();
         try {
             $billing = Billing::find($request->id);
@@ -111,7 +99,7 @@ class BillingController extends Controller
             $vendor     = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
             $vendorBank = \App\Models\Vendor\VendorBankDetails::where('vendor_id',$vendor->id)->first();
             
-            $billing->status                = Billing::Approved;
+            $billing->status                = Billing::Submitted;
             $billing->assignment            = $request->assignment;
             $billing->payment_term_claim    = $request->payment_term_claim;
             $billing->tipe_pph              = $request->tipe_pph;
@@ -125,8 +113,10 @@ class BillingController extends Controller
             $billing->ref_key_3             = $request->ref_key_3 ?? '-';
             $billing->ref_key_1             = $request->ref_key_1 ?? '-';
             $billing->partner_bank          = $vendorBank->partner_bank;
+            $billing->payment_block         = $request->payment_block;
             $billing->calculate_tax         = $request->calculate_tax ?? 0;
             $billing->tax_amount            = $request->tax_amount ? str_replace(',', '.',$request->tax_amount) : '00.00';
+            $billing->nominal_balance       = $request->nominal_balance ? str_replace(',', '.',$request->nominal_balance) : '00.00';
             $billing->nominal_invoice_staff = $request->nominal_invoice_staff ? str_replace(',', '.',$request->nominal_invoice_staff) : "00.00";
             $billing->is_spv                = Billing::sendToSpv;//approve spv
             $billing->update();
@@ -140,15 +130,32 @@ class BillingController extends Controller
     
                 $detail->update();
             }
+            
             $postSap = \sapHelp::sendBillingToSap($request);
             if( $postSap ) {
                 \Session::flash('status','Billing has been approved');
-                \DB::commit();
-                return \redirect()->route('admin.billing');
             } else {
                 \Session::flash('error','Internal server error !!!');
-                \DB::rollback();
             }
+        } catch (\Throwable $th) {
+            throw $th;
+            \DB::rollback();
+        }
+
+        return \redirect()->route('admin.billing-spv-list');
+    }
+
+    public function storeApproved(request $request)
+    {
+        \DB::beginTransaction();
+        try {
+            $billing = Billing::find($request->id);
+            
+            $billing->status                = Billing::Approved;
+            $billing->is_spv                = Billing::sendToSpv;//approve spv
+            $billing->update();
+            \Session::flash('status','Billing has been approved');
+            return \redirect()->route('admin.billing');
         } catch (\Throwable $th) {
             throw $th;
             \DB::rollback();
@@ -182,6 +189,23 @@ class BillingController extends Controller
         return \redirect()->route('admin.billing');
     }
 
+    public function storeVerify(Request $request) 
+    {
+        $billing                    = Billing::find($request->id);
+        $billing->status            = Billing::Verify;
+        $billing->verify_date       = date('Y-m-d');
+
+        $billing->update();
+        $name  = "didi";
+        $email = 'diditriawan13@gmail.com';
+        // $getEmailVendor = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
+
+        \Mail::to($email)->send(new billingIncompleted($billing, $name));
+
+        \Session::flash('status','Billing has been verify');
+        return \redirect()->route('admin.billing-edit',$request->id);
+    }
+
     public function storeIncompleted(Request $request)
     {
         $billing                    = Billing::find($request->id);
@@ -195,21 +219,6 @@ class BillingController extends Controller
 
         \Mail::to($email)->send(new billingIncompleted($billing, $name));
 
-        // foreach( $billing->detail as $key => $rows ) {
-        //     $poGr = PurchaseOrderGr::where('po_no', $rows->po_no)
-        //         ->where('po_item', $rows->PO_ITEM)
-        //         ->where('material_no', $rows->material_id)
-        //         ->first();
-
-        //     $poGr->qty += $rows->qty;
-
-        //     $poGr->save();
-
-        //     $poDetail = PurchaseOrdersDetail::where('id', $rows->purchase_order_detail_id)
-        //                 ->first();
-        //     $poDetail->qty_billing -= $rows->qty;
-        //     $poDetail->save();
-        // }
         \Session::flash('status','Billing has been canceled');
         return \redirect()->route('admin.billing');
     }

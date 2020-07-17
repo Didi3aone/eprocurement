@@ -12,7 +12,7 @@
 <div class="row">
     <div class="col-12">
         <form class="form-material m-t-40" action="{{ route("admin.billing-store") }}" enctype="multipart/form-data" method="post">
-            @csrf
+            @csrf 
             @method('put')
             <input type="hidden" name="id" value="{{ $billing->id }}">
             <div class="card">
