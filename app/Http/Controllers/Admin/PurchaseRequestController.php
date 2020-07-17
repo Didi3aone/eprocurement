@@ -138,7 +138,7 @@ class PurchaseRequestController extends Controller
                             $value->material_id ?? '-',
                             $value->short_text,
                             $value->qty,
-                            $value->unit,
+                            \App\Models\UomConvert::where('uom_1',$value->unit)->first()->uom_2,
                             $value->plant_code,
                             $value->storage_location,
                             $value->qty,
