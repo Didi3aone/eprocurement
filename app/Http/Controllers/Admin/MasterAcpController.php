@@ -45,8 +45,9 @@ class MasterAcpController extends Controller
             // dd($userMapping);
             if( $request->query('q') != '' ) {
                 $model = \App\Models\PurchaseRequestsDetail::where(function ($query) use ($request) {
+                    $trims = $request->query('q');
                     $query->where('short_text', 'like', '%'.$request->query('q').'%')
-                        ->orWhere('material_id', 'like', '%'.$request->query('q').'%');
+                        ->orWhere('material_id', 'like', '%'.$trims.'%');
                         })->select(
                             \DB::raw(
                                 "CASE
