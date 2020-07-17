@@ -14,13 +14,14 @@ class AlterBillingsV5 extends Migration
     public function up()
     {
         Schema::table('billings', function (Blueprint $table) {
-            // $table->date('verify_date')->nullable();
-            // $table->string('payment_block')->nullable();
+            $table->date('verify_date')->nullable();
+            $table->string('payment_block')->nullable();
             $table->decimal('nominal_balance',16,2)->default('0.00');
         });
-        // Schema::table('billing_details', function (Blueprint $table) {
-        //     $table->decimal('qty_billing',16,2)->default('0.00');
-        // });
+
+        Schema::table('purchase_orders_details', function (Blueprint $table) {
+            $table->integer('is_gr')->default(1);
+        });
     }
 
     /**

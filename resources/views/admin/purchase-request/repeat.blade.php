@@ -144,13 +144,15 @@
                                         <option> -- Select --</option>
                                         @if( !empty($hist['header']->item) )
                                             @foreach($hist['header']->item as $key => $rows)
-                                                @if($hist['detail']->item[$key]->EBELN == $rows->EBELN)
-                                                    <option value="{{ $rows->EBELN }}"
-                                                        data-price="{{ $hist['detail']->item[$key]->NETPR }}"
-                                                        data-vendor="{{ substr($rows->LIFNR,3) }}"
-                                                        data-currency="{{ $rows->WAERS }}">
-                                                        {{ $rows->EBELN."/".$rows->LIFRE }}
-                                                    </option>
+                                                @if( !empty($hist['detail']->item[$key]) )
+                                                    @if($hist['detail']->item[$key]->EBELN == $rows->EBELN)
+                                                        <option value="{{ $rows->EBELN }}"
+                                                            data-price="{{ $hist['detail']->item[$key]->NETPR }}"
+                                                            data-vendor="{{ substr($rows->LIFNR,3) }}"
+                                                            data-currency="{{ $rows->WAERS }}">
+                                                            {{ $rows->EBELN."/".$rows->LIFRE }}
+                                                        </option>
+                                                    @endif
                                                 @endif
                                             @endforeach
                                         @endif
