@@ -120,6 +120,25 @@ class PurchaseRequestController extends Controller
                     'request' => \collect($request->all())->forget('draw')->forget('_'),
                     'q' => $q,
                     'data' => \collect($items)->map(function ($value, $key) use ($start) {
+                        if( $value->material_id != '' ) {
+                            $getHistPo = \sapHelp::getHistoryPo($value->material_id);
+                            if( !empty($getHistPo['header']->item) ) {
+                                if(is_countable($getHistPo['header']->item)) {
+                                    // dd(count($getHistPo['header']->item));
+                                    $getLast = count($getHistPo['header']->item);
+                                    $getLast = $getLast - 1;
+                                    $getLast = $getHistPo['header']->item[$getLast]->LIFRE;
+                                } else {
+                                    $getLast = "";
+                                }
+                            } else {
+                                $getLast = "";
+                            }
+                        } else {
+                            $getLast = "";
+                        }
+                        
+
                         $other = \App\Models\PurchaseRequestApprovalHistory::getHistoryApproval($value->uuid);
                         $other = $other->map(function ($row) {
                             return [
@@ -128,6 +147,10 @@ class PurchaseRequestController extends Controller
                                 \Carbon\Carbon::parse($row->created_at)->format('d-m-Y'),
                             ];
                         });
+
+                        // $getHistPo = [];
+                        // if( $value->material_id != '' ) {
+                        // }
 
                         return [
                             ($key + 1) + $start,
@@ -147,6 +170,7 @@ class PurchaseRequestController extends Controller
                             $value->material_group,
                             $value->purchasing_group_code,
                             $value->preq_name,
+                            $getLast,
                             $value->request_no ?? $value->pr_no,
                             $value->delivery_date,
                             // '0000',  
