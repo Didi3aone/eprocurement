@@ -321,10 +321,10 @@ class BillingController extends Controller
                 // $po_gr->qty = $qty_old - $qty;
                 // $po_gr->save();//sementra
 
-                $poDetail = PurchaseOrdersDetail::where('id', $request->get('purchase_order_detail_id')[$key])
-                            ->first();
-                $poDetail->qty_billing = $qty;
-                $poDetail->save();
+                // $poDetail = PurchaseOrdersDetail::where('id', $request->get('purchase_order_detail_id')[$key])
+                //             ->first();
+                // $poDetail->qty_billing = $qty;
+                // $poDetail->save();
             }
 
             \DB::commit();
