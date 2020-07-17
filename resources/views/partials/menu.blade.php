@@ -42,7 +42,7 @@
                 @can('quotation_access')
                 <li class=""> 
                     <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-clipboard"></i>
-                        <span class="hide-menu"> {{ trans('cruds.quotation.title') }} </span>
+                        <span class="hide-menu"> {{ ' PO in process' }} </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">
                         {{-- <li>

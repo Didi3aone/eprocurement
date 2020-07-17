@@ -41,36 +41,67 @@ class MasterAcpController extends Controller
         if (\App\Models\AcpTable::MaterialPr == $request->get('fromPr')) {
             $userMapping = UserMap::where('user_id', \Auth::user()->user_id)->first();
             $userMapping = explode(',', $userMapping->purchasing_group_code);
-            $model = \App\Models\PurchaseRequestsDetail::where(function ($query) use ($request) {
-                $query->where('material_id', 'like', '%'.$request->query('q').'%')
-                    ->orWhere('description', 'like', '%'.$request->query('q').'%');
-            })->select(
-                    \DB::raw(
-                        "CASE
-                        WHEN (material_id IS NULL OR material_id = '') THEN description 
-                        ELSE material_id 
-                        END AS code,
-                        description"
+            // dd($userMapping);
+            if( $request->query('q') != '' ) {
+                $model = \App\Models\PurchaseRequestsDetail::where(function ($query) use ($request) {
+                    $query->where(\DB::raw('lower(material_id)', 'like', '%'.$request->query('q').'%'))
+                        ->orWhere(\DB::raw('lower(short_text)', 'like', '%'.$request->query('q').'%'));
+                })->select(
+                        \DB::raw(
+                            "CASE
+                            WHEN (material_id IS NULL OR material_id = '') THEN description 
+                            ELSE material_id 
+                            END AS code,
+                            description"
+                        )
                     )
-                )
-                ->where('qty', '>', 0)
-                ->whereIn('purchasing_group_code', $userMapping)
-                ->groupBy('material_id', 'description')
-                ->orderBy('description', 'asc')
-                ->limit(50)
-                ->get();
-        } else {
-            $model = MasterMaterial::where(function ($query) use ($request) {
-                $query->where('code', 'like', '%'.$request->query('q').'%')
-                        ->orWhere('description', 'like', '%'.$request->query('q').'%');
-            })->select(
-                        'code',
-                        'description'
-                    )
-                    ->groupBy('code', 'description')
+                    ->where('qty', '>', 0)
+                    ->whereIn('purchasing_group_code', $userMapping)
+                    ->groupBy('material_id', 'description')
                     ->orderBy('description', 'asc')
-                    ->limit(50)
+                    ->limit(200)
                     ->get();
+                    // dd($model);
+            } else {
+                $model = \App\Models\PurchaseRequestsDetail::select(
+                        \DB::raw(
+                            "CASE
+                            WHEN (material_id IS NULL OR material_id = '') THEN description 
+                            ELSE material_id 
+                            END AS code,
+                            description"
+                        )
+                    )
+                    // ->where('qty', '>', 0)
+                    // ->whereIn('purchasing_group_code', $userMapping)
+                    ->groupBy('material_id', 'description')
+                    ->orderBy('description', 'asc')
+                    ->limit(200)
+                    ->get();
+            }
+        } else {
+            if( $request->query('q') != '' ) {
+                $model = MasterMaterial::where(function ($query) use ($request) {
+                    $query->where('code', 'like', '%'.$request->query('q').'%')
+                            ->orWhere('description', 'like', '%'.$request->query('q').'%');
+                })->select(
+                            'code',
+                            'description'
+                        )
+                        ->groupBy('code', 'description')
+                        ->orderBy('description', 'asc')
+                        ->limit(50)
+                        ->get();
+            } else {
+                $model = MasterMaterial::select(
+                            'code',
+                            'description'
+                        )
+                        ->groupBy('code', 'description')
+                        ->orderBy('description', 'asc')
+                        ->limit(50)
+                        ->get();
+            }
         }
         $data = [];
         foreach ($model as $row) {
