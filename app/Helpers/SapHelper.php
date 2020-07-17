@@ -72,7 +72,7 @@ class SapHelper {
         $params[0]['RFQ_HEADER']['item']=[];
 
         $result = $client->__soapCall('ZFM_WS_HISTPO', $params, NULL, $header);
-        
+        // dd($result);
         $data = [];
         $data['header'] = $result->RFQ_HEADER;
         $data['detail'] = $result->RFQ_DETAIL;

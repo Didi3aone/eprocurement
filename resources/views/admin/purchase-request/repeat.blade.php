@@ -92,6 +92,7 @@
                             <th style="width: 20%">Currency</th>
                             <th style="width: 20%">Original Price</th>
                             <th style="width: 20%">Net Price</th>
+                            <th style="width: 14%">Delivery Date PR</th>
                             <th style="width: 14%">Delivery Date</th>
                             <th style="width: 64%">Tax</th>
                         </tr>
@@ -143,18 +144,14 @@
                                         <option> -- Select --</option>
                                         @if( !empty($hist['header']->item) )
                                             @foreach($hist['header']->item as $key => $rows)
-                                                @for($i = 0; $i < 10; $i++)
-                                                    @if(!empty($hist['detail']))
-                                                        @if(!empty($rows->EBELN))
-                                                            <option value="{{ $rows->EBELN }}"
-                                                                data-price="{{ $hist['detail']->item[$key]->NETPR }}"
-                                                                data-vendor="{{ substr($rows->LIFNR,3) }}"
-                                                                data-currency="{{ $rows->WAERS }}">
-                                                                {{ $rows->EBELN."/".$rows->LIFRE }}
-                                                            </option>
-                                                        @endif
-                                                    @endif
-                                                @endfor
+                                                @if($hist['detail']->item[$key]->EBELN == $rows->EBELN)
+                                                    <option value="{{ $rows->EBELN }}"
+                                                        data-price="{{ $hist['detail']->item[$key]->NETPR }}"
+                                                        data-vendor="{{ substr($rows->LIFNR,3) }}"
+                                                        data-currency="{{ $rows->WAERS }}">
+                                                        {{ $rows->EBELN."/".$rows->LIFRE }}
+                                                    </option>
+                                                @endif
                                             @endforeach
                                         @endif
                                     </select>
@@ -162,6 +159,7 @@
                                 <td><input type="text" class="original_currency" name="original_currency[]" id="original_currency" value="" readonly></td>
                                 <td><input type="text" class="original_price" name="original_price[]" id="original_price" value="" readonly></td>
                                 <td><input type="text" class="net_price" name="price[]" id="net_price" value="" readonly></td>
+                                <td>{{ $value->delivery_date }}</td>
                                 <td><input type="text" class="mdate" name="delivery_date_new[]" id="delivery_date_new" value="{{ $value->delivery_date }}"></td>
                                 <td><input type="checkbox" class="" id="check_{{ $value->id }}" name="tax_code[]" value="1">
                                     <label for="check_{{ $value->id }}">&nbsp;</label>
