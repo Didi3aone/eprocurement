@@ -42,7 +42,8 @@ class Vendor extends Authenticatable
         'email',
         'email_2',
         'password',
-        'status'
+        'status',
+        'company_web'
     ];
 
     public function getPaymentTerms($vendorCode)

@@ -108,6 +108,11 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    <input class="form-control" type="text" name="company_web" required placeholder="Company Web">
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="col-lg-6">

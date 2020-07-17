@@ -164,6 +164,7 @@ class LoginController extends Controller
         $different_city = $request->input('different_city') ?? "-";
         $city = $request->input('city');
         $country = $request->input('country');
+        $company_web = $request->input('company_web');
         $postalCode = $request->input('postal_code');
         $street = $request->input('street'); // address
         $street_2 = $request->input('street_2');
@@ -192,6 +193,7 @@ class LoginController extends Controller
         $post['city'] = $city;
         $post['postal_code'] = $postalCode;
         $post['country'] = $country;
+        $post['company_web'] = $company_web;
         $post['street'] = $street;
         $post['street_2'] = $street_2;
         $post['street_3'] = $street_3;

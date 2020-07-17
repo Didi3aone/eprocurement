@@ -52,6 +52,15 @@
                         @endif
                     </div>
                     <div class="form-group">
+                        <label>{{ 'Company Web' }}</label>
+                        <input type="text" class="form-control form-control-line {{ $errors->has('company_web') ? 'is-invalid' : '' }}" name="company_web" value="{{ $vendors->company_web ?? old('company_web', '') }}"> 
+                        @if($errors->has('company_web'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('company_web') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
                         <label>{{ trans('cruds.vendors.fields.address') }}</label>
                         <input type="text" class="form-control form-control-line {{ $errors->has('address') ? 'is-invalid' : '' }}" name="address" value="{{ $vendors->address ?? old('address', '') }}"> 
                         @if($errors->has('address'))
