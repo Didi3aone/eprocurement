@@ -151,6 +151,10 @@ class PurchaseRequestController extends Controller
                         // $getHistPo = [];
                         // if( $value->material_id != '' ) {
                         // }
+                        $unit = $value->unit;
+                        if(\App\Models\UomConvert::where('uom_1',$value->unit)->first() != null) {
+                            $unit = \App\Models\UomConvert::where('uom_1',$value->unit)->first()->uom_2;
+                        }
 
                         return [
                             ($key + 1) + $start,
@@ -161,7 +165,7 @@ class PurchaseRequestController extends Controller
                             $value->material_id ?? '-',
                             $value->short_text,
                             $value->qty,
-                            \App\Models\UomConvert::where('uom_1',$value->unit)->first()->uom_2,
+                            $unit,
                             $value->plant_code,
                             $value->storage_location,
                             $value->qty,
