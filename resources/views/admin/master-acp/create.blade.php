@@ -311,7 +311,9 @@
             ajax: {
                 url: base_url + '/admin/master-acp-material',
                 dataType: 'json',
-                delay: 300,
+                tokenSeparators: [",", " "],
+                //tokenSeparators: [',', ', ', ' '],
+                delay: 250,
                 data: function(params) {
                     return {
                         q: params.term, // search term
