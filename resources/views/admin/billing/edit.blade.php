@@ -152,11 +152,11 @@
                                 @endforeach
                             </select>
                         </div> 
-                        <div class="form-group col-lg-4">
+                        <div class="form-group col-lg-4" id="basePPh" style="display:none">
                             <label>Base PPH</label>
-                            <input type="text" class="form-control form-control-line" name="base_pph" value="{{ toDecimal($billing->dpp) }}"> 
+                            <input type="text" class="form-control form-control-line" onkeyup="leadingZero(this.value, $(this), true)" name="base_pph" id="base_pph" value="{{ toDecimal($billing->dpp) }}"> 
                         </div>
-                        <div class="form-group col-lg-4">
+                        <div class="form-group col-lg-4" id="jmlPPH" style="display:none">
                             <label>{{ trans('cruds.billing.fields.jumlah_pph') }}</label>
                             <input type="text" class="form-control money form-control-line" name="jumlah_pph" id="jumlah_pph" value=""> 
                         </div>
@@ -294,6 +294,14 @@
 
     $("#tipe_pph").change(function() {
         let rates = $('#tipe_pph option:selected').data('rate')
+        console.log(rates)
+        if($(this).val() != '') {
+            $("#basePPh").show()
+            $("#jmlPPH").show()
+        } else {
+            $("#basePPh").show()
+            $("#jmlPPH").show()
+        }
 
         //dpp * rate
         //rate tipe pph * base = nominal pph
@@ -302,22 +310,34 @@
         // dpp * ppn (1.1) - nominal pph
         var dpp = $("#dpp").val()
         var ppn = $("#ppn").val()
+            basPph = $("#base_pph").val()
         var ppns = ''
+            tt = dpp.replace(/,/g, '.')
+            tPph = basPph.replace(/,/g, "")
+            console.log(tPph)
+        var count = (tPph) * (rates/100)
+        var roundedString = count.toFixed(2);
+        var cm = roundedString.replace(".", ",")
         if( ppn == 'V1' ) {
             ppns = 1.1
             var nomInv = parseFloat(tt) * ppns - roundedString;
         } else {
-            var nomInv = parseFloat(tt) * ppns - roundedString;
+            var nomInv = (rates * parseFloat($("#base_pph").val().replace(/,/g, "")))
         }
 
-        tt = dpp.replace(/,/g, '.');
-        var count = parseFloat(tt) * rates;
-        var roundedString = count.toFixed(2);
-        var cm = roundedString.replace(".", ",");
-
+        console.log(cm)
         
-        $("#jumlah_pph").val(cm)
+        $("#jumlah_pph").val(roundedString)
         $("#nominal_invoice_staff").val(nomInv.toFixed(2))
+    })
+
+    $("#base_pph").on('keyup',function() {
+        let based = parseFloat($(this).val().replace(/,/g, ""))
+        const rates = $("#tipe_pph").val()
+        console.log(rates)
+        const total = (based * rates/100)
+        console.log(total)
+        $("#jumlah_pph").val(keyupFormatUangWithDecimal(total.toString()))
     })
 
     $(document).on('click', '#approval', function (result) {
@@ -381,6 +401,41 @@
     $(function() {
      
     })
+    window.leadingZero = function(value, element, decimal = false) {
+        var convert_number = removeChar(value);
 
+        if(decimal) {
+            if(value != '') {
+            element.val(keyupFormatUangWithDecimal(value));
+            } else {
+            element.val(0);
+            }
+        } else {
+            if(value != '') {
+            element.val(keyupFormatUang(parseInt(convert_number)));
+            } else {
+            element.val(0);
+            }
+        }
+    }
+
+    function removeChar(value) {
+        return value.toString().replace(/[.*+?^${}()|[\]\\]/g, '');
+    }
+
+    window.keyupFormatUang = function(value) {
+        var number = '';    
+        var value_rev = value.toString().split('').reverse().join('');
+        
+        for(var i = 0; i < value_rev.length; i++) {
+            if(i % 3 == 0) number += value_rev.substr(i, 3) + '.';
+        }
+        
+        return number.split('', number.length - 1).reverse().join('');
+        }
+
+        window.keyupFormatUangWithDecimal = function(value) {
+        return value.replace(/^0+/, '').replace(/(?!\.)\D/g, "").replace(/(?<=\..*)\./g, "").replace(/(?<=\.\d\d).*/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
 </script>
 @endsection

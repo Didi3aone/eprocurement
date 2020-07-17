@@ -452,7 +452,7 @@
 
     function toDecimal($duit)
     {
-        return number_format($duit, 2, ",", ".");
+        return number_format($duit, 2, ".", ",");
     }
 
     function date_compare($a, $b)
