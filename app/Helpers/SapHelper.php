@@ -1048,6 +1048,7 @@ class SapHelper {
         $POITEM = [];
         $POITEMX = [];
         $POACCOUNT = [];
+        $POACCOUNTX = [];
         $POSERVICES = [];
         $POSRVACCESSVALUES = [];
 
