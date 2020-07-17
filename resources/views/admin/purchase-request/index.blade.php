@@ -53,6 +53,7 @@
                                         <th>Material Group</th>
                                         <th>Purchasing Group</th>
                                         <th>Requisitioner</th>
+                                        <th>Last PO</th>
                                         <th>Req Tracking Number</th>
                                         <th>Delivery Date</th>
                                     </tr>
@@ -240,7 +241,7 @@
             $($modal).children('a').text(data[1])
             $tbody = $($modal).find('.modal tbody')
             $tbody.append('<tr></tr>')
-            data[19].map(function(list){
+            data[20].map(function(list){
                 $tbody.children('tr').append(`<td>${list}</td>`)
             })
             $($modal).children('a').on('click', function() {
@@ -256,20 +257,20 @@
             $($tp4).html(tp4)
             $input = $($tp2).children('input')
             $inputs = $($tp4).children('input')
-            $input.addClass(`qty_${data[19][0]}`)
-            $input.val(data[19][1])
-            $inputs.addClass(`docs_${data[19][0]}`)
-            $inputs.val(data[19][2])
+            $input.addClass(`qty_${data[20][0]}`)
+            $input.val(data[20][1])
+            $inputs.addClass(`docs_${data[20][0]}`)
+            $inputs.val(data[20][2])
             $input.on('change blur keyup', function (e) {
                 e.preventDefault()
                 countQty($(this))
             })
             $check = $($tp1).children('.check_pr')
-            $check.attr('id', `check_${data[19][0]}`)
-            $check.val(data[19][0])
+            $check.attr('id', `check_${data[20][0]}`)
+            $check.val(data[20][0])
             $pr = $($tp1).children('.qty_pr')
-            $pr.val(data[19][1])
-            $($tp1).children('label').attr('for', `check_${data[19][0]}`)
+            $pr.val(data[20][1])
+            $($tp1).children('label').attr('for', `check_${data[20][0]}`)
         },
         searchDelay: 750,
         order: [[0, 'desc']],

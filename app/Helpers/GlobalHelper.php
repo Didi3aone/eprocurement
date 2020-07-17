@@ -455,4 +455,20 @@
         return number_format($duit, 2, ",", ".");
     }
 
+    function date_compare($a, $b)
+    {
+        $t1 = strtotime($a['Date']);
+        $t2 = strtotime($b['Date']);
+        return $t2 - $t1;  // descending
+    }  
+
+    function compareByTimeStamp($time1, $time2) 
+    { 
+        if (strtotime($time1) < strtotime($time2)) 
+            return 1; 
+        else if (strtotime($time1) > strtotime($time2))  
+            return -1; 
+        else
+            return 0; 
+    } 
 ?>
