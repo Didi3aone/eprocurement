@@ -358,6 +358,26 @@
         }
     })
 
+    $('.amount').on('keyup', function() {
+        let value = $(this).val()
+        if (isNaN(value.replace(',', ''))) return false
+
+        let _value = document.getElementsByClassName('amount')
+        if (_value.length > 0) {
+            let total = 0
+            for (let i = 0; i < _value.length; i++) {
+                let _value_value = _value[i].value
+                if (_value_value=='') _value_value = '0'
+                total += parseInt(_value_value.replace(',', ''))
+            }
+            $('#nominal_balance').val(formatNumber(total))
+        }
+    })
+
+    function formatNumber(num) {
+        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    }
+
     $(function() {
      
     })

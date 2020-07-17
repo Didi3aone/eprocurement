@@ -160,7 +160,7 @@
                         <a href="javascript:;" id="rejects" data-toggle="modal" data-id="{{ $billing->id }}" data-target="#modal_rejected_reasons" type="button" class="btn btn-warning"> 
                         <i class="fa fa-times"></i> {{ 'Incomplete' }}</a>
                         @endif
-                        <a href="{{ route('admin.billing-spv-list') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i>Back To List</a>
+                        <a href="{{ route('admin.billing') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i>Back To List</a>
                     </div>
                 </div>
             </div>
