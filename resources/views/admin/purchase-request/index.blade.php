@@ -54,6 +54,7 @@
                                         <th>Purchasing Group</th>
                                         <th>Requisitioner</th>
                                         <th>Req Tracking Number</th>
+                                        <th>Delivery Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
