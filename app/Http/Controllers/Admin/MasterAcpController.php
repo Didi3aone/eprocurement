@@ -45,37 +45,37 @@ class MasterAcpController extends Controller
             // dd($userMapping);
             if( $request->query('q') != '' ) {
                 $model = \App\Models\PurchaseRequestsDetail::where(function ($query) use ($request) {
-                    $query->where('description', 'like', '%'.$request->query('q').'%')
+                    $query->where('short_text', 'like', '%'.$request->query('q').'%')
                         ->orWhere('material_id', 'like', '%'.$request->query('q').'%');
                         })->select(
                             \DB::raw(
                                 "CASE
-                                WHEN (material_id IS NULL OR material_id = '') THEN description 
+                                WHEN (material_id IS NULL OR material_id = '') THEN short_text 
                                 ELSE material_id 
                                 END AS code,
-                                description"
+                                short_text as description"
                             )
                         )
                         ->where('qty', '>', '0.00')
                         ->whereIn('purchasing_group_code', $userMapping)
-                        ->groupBy('material_id', 'description')
-                        ->orderBy('description', 'asc')
+                        ->groupBy('material_id', 'short_text')
+                        ->orderBy('short_text', 'asc')
                         ->limit(700)
                         ->get();
             } else {
                 $model = \App\Models\PurchaseRequestsDetail::select(
                             \DB::raw(
                                 "CASE
-                                WHEN (material_id IS NULL OR material_id = '') THEN description 
+                                WHEN (material_id IS NULL OR material_id = '') THEN short_text 
                                 ELSE material_id 
                                 END AS code,
-                                description"
+                                short_text as description"
                             )
                         )
                         ->where('qty', '>', 0)
                         ->whereIn('purchasing_group_code', $userMapping)
-                        ->groupBy('material_id', 'description')
-                        ->orderBy('description', 'asc')
+                        ->groupBy('material_id', 'short_text')
+                        ->orderBy('short_text', 'asc')
                         ->limit(700)
                         ->get();
             }
