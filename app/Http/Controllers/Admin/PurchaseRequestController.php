@@ -464,19 +464,23 @@ class PurchaseRequestController extends Controller
                         $prDetail->plant_code
                     );  
                     
-                $delivery_date = date('Y-m-d', strtotime('Y-m-d + 14 days'));
+                if( $prHeader->is_project == PurchaseRequest::Project ) {
+                    $delivery_date = date('Y-m-d', strtotime('Y-m-d + 30 weekday'));
+                } else {
+                    $delivery_date = date('Y-m-d', strtotime('Y-m-d + 14 weekday'));
+                }
                 if( $leadTime != null)  {
                     $today = \Carbon\Carbon::now();
                     $approveDate   = $today->toDateString();
                     $finalLeadTime = $leadTime->planned_deliv_time + $leadTime->gr_processing_time;
                     
                     $prDetail->release_date        = date('Y-m-d');
-                    $prDetail->delivery_date       = date('Y-m-d', strtotime($approveDate. ' + '.$finalLeadTime.' days'));
-                    $delivery_date                 = date('Y-m-d', strtotime($approveDate. ' + '.$finalLeadTime.' days'));
+                    $prDetail->delivery_date       = date('Y-m-d', strtotime($approveDate. ' + '.$finalLeadTime.' weekday'));
+                    $delivery_date                 = date('Y-m-d', strtotime($approveDate. ' + '.$finalLeadTime.' weekday'));
                 } else {
                     $prDetail->delivery_date = $delivery_date;
                 }
-
+                
                 $prDetail->status_approval = $status;
                 $assetNo = '';
                 if (PurchaseRequestsDetail::Assets == $prDetail->is_assets) {
