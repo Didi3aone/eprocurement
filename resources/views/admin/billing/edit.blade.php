@@ -245,6 +245,7 @@
                                     @endphp
                                     <tr>
                                         <input type="hidden" value="{{ $val->id }}" name="iddetail[]">
+                                        <input type="hidden" value="{{ $val->po_no }}" name="po_no">
                                         <td>{{ $val->qty }}</td>
                                         <td><input type="text" class="amount" name="amount[]" id="amount" value="{{ $val->amount }}" onkeyup="leadingZero(this.value, $(this), true)"/></td>
                                         <td>{{ $val->material_id." - ".$val->material->description }}</td>
