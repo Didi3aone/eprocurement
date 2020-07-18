@@ -459,7 +459,7 @@ class PurchaseRequestController extends Controller
                     $status = PurchaseRequestsDetail::ApprovedPurchasing;
                 }
 
-                $leadTime = \App\Models\RN\RekapLeadtime::calculateLeadTime(
+                $leadTime = \App\Models\RekapLeadtime::calculateLeadTime(
                         $prDetail->material_id,
                         $prDetail->plant_code
                     );  
