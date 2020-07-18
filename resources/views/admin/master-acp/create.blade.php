@@ -292,11 +292,18 @@
 
     $(document).on('click', '.add_material', function (e) {
         e.preventDefault()
+        var interval
+        var formatData = function($el) {
+            clearInterval(interval)
+            interval = setInterval(() => {
+                $el.mask('###0.00', {reverse: true})
+            }, 500)
+        }
         $('.money').mask('#.##0', { reverse: true })
-
-        $(document).on('keyup', '.prices input', function(e){
+        $('.prices').mask('#.##0,00', {reverse: true});
+        $(document).on('keyup', 'input.prices ', function(e){
             // ...
-            alert()
+            formatData($(this))
         });
 
         const $tr = $(this).closest('tr').parent()

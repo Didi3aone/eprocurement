@@ -2,25 +2,23 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
+use PDF;
 use Gate;
-use Symfony\Component\HttpFoundation\Response;
-use App\Models\PurchaseRequest;
-use App\Models\PurchaseRequestsDetail;
+use App\Mail\SendMail;
 use App\Models\Vendor;
-use App\Models\Plant;
-use App\Models\DocumentType;
+use Illuminate\Http\Request;
 use App\Models\PurchaseOrder;
-use App\Models\PurchaseOrdersDetail;
-use App\Models\PurchaseOrderInvoice;
-use App\Models\Vendor\Quotation;
-use App\Models\Vendor\QuotationDetail;
-use App\Imports\PurchaseOrderImport;
-use App\Models\PurchaseOrderChangeHistoryDetail;
-use App\Models\PurchaseOrderChangeHistory;
 use App\Mail\PurchaseOrderMail;
+use App\Models\Vendor\Quotation;
+use App\Http\Controllers\Controller;
+use App\Models\PurchaseOrderInvoice;
+use App\Models\PurchaseOrdersDetail;
+use Illuminate\Support\Facades\Mail;
+use App\Models\PurchaseRequestsDetail;
+use App\Models\Vendor\QuotationDetail;
+use App\Models\PurchaseOrderChangeHistory;
+use Symfony\Component\HttpFoundation\Response;
+use App\Models\PurchaseOrderChangeHistoryDetail;
 
 class PurchaseOrderController extends Controller
 {
@@ -33,10 +31,10 @@ class PurchaseOrderController extends Controller
     {
         abort_if(Gate::denies('purchase_order_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $po = PurchaseOrdersDetail::join('purchase_orders','purchase_orders.id','=','purchase_orders_details.purchase_order_id')
-                ->leftJoin('master_acps','master_acps.id','=','purchase_orders_details.acp_id')
-                ->leftJoin('vendors','vendors.code','=','purchase_orders.vendor_id')
-                ->where('purchase_orders.status_approval',PurchaseOrder::Approved)
+        $po = PurchaseOrdersDetail::join('purchase_orders', 'purchase_orders.id', '=', 'purchase_orders_details.purchase_order_id')
+                ->leftJoin('master_acps', 'master_acps.id', '=', 'purchase_orders_details.acp_id')
+                ->leftJoin('vendors', 'vendors.code', '=', 'purchase_orders.vendor_id')
+                ->where('purchase_orders.status_approval', PurchaseOrder::Approved)
                 ->select(
                     'purchase_orders_details.purchasing_document',
                     'purchase_orders_details.PO_ITEM',
@@ -75,8 +73,8 @@ class PurchaseOrderController extends Controller
     public function approvalPoChange()
     {
         abort_if(Gate::denies('purchase_order_approval_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-        
-        $po = PurchaseOrder::leftJoin('vendors','vendors.code','=','purchase_orders.vendor_id')
+
+        $po = PurchaseOrder::leftJoin('vendors', 'vendors.code', '=', 'purchase_orders.vendor_id')
                 ->where('purchase_orders.approved_asspro', \Auth::user()->nik)
                 ->where('status_approval', PurchaseOrder::Change)
                 ->where('is_approve_head', PurchaseOrder::ApproveAss)
@@ -102,7 +100,7 @@ class PurchaseOrderController extends Controller
     {
         abort_if(Gate::denies('purchase_order_approval_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $po = PurchaseOrder::leftJoin('vendors','vendors.code','=','purchase_orders.vendor_id')
+        $po = PurchaseOrder::leftJoin('vendors', 'vendors.code', '=', 'purchase_orders.vendor_id')
             // ->where('purchase_orders.approved_asspro', \Auth::user()->nik)
             ->where('status_approval', PurchaseOrder::Change)
             ->where('is_approve_head', PurchaseOrder::ApproveHead)
@@ -122,20 +120,21 @@ class PurchaseOrderController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        if (empty($request->get('vendor_id')))
+        if (empty($request->get('vendor_id'))) {
             return redirect()->route('admin.purchase-order-create-po', $request->get('request_id'))->with('status', 'No vendor chosen!');
+        }
 
-        if ($request->get('bidding') == 0) { // po repeat
+        if (0 == $request->get('bidding')) { // po repeat
             // create Quotation
-            if (empty($request->get('qty')[0]))
+            if (empty($request->get('qty')[0])) {
                 return redirect()->route('admin.purchase-order-create-po', $request->get('request_id'))->with('status', 'Quantity cannot be zero!');
+            }
 
-            $quotation = new Quotation;
+            $quotation = new Quotation();
             $quotation->po_no = $request->get('request_no');
             $quotation->request_id = $request->get('request_id');
             $qty = str_replace('.', '', $request->get('qty')[0]);
@@ -149,28 +148,28 @@ class PurchaseOrderController extends Controller
             $data = [
                 'vendor' => $request->get('vendor_id')[0],
                 'request_no' => $request->get('request_no'),
-                'subject' => 'PO Repeat ' . $request->get('request_no')
+                'subject' => 'PO Repeat '.$request->get('request_no'),
             ];
 
             \Mail::to($vendor->email)->send(new PurchaseOrderMail($data));
 
             return redirect()->route('admin.quotation.index')->with('status', 'PO Repeat!');
-        } elseif ($request->get('bidding') == 2) {
+        } elseif (2 == $request->get('bidding')) {
             // penunjukan langsung
             $filename = '';
-            
+
             if ($request->file('upload_file')) {
                 $path = 'quotation/';
                 $file = $request->file('upload_file');
-                
+
                 $filename = $file->getClientOriginalName();
-        
+
                 $file->move($path, $filename);
-        
-                $real_filename = public_path($path . $filename);
+
+                $real_filename = public_path($path.$filename);
             }
 
-            $quotation = new Quotation;
+            $quotation = new Quotation();
             $quotation->po_no = $request->get('request_no');
             $quotation->notes = $request->get('notes');
             $quotation->request_id = $request->get('request_id');
@@ -183,133 +182,134 @@ class PurchaseOrderController extends Controller
             $data = [
                 'vendor' => $request->get('vendor_id')[0],
                 'request_no' => $request->get('request_no'),
-                'subject' => 'Penunjukkan langsung ' . $request->get('request_no')
+                'subject' => 'Penunjukkan langsung '.$request->get('request_no'),
             ];
 
             \Mail::to($vendor->email)->send(new PurchaseOrderMail($data));
 
             return redirect()->route('admin.quotation.index')->with('status', 'Penunjukkan Langsung!');
-        } else {
-            \DB::beginTransaction();
+        }
+        \DB::beginTransaction();
 
-            if ($request->get('online') == 0) {
-                // send email to each vendor
-                $vendors = $request->get('vendor_id');
+        if (0 == $request->get('online')) {
+            // send email to each vendor
+            $vendors = $request->get('vendor_id');
 
-                foreach ($vendors as $row) {
-                    $row = Vendor::findOrFail($row);
-                    $data = [
-                        'vendor' => $row,
-                        'request_no' => $request->get('request_no'),
-                        'subject' => 'Bidding PR no ' . $request->get('request_no')
-                    ];
-                    
-                    // send email
-                    \Mail::to($row->email)->send(new PurchaseOrderMail($data));
-                }
+            foreach ($vendors as $row) {
+                $row = Vendor::findOrFail($row);
+                $data = [
+                    'vendor' => $row,
+                    'request_no' => $request->get('request_no'),
+                    'subject' => 'Bidding PR no '.$request->get('request_no'),
+                ];
 
-                return redirect()->route('admin.purchase-order.index')->with('success', 'All vendors has been sent');
-            } else {
-                try {
-                    $vendors = $request->get('vendor_id');
-
-                    if (empty($vendors))
-                        return redirect()->route('admin.purchase-order.index')->with('error', 'Vendor has been required');
-                    
-                    $quotation = new Quotation;
-                    $quotation->request_id = $request->get('request_id');
-                    $quotation->po_no = $request->get('request_no');
-                    $quotation->leadtime_type = $request->get('leadtime_type');
-                    $quotation->purchasing_leadtime = $request->get('purchasing_leadtime');
-                    $quotation->target_price = str_replace('.', '', $request->get('target_price'));
-                    $quotation->expired_date = $request->get('expired_date');
-                    $quotation->save();
-
-                    foreach ($vendors as $row) {
-                        $quotationDetail = new QuotationDetail;
-                        $quotationDetail->quotation_order_id = $quotation->id;
-                        $quotationDetail->vendor_id = $row;
-                        $quotationDetail->flag = 0;
-                        $quotationDetail->save();
-                    }
-
-                    $purchaseOrder = new PurchaseOrder;
-
-                    if ($request->get('bidding') == 0)
-                        $purchaseOrder->bidding = 0;
-                    else
-                        $purchaseOrder->bidding = 1;
-
-                    $purchaseOrder->po_no = $request->get('request_no');
-                    $purchaseOrder->po_date = date('Y-m-d');
-                    $purchaseOrder->request_id = $request->get('request_id');
-                    $purchaseOrder->status = 0;
-                    $purchaseOrder->save();
-
-                    // Alvin:: PO Invoice
-                    $purchase_order_invoice = [
-                        'purchase_order_id' => $request->get('purchase_order_id'),
-                        'request_id' => $request->get('request_id'),
-                        'payment_terms' => $request->get('payment_terms'),
-                        'payment_in_days_1' => $request->get('payment_in_days_1'),
-                        'payment_in_percent_1' => $request->get('payment_in_percent_1'),
-                        'payment_in_days_2' => $request->get('payment_in_days_2'),
-                        'payment_in_percent_2' => $request->get('payment_in_percent_2'),
-                        'payment_in_days_3' => $request->get('payment_in_days_3'),
-                        'payment_in_percent_3' => $request->get('payment_in_percent_3'),
-                        'currency' => $request->get('currency'),
-                        'exchange_rate' => $request->get('exchange_rate'),
-                        'sales_person' => $request->get('sales_person'),
-                        'phone' => $request->get('phone'),
-                        'language' => $request->get('language'),
-                        'your_reference' => $request->get('your_reference'),
-                        'our_reference' => $request->get('our_reference')
-                    ];
-                    $purchase_order_invoice_id = $request->get('purchase_order_invoice_id');
-                    if ($purchase_order_invoice) {
-                        PurchaseOrderInvoice::where('id', $purchase_order_invoice_id)->update($purchase_order_invoice);
-                    } else {
-                        PurchaseOrderInvoice::save($purchase_order_invoice);
-                    }
-                    // END
-
-                    \DB::commit();
-
-                    return redirect()->route('admin.quotation.index')->with('status', trans('cruds.purchase-order.alert_success_insert'));
-                } catch (Exception $e) {
-                    \DB::rollBack();
-            
-                    return redirect()->route('admin.quotation.index')->with('error', trans('cruds.purchase-order.alert_error_insert'));
-                }
+                // send email
+                \Mail::to($row->email)->send(new PurchaseOrderMail($data));
             }
+
+            return redirect()->route('admin.purchase-order.index')->with('success', 'All vendors has been sent');
+        }
+        try {
+            $vendors = $request->get('vendor_id');
+
+            if (empty($vendors)) {
+                return redirect()->route('admin.purchase-order.index')->with('error', 'Vendor has been required');
+            }
+
+            $quotation = new Quotation();
+            $quotation->request_id = $request->get('request_id');
+            $quotation->po_no = $request->get('request_no');
+            $quotation->leadtime_type = $request->get('leadtime_type');
+            $quotation->purchasing_leadtime = $request->get('purchasing_leadtime');
+            $quotation->target_price = str_replace('.', '', $request->get('target_price'));
+            $quotation->expired_date = $request->get('expired_date');
+            $quotation->save();
+
+            foreach ($vendors as $row) {
+                $quotationDetail = new QuotationDetail();
+                $quotationDetail->quotation_order_id = $quotation->id;
+                $quotationDetail->vendor_id = $row;
+                $quotationDetail->flag = 0;
+                $quotationDetail->save();
+            }
+
+            $purchaseOrder = new PurchaseOrder();
+
+            if (0 == $request->get('bidding')) {
+                $purchaseOrder->bidding = 0;
+            } else {
+                $purchaseOrder->bidding = 1;
+            }
+
+            $purchaseOrder->po_no = $request->get('request_no');
+            $purchaseOrder->po_date = date('Y-m-d');
+            $purchaseOrder->request_id = $request->get('request_id');
+            $purchaseOrder->status = 0;
+            $purchaseOrder->save();
+
+            // Alvin:: PO Invoice
+            $purchase_order_invoice = [
+                'purchase_order_id' => $request->get('purchase_order_id'),
+                'request_id' => $request->get('request_id'),
+                'payment_terms' => $request->get('payment_terms'),
+                'payment_in_days_1' => $request->get('payment_in_days_1'),
+                'payment_in_percent_1' => $request->get('payment_in_percent_1'),
+                'payment_in_days_2' => $request->get('payment_in_days_2'),
+                'payment_in_percent_2' => $request->get('payment_in_percent_2'),
+                'payment_in_days_3' => $request->get('payment_in_days_3'),
+                'payment_in_percent_3' => $request->get('payment_in_percent_3'),
+                'currency' => $request->get('currency'),
+                'exchange_rate' => $request->get('exchange_rate'),
+                'sales_person' => $request->get('sales_person'),
+                'phone' => $request->get('phone'),
+                'language' => $request->get('language'),
+                'your_reference' => $request->get('your_reference'),
+                'our_reference' => $request->get('our_reference'),
+            ];
+            $purchase_order_invoice_id = $request->get('purchase_order_invoice_id');
+            if ($purchase_order_invoice) {
+                PurchaseOrderInvoice::where('id', $purchase_order_invoice_id)->update($purchase_order_invoice);
+            } else {
+                PurchaseOrderInvoice::save($purchase_order_invoice);
+            }
+            // END
+
+            \DB::commit();
+
+            return redirect()->route('admin.quotation.index')->with('status', trans('cruds.purchase-order.alert_success_insert'));
+        } catch (Exception $e) {
+            \DB::rollBack();
+
+            return redirect()->route('admin.quotation.index')->with('error', trans('cruds.purchase-order.alert_error_insert'));
         }
     }
 
     public function show($id)
     {
-        $purchaseOrder  = PurchaseOrder::find($id);
+        $purchaseOrder = PurchaseOrder::find($id);
 
-        return view('admin.purchase-order.show',compact('purchaseOrder'));   
+        return view('admin.purchase-order.show', compact('purchaseOrder'));
     }
 
     public function showApprovalAss($id)
     {
         $purchaseOrder = PurchaseOrder::find($id);
 
-        return view('admin.purchase-order.show-change-ass',compact('purchaseOrder'));   
+        return view('admin.purchase-order.show-change-ass', compact('purchaseOrder'));
     }
 
     public function showApprovalHead($id)
     {
         $purchaseOrder = PurchaseOrder::find($id);
 
-        return view('admin.purchase-order.show-change-head',compact('purchaseOrder'));   
+        return view('admin.purchase-order.show-change-head', compact('purchaseOrder'));
     }
-    
+
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -318,157 +318,153 @@ class PurchaseOrderController extends Controller
 
         $purchaseOrder = PurchaseOrder::findOrFail($id);
         $currency = \App\Models\Currency::all();
-        $top    = \App\Models\PaymentTerm::all();
+        $top = \App\Models\PaymentTerm::all();
         $poDetail = PurchaseOrdersDetail::where('purchase_order_id', $id)->get();
 
-        return view('admin.purchase-order.edit', compact('purchaseOrder','currency','top','poDetail'));
+        return view('admin.purchase-order.edit', compact('purchaseOrder', 'currency', 'top', 'poDetail'));
     }
-
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        $purchaseOrder                 = PurchaseOrder::findOrFail($id);
-        $purchaseOrder->notes          = $request->get('notes');
-        $purchaseOrder->payment_term   = $request->get('payment_term');
+        $purchaseOrder = PurchaseOrder::findOrFail($id);
+        $purchaseOrder->notes = $request->get('notes');
+        $purchaseOrder->payment_term = $request->get('payment_term');
 
-        $poChangeHeader                         = new PurchaseOrderChangeHistory;
-        $poChangeHeader->po_id                  = $purchaseOrder->id;
-        $poChangeHeader->vendor_old             = $purchaseOrder->vendor_id;
-        $poChangeHeader->vendor_change          = $request->get('payment_term') ?? '';
-        $poChangeHeader->notes_old              = $purchaseOrder->notes;
-        $poChangeHeader->notes_change           = $request->get('notes');
+        $poChangeHeader = new PurchaseOrderChangeHistory();
+        $poChangeHeader->po_id = $purchaseOrder->id;
+        $poChangeHeader->vendor_old = $purchaseOrder->vendor_id;
+        $poChangeHeader->vendor_change = $request->get('payment_term') ?? '';
+        $poChangeHeader->notes_old = $purchaseOrder->notes;
+        $poChangeHeader->notes_change = $request->get('notes');
         // $poChangeHeader->peyment_term_old       = $purchaseOrder->payment_term;
         $poChangeHeader->save();
-        
-        $service        = '';
-        $packageParent  = '000000000';
+
+        $service = '';
+        $packageParent = '000000000';
         $subpackgparent = '000000000';
-        $noLine         = '';
-        $sched          = "";
+        $noLine = '';
+        $sched = '';
         $totalPrice = 0;
         foreach ($request->idDetail as $key => $rows) {
             $totalPrice += $request->price[$key];
             $poDetail = PurchaseOrdersDetail::find($rows);
-            if( $poDetail->qty != $request->qty[$key] ) {
+            if ($poDetail->qty != $request->qty[$key]) {
                 $prDetail = PurchaseRequestsDetail::find($poDetail->request_detail_id);
-                $prDetail->qty      += $poDetail->qty;
+                $prDetail->qty += $poDetail->qty;
                 $prDetail->qty_order = 0;
                 $prDetail->update();
 
-                $prDetail->qty      -= $request->qty[$key];
+                $prDetail->qty -= $request->qty[$key];
                 $prDetail->qty_order = $request->qty[$key];
 
                 $prDetail->save();
-
             }
-            $poChangeDetail = new PurchaseOrderChangeHistoryDetail;
-            $poChangeDetail->qty_old        = $poDetail->qty;
-            $poChangeDetail->qty_change     = $request->qty[$key];
-            $poChangeDetail->po_detail_id   = $poDetail->id;
-            $poChangeDetail->po_history_id  = $poChangeHeader->id;
-            $poChangeDetail->price_old      = $poDetail->price;
-            $poChangeDetail->price_change   = $request->price[$key];
+            $poChangeDetail = new PurchaseOrderChangeHistoryDetail();
+            $poChangeDetail->qty_old = $poDetail->qty;
+            $poChangeDetail->qty_change = $request->qty[$key];
+            $poChangeDetail->po_detail_id = $poDetail->id;
+            $poChangeDetail->po_history_id = $poChangeHeader->id;
+            $poChangeDetail->price_old = $poDetail->price;
+            $poChangeDetail->price_change = $request->price[$key];
             $poChangeDetail->save();
 
-            $poDetail->qty                  = $request->qty[$key];
-            $poDetail->price                = $request->price[$key];
-            $poDetail->currency             = $request->currency[$key];
-            $poDetail->delivery_date        = $request->delivery_date[$key];
-            $poDetail->delivery_complete    = $request->delivery_complete[$key];
-            $poDetail->tax_code             = $request->tax_code[$key] == 1 ? 'V1' : 'V0';
-            
+            $poDetail->qty = $request->qty[$key];
+            $poDetail->price = $request->price[$key];
+            $poDetail->currency = $request->currency[$key];
+            $poDetail->delivery_date = $request->delivery_date[$key];
+            $poDetail->delivery_complete = $request->delivery_complete[$key];
+            $poDetail->tax_code = 1 == $request->tax_code[$key] ? 'V1' : 'V0';
 
             $poDetail->update();
         }
 
-        if( $purchaseOrder->total_price != $totalPrice ) {
+        if ($purchaseOrder->total_price != $totalPrice) {
             $purchaseOrder->status_approval = PurchaseOrder::Rejected;
             $purchaseOrder->approved_asspro = \App\Models\Vendor\Quotation::getQuotationById($purchaseOrder->quotation_id)->approved_asspro;
-            $purchaseOrder->approved_head   = 'PROCUREMENT01';
+            $purchaseOrder->approved_head = 'PROCUREMENT01';
             $purchaseOrder->save();
+
             return redirect()->route('admin.purchase-order.index')->with('status', 'Purchase order has been updated & waiting approval');
-        } else {
-            $poChange = \sapHelp::sendPOchangeToSap($purchaseOrder->PO_NUMBER);
-            if( $poChange ) {
-                $purchaseOrder->status_approval = PurchaseOrder::Approved;
-                $purchaseOrder->save();
-                return redirect()->route('admin.purchase-order.index')->with('status', 'Purchase order has been updated');
-            } else {
-                return redirect()->route('admin.purchase-order.index');
-                \Session::flash('error','Internal server error');
-            }
         }
-        
+        $poChange = \sapHelp::sendPOchangeToSap($purchaseOrder->PO_NUMBER);
+        if ($poChange) {
+            $purchaseOrder->status_approval = PurchaseOrder::Approved;
+            $purchaseOrder->save();
+
+            return redirect()->route('admin.purchase-order.index')->with('status', 'Purchase order has been updated');
+        }
+
+        return redirect()->route('admin.purchase-order.index');
+        \Session::flash('error', 'Internal server error');
     }
 
-     /**
+    /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function approvalChangeAss(Request $request)
     {
         $purchaseOrder = PurchaseOrder::findOrFail($request->id);
 
-        if( $request->is_approve == 1 ) {
+        if (1 == $request->is_approve) {
             $purchaseOrder->is_approve_head = PurchaseOrder::ApproveHead;
             $purchaseOrder->save();
 
-            \Session::flash('status','Po change Has been approved');
+            \Session::flash('status', 'Po change Has been approved');
 
             return \redirect()->route('admin.purchase-order-change-ass');
-        } else {
-            $purchaseOrder->is_approve_head = PurchaseOrder::ApproveAss;
-            $purchaseOrder->reject_reason   = $request->reason;
-            $purchaseOrder->status_approval = PurchaseOrder::Rejected;
-            $purchaseOrder->save();
-            \Session::flash('status','Po change Has been rejected');
         }
+        $purchaseOrder->is_approve_head = PurchaseOrder::ApproveAss;
+        $purchaseOrder->reject_reason = $request->reason;
+        $purchaseOrder->status_approval = PurchaseOrder::Rejected;
+        $purchaseOrder->save();
+        \Session::flash('status', 'Po change Has been rejected');
     }
 
-     /**
+    /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function approvalChangeHead(Request $request)
     {
         $purchaseOrder = PurchaseOrder::findOrFail($request->id);
 
-        if( $request->is_approve == 1 ) {
+        if (1 == $request->is_approve) {
             $purchaseOrder->is_approve_head = PurchaseOrder::ApproveHead;
             $purchaseOrder->status_approval = PurchaseOrder::Approved;
             $purchaseOrder->save();
 
             $poChange = \sapHelp::sendPOchangeToSap($purchaseOrder->PO_NUMBER);
-            
-            \Session::flash('status','Po change Has been approved');
+
+            \Session::flash('status', 'Po change Has been approved');
 
             return \redirect()->route('admin.purchase-order-change-head');
-        } else {
-            $purchaseOrder->is_approve_head = PurchaseOrder::ApproveHead;
-            $purchaseOrder->reject_reason   = $request->reason;
-            $purchaseOrder->status_approval = PurchaseOrder::Rejected;
-            $purchaseOrder->save();
-            \Session::flash('status','Po change Has been rejected');
         }
+        $purchaseOrder->is_approve_head = PurchaseOrder::ApproveHead;
+        $purchaseOrder->reject_reason = $request->reason;
+        $purchaseOrder->status_approval = PurchaseOrder::Rejected;
+        $purchaseOrder->save();
+        \Session::flash('status', 'Po change Has been rejected');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -478,12 +474,12 @@ class PurchaseOrderController extends Controller
         $delete = PurchaseOrder::where('id', $id)->delete();
 
         // check data deleted or not
-        if ($delete == 1) {
+        if (1 == $delete) {
             $success = true;
-            $message = "Profit Center deleted successfully";
+            $message = 'Profit Center deleted successfully';
         } else {
             $success = true;
-            $message = "Profit Center not found";
+            $message = 'Profit Center not found';
         }
 
         //  Return response
@@ -496,23 +492,23 @@ class PurchaseOrderController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function destroyItem(Request $request)
     {
         // abort_if(Gate::denies('purchase_order_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        
-        if( isset($request->id) ) {
+        if (isset($request->id)) {
             $checkGr = \App\Models\PurchaseOrderGr::getPoItemGr($request->id);
 
-            if( $checkGr > 0 ) {
+            if ($checkGr > 0) {
                 $success = false;
                 $message = 'Material has been gr !!!';
             } else {
                 $delete = PurchaseOrdersDetail::findOrFail($request->id);
-                $delete->is_active = 0;//not active
+                $delete->is_active = 0; //not active
                 $delete->update();
 
                 $success = true;
@@ -521,7 +517,7 @@ class PurchaseOrderController extends Controller
 
             return response()->json([
                 'success' => $success,
-                'message' => $message
+                'message' => $message,
             ], 200);
         }
     }
@@ -529,7 +525,17 @@ class PurchaseOrderController extends Controller
     public function printPo($id)
     {
         $po = PurchaseOrder::find($id);
+        $print = false;
+        $pdf = PDF::loadview('print', \compact('po', 'print'))
+            ->setPaper('A4', 'potrait')
+            ->setOptions(['debugCss' => true, 'isPhpEnabled' => true])
+            ->setWarnings(true);
+        $pdf->save(public_path("storage/{$id}_print.pdf"));
+        Mail::to('jul14n4v@gmail.com')->send(new SendMail($po));
+        $print = true;
 
-        return view('admin.purchase-order.print',compact('po'));
+        return $pdf->stream();
+
+        return view('admin.purchase-order.print', compact('po', 'print'));
     }
 }
