@@ -465,10 +465,12 @@ class PurchaseRequestController extends Controller
                     );  
                     
                 if( $prHeader->is_project == PurchaseRequest::Project ) {
-                    $delivery_date = date('Y-m-d', strtotime('Y-m-d + 30 weekday'));
+                    $delivery_date = date('Y-m-d', strtotime('+30 weekday'));
                 } else {
-                    $delivery_date = date('Y-m-d', strtotime('Y-m-d + 14 weekday'));
+                    $delivery_date = date('Y-m-d', strtotime('+14 weekday'));
                 }
+
+                echo $delivery_date;die;
                 if( $leadTime != null)  {
                     $today = \Carbon\Carbon::now();
                     $approveDate   = $today->toDateString();
@@ -480,7 +482,7 @@ class PurchaseRequestController extends Controller
                 } else {
                     $prDetail->delivery_date = $delivery_date;
                 }
-                
+
                 $prDetail->status_approval = $status;
                 $assetNo = '';
                 if (PurchaseRequestsDetail::Assets == $prDetail->is_assets) {
