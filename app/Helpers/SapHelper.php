@@ -3804,7 +3804,7 @@ class SapHelper {
             'DIFF_INV' => '',
             'CURRENCY' => $billing->currency,
             'CURRENCY_ISO' => '',
-            'EXCH_RATE' =>'',// $billing->exchange_rate,
+            'EXCH_RATE' =>$billing->exchange_rate,// $billing->exchange_rate,
             'EXCH_RATE_V' => '',
             'GROSS_AMOUNT' => $billing->nominal_inv_after_ppn,
             'CALC_TAX_IND' => $billing->ppn == 'V1' ? 'X' : '',
@@ -3966,13 +3966,14 @@ class SapHelper {
             $billing->update();
             return true;
         } else {
-            \App\Models\employeeApps\SapLogSoap::create([
-                'log_type' => 'BILLING',
-                'log_type_id' => $quotation->id,
-                'log_params_employee' => \json_encode($params),
-                'log_response_sap' => \json_encode($result),
-                'status' => 'FAILED',
-            ]); 
+            // \App\Models\employeeApps\SapLogSoap::create([
+            //     'log_type' => 'BILLING',
+            //     'log_type_id' => $quotation->id,
+            //     'log_params_employee' => \json_encode($params),
+            //     'log_response_sap' => \json_encode($result),
+            //     'status' => 'FAILED',
+            // ]); 
+            dd($result);
             return false;
         }
     }
