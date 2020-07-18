@@ -470,7 +470,7 @@ class PurchaseRequestController extends Controller
                     $delivery_date = date('Y-m-d', strtotime('+14 weekday'));
                 }
 
-                echo $delivery_date;die;
+                //echo $delivery_date;die;
                 if( $leadTime != null)  {
                     $today = \Carbon\Carbon::now();
                     $approveDate   = $today->toDateString();
