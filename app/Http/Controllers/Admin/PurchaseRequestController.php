@@ -481,11 +481,10 @@ class PurchaseRequestController extends Controller
                     if( $prHeader->is_project == PurchaseRequest::Project ) {
                         $delivery_date = date('Y-m-d', strtotime('+30 weekday'));
                     } else {
-                        $delivery_date            = date('Y-m-d', strtotime($approveDate. ' + '.$finalLeadTime.' weekday'));
+                        $delivery_date = date('Y-m-d', strtotime($approveDate. ' + '.$finalLeadTime.' weekday'));
                     }
-                } else {
-                    $prDetail->delivery_date = $delivery_date;
                 }
+                $prDetail->delivery_date = $delivery_date;
 
                 $prDetail->status_approval = $status;
                 $assetNo = '';
