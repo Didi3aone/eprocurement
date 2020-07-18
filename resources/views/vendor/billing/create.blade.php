@@ -225,8 +225,12 @@
                 //console.log(result)
                 $.each(result,function(k,v) {
                    // console.log(v.material.description)
-                    let material = v.material_no ?  v.material_no : '-'
-                    let desc = v.material.description ? v.material.description : '-'
+                    let material = '-';
+                    let desc = '-';
+                    if( v.material_no != '') {
+                        material = v.material_no !='' ?  v.material_no : '-'
+                        desc = v.material.description ? v.material.description : '-'
+                    }
                     template += `
                         <tr>
                             <input type="hidden"name="currency[]" value="${v.currency}">
