@@ -478,7 +478,11 @@ class PurchaseRequestController extends Controller
                     
                     $prDetail->release_date        = date('Y-m-d');
                     $prDetail->delivery_date       = date('Y-m-d', strtotime($approveDate. ' + '.$finalLeadTime.' weekday'));
-                    $delivery_date                 = date('Y-m-d', strtotime($approveDate. ' + '.$finalLeadTime.' weekday'));
+                    if( $prHeader->is_project == PurchaseRequest::Project ) {
+                        $delivery_date = date('Y-m-d', strtotime('+30 weekday'));
+                    } else {
+                        $delivery_date            = date('Y-m-d', strtotime($approveDate. ' + '.$finalLeadTime.' weekday'));
+                    }
                 } else {
                     $prDetail->delivery_date = $delivery_date;
                 }
