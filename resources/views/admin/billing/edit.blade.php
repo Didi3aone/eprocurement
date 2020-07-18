@@ -246,7 +246,7 @@
                                     <tr>
                                         <input type="hidden" value="{{ $val->id }}" name="iddetail[]">
                                         <td>{{ $val->qty }}</td>
-                                        <td><input type="text" class="amount" name="amount[]" id="amount" value="{{ $val->amount }}"/></td>
+                                        <td><input type="text" class="amount" name="amount[]" id="amount" value="{{ $val->amount }}" onkeyup="leadingZero(this.value, $(this), true)"/></td>
                                         <td>{{ $val->material_id." - ".$val->material->description }}</td>
                                         <td>{{ $val->po_no }}</td>
                                         <td>{{ $val->PO_ITEM }}</td>
@@ -390,7 +390,11 @@
                 if (_value_value=='') _value_value = '0'
                 total += parseInt(_value_value.replace(',', ''))
             }
-            $('#nominal_balance').val(formatNumber(total))
+
+            let DPP = $("#dpp").val().replace(',', '')
+            let totalB  = parseInt(total) - parseInt(DPP) 
+            console.log(total)
+            $('#nominal_balance').val(formatNumber(totalB))
         }
     })
 
