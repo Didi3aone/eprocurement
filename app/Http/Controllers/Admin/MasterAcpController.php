@@ -234,7 +234,7 @@ class MasterAcpController extends Controller
                 $material->master_acp_id        = $acp->id;
                 $material->master_acp_vendor_id = $val['vendor'];
                 $material->material_id          = $val['material'];
-                $material->price                = str_replace(',','.',$val['price']);
+                $material->price                = str_replace(',','',$val['price']);
                 $material->qty                  = $val['qty'];
                 $material->currency             = $val['currency'] ?? 'IDR';
                 $material->file_attachment      = $val['file_attachment'];
@@ -273,13 +273,13 @@ class MasterAcpController extends Controller
                 //     return redirect()->route('admin.master-acp.index');
                 // }
                 if (1 == $val['winner']) {
-                    $price += $val['price'];
+                    $price += str_replace(',','',$val['price']);//$val['price'];
                     $isAcp = true;
                     // insert to rfq detail
                     $rfqDetail = new MasterRfqDetail();
                     $rfqDetail->purchasing_document = $val['purchasing_document'];
                     $rfqDetail->material            = $val['material'];
-                    $rfqDetail->net_order_price     = str_replace(',','.',$val['price']);
+                    $rfqDetail->net_order_price     = str_replace(',','',$val['price']);
                     $rfqDetail->save();
                 }
             }
