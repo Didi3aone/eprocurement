@@ -81,7 +81,7 @@
                                     <td>{{ $row->uom_code ?? '-' }}</td>
                                     <td>{{ $data['qty_'.$vendor->code][$key] }}</td>
                                     <td>{{ $data['currency_'.$vendor->code][$key] }}</td>
-                                    <td>{{ number_format($data['price_'.$vendor->code][$key], 2) }}</td>
+                                    <td>{{ $data['price_'.$vendor->code][$key] }}</td>
                             </tr>
                             @endforeach
                         @endforeach
