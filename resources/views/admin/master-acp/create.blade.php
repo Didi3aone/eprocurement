@@ -296,7 +296,7 @@
         var formatData = function($el) {
             clearInterval(interval)
             interval = setInterval(() => {
-                $el.mask('###0.00', {reverse: true})
+                $el.mask('#,##0.00', {reverse: true})
             }, 500)
         }
         $('.money').mask('#.##0', { reverse: true })
