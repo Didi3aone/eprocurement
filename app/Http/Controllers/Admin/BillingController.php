@@ -27,7 +27,6 @@ class BillingController extends Controller
      */
     public function index()
     {
-        $spv = 0;
         $billing = Billing::all();
 
         return view('admin.billing.index', compact('billing'));
@@ -40,9 +39,7 @@ class BillingController extends Controller
      */
     public function listSpv()
     {
-        $spv = 1;
-
-        $billing = Billing::where('is_spv', $spv)->where('status',2)->get();
+        $billing = Billing::all();
 
         return view('admin.billing.index-spv', compact('billing'));
     }
@@ -126,14 +123,14 @@ class BillingController extends Controller
                 //     return redirect()->route('admin.billing-edit', $request->id);
                 // } 
                 $detail         = BillingDetail::find($rows);
-                $detail->amount = str_replace(',', '.',$request->amount[$key]);
+                $detail->amount = str_replace(',', '',$request->amount[$key]);
     
                 $detail->update();
             }
             
             $postSap = \sapHelp::sendBillingToSap($request);
             if( $postSap ) {
-                \Session::flash('status','Billing has been approved');
+                \Session::flash('status','Billing has been submitted');
             } else {
                 \Session::flash('error','Internal server error !!!');
             }

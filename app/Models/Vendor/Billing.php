@@ -48,7 +48,7 @@ class Billing extends Model
 
     public const TypeStatus = [
         1 => 'Waiting For Approval',
-        2 => 'Approved',
+        2 => 'Approved', 
         3 => 'Rejected',
         4 => 'Submitted',
         8 => 'Incompleted',
