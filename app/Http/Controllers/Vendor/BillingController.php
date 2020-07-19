@@ -349,6 +349,7 @@ class BillingController extends Controller
     public function poGR ($po_no)
     { 
         $model = PurchaseOrderGr::with('material')->where('doc_gr', $po_no)
+            ->where('is_cancel',PurchaseOrderGr::NoCancel)
             ->where('debet_credit','S')->get();
 
         // $material_description = $model->material ? $model->material->description : '';

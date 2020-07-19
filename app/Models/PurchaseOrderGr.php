@@ -44,6 +44,9 @@ class PurchaseOrderGr extends Model
         'posting_date'
     ];
 
+    public const YesCancel = 0;
+    public const NoCancel = 1;
+
     public static function boot()
     {
         parent::boot();

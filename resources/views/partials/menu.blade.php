@@ -175,7 +175,7 @@
                 @endcan
                 @can('billing_access')
                 <li class=""> 
-                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-clipboard"></i>
+                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-credit-card"></i>
                         <span class="hide-menu"> {{ 'Billing' }} </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">
