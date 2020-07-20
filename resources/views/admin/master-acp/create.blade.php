@@ -294,7 +294,6 @@
         e.preventDefault()
         var interval
         var formatData = function($el) {
-            console.log('test')
             clearInterval(interval)
             interval = setInterval(() => {
                 $el.mask('#,##0.00', {reverse: true})
