@@ -57,6 +57,7 @@ class PurchaseOrdersDetail extends Model
     ];
 
     public const SERVICE = 9;
+    public const MaterialText = 99;
 
     public const YesGr = 1;
     public const Active = 1;

@@ -250,6 +250,7 @@
                             <input type="hidden" name="cost_center_code[]" value="${v.cost_center_code}"/>
                             <input type="hidden" name="tahun_gr[]" value="${v.tahun_gr}"/>
                             <input type="hidden" name="price_per_pc[]" value="${v.price_per_pc}"/>
+                            <input type="hidden" name="item_category[]" value="${v.item_category}"/>
                             <input type="hidden" name="purchase_order_detail_id[]" value="${v.purchase_order_detail_id}"/>
                             <td><input type="number" class="qty-old form-control" name="qty_old[]" value="${v.qty}" readonly></td>
                             <td><input type="number" class="qty form-control" name="qty[]" value="${v.qty}" required/></td>
@@ -359,35 +360,35 @@
    function PreviewImagePo() {
         pdffile=document.getElementById("files").files[0];
         pdffile_url=URL.createObjectURL(pdffile);
-        console.log(pdffile_url)
+        
         $('#viewer').attr('href',pdffile_url);
     }
 
     function PreviewImageDo() {
         pdffile=document.getElementById("files_do").files[0];
         pdffile_url=URL.createObjectURL(pdffile);
-        console.log(pdffile_url)
+        
         $('#viewer_do').attr('href',pdffile_url);
     }
 
     function PreviewImageSurat() {
         pdffile=document.getElementById("surat").files[0];
         pdffile_url=URL.createObjectURL(pdffile);
-        console.log(pdffile_url)
+        
         $('#viewer_surat').attr('href',pdffile_url);
     }
 
     function PreviewImageInvoice() {
         pdffile=document.getElementById("files_invoice").files[0];
         pdffile_url=URL.createObjectURL(pdffile);
-        console.log(pdffile_url)
+        
         $('#viewer_invoice').attr('href',pdffile_url);
     }
 
     function PreviewImageFaktur() {
         pdffile=document.getElementById("file_faktur").files[0];
         pdffile_url=URL.createObjectURL(pdffile);
-        console.log(pdffile_url)
+        
         $('#viewer_faktur').attr('href',pdffile_url);
     }
 

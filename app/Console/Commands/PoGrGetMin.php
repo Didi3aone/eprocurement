@@ -4,21 +4,21 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
-class PoGrGet extends Command
+class PoGrGetMin extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'po:gr';
+    protected $signature = 'po:gr-min';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Get PO GR S';
+    protected $description = 'Get PO GR H';
 
     /**
      * Create a new command instance.
@@ -80,7 +80,7 @@ class PoGrGet extends Command
                 echo "get po gr \n";
                 $params[0]['EBELN'] = $row->PO_NUMBER;
                 $result = $client->__soapCall("ZFM_WS_POGR", $params, NULL, $header);
-                // dd(count($result->ITAB));
+                // dd($result->ITAB);
                 foreach( $result->ITAB as $value ) {
                     // dd(count($value));
                     if(\is_countable($value) ) {
@@ -91,25 +91,24 @@ class PoGrGet extends Command
                                             ->where('po_item',$value[$i]->EBELP)
                                             ->first();
                             
-                            if( $value[$i]->SHKZG != 'H' ) {
+                            if( $value[$i]->SHKZG != 'S' ) {
                                 if( $checkExistData == null ) {
                                     $poDetail = \App\Models\PurchaseOrdersDetail::where('purchase_order_id', $poHeader->id)
                                             ->where('PO_ITEM', $value[$i]->EBELP)
                                             ->first();
-                                    // dd($checkExistData);
-                                            
+
                                     if($poDetail->item_category == \App\Models\PurchaseOrdersDetail::SERVICE 
                                         OR $poDetail->item_category == \App\Models\PurchaseOrdersDetail::MaterialText) {
                                         $qty = $value[$i]->ERFMG;
                                     } else {
                                         $qty = $value[$i]->MENGE;
                                     }
-    
-                                    $poDetail->qty_outstanding  = $poDetail->qty - $qty;
-                                    $poDetail->qty_gr           = $qty;
-                                    $poDetail->is_gr            = \App\Models\PurchaseOrdersDetail::YesGr;
-                                    $poDetail->update();
 
+                                    $poDetail->qty_gr  -= $qty;
+                                    $poDetail->qty_outstanding -= $qty;
+                                    $poDetail->is_gr    = 0;
+                                    $poDetail->update();
+                                    
                                     $amount = $value[$i]->WRBTR;
                                     if( $value[$i]->WAERS == 'IDR' ) {
                                         $amount = ($value[$i]->WRBTR * 100);
@@ -145,32 +144,42 @@ class PoGrGet extends Command
                                         'posting_date'              => $value[$i]->BUDAT, 
                                         'item_category'             => $poDetail->item_category
                                     ]);
+
+                                    $gr = \App\Models\PurchaseOrderGr::where('debet_credit','S')
+                                        ->where('doc_gr',$value[$i]->LFBNR)
+                                        ->where('po_item',$value[$i]->EBELP)
+                                        ->first();
+                                    if( $gr != null ) {
+                                        $gr->is_cancel = \App\Models\PurchaseOrderGr::YesCancel;
+                                        $gr->save();
+                                    }
+                                
                                 }
                             } 
                         }
                     } else {
                         $poHeader = \App\Models\PurchaseOrder::where('PO_NUMBER', $value->EBELN)->first();
                         $checkExistData = \App\Models\PurchaseOrderGr::where('debet_credit',$value->SHKZG)
-                            ->where('doc_gr',$value->MBLNR)
-                            ->where('po_item',$value->EBELP)
-                            ->first();
-                        if( $value->SHKZG != 'H' ) {
+                                    ->where('doc_gr',$value->MBLNR)
+                                    ->where('po_item',$value->EBELP)
+                                    ->first();
+                        if( $value->SHKZG != 'S' ) {
                             if( $checkExistData == null ) {
                                 $poDetail = \App\Models\PurchaseOrdersDetail::where('purchase_order_id', $poHeader->id)
                                             ->where('PO_ITEM', $value->EBELP)
                                             ->first();
                                 if($poDetail->item_category == \App\Models\PurchaseOrdersDetail::SERVICE 
-                                    OR $poDetail->item_category == \App\Models\PurchaseOrdersDetail::MaterialText){
+                                    OR $poDetail->item_category == \App\Models\PurchaseOrdersDetail::MaterialText) {
                                     $qty = $value->ERFMG;
                                 } else {
                                     $qty = $value->MENGE;
                                 }
 
-                                $poDetail->qty_outstanding  = $poDetail->qty - $qty;
-                                $poDetail->qty_gr           = $qty;
-                                $poDetail->is_gr            = \App\Models\PurchaseOrdersDetail::YesGr;
+                                $poDetail->qty_gr   -= $qty;
+                                $poDetail->qty_outstanding -= $qty;
+                                $poDetail->is_gr    = 0;
                                 $poDetail->update();
-
+                                
                                 $amount = $value->WRBTR;
                                 if( $value->WAERS == 'IDR' ) {
                                     $amount = ($value->WRBTR * 100);//jika IDR dikali 100
@@ -206,6 +215,15 @@ class PoGrGet extends Command
                                     'posting_date'              => $value->BUDAT, 
                                     'item_category'             => $poDetail->item_category
                                 ]);
+
+                                $gr = \App\Models\PurchaseOrderGr::where('debet_credit','S')
+                                    ->where('doc_gr',$value->LFBNR)
+                                    ->where('po_item',$value->EBELP)
+                                    ->first();
+                                if( $gr != null ) {
+                                    $gr->is_cancel = \App\Models\PurchaseOrderGr::YesCancel;
+                                    $gr->save();
+                                }
                             }
                         }
                     }

@@ -310,21 +310,22 @@ class BillingController extends Controller
                 $billingDetail->tahun_gr                    = $request->get('tahun_gr')[$key];
                 $billingDetail->gr_date                     = $request->get('posting_date')[$key];
                 $billingDetail->purchase_order_detail_id    = $request->get('purchase_order_detail_id')[$key];
+                $billingDetail->item_category               = $request->get('item_category')[$key];
                 $billingDetail->save();
 
-                // $po_gr = PurchaseOrderGr::where('po_no', $po_no)
-                //         ->where('po_item', $PO_ITEM)
-                //         ->where('material_no', $material_no)
-                //         ->first();
+                $po_gr = PurchaseOrderGr::where('po_no', $po_no)
+                        ->where('po_item', $PO_ITEM)
+                        ->where('material_no', $material_no)
+                        ->first();
 
-                // $po_gr->qty_billing = $qty;
-                // $po_gr->qty = $qty_old - $qty;
-                // $po_gr->save();//sementra
+                $po_gr->qty_billing = $qty;
+                $po_gr->qty = $qty_old - $qty;
+                $po_gr->save();
 
-                // $poDetail = PurchaseOrdersDetail::where('id', $request->get('purchase_order_detail_id')[$key])
-                //             ->first();
-                // $poDetail->qty_billing = $qty;
-                // $poDetail->save();
+                $poDetail = PurchaseOrdersDetail::where('id', $request->get('purchase_order_detail_id')[$key])
+                            ->first();
+                $poDetail->qty_billing = $qty;
+                $poDetail->save();
             }
 
             \DB::commit();

@@ -41,7 +41,8 @@ class PurchaseOrderGr extends Model
         'price_per_pc',
         'qty_billing',
         'cost_center_code',
-        'posting_date'
+        'posting_date',
+        'item_category'
     ];
 
     public const YesCancel = 0;
