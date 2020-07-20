@@ -294,13 +294,13 @@
         e.preventDefault()
         var interval
         var formatData = function($el) {
+            console.log('test')
             clearInterval(interval)
             interval = setInterval(() => {
                 $el.mask('#,##0.00', {reverse: true})
             }, 500)
         }
         $('.money').mask('#.##0', { reverse: true })
-        $('.prices').mask('#.##0,00', {reverse: true});
         $(document).on('keyup', 'input.prices ', function(e){
             // ...
             formatData($(this))
