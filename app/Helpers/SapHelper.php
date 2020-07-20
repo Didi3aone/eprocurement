@@ -1239,7 +1239,7 @@ class SapHelper {
                     'NET_PRICE' => $quotationDetail[$i]->price ?? '1000000',
                     'PRICE_UNIT' => '',
                     'GR_PR_TIME' => '',
-                    'TAX_CODE' => $quotationDetail[$i]->tax_code == 1 ? 'V1' : 'V0',
+                    'TAX_CODE' => $quotationDetail[$i]->tax_code,
                     'BON_GRP1' => '',
                     'QUAL_INSP' => '',
                     'INFO_UPD' => '',
@@ -1781,7 +1781,7 @@ class SapHelper {
                     'NET_PRICE' => $quotationDetail[$i]->price ?? '1000000',
                     'PRICE_UNIT' => '',
                     'GR_PR_TIME' => '',
-                    'TAX_CODE' => $quotationDetail[$i]->tax_code == 1 ? 'V1' : 'V0',
+                    'TAX_CODE' => $quotationDetail[$i]->tax_code,
                     'BON_GRP1' => '',
                     'QUAL_INSP' => '',
                     'INFO_UPD' => '',
@@ -2410,7 +2410,7 @@ class SapHelper {
                     'NET_PRICE' => $quotationDetail[$i]->price ?? '1000000',
                     'PRICE_UNIT' => '',
                     'GR_PR_TIME' => '',
-                    'TAX_CODE' => $quotationDetail[$i]->tax_code == 1 ? 'V1' : 'V0',
+                    'TAX_CODE' => $quotationDetail[$i]->tax_code,
                     'BON_GRP1' => '',
                     'QUAL_INSP' => '',
                     'INFO_UPD' => '',
@@ -3076,7 +3076,7 @@ class SapHelper {
                 'status' => 'FAILED',
             ]); 
 
-            return $result->EXPPURCHASEORDER;
+            return false;
         }
     }
 
