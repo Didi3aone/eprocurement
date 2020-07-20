@@ -64,6 +64,8 @@ class Billing extends Model
     public const Verify = 6;
     public const sendToSpv = 1;
     public const Incompleted = 8;
+    
+    public const NoCalculate = 0;
 
     protected static function boot()
     {

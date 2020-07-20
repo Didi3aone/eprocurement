@@ -16,6 +16,16 @@ class AlterPrDetailV10 extends Migration
         Schema::table('purchase_requests_details', function (Blueprint $table) {
             $table->integer('is_assets_prod')->nullable();
         });
+        Schema::table('billings', function (Blueprint $table) {
+            $table->dateTime('submitted_date',0)->nullable();
+        });
+        Schema::table('purchase_order_gr', function (Blueprint $table) {
+            $table->integer('item_category')->default(0);
+        });
+
+        Schema::table('billing_details', function (Blueprint $table) {
+            $table->integer('item_category')->default(0);
+        });
     }
 
     /**

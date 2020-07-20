@@ -3870,6 +3870,11 @@ class SapHelper {
             $i = $key + 1;
             $invDocItem = ('0000'.(0+($i*10)));
             // like 1 0 9x = sheetno di isi
+            $sheetNo = '';
+            if( $rows->item_category == \App\Models\PurchaseOrdersDetail::SERVICE ) {
+                $sheetNo = $rows->reference_document;
+            }
+
             $ITEMDATA = [
                 'INVOICE_DOC_ITEM' => $invDocItem,//$invDocItem,//'000010',20
                 'PO_NUMBER' => $rows->po_no,//'3010002673',
@@ -3890,7 +3895,7 @@ class SapHelper {
                 'COND_TYPE' => '',
                 'COND_ST_NO' => '',
                 'COND_COUNT' => '',
-                'SHEET_NO' => '',//ketika po service $rows->reference_document
+                'SHEET_NO' => $sheetNo,//ketika po service $rows->reference_document
                 'ITEM_TEXT' => '',
                 'FINAL_INV' => '',
                 'SHEET_ITEM' => '',
@@ -3910,7 +3915,7 @@ class SapHelper {
             $params[0]['ITEMDATA'][$key] = $ITEMDATA;
         }
 
-        if( $billing->calculate_tax == 0 ) {
+        if( $billing->calculate_tax == \App\Models\Vendor\Billing::NoCalculate ) {
             $TAXDATA = [
                 'TAX_CODE' => $billing->ppn,
                 'TAX_AMOUNT' => $billing->tax_amount,
@@ -3960,20 +3965,21 @@ class SapHelper {
         $params[0]['RETURN'] = $RETURN;
         $result = $client->__soapCall('ZFM_WS_MIRO', $params, null, $header);
         if( $result->INVOICEDOCNUMBER != '' ) {
-            $billing->document_no = $result->INVOICEDOCNUMBER;
-            $billing->fiscal_year = $result->FISCALYEAR;
-            $billing->status      = \App\Models\Vendor\Billing::ApprovedSpv;
+            $billing->document_no       = $result->INVOICEDOCNUMBER;
+            $billing->fiscal_year       = $result->FISCALYEAR;
+            $billing->status            = \App\Models\Vendor\Billing::Submitted;
+            $billing->submitted_date    =  date('Y-m-d H:i:s');
             $billing->update();
             return true;
         } else {
-            // \App\Models\employeeApps\SapLogSoap::create([
-            //     'log_type' => 'BILLING',
-            //     'log_type_id' => $quotation->id,
-            //     'log_params_employee' => \json_encode($params),
-            //     'log_response_sap' => \json_encode($result),
-            //     'status' => 'FAILED',
-            // ]); 
-            dd($result);
+            \App\Models\employeeApps\SapLogSoap::create([
+                'log_type' => 'BILLING',
+                'log_type_id' => $billing->id,
+                'log_params_employee' => \json_encode($params),
+                'log_response_sap' => \json_encode($result),
+                'status' => 'FAILED',
+            ]); 
+            // dd($result);
             return false;
         }
     }

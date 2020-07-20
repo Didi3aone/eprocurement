@@ -131,8 +131,10 @@ class BillingController extends Controller
             $postSap = \sapHelp::sendBillingToSap($request);
             if( $postSap ) {
                 \Session::flash('status','Billing has been submitted');
+                \DB::commit();
             } else {
                 \Session::flash('error','Internal server error !!!');
+                \DB::rollback();
             }
         } catch (\Throwable $th) {
             throw $th;
