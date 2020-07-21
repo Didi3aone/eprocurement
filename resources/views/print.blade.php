@@ -133,7 +133,13 @@
                     </div>
                     <div style="width: 74%;">
                         <p>
+                        @if($po->orderDetail[0]['plant_code'] == '1101')
                         PT. Herlina Indah <br>
+                        @elseif($po->orderDetail[0]['plant_code'] == '2101')
+                        PT. Marketama Indah 
+                        @elseif($po->orderDetail[0]['plant_code'] == '1201' OR $po->orderDetail[0]['plant_code'] == '1201')
+                        PT. Sari Enesis Indah 
+                        @endif
                         Jl. Rawa Sumur II Blok DD.16 <br>
                         Pulo Gadung Industri Estate, Jakarta <br>
                         13930 <br>
@@ -168,7 +174,13 @@
                 <br>
                 <p>
                     Shipped T0: <br>
-                    Herlina Indah <br>
+                    @if($po->orderDetail[0]['plant_code'] == '1101')
+                        Herlina Indah <br>
+                    @elseif($po->orderDetail[0]['plant_code'] == '2101')
+                        Marketama Indah 
+                    @elseif($po->orderDetail[0]['plant_code'] == '1201' OR $po->orderDetail[0]['plant_code'] == '1201')
+                        Sari Enesis Indah 
+                    @endif
                     Jl. Rawa Sumur II Blok DD.16 <br>
                     Pulo Gadung Industri Estate, Jakarta <br>
                 </p>
@@ -193,9 +205,17 @@
             <tbody>
                 @php
                     $total = 0;
+                    $totalTax = 0;
                 @endphp
                 @foreach($po->orderDetail as $key => $value)
                     @php
+                        $tax = 0;
+                        if( $value->tax_code == 'V1' ) {
+                            $tax = ($value * 10/100);
+                        }
+
+                        $totalTax += $tax;
+
                         $totalRows = count($po->orderDetail);
                         $total += $value->price;
 
@@ -207,7 +227,7 @@
                     @endphp
                 <tr>
                     <td>
-                        <div style="display:block; height: {{ $size }}; min-height: {{ $size }};">{{ $value->key + 1 }}</div>
+                        <div style="display:block; height: {{ $size }}; min-height: {{ $size }};">{{ $key + 1 }}</div>
                     </td>
                     <td>{{ $value->material_id ?? '' }}</td>
                     <td>{{ $value->short_text }}</td>
@@ -215,8 +235,8 @@
                     <td>{{ $value->delivery_date }}</td>
                     <td>{{ $value->qty." - ".$value->unit }}</td>
                     <td>{{ $value->PR_NO }}</td>
-                    <td>{{ $value->price }}</td>
-                    <td>{{ $value->price }}</td>
+                    <td>{{ \toDecimal($value->price) }}</td>
+                    <td>{{ \toDecimal($value->price) }}</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -232,15 +252,15 @@
                         </p>
                     </td>
                     <td colspan="3">Total</td>
-                    <td colspan="1">{{ number_format($total,2) }}</td>
+                    <td colspan="1">{{ \toDecimal($total) }}</td>
                 </tr>
                 <tr>
                     <td colspan="3">Tax</td>
-                    <td colspan="1">10</td>
+                    <td colspan="1">{{ \toDecimal($totalTax) }}</td>
                 </tr>
                 <tr>
                     <td colspan="3">Grand Total</td>
-                    <td colspan="1">{{ number_format($total,2) }}</td>
+                    <td colspan="1">{{ \toDecimal($total + $totalTax) }}</td>
                 </tr>
                 <tr>
                     <td colspan="5">
