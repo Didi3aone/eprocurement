@@ -3799,7 +3799,7 @@ class SapHelper {
             'DOC_TYPE' => 'RE',
             'DOC_DATE' => $billing->tgl_invoice,
             'PSTNG_DATE' => date('Y-m-d'),
-            'REF_DOC_NO' => $billing->invoice_no,
+            'REF_DOC_NO' => $billing->no_invoice,
             'COMP_CODE' => $compCode,
             'DIFF_INV' => '',
             'CURRENCY' => $billing->currency,
@@ -3912,7 +3912,7 @@ class SapHelper {
                 'COND_COUNT_LONG' => '',
                 'DEL_CREATE_DATE' => '',
             ];
-            $params[0]['ITEMDATA'][$key] = $ITEMDATA;
+            $params[0]['ITEMDATA']['item'][$key] = $ITEMDATA;
         }
 
         if( $billing->calculate_tax == \App\Models\Vendor\Billing::NoCalculate ) {
@@ -3933,7 +3933,7 @@ class SapHelper {
         if( $billing->tipe_pph != '' ) {
             $taxType = \App\Models\MasterPph::getPphById($billing->tipe_pph);
             $WITHTAXDATA = [
-                'SPLIT_KEY' => '00001',//klo tipe pa 0,1
+                'SPLIT_KEY' => '000001',//klo tipe pa 0,1
                 'WI_TAX_TYPE' => $taxType->withholding_tax_type,//dari master pph
                 'WI_TAX_CODE' => $taxType->withholding_tax_code,//dari master pph
                 'WI_TAX_BASE' => $billing->base_pph,//
@@ -3961,9 +3961,9 @@ class SapHelper {
 
         $params[0]['HEADERDATA'] = $HEADER;
         $params[0]['TAXDATA'] = $TAXDATA;
-        $params[0]['WITHTAXDATA'] = $WITHTAXDATA;
+        $params[0]['WITHTAXDATA']['item'] = $WITHTAXDATA;
         $params[0]['RETURN'] = $RETURN;
-        dd($params);
+        // dd($params);
         $result = $client->__soapCall('ZFM_WS_MIRO', $params, null, $header);
         if( $result->INVOICEDOCNUMBER != '' ) {
             $billing->document_no       = $result->INVOICEDOCNUMBER;
@@ -3980,7 +3980,7 @@ class SapHelper {
                 'log_response_sap' => \json_encode($result),
                 'status' => 'FAILED',
             ]); 
-            dd($result);
+            // dd($result);
             return false;
         }
     }
