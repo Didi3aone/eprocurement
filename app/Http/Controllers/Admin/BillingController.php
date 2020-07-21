@@ -99,7 +99,7 @@ class BillingController extends Controller
             $billing->status                = Billing::Submitted;
             $billing->assignment            = $request->assignment;
             $billing->payment_term_claim    = $request->payment_term_claim;
-            $billing->tipe_pph              = $request->tipe_pph;
+            $billing->tipe_pph              = $request->tipe_pphs;
             $billing->jumlah_pph            = $request->jumlah_pph ? str_replace(',', '',$request->jumlah_pph) : "00.00";
             $billing->base_pph              = $request->base_pph ? str_replace(',', '',$request->base_pph) : "00.00";
             $billing->currency              = $request->currency;

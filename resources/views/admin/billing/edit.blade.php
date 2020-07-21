@@ -145,10 +145,11 @@
                         </div>
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.tipe_pph') }}</label>
+                            <input type="hidden" name="tipe_pphs" id="tipe_pphs" value="">
                             <select class="form-control select2 form-control-line" name="tipe_pph" id="tipe_pph">
                                 <option value=""> -Select-</option>
                                 @foreach ($tipePphs as $tipe)
-                                    <option value="{{ $tipe->id }}" data-rate="{{ $tipe->withholding_tax_rate }}">{{ $tipe->withholding_tax_code }} - {{ $tipe->name }}</option>
+                                    <option value="{{ $tipe->withholding_tax_rate }}" data-id="{{ $tipe->id }}" data-rate="{{ $tipe->withholding_tax_rate }}">{{ $tipe->withholding_tax_code }} - {{ $tipe->name }}</option>
                                 @endforeach
                             </select>
                         </div> 
@@ -296,6 +297,8 @@
 
     $("#tipe_pph").change(function() {
         let rates = $('#tipe_pph option:selected').data('rate')
+        let rateId = $('#tipe_pph option:selected').data('id')
+        $("#tipe_pphs").val(rateId);
         if($(this).val() != '') {
             $("#basePPh").show()
             $("#jmlPPH").show()
