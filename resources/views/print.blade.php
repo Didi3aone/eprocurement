@@ -211,7 +211,7 @@
                     @php
                         $tax = 0;
                         if( $value->tax_code == 'V1' ) {
-                            $tax = ($value * 10/100);
+                            $tax = ($value->price * 10/100);
                         }
 
                         $totalTax += $tax;
