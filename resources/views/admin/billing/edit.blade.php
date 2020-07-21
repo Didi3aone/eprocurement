@@ -381,7 +381,7 @@
 
     $('.amount').on('keyup', function() {
         let value = $(this).val()
-        if (isNaN(value.replace(',', ''))) return false
+        if (isNaN(value.replace(/,/g, ''))) return false
 
         let _value = document.getElementsByClassName('amount')
         if (_value.length > 0) {
@@ -389,12 +389,11 @@
             for (let i = 0; i < _value.length; i++) {
                 let _value_value = _value[i].value
                 if (_value_value=='') _value_value = '0'
-                total += parseInt(_value_value.replace(',', ''))
+                total += parseInt(_value_value.replace(/,/g, ''))
             }
 
-            let DPP = $("#dpp").val().replace(',', '')
-            let totalB  = parseInt(total) - parseInt(DPP) 
-            console.log(total)
+            let DPP = $("#dpp").val().replace(/,/g, '')
+            let totalB  = parseInt(DPP) - parseInt(total)
             $('#nominal_balance').val(formatNumber(totalB))
         }
     })
