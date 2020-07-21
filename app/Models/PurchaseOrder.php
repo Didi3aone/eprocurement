@@ -47,7 +47,7 @@ class PurchaseOrder extends Model
             try {
                 $user              = \Auth::user();
                 // $model->created_by = $user->nik;
-                $model->updated_by = $user->nik;
+              //  $model->updated_by = $user->nik;
             } catch (UnsatisfiedDependencyException $e) {
                 abort(500, $e->getMessage());
             }
@@ -56,7 +56,7 @@ class PurchaseOrder extends Model
         static::updating(function ($model) {
             try {
                 $user              = \Auth::user();
-                $model->updated_by = $user->nik;
+              //  $model->updated_by = $user->nik;
             } catch (UnsatisfiedDependencyException $e) {
                 abort(500, $e->getMessage());
             }
@@ -71,6 +71,11 @@ class PurchaseOrder extends Model
     public function vendor ()
     {
         return $this->hasOne(\App\Models\Vendor::class, 'id', 'vendor_id');
+    }
+
+    public function plant ()
+    {
+        return $this->hasOne(\App\Models\Plant::class, 'plant_code','code');
     }
 
     public function paymentTerm ()

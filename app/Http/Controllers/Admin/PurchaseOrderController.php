@@ -531,7 +531,7 @@ class PurchaseOrderController extends Controller
             ->setOptions(['debugCss' => true, 'isPhpEnabled' => true])
             ->setWarnings(true);
         $pdf->save(public_path("storage/{$id}_print.pdf"));
-        Mail::to('jul14n4v@gmail.com')->send(new SendMail($po));
+        // Mail::to('jul14n4v@gmail.com')->send(new SendMail($po));
         $print = true;
 
         return $pdf->stream();
