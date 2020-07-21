@@ -60,7 +60,7 @@
                                     <td>{{ $q->storage_location }}</td>
                                     <td>{{ $q->qty }}</td>
                                     <td>{{ $q->unit }}</td>
-                                    <td>{{ $q->qty_gr ?? '0' }}</td>
+                                    <td>{{ $q->qty - $q->qty_gr }}</td>
                                     <td>{{ $q->qty_billing ?? '0' }}</td>
                                     <td>{{ $q->original_currency }}</td>
                                     <td>{{ $q->original_price }}</td>

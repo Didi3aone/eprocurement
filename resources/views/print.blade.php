@@ -232,7 +232,7 @@
                     <td>{{ $value->material_id ?? '' }}</td>
                     <td>{{ $value->short_text }}</td>
                     <td>{{ $value->description }}</td>
-                    <td>{{ $value->delivery_date }}</td>
+                    <td>{{ date('d-m-Y',strtotime($value->delivery_date)) }}</td>
                     <td>{{ $value->qty." - ".$value->unit }}</td>
                     <td>{{ $value->PR_NO }}</td>
                     <td>{{ \toDecimal($value->price) }}</td>
@@ -241,12 +241,15 @@
                 @endforeach
             </tbody>
             <tfoot>
+                @php
+                    $grandTotal = ($total + $totalTax);
+                @endphp
                 <tr>
                     <td rowspan="3" colspan="5">
                         <p>
                             Amount <br>
                             <br>
-                            {{ ucfirst(Terbilang::make($total)) }}
+                            {{ ucfirst(Terbilang::make($grandTotal)) }}
                             <br>
                             <br>
                         </p>
@@ -260,7 +263,7 @@
                 </tr>
                 <tr>
                     <td colspan="3">Grand Total</td>
-                    <td colspan="1">{{ \toDecimal($total + $totalTax) }}</td>
+                    <td colspan="1">{{ \toDecimal($grandTotal) }}</td>
                 </tr>
                 <tr>
                     <td colspan="5">
