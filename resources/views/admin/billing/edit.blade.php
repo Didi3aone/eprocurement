@@ -148,7 +148,7 @@
                             <select class="form-control select2 form-control-line" name="tipe_pph" id="tipe_pph">
                                 <option value=""> -Select-</option>
                                 @foreach ($tipePphs as $tipe)
-                                    <option value="{{ $tipe->withholding_tax_rate }}" data-rate="{{ $tipe->withholding_tax_rate }}">{{ $tipe->withholding_tax_code }} - {{ $tipe->name }}</option>
+                                    <option value="{{ $tipe->id }}" data-rate="{{ $tipe->withholding_tax_rate }}">{{ $tipe->withholding_tax_code }} - {{ $tipe->name }}</option>
                                 @endforeach
                             </select>
                         </div> 
@@ -171,7 +171,7 @@
                         <div class="form-group col-lg-4">
                             <label>{{ 'Tax Amount' }}</label>
                             <input type="text" class="form-control form-control-line " name="tax_amount" value="" id="taxAmount"> 
-                            <input type="checkbox" class="" id="check_1" name="calculate_tax" value="1">
+                            <input type="checkbox" class="calculate_tax" id="check_1" name="calculate_tax" value="1">
                             <label for="check_1">&nbsp; Calculate Tax</label>
                         </div>
                         <div class="form-group col-lg-4">
@@ -201,7 +201,6 @@
                         <div class="form-group col-lg-6">
                             <input type="checkbox" class="" id="check_B" name="payment_block" value="1">
                             <label for="check_B">&nbsp; Payment Block</label>
-                            <label>Payment Block</label>
                         </div>
                         <div class="form-group col-lg-4">
                             <label>Nominal Balance</label>
@@ -265,12 +264,13 @@
                             $balance = $billing->dpp - $totalSum;
                         @endphp
                         <input type="hidden" class="form-control form-control-line" name="nominal_balances" id="nominal_balances" value="{{ toDecimal($balance) }}"> 
+                        <input type="hidden" class="form-control form-control-line" name="summary" id="summary" value="{{ toDecimal($totalSum) }}"> 
                     </div>
                     <br>
                     <br>
                     <div class="form-actions">
-                        <button id="save" type="submit" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.submit') }}</button>
-                        {{-- <a href="{{ route('admin.billing') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i> Back To List</a> --}}
+                        {{-- <button id="save" type="submit" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.submit') }}</button> --}}
+                        <a href="javascript:void(0)" id='submit' class="btn btn-success"><i class="fa fa-check"></i>{{ trans('global.submit') }}</a>
                     </div>
                 </div>
             </div>
@@ -290,54 +290,111 @@
     });
 
     $("#nominal_balance").val($("#nominal_balances").val())
+     $("#nominal_invoice_staff").val($("#summary").val())
 
     $('.money').mask('#.##0', { reverse: true });
 
     $("#tipe_pph").change(function() {
         let rates = $('#tipe_pph option:selected').data('rate')
-        console.log(rates)
         if($(this).val() != '') {
             $("#basePPh").show()
             $("#jmlPPH").show()
+
+            //dpp * rate
+            //rate tipe pph * base = nominal pph
+            // rumus nominal invoice 
+            // dpp * ppn (1.1) - nominal pph
+            // klo d tick total value * 1.1.
+            // klo ngga summary + tax amount 
+            var dpp = $("#dpp").val()
+            var ppn = $("#ppn").val()
+                basPph = $("#base_pph").val()
+                nominal_invoice_staff = $("#nominal_invoice_staff").val().replace(/,/g, "")
+            var ppns = ''
+                tt = dpp.replace(/,/g, '.')
+                tPph = basPph.replace(/,/g, "")
+            var count = (tPph) * (rates/100)
+            var roundedString = count.toFixed(2);
+            var cm = roundedString.replace(".", ",")
+            var nomInv = nominal_invoice_staff - roundedString
+            
+            var _nominal_invoice_ = $("#summary").val().replace(/,/g, '')
+            
+            console.log('JUMLAH PPH ='+ roundedString)
+
+            if ($('.calculate_tax').is(":checked")) {
+                if( ppn == 'V1' ) {
+                    _nominal_invoice_ = (_nominal_invoice_ * 1.1) - roundedString
+                } else {
+                    _nominal_invoice_ = (_nominal_invoice_ - roundedString)
+                }
+            } else {
+                _nominal_invoice_ = (_nominal_invoice_ - roundedString)
+            }
+
+            console.log('NOMINAL INVOICE ='+ _nominal_invoice_)
+
+            $("#jumlah_pph").val(roundedString)
+            $("#nominal_invoice_staff").val(_nominal_invoice_.toFixed(2))
         } else {
-            $("#basePPh").show()
-            $("#jmlPPH").show()
+            $("#basePPh").hide()
+            $("#jmlPPH").hide()
+            var ppn_ = $("#ppn").val()
+            if( ppn_ == 'V1' ) {
+                if ($('.calculate_tax').is(":checked")) {
+                    var noPPh = $("#summary").val().replace(/,/g, '') * 1.1
+                    $("#nominal_invoice_staff").val(noPPh.toFixed(2))
+                } else {
+                    $("#nominal_invoice_staff").val($("#summary").val())
+                }
+            } else {
+                $("#nominal_invoice_staff").val($("#summary").val())
+            }
         }
+    })
 
-        //dpp * rate
-        //rate tipe pph * base = nominal pph
+    $("#taxAmount").on('keyup',function() {
+        let taxAmount = $(this).val()
+        if (isNaN(taxAmount.replace(/,/g, ''))) return false
 
-        // rumus nominal invoice 
-        // dpp * ppn (1.1) - nominal pph
-        var dpp = $("#dpp").val()
-        var ppn = $("#ppn").val()
-            basPph = $("#base_pph").val()
-        var ppns = ''
-            tt = dpp.replace(/,/g, '.')
-            tPph = basPph.replace(/,/g, "")
-            console.log(tPph)
-        var count = (tPph) * (rates/100)
-        var roundedString = count.toFixed(2);
-        var cm = roundedString.replace(".", ",")
-        if( ppn == 'V1' ) {
-            ppns = 1.1
-            var nomInv = parseFloat(tt) * ppns - roundedString;
-        } else {
-            var nomInv = (rates * parseFloat($("#base_pph").val().replace(/,/g, "")))
-        }
+        var nominalBalance = $("#summary").val().replace(/,/g, '')
+        var totalInvoice = parseFloat(taxAmount) + parseFloat(nominalBalance)
 
-        console.log(cm)
-        
-        $("#jumlah_pph").val(roundedString)
-        $("#nominal_invoice_staff").val(nomInv.toFixed(2))
+        var _tipePph = $("#tipe_pph").val() 
+        if( _tipePph != '') {
+            totalInvoice = parseFloat(totalInvoice) - $("#jumlah_pph").val().replace(/,/g, '')
+        } 
+
+        $("#nominal_invoice_staff").val(keyupFormatUangWithDecimal(totalInvoice.toString()))
     })
 
     $("#base_pph").on('keyup',function() {
         let based = parseFloat($(this).val().replace(/,/g, ""))
         const rates = $("#tipe_pph").val()
-        console.log(rates)
         const total = (based * rates/100)
-        console.log(total)
+        var _tipePph = $("#tipe_pph").val()
+        var _ppn = $("#ppn").val()
+
+        //get dulu summaryny
+        var _nominalInvoice = $("#summary").val().replace(/,/g, "")
+        //cek di tick belom
+        if ($('.calculate_tax').is(":checked")) {
+            //klo iya cek ppnny
+            if( _ppn == 'V1' ) {
+                _nominalInvoice = _nominalInvoice * 1.1
+            }
+        } else {
+            _nominalInvoice = (_nominalInvoice)
+        }
+
+        console.log('NOMINAL INVOICE ' + _nominalInvoice)
+        console.log('JUMLAH PPH ' + total)
+        
+        var _TotalInvoice = _nominalInvoice - total 
+        console.log(_TotalInvoice)
+
+        $("#nominal_invoice_staff").val(keyupFormatUangWithDecimal(_TotalInvoice.toString()))
+
         $("#jumlah_pph").val(keyupFormatUangWithDecimal(total.toString()))
     })
 
@@ -371,11 +428,43 @@
                 //$("#payment_block").val('B') --}}
                 $("#taxAmount").attr('readonly',true)
                 $("#nominal_invoice_staff").attr('readonly',true)
+                const summary = $("#summary").val().replace(/,/g, "")
+                var ppn = $("#ppn").val()
+                var tipePph = $("#tipe_pph").val()
+
+                var totalInv = summary
+                if( tipePph != '') {
+                    totalInv = parseFloat(totalInv) - $("#jumlah_pph").val().replace(/,/g, "")
+                } 
+
+                if( ppn == 'V1' ) {
+                    totalInv = parseFloat(summary) * 1.1
+
+                    if( tipePph != '') {
+                        totalInv = parseFloat(totalInv) - $("#jumlah_pph").val().replace(/,/g, "")
+                    }
+                } else {
+                    totalInv = summary
+                }
+                console.log('TOTAL INVOICE CHECLIS = ' + totalInv)
+
+                $("#nominal_invoice_staff").val(totalInv.toFixed(2))
             } 
         } else {
             $("#nominal_invoice_staff").attr('readonly',false)
             $("#taxAmount").attr('readonly',false)
+            const _summary  = $("#summary").val().replace(/,/g, "")
+            var _tipePph    = $("#tipe_pph").val()
+            var _totalInv   = _summary
+
+            if( tipePph != '') {
+                _totalInv = parseFloat(_totalInv) - $("#jumlah_pph").val().replace(/,/g, "")
+            } else {
+                _totalInv = _summary
+            }
+            $("#nominal_invoice_staff").val(_totalInv.toFixed(2))
             //$("#payment_block").val(' ')
+            //$("#nominal_invoice_staff")
         }
     })
 

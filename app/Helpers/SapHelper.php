@@ -3798,7 +3798,7 @@ class SapHelper {
             'INVOICE_IND' => 'X',
             'DOC_TYPE' => 'RE',
             'DOC_DATE' => $billing->tgl_invoice,
-            'PSTNG_DATE' => date('Y-06-d'),
+            'PSTNG_DATE' => date('Y-m-d'),
             'REF_DOC_NO' => $billing->invoice_no,
             'COMP_CODE' => $compCode,
             'DIFF_INV' => '',
@@ -3925,7 +3925,7 @@ class SapHelper {
                 'TAXJURCODE_DEEP'=>'',
                 'ITEMNO_TAX' => '',
                 'TAX_AMOUNT_LOCAL' => '',
-                'TAX_BASE_AMOUNT_LOCAL '=>'',
+                'TAX_BASE_AMOUNT_LOCAL '=>'', 
             ];
             
         }
@@ -3937,7 +3937,7 @@ class SapHelper {
                 'WI_TAX_TYPE' => $taxType->withholding_tax_type,//dari master pph
                 'WI_TAX_CODE' => $taxType->withholding_tax_code,//dari master pph
                 'WI_TAX_BASE' => $billing->base_pph,//
-                'WI_TAX_AMT' => $billing->nominal_pph,
+                'WI_TAX_AMT' => $billing->jumlah_pph,
                 'WI_TAX_WITHHELD_AMT' => ''
             ];
         }
@@ -3963,6 +3963,7 @@ class SapHelper {
         $params[0]['TAXDATA'] = $TAXDATA;
         $params[0]['WITHTAXDATA'] = $WITHTAXDATA;
         $params[0]['RETURN'] = $RETURN;
+        dd($params);
         $result = $client->__soapCall('ZFM_WS_MIRO', $params, null, $header);
         if( $result->INVOICEDOCNUMBER != '' ) {
             $billing->document_no       = $result->INVOICEDOCNUMBER;
@@ -3979,7 +3980,7 @@ class SapHelper {
                 'log_response_sap' => \json_encode($result),
                 'status' => 'FAILED',
             ]); 
-            // dd($result);
+            dd($result);
             return false;
         }
     }
