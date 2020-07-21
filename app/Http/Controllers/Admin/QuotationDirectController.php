@@ -646,6 +646,7 @@ class QuotationDirectController extends Controller
         $quotation = Quotation::find($id);
         $quotation->total_price     = $totalPrice;
         $quotation->approved_asspro = $assProc->user_id;
+        $quotation->approved_head   = 'PROCUREMENT01';
         $quotation->save();
     }
 

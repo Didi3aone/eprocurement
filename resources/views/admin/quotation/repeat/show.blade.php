@@ -78,6 +78,7 @@
                         <tr>
                             <th>#</th>
                             <th>User ID</th>
+                            <th>Name</th>
                             <th>Status</th>
                             <th>Date</th>
                         </tr>
@@ -85,14 +86,16 @@
                     <tbody>
                         <tr>
                             <td>1</td>
+                            <td>{{ $quotation->getUserAss['user_id'] }}</td>
                             <td>{{ $quotation->getUserAss['name'] }}</td>
                             <td>
                                 @php
-                                    if( $quotation->status_approval == \App\Models\Vendor\Quotation::Waiting ) {
+                                    if( $quotation->approval_status == \App\Models\Vendor\Quotation::Waiting ) {
                                         echo "Waiting For Approval";
-                                    } else if( $quotation->status_approval == \App\Models\Vendor\Quotation::ApprovalAss ) {
+                                    } else if( $quotation->approval_status == \App\Models\Vendor\Quotation::ApprovalAss 
+                                        OR $quotation->approval_status == \App\Models\Vendor\Quotation::ApprovalHead) {
                                         echo "Approved";
-                                    } else if( $quotation->status_approval == \App\Models\Vendor\Quotation::Rejected ) {
+                                    } else if( $quotation->approval_status == \App\Models\Vendor\Quotation::Rejected ) {
                                         echo 'Rejected';
                                     }
                                 @endphp
@@ -101,14 +104,15 @@
                         </tr>
                         <tr>
                             <td>2</td>
+                            <td>{{  'PROCUREMENT01' }}</td>
                             <td>{{ $quotation->getUserHead['name'] }}</td>
                             <td>
                                 @php
-                                    if( $quotation->status_approval == \App\Models\Vendor\Quotation::Waiting ) {
+                                    if( $quotation->approval_status == \App\Models\Vendor\Quotation::Waiting ) {
                                         echo "Waiting For Approval";
-                                    } else if( $quotation->status_approval == \App\Models\Vendor\Quotation::ApprovalHead ) {
+                                    } else if( $quotation->approval_status == \App\Models\Vendor\Quotation::ApprovalHead ) {
                                         echo "Approved";
-                                    } else if( $quotation->status_approval == \App\Models\Vendor\Quotation::Rejected ) {
+                                    } else if( $quotation->approval_status == \App\Models\Vendor\Quotation::Rejected ) {
                                         echo 'Rejected';
                                     }
                                 @endphp
