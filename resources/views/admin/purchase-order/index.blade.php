@@ -55,7 +55,7 @@
                                     <td>{{ $q->po_date }}</td>
                                     <td>{{ $q->material_id }}</td>
                                     <td>{{ $q->short_text }}</td>
-                                    <td>{{ $q->vendor }}</td>
+                                    <td>{{ $q->vendor_id." - ".$q->vendor }}</td>
                                     <td>{{ $q->plant_code }}</td>
                                     <td>{{ $q->storage_location }}</td>
                                     <td>{{ $q->qty }}</td>

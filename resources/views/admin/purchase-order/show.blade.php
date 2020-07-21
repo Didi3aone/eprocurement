@@ -34,7 +34,7 @@
                         </tr>
                         <tr>
                             <th>Vendor</th>
-                            <td>{{ $purchaseOrder->vendors['name'] }}</td>
+                            <td>{{ $purchaseOrder->vendor_id." - ".$purchaseOrder->vendors['name'] }}</td>
                         </tr>
                         <tr>
                             <th>Payment Term</th>

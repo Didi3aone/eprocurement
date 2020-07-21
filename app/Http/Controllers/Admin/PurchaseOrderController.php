@@ -57,6 +57,7 @@ class PurchaseOrderController extends Controller
                     'purchase_orders.po_date',
                     'purchase_orders.PO_NUMBER',
                     'purchase_orders.id',
+                    'purchase_orders.vendor_id',
                     'master_acps.acp_no',
                     'vendors.name as vendor'
                 )
@@ -530,12 +531,12 @@ class PurchaseOrderController extends Controller
             ->setPaper('A4', 'potrait')
             ->setOptions(['debugCss' => true, 'isPhpEnabled' => true])
             ->setWarnings(true);
-        $pdf->save(public_path("storage/{$id}_print.pdf"));
+        // $pdf->save(public_path("storage/{$id}_print.pdf"));
         // Mail::to('jul14n4v@gmail.com')->send(new SendMail($po));
-        $print = true;
+        // $print = true;
 
         return $pdf->stream();
 
-        return view('admin.purchase-order.print', compact('po', 'print'));
+        // return view('admin.purchase-order.print', compact('po', 'print'));
     }
 }
