@@ -116,7 +116,7 @@
                                        <td><input type="text" class="price" name="price[]" id="price" {{ $readonly }} value="{{ $value->price }}"</td>
                                        <td><input type="text" class="delivery_date mdate" disabled name="delivery_date[]" id="delivery_date" value="{{ $value->delivery_date }}"></td>
                                        <td>
-                                            <input type="checkbox" class="" id="check_{{ $value->id }}" name="tax_code[]" {{ $disabled }} value="1"
+                                            <input type="checkbox" class="" id="check_{{ $value->id }}" name="tax_code[]" value="1"
                                                 @if($value->tax_code == 'V1') checked @endif>
                                             <label for="check_{{ $value->id }}">&nbsp;</label>
                                        </td>

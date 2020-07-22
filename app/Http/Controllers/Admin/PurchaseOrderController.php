@@ -334,6 +334,7 @@ class PurchaseOrderController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // dd($request);
         $purchaseOrder = PurchaseOrder::findOrFail($id);
         $purchaseOrder->notes = $request->get('notes');
         $purchaseOrder->payment_term = $request->get('payment_term');
@@ -367,6 +368,7 @@ class PurchaseOrderController extends Controller
 
                 $prDetail->save();
             }
+            $taxCode =  $request->tax_code[$key] ?? "";
             $poChangeDetail = new PurchaseOrderChangeHistoryDetail();
             $poChangeDetail->qty_old = $poDetail->qty;
             $poChangeDetail->qty_change = $request->qty[$key];
@@ -376,20 +378,21 @@ class PurchaseOrderController extends Controller
             $poChangeDetail->price_change = $request->price[$key];
             $poChangeDetail->save();
 
-            $poDetail->qty = $request->qty[$key];
+            $poDetail->qty          = $request->qty[$key];
             $poDetail->price = $request->price[$key];
-            $poDetail->currency = $request->currency[$key];
+            // $poDetail->currency = $request->currency[$key];
             $poDetail->delivery_date = $request->delivery_date[$key];
             $poDetail->delivery_complete = $request->delivery_complete[$key];
-            $poDetail->tax_code = 1 == $request->tax_code[$key] ? 'V1' : 'V0';
+            $poDetail->tax_code = 1 == $taxCode ? "V1" : "V0";
 
             $poDetail->update();
         }
 
         if ($purchaseOrder->total_price != $totalPrice) {
+            $purchaseOrder->total_price     = $totalPrice;
             $purchaseOrder->status_approval = PurchaseOrder::Rejected;
             $purchaseOrder->approved_asspro = \App\Models\Vendor\Quotation::getQuotationById($purchaseOrder->quotation_id)->approved_asspro;
-            $purchaseOrder->approved_head = 'PROCUREMENT01';
+            $purchaseOrder->approved_head   = 'PROCUREMENT01';
             $purchaseOrder->save();
 
             return redirect()->route('admin.purchase-order.index')->with('status', 'Purchase order has been updated & waiting approval');
