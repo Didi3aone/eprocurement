@@ -483,7 +483,7 @@ class QuotationDirectController extends Controller
                     'original_price'            => $rows->orginal_price,
                     'currency'                  => $rows->currency,
                     'preq_name'                 => $rows->preq_name,
-                    'delivery_date'             => $sched->DELIVERY_DATE,
+                    'delivery_date'             => $rows->delivery_date,
                     'item_category'             => $rows->item_category,
                     'request_no'                => $rows->request_no,
                     'plant_code'                => $rows->plant_code,
@@ -551,9 +551,11 @@ class QuotationDirectController extends Controller
             $subpackgparent         = '000000000';
             $childPackageParent     = '000000000';
             $noLine                 = '';
+            $lineNumber             = '000000000';
             if( $detail['item_category'] == QuotationDetail::SERVICE ) {
 
                 $subpackgparent    .= (2+($i*2));
+                $lineNumber        .= $i;
                 if( $i % 2 == 0 ) {
                     //anak genap
                     $ke3 =  $i+1;
@@ -613,7 +615,7 @@ class QuotationDirectController extends Controller
             $quotationDetail->tax_code                  = $detail['tax_code'] == 1 ? 'V1' : 'V0';
             $quotationDetail->package_no                = $packageParent;
             $quotationDetail->subpackage_no             = $subpackgparent;
-            $quotationDetail->line_no                   = '000000000'.$i;
+            $quotationDetail->line_no                   = $lineNumber;
             $quotationDetail->request_detail_id         = $detail['request_detail_id'];
             $quotationDetail->save();
 

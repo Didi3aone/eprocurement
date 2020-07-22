@@ -3119,7 +3119,9 @@ class SapHelper {
 
         //get data
         $poHeader = PurchaseOrder::where('PO_NUMBER',$poNumber)->first();
-        $poDetail = PurchaseOrdersDetail::where('purchase_order_id',$poHeader->id)->get();
+        $poDetail = PurchaseOrdersDetail::where('purchase_order_id',$poHeader->id)
+                    ->where('is_gr',0) 
+                    ->get();
         $poDelivery = PurchaseOrderDelivery::where('purchase_order_id',$poHeader->id)->get();
 
         $POHEADER = [
@@ -3283,7 +3285,7 @@ class SapHelper {
                 OR $poDetail[$i]->item_category == \App\Models\PurchaseOrdersDetail::MaterialText) {
                 $POITEM = [
                     'PO_ITEM' => $poDetail[$i]->PO_ITEM,//LINE
-                    'DELETE_IND' => $itemDelete,
+                    'DELETE_IND' => '',
                     'SHORT_TEXT' => '',
                     'MATERIAL' => '',
                     'MATERIAL_EXTERNAL' => '',
@@ -3306,7 +3308,7 @@ class SapHelper {
                     'ORDERPR_UN_ISO' => '',
                     'CONV_NUM1' => '',
                     'CONV_DEN1' => '',
-                    'NET_PRICE' => $poDetail[$i]->price,
+                    'NET_PRICE' => $poDetail[$i]->price ?? '1000000',
                     'PRICE_UNIT' => '',
                     'GR_PR_TIME' => '',
                     'TAX_CODE' => $poDetail[$i]->tax_code,
@@ -3324,15 +3326,15 @@ class SapHelper {
                     'VAL_TYPE' => '',
                     'NO_MORE_GR' => '',
                     'FINAL_INV' => '',
-                    'ITEM_CAT' => '',
-                    'ACCTASSCAT' => '',
+                    'ITEM_CAT' => '9',
+                    'ACCTASSCAT' => 'K',
                     'DISTRIB' => '',
                     'PART_INV' => '',
-                    'GR_IND' => '',
+                    'GR_IND' => 'X',
                     'GR_NON_VAL' => '',
-                    'IR_IND' => '',
+                    'IR_IND' => 'X',
                     'FREE_ITEM' => '',
-                    'GR_BASEDIV' => '',
+                    'GR_BASEDIV' => 'X',
                     'ACKN_REQD' => '',
                     'ACKNOWL_NO' => '',
                     'AGREEMENT' => '',
@@ -3380,8 +3382,8 @@ class SapHelper {
                     'MINREMLIFE' => '',
                     'RFQ_NO' => '',
                     'RFQ_ITEM' => '',
-                    'PREQ_NO' => '',
-                    'PREQ_ITEM' => '',
+                    'PREQ_NO' => (string) $poDetail[$i]->PR_NO,
+                    'PREQ_ITEM' => $poDetail[$i]->preq_item,
                     'REF_DOC' => '',
                     'REF_ITEM' => '',
                     'SI_CAT' => '',
@@ -3398,10 +3400,10 @@ class SapHelper {
                     'DELIV_COMPL' => '',
                     'PART_DELIV' => '',
                     'SHIP_BLOCKED' => '',
-                    'PREQ_NAME' => '',
+                    'PREQ_NAME' =>  strtoupper(split_name($poDetail[$i]->preq_name)),
                     'PERIOD_IND_EXPIRATION_DATE' => '',
                     'INT_OBJ_NO' => '',
-                    'PCKG_NO' => '',
+                    'PCKG_NO' => $poDetail[$i]->package_no,
                     'BATCH' => '',
                     'VENDRBATCH' => '',
                     'CALCTYPE' => '',
@@ -3474,7 +3476,7 @@ class SapHelper {
                 $POITEMX = [
                     'PO_ITEM' => $poDetail[$i]->PO_ITEM,
                     'PO_ITEMX' => 'X',
-                    'DELETE_IND' => $itemDelete,
+                    'DELETE_IND' => '',
                     'SHORT_TEXT' => '',
                     'MATERIAL' => '',
                     'MATERIAL_EXTERNAL' => '',
@@ -3490,17 +3492,17 @@ class SapHelper {
                     'MATL_GROUP' => '',
                     'INFO_REC' => '',
                     'VEND_MAT' => '',
-                    'QUANTITY' => 'X',
+                    'QUANTITY' => '',
                     'PO_UNIT' => '',
                     'PO_UNIT_ISO' => '',
                     'ORDERPR_UN' => '',
                     'ORDERPR_UN_ISO' => '',
                     'CONV_NUM1' => '',
                     'CONV_DEN1' => '',
-                    'NET_PRICE' => '',
+                    'NET_PRICE' => 'X',
                     'PRICE_UNIT' => '',
                     'GR_PR_TIME' => '',
-                    'TAX_CODE' => '',
+                    'TAX_CODE' => 'X',
                     'BON_GRP1' => '',
                     'QUAL_INSP' => '',
                     'INFO_UPD' => '',
@@ -3515,15 +3517,15 @@ class SapHelper {
                     'VAL_TYPE' => '',
                     'NO_MORE_GR' => '',
                     'FINAL_INV' => '',
-                    'ITEM_CAT' => '',
-                    'ACCTASSCAT' => '',
+                    'ITEM_CAT' => 'X',
+                    'ACCTASSCAT' => 'X',
                     'DISTRIB' => '',
                     'PART_INV' => '',
-                    'GR_IND' => '',
+                    'GR_IND' => 'X',
                     'GR_NON_VAL' => '',
-                    'IR_IND' => '',
+                    'IR_IND' => 'X',
                     'FREE_ITEM' => '',
-                    'GR_BASEDIV' => '',
+                    'GR_BASEDIV' => 'X',
                     'ACKN_REQD' => '',
                     'ACKNOWL_NO' => '',
                     'AGREEMENT' => '',
@@ -3571,8 +3573,8 @@ class SapHelper {
                     'MINREMLIFE' => '',
                     'RFQ_NO' => '',
                     'RFQ_ITEM' => '',
-                    'PREQ_NO' => '',
-                    'PREQ_ITEM' => '',
+                    'PREQ_NO' => 'X',
+                    'PREQ_ITEM' => 'X',
                     'REF_DOC' => '',
                     'REF_ITEM' => '',
                     'SI_CAT' => '',
@@ -3589,10 +3591,10 @@ class SapHelper {
                     'DELIV_COMPL' => '',
                     'PART_DELIV' => '',
                     'SHIP_BLOCKED' => '',
-                    'PREQ_NAME' => '',
+                    'PREQ_NAME' => 'X',
                     'PERIOD_IND_EXPIRATION_DATE' => '',
                     'INT_OBJ_NO' => '',
-                    'PCKG_NO' => '',
+                    'PCKG_NO' => 'X',
                     'BATCH' => '',
                     'VENDRBATCH' => '',
                     'CALCTYPE' => '',
@@ -3722,6 +3724,104 @@ class SapHelper {
                     "GEO_ROUTE" => "",
                     "HANDOVERDATE" => "",
                     "HANDOVERTIME" => "",
+                ];
+
+                $POACCOUNT = [
+                    'PO_ITEM' => $poDetail[$i]->PO_ITEM,//00010
+                    'SERIAL_NO' => '01',//01
+                    'DELETE_IND' => '',
+                    'CREAT_DATE' => '',
+                    'QUANTITY' => '',
+                    'DISTR_PERC' => '',
+                    'NET_VALUE' => '',
+                    'GL_ACCOUNT' => $poDetail[$i]->gl_acct_code,// DARI PR 
+                    'BUS_AREA' => '',
+                    'COSTCENTER' => $poDetail[$i]->cost_center_code, //DARI PR
+                    'SD_DOC' => '',
+                    'ITM_NUMBER' => '' ,
+                    'SCHED_LINE' =>'' ,
+                    'ASSET_NO' => '',
+                    'SUB_NUMBER' => '',
+                    'ORDERID' => '',
+                    'GR_RCPT' => '',
+                    'UNLOAD_PT' => '',
+                    'CO_AREA' => '',
+                    'COSTOBJECT' => '',
+                    'PROFIT_CTR' => '',
+                    'WBS_ELEMENT' => '',
+                    'NETWORK' => '',
+                    'RL_EST_KEY' => '',
+                    'PART_ACCT' => '',
+                    'CMMT_ITEM' => '',
+                    'REC_IND' => '',
+                    'FUNDS_CTR' => '',
+                    'FUND' => '',
+                    'FUNC_AREA' => '',
+                    'REF_DATE' => '',
+                    'TAX_CODE' => '',
+                    'TAXJURCODE' => '',
+                    'NOND_ITAX' => '',
+                    'ACTTYPE' => '',
+                    'CO_BUSPROC' => '',
+                    'RES_DOC' => '',
+                    'RES_ITEM' => '',
+                    'ACTIVITY' => '',
+                    'GRANT_NBR' => '',
+                    'CMMT_ITEM_LONG' => '',
+                    'FUNC_AREA_LONG'=> '',
+                    'BUDGET_PERIOD' =>'' ,
+                    'FINAL_IND' => '',                    
+                    'FINAL_REASON' => ''
+                ];
+
+                $POACCOUNTX = [
+                    'PO_ITEM' => $poDetail[$i]->PO_ITEM,//00010
+                    'PO_ITEMX'  => 'X',
+                    'SERIAL_NO' => '',//01
+                    'SERIAL_NOX'    => 'X',
+                    'DELETE_IND' => '',
+                    'CREAT_DATE' => '',
+                    'QUANTITY' => '',
+                    'DISTR_PERC' => '',
+                    'NET_VALUE' => '',
+                    'GL_ACCOUNT' => 'X',// DARI PR 
+                    'BUS_AREA' => '',
+                    'COSTCENTER' => 'X', //DARI PR
+                    'SD_DOC' => '',
+                    'ITM_NUMBER' => '' ,
+                    'SCHED_LINE' =>'' ,
+                    'ASSET_NO' => '',
+                    'SUB_NUMBER' => '',
+                    'ORDERID' => '',
+                    'GR_RCPT' => '',
+                    'UNLOAD_PT' => '',
+                    'CO_AREA' => '',
+                    'COSTOBJECT' => '',
+                    'PROFIT_CTR' => '',
+                    'WBS_ELEMENT' => '',
+                    'NETWORK' => '',
+                    'RL_EST_KEY' => '',
+                    'PART_ACCT' => '',
+                    'CMMT_ITEM' => '',
+                    'REC_IND' => '',
+                    'FUNDS_CTR' => '',
+                    'FUND' => '',
+                    'FUNC_AREA' => '',
+                    'REF_DATE' => '',
+                    'TAX_CODE' => '',
+                    'TAXJURCODE' => '',
+                    'NOND_ITAX' => '',
+                    'ACTTYPE' => '',
+                    'CO_BUSPROC' => '',
+                    'RES_DOC' => '',
+                    'RES_ITEM' => '',
+                    'ACTIVITY' => '',
+                    'GRANT_NBR' => '',
+                    'CMMT_ITEM_LONG' => '',
+                    'FUNC_AREA_LONG'=> '',
+                    'BUDGET_PERIOD' =>'' ,
+                    'FINAL_IND' => '',                    
+                    'FINAL_REASON' => ''
                 ];
 
             } elseif( $poHeader->doc_type == 'Z104' && $poDetail[$i]->item_category == \App\Models\PurchaseOrdersDetail::SERVICE) {
@@ -4454,7 +4554,7 @@ class SapHelper {
                     'RFQ_NO' => '',
                     'RFQ_ITEM' => '',
                     'PREQ_NO' => (string) $poDetail[$i]->PR_NO,
-                    'PREQ_ITEM' => $poDetail[$i]->PREQ_ITEM,
+                    'PREQ_ITEM' => $poDetail[$i]->preq_item,
                     'REF_DOC' => '',
                     'REF_ITEM' => '',
                     'SI_CAT' => '',
@@ -4737,12 +4837,12 @@ class SapHelper {
                     "PO_ITEM" => $poDetail[$i]->PO_ITEM, //line
                     "SCHED_LINE" => '0001',//$quotationDeliveryDate[$i]->SCHED_LINE, // 0001 ++
                     "DEL_DATCAT_EXT" => "",
-                    "DELIVERY_DATE" => $poDelivery[$i]->DELIVERY_DATE,//delivery date
+                    "DELIVERY_DATE" => $poDelivery[$i]->delivery_date,//delivery date
                     "QUANTITY" =>  (string) $poDelivery[$i]->QUANTITY,// qty
                     "DELIV_TIME" => "", 
                     "STAT_DATE" => "",
                     "PREQ_NO" =>  (string) $poDetail[$i]->PR_NO, // kedua no pr di insert
-                    "PREQ_ITEM" => $poDelivery[$i]->PREQ_ITEM, // line 
+                    "PREQ_ITEM" => $poDelivery[$i]->preq_item, // line 
                     "PO_DATE" => "",
                     "ROUTESCHED" => "",
                     "MS_DATE" => "",
@@ -4895,13 +4995,13 @@ class SapHelper {
                     'FINAL_REASON' => ''
                 ];
 
-                $dataChild = QuotationServiceChild::where('quotation_id', $quotation->id)->get();
+                $dataChild = \App\Models\PurchaseOrderServiceChild::where('purchase_order_id', $poHeader->id)->get();
                 for( $k = 0; $k < count($dataChild); $k++ ) {
                     $createLine = $k + 1;
                     $POSERVICES = [
                         "PCKG_NO" => $dataChild[$k]->package_no,//0 = 9X 1; CHILD = 2 DST 
                         "LINE_NO" =>  '000000000'.$createLine,//0 = 9X 1; CHILD = 2 DST
-                        "EXT_LINE" =>  "",//CHILD = 0 = 9X 1
+                        "EXT_LINE" =>  '000000000'.$createLine,//CHILD = 0 = 9X 1
                         "OUTL_LEVEL" => "",
                         "OUTL_NO" => "",    
                         "OUTL_IND" => "",
@@ -4983,12 +5083,34 @@ class SapHelper {
                 ];
             }
 
-            $params[0]['POITEM']['item'][$i] = $POITEM;
-            $params[0]['POITEMX']['item'][$i] = $POITEMX;
+            if( $poDetail[$i]->item_category == \App\Models\PurchaseOrdersDetail::Material 
+                OR $poDetail[$i]->item_category == \App\Models\PurchaseOrdersDetail::MaterialText) {
+
+                $params[0]['POITEM']['item'][$i] = $POITEM;
+                $params[0]['POITEMX']['item'][$i] = $POITEMX;
+                $params[0]['POSCHEDULE']['item'][$i] = $POSCHEDULE;
+                $params[0]['POSCHEDULEX']['item'][$i] = $POSCHEDULEX;
+            }  elseif(  $poHeader->doc_type == 'Z104' && $poDetail[$i]->item_category == \App\Models\PurchaseOrdersDetail::SERVICE)  {
+                $params[0]['POITEM']['item'][$i] = $POITEM;
+                $params[0]['POITEMX']['item'][$i] = $POITEMX;
+                $params[0]['POSCHEDULE']['item'][$i] = $POSCHEDULE;
+                $params[0]['POSCHEDULEX']['item'][$i] = $POSCHEDULEX;
+                $params[0]['POACCOUNT']['item'][$i] = $POACCOUNT;
+                $params[0]['POACCOUNTX']['item'][$i] = $POACCOUNTX;
+                $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
+            } elseif( $poDetail[$i]->item_category == \App\Models\PurchaseOrdersDetail::SERVICE ) {
+                $params[0]['POITEM']['item'][$i] = $POITEM;
+                $params[0]['POITEMX']['item'][$i] = $POITEMX;
+                $params[0]['POSCHEDULE']['item'][$i] = $POSCHEDULE;
+                $params[0]['POSCHEDULEX']['item'][$i] = $POSCHEDULEX;
+                $params[0]['POACCOUNT']['item'][$i] = $POACCOUNT;
+                $params[0]['POACCOUNTX']['item'][$i] = $POACCOUNTX;
+                $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
+            }
         
         }
         $params[0]['PURCHASEORDER'] = $poHeader->PO_NUMBER;
-        dd($params);
+        // dd($params);
         $RETURN = [
             "TYPE" => "",
             "ID" => "",
@@ -5008,6 +5130,7 @@ class SapHelper {
         $params[0]['RETURN'] = $RETURN;
       
         $result = $client->__soapCall('ZFM_WS_POCHANGE', $params, NULL, $header);
+        // dd($result);
         return $result;
     }
 
