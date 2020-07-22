@@ -77,8 +77,8 @@ class PurchaseOrderController extends Controller
 
         $po = PurchaseOrder::leftJoin('vendors', 'vendors.code', '=', 'purchase_orders.vendor_id')
                 ->where('purchase_orders.approved_asspro', \Auth::user()->nik)
-                ->where('status_approval', PurchaseOrder::Change)
-                ->where('is_approve_head', PurchaseOrder::ApproveAss)
+                ->where('status_approval', PurchaseOrder::Rejected)
+                ->where('is_approve_head', PurchaseOrder::ApproveAss) 
                 ->select(
                     'purchase_orders.po_date',
                     'purchase_orders.id',
@@ -103,7 +103,7 @@ class PurchaseOrderController extends Controller
 
         $po = PurchaseOrder::leftJoin('vendors', 'vendors.code', '=', 'purchase_orders.vendor_id')
             // ->where('purchase_orders.approved_asspro', \Auth::user()->nik)
-            ->where('status_approval', PurchaseOrder::Change)
+            ->where('status_approval', PurchaseOrder::Rejected)
             ->where('is_approve_head', PurchaseOrder::ApproveHead)
             ->select(
                 'purchase_orders.po_date',
@@ -362,7 +362,7 @@ class PurchaseOrderController extends Controller
                 $prDetail->qty_order = 0;
                 $prDetail->update();
 
-                $prDetail->qty -= $request->qty[$key];
+                $prDetail->qty      -= $request->qty[$key];
                 $prDetail->qty_order = $request->qty[$key];
 
                 $prDetail->save();
