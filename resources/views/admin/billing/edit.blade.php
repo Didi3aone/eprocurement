@@ -487,6 +487,7 @@
             let DPP = $("#dpp").val().replace(/,/g, '')
             let totalB  = parseInt(DPP) - parseInt(total)
             $('#nominal_balance').val(formatNumber(totalB))
+            $("#nominal_invoice_staff").val(formatNumber(totalB))
         }
     })
 
