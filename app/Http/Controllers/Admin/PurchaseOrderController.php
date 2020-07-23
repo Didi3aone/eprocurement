@@ -385,8 +385,9 @@ class PurchaseOrderController extends Controller
             $poChangeDetail->po_history_id          = $poChangeHeader->id;
             $poChangeDetail->price_old              = $poDetail->price;
             $poChangeDetail->delivery_date_old      = $poDetail->delivery_date;
-            $poChangeDetail->delivery_date_change   = $deliveryDate;
+            $poChangeDetail->delivery_date_change   = $request->delivery_date[$key] ?? NULL;
             $poChangeDetail->price_change           = $price;
+
             $poChangeDetail->save();
 
             // update po detail
@@ -394,7 +395,7 @@ class PurchaseOrderController extends Controller
             $poDetail->delivery_date_old    = $poDetail->delivery_date;//yg old2 di update 
             $poDetail->qty                  = $qty;
             $poDetail->price                = $price;// ini harusanya yg baru 
-            $poDetail->delivery_date        = $deliveryDate;
+            $poDetail->delivery_date        = $request->delivery_date[$key] ?? NULL;
             $poDetail->delivery_complete    = $deliveryComplete;
             $poDetail->tax_code             = 1 == $taxCode ? "V1" : "V0";
 
@@ -403,7 +404,7 @@ class PurchaseOrderController extends Controller
             \App\Models\PurchaseOrderDelivery::where('purchase_order_id', $id)
                 ->where('po_item', $poDetail->PO_ITEM)
                 ->update([
-                    'delivery_date' => $deliveryDate,
+                    'delivery_date' => $request->delivery_date[$key] ?? NULL,
                     'qty'           => $qty,
                 ]);
         }
