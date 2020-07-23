@@ -336,8 +336,8 @@ class PurchaseOrderController extends Controller
     {
         // dd($request);
         $purchaseOrder = PurchaseOrder::findOrFail($id);
-        $purchaseOrder->notes = $request->get('notes');
-        $purchaseOrder->payment_term = $request->get('payment_term');
+        // $purchaseOrder->notes = $request->get('notes');
+        // $purchaseOrder->payment_term = $request->get('payment_term');
 
         $poChangeHeader = new PurchaseOrderChangeHistory();
         $poChangeHeader->po_id          = $purchaseOrder->id;
@@ -345,6 +345,7 @@ class PurchaseOrderController extends Controller
         $poChangeHeader->vendor_change  = $request->get('payment_term') ?? '';
         $poChangeHeader->notes_old      = $purchaseOrder->notes;
         $poChangeHeader->notes_change   = $request->get('notes');
+        
         // $poChangeHeader->peyment_term_old       = $purchaseOrder->payment_term;
         $poChangeHeader->save();
 
