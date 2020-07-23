@@ -68,10 +68,10 @@ class PoGrGet extends Command
         $params = [];
         try {
             $purchaseOrder = \App\Models\PurchaseOrder::get();
-            $purchaseOrder = [
-                0 => '3010002759',
-                // 1 => '3010002759'
-            ];
+            // $purchaseOrder = [
+            //     0 => '3010002759',
+            //     // 1 => '3010002759'
+            // ];
             $poHeader = [];
             $poDetail = [];
 
