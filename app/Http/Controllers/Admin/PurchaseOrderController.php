@@ -340,52 +340,60 @@ class PurchaseOrderController extends Controller
         $purchaseOrder->payment_term = $request->get('payment_term');
 
         $poChangeHeader = new PurchaseOrderChangeHistory();
-        $poChangeHeader->po_id = $purchaseOrder->id;
-        $poChangeHeader->vendor_old = $purchaseOrder->vendor_id;
-        $poChangeHeader->vendor_change = $request->get('payment_term') ?? '';
-        $poChangeHeader->notes_old = $purchaseOrder->notes;
-        $poChangeHeader->notes_change = $request->get('notes');
+        $poChangeHeader->po_id          = $purchaseOrder->id;
+        $poChangeHeader->vendor_old     = $purchaseOrder->vendor_id;
+        $poChangeHeader->vendor_change  = $request->get('payment_term') ?? '';
+        $poChangeHeader->notes_old      = $purchaseOrder->notes;
+        $poChangeHeader->notes_change   = $request->get('notes');
         // $poChangeHeader->peyment_term_old       = $purchaseOrder->payment_term;
         $poChangeHeader->save();
 
-        $service = '';
-        $packageParent = '000000000';
+        $service        = '';
+        $packageParent  = '000000000';
         $subpackgparent = '000000000';
-        $noLine = '';
-        $sched = '';
-        $totalPrice = 0;
+        $noLine         = '';
+        $sched          = '';
+        $totalPrice     = 0;
         foreach ($request->idDetail as $key => $rows) {
             $totalPrice += $request->price[$key];
-            $poDetail = PurchaseOrdersDetail::find($rows);
+            $poDetail    = PurchaseOrdersDetail::find($rows);
+
             if ($poDetail->qty != $request->qty[$key]) {
-                $prDetail = PurchaseRequestsDetail::find($poDetail->request_detail_id);
-                $prDetail->qty += $poDetail->qty;
-                $prDetail->qty_order = 0;
+                $prDetail               = PurchaseRequestsDetail::find($poDetail->request_detail_id);
+                $prDetail->qty         += $poDetail->qty;
+                $prDetail->qty_order    = 0;
                 $prDetail->update();
 
                 $prDetail->qty      -= $request->qty[$key];
                 $prDetail->qty_order = $request->qty[$key];
-
                 $prDetail->save();
             }
-            $taxCode =  $request->tax_code[$key] ?? "";
-            $poChangeDetail = new PurchaseOrderChangeHistoryDetail();
-            $poChangeDetail->qty_old = $poDetail->qty;
-            $poChangeDetail->qty_change = $request->qty[$key];
-            $poChangeDetail->po_detail_id = $poDetail->id;
-            $poChangeDetail->po_history_id = $poChangeHeader->id;
-            $poChangeDetail->price_old = $poDetail->price;
-            $poChangeDetail->price_change = $request->price[$key];
+
+            $taxCode                                = $request->tax_code[$key] ?? "";
+            $poChangeDetail                         = new PurchaseOrderChangeHistoryDetail();
+            $poChangeDetail->qty_old                = $poDetail->qty;
+            $poChangeDetail->qty_change             = $request->qty[$key];
+            $poChangeDetail->po_detail_id           = $poDetail->id;
+            $poChangeDetail->po_history_id          = $poChangeHeader->id;
+            $poChangeDetail->price_old              = $poDetail->price;
+            $poChangeDetail->delivery_date_old      = $poDetail->delivery_date;
+            $poChangeDetail->delivery_date_change   = $request->delivery_date[$key];
+            $poChangeDetail->price_change           = $request->price[$key];
             $poChangeDetail->save();
 
-            $poDetail->qty          = $request->qty[$key];
-            $poDetail->price = $request->price[$key];
-            // $poDetail->currency = $request->currency[$key];
-            $poDetail->delivery_date = $request->delivery_date[$key];
-            $poDetail->delivery_complete = $request->delivery_complete[$key];
-            $poDetail->tax_code = 1 == $taxCode ? "V1" : "V0";
+            $poDetail->qty                  = $request->qty[$key];
+            $poDetail->price                = $request->price[$key];
+            $poDetail->delivery_date        = $request->delivery_date[$key];
+            $poDetail->delivery_complete    = $request->delivery_complete[$key];
+            $poDetail->tax_code             = 1 == $taxCode ? "V1" : "V0";
 
             $poDetail->update();
+
+            \App\Models\PurchaseOrderDelivery::where('purchase_order_id', $id)
+                ->update([
+                    'delivery_date' => $request->delivery_date[$key],
+                    'qty'           => $request->qty[$key],
+                ]);
         }
 
         if ($purchaseOrder->total_price != $totalPrice) {
@@ -397,11 +405,11 @@ class PurchaseOrderController extends Controller
 
             return redirect()->route('admin.purchase-order.index')->with('status', 'Purchase order has been updated & waiting approval');
         }
+
         $poChange = \sapHelp::sendPOchangeToSap($purchaseOrder->PO_NUMBER);
         if ($poChange) {
             $purchaseOrder->status_approval = PurchaseOrder::Approved;
             $purchaseOrder->save();
-
             return redirect()->route('admin.purchase-order.index')->with('status', 'Purchase order has been updated');
         }
 

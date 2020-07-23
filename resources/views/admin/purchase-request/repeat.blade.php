@@ -134,7 +134,10 @@
                                 <input type="hidden" class="qty" name="qty[]" readonly value="{{ empty($value->qty) ? 0 : $value->qty }}">
                                 <td>{!! $value->material_id .'<br>'.$value->description !!}
                                     @php
-                                        $hist = \sapHelp::getHistoryPo($value->material_id);
+                                        $materialId = '';
+                                        if( $value->material_id != '' ) {
+                                            $materialId = $value->material_id;
+                                        }
                                     @endphp
                                 </td>
                                 <td>{{ $value->unit }}</td>
@@ -142,7 +145,19 @@
                                 <td>
                                     <select name="rfq[]" id="history" class="select2 history" required>
                                         <option> -- Select --</option>
-                                        @if( !empty($hist['header']->item) )
+                                        @foreach(\App\Models\RfqDetail::getRfq($materialId,$value->description) as $key => $rows)
+                                            @if($rows->po_number != '')
+                                                <option value="{{ $rows->rfq_number }}"
+                                                    data-price="{{ $rows->net_price }}"
+                                                    data-vendor="{{ $rows->vendor_id }}"
+                                                    data-currency="{{ $rows->currency }}"
+                                                    data-is-from-po="{{ $rows->is_from_po }}"
+                                                    >
+                                                    {{ $rows->po_number."/".$rows->rfq_number }}
+                                                </option>
+                                            @endif
+                                        @endforeach
+                                        {{-- @if( !empty($hist['header']->item) )
                                             @foreach($hist['header']->item as $key => $rows)
                                                 @if( !empty($hist['detail']->item[$key]) )
                                                     @if($hist['detail']->item[$key]->EBELN == $rows->EBELN)
@@ -155,7 +170,7 @@
                                                     @endif
                                                 @endif
                                             @endforeach
-                                        @endif
+                                        @endif --}}
                                     </select>
                                 </td>
                                 <td><input type="text" class="original_currency" name="original_currency[]" id="original_currency" value="" readonly></td>

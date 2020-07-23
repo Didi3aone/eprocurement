@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use App\Models\AcpTableDetail;
 use App\Models\MasterMaterial;
 use App\Models\MasterRfqDetail;
+use App\Models\Rfq;
+use App\Models\RfqDetail;
 use App\Models\AcpTableMaterial;
 use App\Http\Controllers\Controller;
 use App\Models\Vendor\QuotationApproval;
@@ -197,6 +199,17 @@ class MasterAcpController extends Controller
                     $rfq->language_key        = 'EN';
                     $rfq->acp_id              = $acp->id;
                     $rfq->save();
+
+                    $maxNumber = Rfq::max('rfq_number');
+                    $rfqNew             = new Rfq;
+                    $rfqNew->rfq_number = $maxNumber + 1;
+                    $rfqNew->vendor_id  = $value;
+                    $rfqNew->acp_id     = $acp->id;
+                    $rfqNew->plant      = $request->get('plant_id');
+                    $rfqNew->is_from_po = 2;
+
+                    $rfqNew->save();
+
                 }
 
                 foreach ($request['material_'.$value] as $i => $row) {
@@ -216,6 +229,7 @@ class MasterAcpController extends Controller
                     }
 
                     $temp['purchasing_document']    = $rfq->purchasing_document ?? 0;
+                    $temp['rfq_number']             = $rfqNew->rfq_number ?? 0;
                     $temp['vendor']                 = $value;
                     $temp['material']               = $row;
                     $temp['price']                  = $request['price_'.$value][$i];
@@ -230,6 +244,8 @@ class MasterAcpController extends Controller
             $price = 0;
             $assProc = '';
             foreach ($result as $key => $val) {
+                $i = $key + 1;
+                $poItem = (0+($i*10));
                 $material = new AcpTableMaterial();
                 $material->master_acp_id        = $acp->id;
                 $material->master_acp_vendor_id = $val['vendor'];
@@ -281,6 +297,32 @@ class MasterAcpController extends Controller
                     $rfqDetail->material            = $val['material'];
                     $rfqDetail->net_order_price     = str_replace(',','',$val['price']);
                     $rfqDetail->save();
+
+                    $materialName = \App\Models\MasterMaterial::getMaterialName($val['material']);
+                    // dd($materialName->uom_code);
+
+                    if( $materialName == null ) {
+                        $nonMaterial    =  \App\Models\PurchaseRequestsDetail::where('description',$val['material'])->first();
+                        $desc           = $val['material'];
+                        $unit           = $nonMaterial->unit;
+                        $storage        = $nonMaterial->storage_location_code;
+                    } else {
+                        $desc           = $materialName->description;
+                        $unit           = $materialName->uom_code;
+                        $storage        = $materialName->storage_location_code;
+                    }
+                    // dd($val['rfq_number']);
+                    $rfqDetailNew = new RfqDetail;
+                    $rfqDetailNew->material_id                  = $val['material'] ?? '';
+                    $rfqDetailNew->short_text                   = $desc;
+                    $rfqDetailNew->plant_code                   = $request->get('plant_id');
+                    $rfqDetailNew->storage_location_code        = $storage;
+                    $rfqDetailNew->qty                          = $val['qty'];
+                    $rfqDetailNew->unit                         = $unit;
+                    $rfqDetailNew->rfq_number                   = $val['rfq_number'];
+                    $rfqDetailNew->po_item                      = $poItem;
+                    $rfqDetailNew->is_from_po                   = 2;
+                    $rfqDetailNew->save();
                 }
             }
 
@@ -304,7 +346,7 @@ class MasterAcpController extends Controller
                     }
                     \saveApprovals($assProc, $acp->id, 'COO', 'ACP', $isPlant, $isCmo);
                 }
-            }
+            } 
 
             \DB::commit();
 

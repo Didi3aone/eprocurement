@@ -16,6 +16,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Models\PurchaseRequestsDetail;
+use App\Models\RfqDetail;
+use App\Models\Rfq;
 use App\Mail\enesisPurchaseRequestAdminDpj;
 use App\Models\PurchaseRequestApprovalHistory;
 use Symfony\Component\HttpFoundation\Response;
@@ -120,23 +122,23 @@ class PurchaseRequestController extends Controller
                     'request' => \collect($request->all())->forget('draw')->forget('_'),
                     'q' => $q,
                     'data' => \collect($items)->map(function ($value, $key) use ($start) {
-                        if( $value->material_id != '' ) {
-                            $getHistPo = \sapHelp::getHistoryPo($value->material_id);
-                            if( !empty($getHistPo['header']->item) ) {
-                                if(is_countable($getHistPo['header']->item)) {
-                                    // dd(count($getHistPo['header']->item));
-                                    $getLast = count($getHistPo['header']->item);
-                                    $getLast = $getLast - 1;
-                                    $getLast = $getHistPo['header']->item[$getLast]->LIFRE;
-                                } else {
-                                    $getLast = "";
-                                }
-                            } else {
-                                $getLast = "";
-                            }
-                        } else {
-                            $getLast = "";
-                        }
+                        // if( $value->material_id != '' ) {
+                        //     $getHistPo = \sapHelp::getHistoryPo($value->material_id);
+                        //     if( !empty($getHistPo['header']->item) ) {
+                        //         if(is_countable($getHistPo['header']->item)) {
+                        //             // dd(count($getHistPo['header']->item));
+                        //             $getLast = count($getHistPo['header']->item);
+                        //             $getLast = $getLast - 1;
+                        //             $getLast = $getHistPo['header']->item[$getLast]->LIFRE;
+                        //         } else {
+                        //             $getLast = "";
+                        //         }
+                        //     } else {
+                        //         $getLast = "";
+                        //     }
+                        // } else {
+                        //     $getLast = "";
+                        // }
                         
 
                         $other = \App\Models\PurchaseRequestApprovalHistory::getHistoryApproval($value->uuid);
@@ -174,7 +176,7 @@ class PurchaseRequestController extends Controller
                             $value->material_group,
                             $value->purchasing_group_code,
                             $value->preq_name,
-                            $getLast,
+                            0,
                             $value->request_no ?? $value->pr_no,
                             $value->delivery_date,
                             // '0000',  
@@ -354,6 +356,16 @@ class PurchaseRequestController extends Controller
                 ->where('code', $type)
                 ->get();
         $currency = Currency::all();
+        $rfqDetail = RfqDetail::join('rfqs','rfqs.rfq_number','=','rfq_details.rfq_number')
+            ->select(
+                'rfqs.po_number',
+                'rfqs.rfq_number',
+                'rfqs.vendor_id',
+                'rfq_details.net_price',
+                'rfq_details.currency',
+                'rfqs.is_from_po',
+            )
+            ->get();
 
         $uri = [
             'ids' => base64_encode($ids),
@@ -367,7 +379,8 @@ class PurchaseRequestController extends Controller
             'vendor',
             'uri',
             'top',
-            'currency'
+            'currency',
+            'rfqDetail'
         ));
     }
 

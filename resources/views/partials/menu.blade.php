@@ -187,14 +187,14 @@
                             </a>
                         </li>
                         @endcan
-                        @can('accounting_spv')
+                        {{-- @can('accounting_spv')
                         <li>
                             <a href="{{ route('admin.billing-spv-list') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
                                 List Billing Spv
                             </a>
                         </li>
-                        @endcan
+                        @endcan --}}
                     </ul>
                 </li>
                 @endcan

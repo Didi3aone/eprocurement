@@ -141,7 +141,7 @@ class BillingController extends Controller
             \DB::rollback();
         }
 
-        return \redirect()->route('admin.billing-spv-list');
+        return \redirect()->route('admin.billing');
     }
 
     public function storeApproved(request $request)
