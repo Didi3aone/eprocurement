@@ -4837,7 +4837,7 @@ class SapHelper {
                     "PO_ITEM" => $poDetail[$i]->PO_ITEM, //line
                     "SCHED_LINE" => '0001',//$quotationDeliveryDate[$i]->SCHED_LINE, // 0001 ++
                     "DEL_DATCAT_EXT" => "",
-                    "DELIVERY_DATE" => $poDelivery[$i]->delivery_date,//delivery date
+                    "DELIVERY_DATE" => date('Ymd',strtotime($poDelivery[$i]->delivery_date)),//delivery date
                     "QUANTITY" =>  (string) $poDelivery[$i]->QUANTITY,// qty
                     "DELIV_TIME" => "", 
                     "STAT_DATE" => "",
