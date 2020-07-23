@@ -3285,7 +3285,7 @@ class SapHelper {
                 OR $poDetail[$i]->item_category == \App\Models\PurchaseOrdersDetail::MaterialText) {
                 $POITEM = [
                     'PO_ITEM' => $poDetail[$i]->PO_ITEM,//LINE
-                    'DELETE_IND' => '',
+                    'DELETE_IND' => $itemDelete,
                     'SHORT_TEXT' => '',
                     'MATERIAL' => '',
                     'MATERIAL_EXTERNAL' => '',
@@ -3827,7 +3827,7 @@ class SapHelper {
             } elseif( $poHeader->doc_type == 'Z104' && $poDetail[$i]->item_category == \App\Models\PurchaseOrdersDetail::SERVICE) {
                 $POITEM = [
                     'PO_ITEM' => $poDetail[$i]->PO_ITEM,//LINE
-                    'DELETE_IND' => '',
+                    'DELETE_IND' => $itemDelete,
                     'SHORT_TEXT' => '',
                     'MATERIAL' => '',
                     'MATERIAL_EXTERNAL' => '',
@@ -4456,7 +4456,7 @@ class SapHelper {
             } else if($poDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::SERVICE) {
                 $POITEM = [
                     'PO_ITEM' => $poDetail[$i]->PO_ITEM,//LINE
-                    'DELETE_IND' => '',
+                    'DELETE_IND' => $itemDelete,
                     'SHORT_TEXT' => '',
                     'MATERIAL' => '',
                     'MATERIAL_EXTERNAL' => '',
