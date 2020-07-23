@@ -527,9 +527,9 @@ class PurchaseOrderController extends Controller
         // abort_if(Gate::denies('purchase_order_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         if (isset($request->id)) {
-            $checkGr = \App\Models\PurchaseOrderGr::getPoItemGr($request->id);
+            $checkGr = \App\Models\PurchaseOrdersDetail::find($request->id);
 
-            if ($checkGr > 0) {
+            if ($checkGr->is_gr == 1) {
                 $success = false;
                 $message = 'Material has been gr !!!';
             } else {
