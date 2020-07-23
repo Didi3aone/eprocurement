@@ -3326,8 +3326,8 @@ class SapHelper {
                     'VAL_TYPE' => '',
                     'NO_MORE_GR' => '',
                     'FINAL_INV' => '',
-                    'ITEM_CAT' => '9',
-                    'ACCTASSCAT' => 'K',
+                    'ITEM_CAT' => '',
+                    'ACCTASSCAT' => '',
                     'DISTRIB' => '',
                     'PART_INV' => '',
                     'GR_IND' => 'X',
@@ -3517,8 +3517,8 @@ class SapHelper {
                     'VAL_TYPE' => '',
                     'NO_MORE_GR' => '',
                     'FINAL_INV' => '',
-                    'ITEM_CAT' => 'X',
-                    'ACCTASSCAT' => 'X',
+                    'ITEM_CAT' => '',
+                    'ACCTASSCAT' => '',
                     'DISTRIB' => '',
                     'PART_INV' => '',
                     'GR_IND' => 'X',
@@ -3664,7 +3664,7 @@ class SapHelper {
             
                 $POSCHEDULE = [
                     "PO_ITEM" => $poDetail[$i]->PO_ITEM, //line
-                    "SCHED_LINE" => $poDetail[$i]->SCHED_LINE, // 0001 ++
+                    "SCHED_LINE" => '0001',//$poDetail[$i]->SCHED_LINE, // 0001 ++
                     "DEL_DATCAT_EXT" => "",
                     "DELIVERY_DATE" =>  date('Ymd',strtotime($poDelivery[$i]->delivery_date)),//delivery date
                     "QUANTITY" =>  (string) $poDetail[$i]->qty,// qty
@@ -3695,7 +3695,7 @@ class SapHelper {
 
                 $POSCHEDULEX = [
                     "PO_ITEM" => $poDetail[$i]->PO_ITEM,
-                    "SCHED_LINE" => $poDelivery[$i]->sched_line,
+                    "SCHED_LINE" => '0001',
                     "PO_ITEMX" => "X",
                     "SCHED_LINEX" => "X",
                     "DEL_DATCAT_EXT" => "",
@@ -5110,7 +5110,7 @@ class SapHelper {
         
         }
         $params[0]['PURCHASEORDER'] = $poHeader->PO_NUMBER;
-        dd($params);
+        
         $RETURN = [
             "TYPE" => "",
             "ID" => "",
@@ -5128,6 +5128,7 @@ class SapHelper {
             "SYSTEM" => "0"
         ];
         $params[0]['RETURN'] = $RETURN;
+        // dd($params);
       
         $result = $client->__soapCall('ZFM_WS_POCHANGE', $params, NULL, $header);
         // dd($result);

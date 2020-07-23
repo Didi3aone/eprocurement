@@ -524,7 +524,7 @@ class QuotationDirectController extends Controller
             $poDel->delivery_date               = $rec->DELIVERY_DATE;
             $poDel->preq_no                     = $rec->PREQ_NO;
             $poDel->preq_item                   = $rec->PREQ_ITEM;
-            $poDel->qty                         = $rows->qty;
+            $poDel->qty                         = $rec->QUANTITY;
             $poDel->save();
         }
 

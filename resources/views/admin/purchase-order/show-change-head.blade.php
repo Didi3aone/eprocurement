@@ -65,10 +65,10 @@
                             <tr>
                                 <td>{{ $value->material_id." - ".$value->description }}</td>
                                 <td>{{ $value->unit }}</td>
-                                <td>{{ $value->getChangeDetail['qty_old'] }}</td>
-                                <td>{{ $value->getChangeDetail['qty_change'] }}</td>
-                                <td>{{ $value->getChangeDetail['price_old'] }}</td>
-                                <td>{{ $value->getChangeDetail['price_change'] }}</td>
+                                <td>{{ $value->qty_old }}</td>
+                                <td>{{ $value->qty }}</td>
+                                <td>{{ $value->original_price }}</td>
+                                <td>{{ $value->price }}</td>
                             </tr>
                             @endforeach
                         </tbody>

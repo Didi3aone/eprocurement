@@ -382,8 +382,10 @@ class PurchaseOrderController extends Controller
             $poChangeDetail->price_change           = $request->price[$key];
             $poChangeDetail->save();
 
+            $poDetail->qty_old              = $poDetail->qty;
+            $poDetail->delivery_date_old    = $poDetail->delivery_date;//yg old2 di update 
             $poDetail->qty                  = $request->qty[$key];
-            $poDetail->price                = $request->price[$key];
+            $poDetail->price                = $request->price[$key];// ini harusanya yg baru 
             $poDetail->delivery_date        = $request->delivery_date[$key];
             $poDetail->delivery_complete    = $request->delivery_complete[$key];
             $poDetail->tax_code             = 1 == $taxCode ? "V1" : "V0";
@@ -391,6 +393,7 @@ class PurchaseOrderController extends Controller
             $poDetail->update();
 
             \App\Models\PurchaseOrderDelivery::where('purchase_order_id', $id)
+                ->where('po_item', $poDetail->PO_ITEM)
                 ->update([
                     'delivery_date' => $request->delivery_date[$key],
                     'qty'           => $request->qty[$key],
@@ -400,6 +403,7 @@ class PurchaseOrderController extends Controller
         if ($purchaseOrder->total_price != $totalPrice) {
             $purchaseOrder->total_price     = $totalPrice;
             $purchaseOrder->status_approval = PurchaseOrder::Rejected;
+            $purchaseOrder->is_approve_head = 1;//balik ke assproc lagi
             $purchaseOrder->approved_asspro = \App\Models\Vendor\Quotation::getQuotationById($purchaseOrder->quotation_id)->approved_asspro;
             $purchaseOrder->approved_head   = 'PROCUREMENT01';
             $purchaseOrder->save();
