@@ -3120,7 +3120,7 @@ class SapHelper {
         //get data
         $poHeader = PurchaseOrder::where('PO_NUMBER',$poNumber)->first();
         $poDetail = PurchaseOrdersDetail::where('purchase_order_id',$poHeader->id)
-                    ->where('is_gr',0) 
+                    // ->where('is_gr',0) 
                     ->get();
         $poDelivery = PurchaseOrderDelivery::where('purchase_order_id',$poHeader->id)->get();
 
@@ -3397,7 +3397,7 @@ class SapHelper {
                     'INDUS3' => '',
                     'INF_INDEX' => '',
                     'UNTIL_DATE' => '',
-                    'DELIV_COMPL' => '',
+                    'DELIV_COMPL' => $deliveryComplete,
                     'PART_DELIV' => '',
                     'SHIP_BLOCKED' => '',
                     'PREQ_NAME' =>  strtoupper(split_name($poDetail[$i]->preq_name)),
@@ -3939,7 +3939,7 @@ class SapHelper {
                     'INDUS3' => '',
                     'INF_INDEX' => '',
                     'UNTIL_DATE' => '',
-                    'DELIV_COMPL' => '',
+                    'DELIV_COMPL' => $deliveryComplete,
                     'PART_DELIV' => '',
                     'SHIP_BLOCKED' => '',
                     'PREQ_NAME' =>  strtoupper(split_name($poDetail[$i]->preq_name)),
@@ -4568,7 +4568,7 @@ class SapHelper {
                     'INDUS3' => '',
                     'INF_INDEX' => '',
                     'UNTIL_DATE' => '',
-                    'DELIV_COMPL' => '',
+                    'DELIV_COMPL' => $deliveryComplete,
                     'PART_DELIV' => '',
                     'SHIP_BLOCKED' => '',
                     'PREQ_NAME' =>  strtoupper(split_name($poDetail[$i]->preq_name)),
