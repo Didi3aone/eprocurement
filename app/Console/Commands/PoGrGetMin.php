@@ -84,7 +84,7 @@ class PoGrGetMin extends Command
                 foreach( $result->ITAB as $value ) {
                     // dd(count($value));
                     if(\is_countable($value) ) {
-                        for ($i = 0; $i < count($value) - 1; $i++) {
+                        for ($i = 0; $i < count($value); $i++) {
                             $poHeader = \App\Models\PurchaseOrder::where('PO_NUMBER', $value[$i]->EBELN)->first();
                             $checkExistData = \App\Models\PurchaseOrderGr::where('debet_credit',$value[$i]->SHKZG)
                                             ->where('doc_gr',$value[$i]->MBLNR)
@@ -117,7 +117,7 @@ class PoGrGetMin extends Command
                                     $insertGr = \App\Models\PurchaseOrderGr::create([
                                         'po_no'                     => $value[$i]->EBELN,
                                         'po_item'                   => $value[$i]->EBELP,
-                                        'vendor_id'                 => $poHeader->vendor_id ?? '3000046',
+                                        'vendor_id'                 => str_replace('000','',$value[$i]->LIFNR),//$poHeader->vendor_id ?? '3000046',
                                         'movement_type'             => $value[$i]->EBELP,
                                         'debet_credit'              => $value[$i]->SHKZG ?? '',//s itu debit h itu kredit
                                         'material_no'               => str_replace('00000000000','',$value[$i]->MATNR),
@@ -188,7 +188,7 @@ class PoGrGetMin extends Command
                                 $insertGr = \App\Models\PurchaseOrderGr::create([
                                     'po_no'                     => $value->EBELN,
                                     'po_item'                   => $value->EBELP,
-                                    'vendor_id'                 => $poHeader->vendor_id ?? '3000046',
+                                    'vendor_id'                 => str_replace('000','',$value->LIFNR),//$poHeader->vendor_id ?? '3000046',
                                     'movement_type'             => $value->EBELP,
                                     'debet_credit'              => $value->SHKZG ?? '',//s itu debit h itu kredit
                                     'material_no'               => str_replace('00000000000','',$value->MATNR),

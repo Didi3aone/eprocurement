@@ -14,26 +14,27 @@ class AlterPoDetailAdded extends Migration
     public function up()
     {
         Schema::table('purchase_orders_details', function (Blueprint $table) {
-            $table->bigInteger('rfq_number')->nullable();
+            // $table->bigInteger('rfq_number')->nullable();
             $table->date('delivery_date_old')->nullable();
+            $table->decimal('qty_old')->default('0.00');
         });
 
-        Schema::table('quotation_details', function (Blueprint $table) {
-            $table->bigInteger('rfq_number')->nullable();
-        });
+        // Schema::table('quotation_details', function (Blueprint $table) {
+        //     $table->bigInteger('rfq_number')->nullable();
+        // });
 
-        Schema::table('rfq_details', function (Blueprint $table) {
-            $table->string('currency')->nullable();
-        });
+        // Schema::table('rfq_details', function (Blueprint $table) {
+        //     $table->string('currency')->nullable();
+        // });
 
-        Schema::table('rfqs', function (Blueprint $table) {
-            $table->integer('is_from_po')->default(1);
-        });
+        // Schema::table('rfqs', function (Blueprint $table) {
+        //     $table->integer('is_from_po')->default(1);
+        // });
 
-        Schema::table('purchase_order_change_history_detail', function (Blueprint $table) {
-            $table->date('delivery_date_old')->nullable();
-            $table->date('delivery_date_change')->nullable();
-        });
+        // Schema::table('purchase_order_change_history_detail', function (Blueprint $table) {
+        //     $table->date('delivery_date_old')->nullable();
+        //     $table->date('delivery_date_change')->nullable();
+        // });
     }
 
     /**

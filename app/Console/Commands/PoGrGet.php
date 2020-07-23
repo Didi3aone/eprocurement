@@ -68,23 +68,28 @@ class PoGrGet extends Command
         $params = [];
         try {
             $purchaseOrder = \App\Models\PurchaseOrder::get();
-            // $purchaseOrder = [
-            //     0 => '3010002118',
-            //     1 => '3010000001'
-            // ];
+            $purchaseOrder = [
+                0 => '3010002759',
+                // 1 => '3010002759'
+            ];
             $poHeader = [];
             $poDetail = [];
 
             foreach( $purchaseOrder as $key => $row ) {
                 echo "..... \n";
                 echo "get po gr \n";
+                // $params[0]['EBELN'] = $row;
                 $params[0]['EBELN'] = $row->PO_NUMBER;
                 $result = $client->__soapCall("ZFM_WS_POGR", $params, NULL, $header);
-                // dd(count($result->ITAB));
+                // usort($result, function($a, $b) {
+                //     return strtotime($a['BUDAT']) < strtotime($b['BUDAT'])?1:-1;
+                // });
+                // dd(($result->ITAB));
+
                 foreach( $result->ITAB as $value ) {
                     // dd(count($value));
                     if(\is_countable($value) ) {
-                        for ($i = 0; $i < count($value) - 1; $i++) {
+                        for ($i = 0; $i < count($value); $i++) {
                             $poHeader = \App\Models\PurchaseOrder::where('PO_NUMBER', $value[$i]->EBELN)->first();
                             $checkExistData = \App\Models\PurchaseOrderGr::where('debet_credit',$value[$i]->SHKZG)
                                             ->where('doc_gr',$value[$i]->MBLNR)
@@ -106,7 +111,7 @@ class PoGrGet extends Command
                                     }
     
                                     $poDetail->qty_outstanding  = $poDetail->qty - $qty;
-                                    $poDetail->qty_gr           = $qty;
+                                    $poDetail->qty_gr           += $qty;
                                     $poDetail->is_gr            = \App\Models\PurchaseOrdersDetail::YesGr;
                                     $poDetail->update();
 
@@ -118,7 +123,7 @@ class PoGrGet extends Command
                                     $insertGr = \App\Models\PurchaseOrderGr::create([
                                         'po_no'                     => $value[$i]->EBELN,
                                         'po_item'                   => $value[$i]->EBELP,
-                                        'vendor_id'                 => $poHeader->vendor_id ?? '3000046',
+                                        'vendor_id'                 => str_replace('000','',$value[$i]->LIFNR),//$poHeader->vendor_id ?? '3000046',
                                         'movement_type'             => $value[$i]->EBELP,
                                         'debet_credit'              => $value[$i]->SHKZG ?? '',//s itu debit h itu kredit
                                         'material_no'               => str_replace('00000000000','',$value[$i]->MATNR),
@@ -167,7 +172,7 @@ class PoGrGet extends Command
                                 }
 
                                 $poDetail->qty_outstanding  = $poDetail->qty - $qty;
-                                $poDetail->qty_gr           = $qty;
+                                $poDetail->qty_gr           += $qty;
                                 $poDetail->is_gr            = \App\Models\PurchaseOrdersDetail::YesGr;
                                 $poDetail->update();
 
@@ -179,7 +184,7 @@ class PoGrGet extends Command
                                 $insertGr = \App\Models\PurchaseOrderGr::create([
                                     'po_no'                     => $value->EBELN,
                                     'po_item'                   => $value->EBELP,
-                                    'vendor_id'                 => $poHeader->vendor_id ?? '3000046',
+                                    'vendor_id'                 => str_replace('000','',$value->LIFNR),//$poHeader->vendor_id ?? '3000046',
                                     'movement_type'             => $value->EBELP,
                                     'debet_credit'              => $value->SHKZG ?? '',//s itu debit h itu kredit
                                     'material_no'               => str_replace('00000000000','',$value->MATNR),

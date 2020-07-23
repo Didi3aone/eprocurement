@@ -370,24 +370,32 @@ class PurchaseOrderController extends Controller
                 $prDetail->save();
             }
 
+            //init variable
             $taxCode                                = $request->tax_code[$key] ?? "";
+            $deliveryDate                           = $request->delivery_date[$key] ?? "";
+            $deliveryComplete                       = $request->delivery_complete[$key] ?? "";
+            $price                                  = $request->price[$key] ?? "";
+            $qty                                    = $request->qty[$key] ?? "";
+
+            //save to log history
             $poChangeDetail                         = new PurchaseOrderChangeHistoryDetail();
             $poChangeDetail->qty_old                = $poDetail->qty;
-            $poChangeDetail->qty_change             = $request->qty[$key];
+            $poChangeDetail->qty_change             = $qty;
             $poChangeDetail->po_detail_id           = $poDetail->id;
             $poChangeDetail->po_history_id          = $poChangeHeader->id;
             $poChangeDetail->price_old              = $poDetail->price;
             $poChangeDetail->delivery_date_old      = $poDetail->delivery_date;
-            $poChangeDetail->delivery_date_change   = $request->delivery_date[$key];
-            $poChangeDetail->price_change           = $request->price[$key];
+            $poChangeDetail->delivery_date_change   = $deliveryDate;
+            $poChangeDetail->price_change           = $price;
             $poChangeDetail->save();
 
+            // update po detail
             $poDetail->qty_old              = $poDetail->qty;
             $poDetail->delivery_date_old    = $poDetail->delivery_date;//yg old2 di update 
-            $poDetail->qty                  = $request->qty[$key];
-            $poDetail->price                = $request->price[$key];// ini harusanya yg baru 
-            $poDetail->delivery_date        = $request->delivery_date[$key];
-            $poDetail->delivery_complete    = $request->delivery_complete[$key];
+            $poDetail->qty                  = $qty;
+            $poDetail->price                = $price;// ini harusanya yg baru 
+            $poDetail->delivery_date        = $deliveryDate;
+            $poDetail->delivery_complete    = $deliveryComplete;
             $poDetail->tax_code             = 1 == $taxCode ? "V1" : "V0";
 
             $poDetail->update();
@@ -395,12 +403,12 @@ class PurchaseOrderController extends Controller
             \App\Models\PurchaseOrderDelivery::where('purchase_order_id', $id)
                 ->where('po_item', $poDetail->PO_ITEM)
                 ->update([
-                    'delivery_date' => $request->delivery_date[$key],
-                    'qty'           => $request->qty[$key],
+                    'delivery_date' => $deliveryDate,
+                    'qty'           => $qty,
                 ]);
         }
 
-        if ($purchaseOrder->total_price != $totalPrice) {
+        if ( $purchaseOrder->total_price != $totalPrice ) {
             $purchaseOrder->total_price     = $totalPrice;
             $purchaseOrder->status_approval = PurchaseOrder::Rejected;
             $purchaseOrder->is_approve_head = 1;//balik ke assproc lagi
