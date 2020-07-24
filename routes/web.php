@@ -166,6 +166,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('purchase-order/release', 'PurchaseOrderController@release')->name('purchase-order.release');
     Route::get('purchase-order/direct', 'PurchaseOrderController@direct')->name('purchase-order.direct');
     Route::put('purchase-order-destroy', 'PurchaseOrderController@destroyItem')->name('purchase-order-destroy');
+    Route::put('purchase-order-restore', 'PurchaseOrderController@restoreItem')->name('purchase-order-restore');
     Route::get('purchase-order-print/{id}','PurchaseOrderController@printPo')->name('purchase-order-print');
     Route::get('purchase-order-show-ass/{id}','PurchaseOrderController@showApprovalAss')->name('purchase-order-show-ass');
     Route::get('purchase-order-show-head/{id}','PurchaseOrderController@showApprovalHead')->name('purchase-order-show-head');
