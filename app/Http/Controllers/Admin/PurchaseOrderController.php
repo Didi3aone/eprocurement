@@ -372,7 +372,7 @@ class PurchaseOrderController extends Controller
 
             //init variable
             $taxCode                                = $request->tax_code[$key] ?? "";
-            $deliveryDate                           = $request->delivery_date[$key] ?? "";
+            $deliveryDate                           = $request->delivery_date[$key] ?? $poDetail->delivery_date;
             $deliveryComplete                       = $request->delivery_complete[$key] ?? "";
             $price                                  = $request->price[$key] ?? "";
             $qty                                    = $request->qty[$key] ?? "";
@@ -385,7 +385,7 @@ class PurchaseOrderController extends Controller
             $poChangeDetail->po_history_id          = $poChangeHeader->id;
             $poChangeDetail->price_old              = $poDetail->price;
             $poChangeDetail->delivery_date_old      = $poDetail->delivery_date;
-            $poChangeDetail->delivery_date_change   = $request->delivery_date[$key] ?? NULL;
+            $poChangeDetail->delivery_date_change   = $request->delivery_date[$key] ?? $poDetail->delivery_date;
             $poChangeDetail->price_change           = $price;
 
             $poChangeDetail->save();
@@ -395,7 +395,7 @@ class PurchaseOrderController extends Controller
             $poDetail->delivery_date_old    = $poDetail->delivery_date;//yg old2 di update 
             $poDetail->qty                  = $qty;
             $poDetail->price                = $price;// ini harusanya yg baru 
-            $poDetail->delivery_date        = $request->delivery_date[$key] ?? NULL;
+            $poDetail->delivery_date        = $request->delivery_date[$key] ?? $poDetail->delivery_date;
             $poDetail->delivery_complete    = $deliveryComplete;
             $poDetail->tax_code             = 1 == $taxCode ? "V1" : "V0";
 
@@ -404,7 +404,7 @@ class PurchaseOrderController extends Controller
             \App\Models\PurchaseOrderDelivery::where('purchase_order_id', $id)
                 ->where('po_item', $poDetail->PO_ITEM)
                 ->update([
-                    'delivery_date' => $request->delivery_date[$key] ?? NULL,
+                    'delivery_date' => $request->delivery_date[$key] ?? $poDetail->delivery_date,
                     'qty'           => $qty,
                 ]);
         }
@@ -540,6 +540,33 @@ class PurchaseOrderController extends Controller
                 $success = true;
                 $message = '';
             }
+
+            return response()->json([
+                'success' => $success,
+                'message' => $message,
+            ], 200);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function restoreItem(Request $request)
+    {
+        // abort_if(Gate::denies('purchase_order_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        if (isset($request->id)) {
+
+            $delete = PurchaseOrdersDetail::findOrFail($request->id);
+            $delete->is_active = 1; //active
+            $delete->update();
+
+            $success = true;
+            $message = '';
 
             return response()->json([
                 'success' => $success,

@@ -106,7 +106,6 @@
                                             $disabled = 'disabled';
                                         }
                                     @endphp
-                                    @if($value->is_active == \App\Models\PurchaseOrdersDetail::Active)
                                     <tr id="item_{{ $key }}">
                                         <input type="hidden" class="id" name="idDetail[]" id="id" value="{{ $value->id }}">
                                         <input type="hidden" class="id" name="idPrDetail[]" id="idPrDetail" value="">
@@ -121,18 +120,22 @@
                                             <label for="check_{{ $value->id }}">&nbsp;</label>
                                        </td>
                                        <td>
-                                            <input type="checkbox" class="" id="checks_{{ $key }}" name="delivery_complete[]" value="1">
+                                            <input type="checkbox" class="" id="checks_{{ $key }}" @if($value->delivery_complete == '1') checked @endif name="delivery_complete[]" value="1">
                                             <label for="checks_{{ $key }}">&nbsp;</label>
                                        </td>
                                        <td>
-                                            @if( $value->is_gr == \App\Models\PurchaseOrdersDetail::NoGr )
+                                            @if( $value->is_gr == \App\Models\PurchaseOrdersDetail::NoGr && $value->is_active == 1)
                                             <a href="javascript:;" data-key="{{ $key }}" data-id="{{ $value->id }}" data-po="{{ $purchaseOrder->PO_NUMBER }}"  class="remove-item btn btn-danger btn-xs">
                                                 <i class="fa fa-trash"></i> Delete
                                             </a>
                                             @endif
+                                            @if($value->is_active == 0)
+                                            <a href="javascript:;" data-key="{{ $key }}" data-id="{{ $value->id }}" data-po="{{ $purchaseOrder->PO_NUMBER }}"  class="undelete btn btn-success btn-xs">
+                                                <i class="fa fa-check"></i> Restore
+                                            </a>
+                                            @endif
                                        </td>
                                     </tr>
-                                    @endif
                                 @endforeach
                             </tbody>
                         </table>
@@ -256,6 +259,28 @@
             });
         }
     });
+
+    $(document).on('click','.undelete',function(e) {
+         e.preventDefault()
+        let id = $(this).data('id');
+        let deleteFile = confirm("Do you really want to Restore?");
+        const $key = $(this).data('key')
+
+        if (deleteFile == true) {
+            $.ajax({
+                url: '{{ route("admin.purchase-order-restore") }}',
+                type: 'PUT',
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    id:id
+                },
+                success: function(response){
+                    location.reload();
+                    //swal('Oops',response.message,'error')
+                }
+            });
+        }
+    })
 
     $('.history').on('change', function (e) {
         e.preventDefault()

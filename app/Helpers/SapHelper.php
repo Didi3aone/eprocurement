@@ -3120,6 +3120,7 @@ class SapHelper {
         //get data
         $poHeader = PurchaseOrder::where('PO_NUMBER',$poNumber)->first();
         $poDetail = PurchaseOrdersDetail::where('purchase_order_id',$poHeader->id)
+                    ->orderBy('PO_ITEM','asc')
                     // ->where('is_gr',0) 
                     ->get();
         $poDelivery = PurchaseOrderDelivery::where('purchase_order_id',$poHeader->id)->get();
@@ -3324,7 +3325,7 @@ class SapHelper {
                     'UNLIMITED_DLV' => '',
                     'UNDER_DLV_TOL' => '',
                     'VAL_TYPE' => '',
-                    'NO_MORE_GR' => '',
+                    'NO_MORE_GR' => $deliveryComplete,
                     'FINAL_INV' => '',
                     'ITEM_CAT' => '',
                     'ACCTASSCAT' => '',
@@ -3476,7 +3477,7 @@ class SapHelper {
                 $POITEMX = [
                     'PO_ITEM' => $poDetail[$i]->PO_ITEM,
                     'PO_ITEMX' => 'X',
-                    'DELETE_IND' => $itemDelete,
+                    'DELETE_IND' => 'X',
                     'SHORT_TEXT' => '',
                     'MATERIAL' => '',
                     'MATERIAL_EXTERNAL' => '',
@@ -3515,7 +3516,7 @@ class SapHelper {
                     'UNLIMITED_DLV' => '',
                     'UNDER_DLV_TOL' => '',
                     'VAL_TYPE' => '',
-                    'NO_MORE_GR' => '',
+                    'NO_MORE_GR' => 'X',
                     'FINAL_INV' => '',
                     'ITEM_CAT' => '',
                     'ACCTASSCAT' => '',
@@ -3588,7 +3589,7 @@ class SapHelper {
                     'INDUS3' => '',
                     'INF_INDEX' => '',
                     'UNTIL_DATE' => '',
-                    'DELIV_COMPL' => $deliveryComplete,
+                    'DELIV_COMPL' => 'X',
                     'PART_DELIV' => '',
                     'SHIP_BLOCKED' => '',
                     'PREQ_NAME' => 'X',
@@ -3866,7 +3867,7 @@ class SapHelper {
                     'UNLIMITED_DLV' => '',
                     'UNDER_DLV_TOL' => '',
                     'VAL_TYPE' => '',
-                    'NO_MORE_GR' => '',
+                    'NO_MORE_GR' => $deliveryComplete,
                     'FINAL_INV' => '',
                     'ITEM_CAT' => '9',
                     'ACCTASSCAT' => 'K',
@@ -4057,7 +4058,7 @@ class SapHelper {
                     'UNLIMITED_DLV' => '',
                     'UNDER_DLV_TOL' => '',
                     'VAL_TYPE' => '',
-                    'NO_MORE_GR' => '',
+                    'NO_MORE_GR' => $deliveryComplete,
                     'FINAL_INV' => '',
                     'ITEM_CAT' => 'X',
                     'ACCTASSCAT' => 'X',
@@ -4495,7 +4496,7 @@ class SapHelper {
                     'UNLIMITED_DLV' => '',
                     'UNDER_DLV_TOL' => '',
                     'VAL_TYPE' => '',
-                    'NO_MORE_GR' => '',
+                    'NO_MORE_GR' => $deliveryComplete,
                     'FINAL_INV' => '',
                     'ITEM_CAT' => '9',
                     'ACCTASSCAT' => 'K',
@@ -4686,7 +4687,7 @@ class SapHelper {
                     'UNLIMITED_DLV' => '',
                     'UNDER_DLV_TOL' => '',
                     'VAL_TYPE' => '',
-                    'NO_MORE_GR' => '',
+                    'NO_MORE_GR' => $deliveryComplete,
                     'FINAL_INV' => '',
                     'ITEM_CAT' => 'X',
                     'ACCTASSCAT' => 'X',
@@ -5128,10 +5129,10 @@ class SapHelper {
             "SYSTEM" => "0"
         ];
         $params[0]['RETURN'] = $RETURN;
-        dd($params);
+        // dd($params);
       
         $result = $client->__soapCall('ZFM_WS_POCHANGE', $params, NULL, $header);
-        // dd($result);
+        dd($result);
         return $result;
     }
 
