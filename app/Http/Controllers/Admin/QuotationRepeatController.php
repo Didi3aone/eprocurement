@@ -608,6 +608,7 @@ class QuotationRepeatController extends Controller
             $quotationDetail->subpackage_no             = $subpackgparent;
             $quotationDetail->line_no                   = $lineNumber;
             $quotationDetail->request_detail_id         = $detail['request_detail_id'];
+            $quotationDetail->rfq_number                = $detail['rfq'];
             $quotationDetail->save();
 
             if( $detail['item_category'] == QuotationDetail::SERVICE ) {
