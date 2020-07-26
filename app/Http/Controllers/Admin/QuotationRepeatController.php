@@ -285,17 +285,6 @@ class QuotationRepeatController extends Controller
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
-
      /**
      * multiple approve po.
      *
@@ -505,20 +494,21 @@ class QuotationRepeatController extends Controller
                 }
             }
 
-            $quotDelivery = QuotationDelivery::where('quotation_id', $header->id)->get();
+        }
+        
+        $quotDelivery = QuotationDelivery::where('quotation_id', $header->id)->get();
 
-            foreach( $quotDelivery as $rec ) {
-                $poDel = new PurchaseOrderDelivery;
-                $poDel->purchase_order_id = $po->id;
-                $poDel->purchase_order_detail_id = $detail->id;
-                $poDel->sched_line = $rec->SCHED_LINE;
-                $poDel->po_item = $rec->PO_ITEM;
-                $poDel->delivery_date = $rec->DELIVERY_DATE;
-                $poDel->preq_no = $rec->PREQ_NO;
-                $poDel->preq_item = $rec->PREQ_ITEM;
-                $poDel->qty = $rec->QTY;
-                $poDel->save();
-            }
+        foreach( $quotDelivery as $rec ) {
+            $poDel = new PurchaseOrderDelivery;
+            $poDel->purchase_order_id = $po->id;
+            $poDel->purchase_order_detail_id = $detail->id;
+            $poDel->sched_line = $rec->SCHED_LINE;
+            $poDel->po_item = $rec->PO_ITEM;
+            $poDel->delivery_date = $rec->DELIVERY_DATE;
+            $poDel->preq_no = $rec->PREQ_NO;
+            $poDel->preq_item = $rec->PREQ_ITEM;
+            $poDel->qty = $rec->QTY;
+            $poDel->save();
         }
 
         $print = false;
