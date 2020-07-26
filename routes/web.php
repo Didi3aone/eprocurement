@@ -332,7 +332,7 @@ Route::group(['prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor', 
     Route::get('billing-po-gr/{po_no}', 'BillingController@poGR')->name('billing-po-gr');
     Route::get('billing-edit/{id}', 'BillingController@edit')->name('billing-edit');
     Route::post('billing-post', 'BillingController@store')->name('billing-post');
-    Route::post('billing-post-update/{id}', 'BillingController@store')->name('billing-post-update');
+    Route::post('billing-post-update/{id}', 'BillingController@update')->name('billing-post-update');
 
     // logout
     Route::post('logout', '\App\Http\Controllers\AuthVendor\LoginController@logout')->name('logout');

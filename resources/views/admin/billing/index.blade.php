@@ -36,7 +36,7 @@
                             @foreach($billing as $key => $rows)
                                 <tr>
                                     <td>{{ $rows->billing_no }}</td>
-                                    <td>{{ isset($rows->vendor) ? $rows->vendor->name : '' }}</td>
+                                    <td>{{ isset($rows->vendor) ? $rows->vendor->code." - ".$rows->vendor->name : '' }}</td>
                                     <td>{{ $rows->no_faktur }}</td>
                                     <td>{{ $rows->no_invoice }}</td>
                                     <td>{{ App\Models\Vendor\Billing::TypeStatus[$rows->status] }}</td>

@@ -18,6 +18,7 @@ use App\Models\MasterBankHouse;
 use App\Http\Requests\UpdateBillingRequest;
 use Symfony\Component\HttpFoundation\Response;
 use App\Mail\billingIncompleted;
+use App\Mail\billingRejected;
 class BillingController extends Controller
 {
     /**
@@ -169,21 +170,26 @@ class BillingController extends Controller
 
         $billing->update();
 
-        foreach( $billing->detail as $key => $rows ) {
-            $poGr = PurchaseOrderGr::where('po_no', $rows->po_no)
-                ->where('po_item', $rows->PO_ITEM)
-                ->where('material_no', $rows->material_id)
-                ->first();
+        // foreach( $billing->detail as $key => $rows ) {
+        //     $poGr = PurchaseOrderGr::where('po_no', $rows->po_no)
+        //         ->where('po_item', $rows->PO_ITEM)
+        //         ->where('material_no', $rows->material_id)
+        //         ->first();
 
-            $poGr->qty += $rows->qty;
+        //     $poGr->qty += $rows->qty;
 
-            $poGr->save();
+        //     $poGr->save();
 
-            $poDetail = PurchaseOrdersDetail::where('id', $rows->purchase_order_detail_id)
-                        ->first();
-            $poDetail->qty_billing -= $rows->qty;
-            $poDetail->save();
-        }
+        //     $poDetail = PurchaseOrdersDetail::where('id', $rows->purchase_order_detail_id)
+        //                 ->first();
+        //     $poDetail->qty_billing -= $rows->qty;
+        //     $poDetail->save();
+        // }
+        $name  = "didi";
+        $email = 'diditriawan13@gmail.com';
+        // $getEmailVendor = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
+
+        \Mail::to($email)->send(new billingRejected($billing, $name));
         \Session::flash('status','Billing has been rejected');
         return \redirect()->route('admin.billing');
     }

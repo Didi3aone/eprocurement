@@ -54,10 +54,8 @@
                             <tr>
                                 <th>Material</th>
                                 <th>Unit</th>
-                                <th>Qty Old</th>
-                                <th>Qty New</th>
-                                <th>Price Old</th>
-                                <th>Price New</th>
+                                <th>Qty</th>
+                                <th>Price</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -65,15 +63,37 @@
                             <tr>
                                 <td>{{ $value->material_id." - ".$value->description }}</td>
                                 <td>{{ $value->unit }}</td>
-                                <td>{{ $value->qty_old }}</td>
                                 <td>{{ $value->qty }}</td>
-                                <td>{{ $value->original_price }}</td>
                                 <td>{{ $value->price }}</td>
                             </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
+
+                <div class="card-body">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Material</th>
+                                <th>Unit</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($history->detail as $key => $value)
+                            <tr>
+                                <td>{{ $value->material_id." - ".$value->description }}</td>
+                                <td>{{ $value->unit }}</td>
+                                <td>{{ $value->qty }}</td>
+                                <td>{{ $value->price }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
                 <div class="card-body">
                     <div class="row" style="margin-top: 20px">
                         <div class="col-lg-12">

@@ -97,7 +97,7 @@
                                 </tr>
                              </thead>
                             <tbody id="poItem">
-                                @foreach($purchaseOrder->orderDetail as $key => $value) 
+                                @foreach($purchaseOrderDetail as $key => $value) 
                                     @php
                                         $readonly = '';
                                         $disabled = '';

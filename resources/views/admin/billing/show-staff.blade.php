@@ -155,7 +155,7 @@
                         <a href="javascript:;" id="reject" data-toggle="modal" data-id="{{ $billing->id }}" data-target="#modal_rejected_reason" type="button" class="btn btn-danger"> 
                             <i class="fa fa-times"></i> {{ trans('global.reject') }}
                         </a>
-                        @elseif($billing->status == \App\Models\Vendor\Billing::Approved )
+                        @elseif($billing->status == \App\Models\Vendor\Billing::Approved OR $billing->status == \App\Models\Vendor\Billing::Incompleted)
                         <a href="javascript:;" id="verify" type="button" class="btn btn-success"> <i class="fa fa-check"></i> {{ 'verify' }}</a>
                         <a href="javascript:;" id="rejects" data-toggle="modal" data-id="{{ $billing->id }}" data-target="#modal_rejected_reasons" type="button" class="btn btn-warning"> 
                         <i class="fa fa-times"></i> {{ 'Incomplete' }}</a>
@@ -185,7 +185,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
-                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Submit</button>
                 </div>
             </form>
         </div>
@@ -210,7 +210,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
-                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Submit</button>
                 </div>
             </form>
         </div>

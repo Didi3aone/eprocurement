@@ -295,6 +295,7 @@ class PurchaseOrderController extends Controller
     public function showApprovalAss($id)
     {
         $purchaseOrder = PurchaseOrder::find($id);
+        $history       = PurchaseOrderChangeHistory::where('po_id', $id)->first();
 
         return view('admin.purchase-order.show-change-ass', compact('purchaseOrder'));
     }
@@ -320,9 +321,9 @@ class PurchaseOrderController extends Controller
         $purchaseOrder = PurchaseOrder::findOrFail($id);
         $currency = \App\Models\Currency::all();
         $top = \App\Models\PaymentTerm::all();
-        $poDetail = PurchaseOrdersDetail::where('purchase_order_id', $id)->get();
+        $purchaseOrderDetail = PurchaseOrdersDetail::where('purchase_order_id', $id)->orderBy('PO_ITEM','asc')->get();
 
-        return view('admin.purchase-order.edit', compact('purchaseOrder', 'currency', 'top', 'poDetail'));
+        return view('admin.purchase-order.edit', compact('purchaseOrder', 'currency', 'top', 'purchaseOrderDetail'));
     }
 
     /**
@@ -336,8 +337,6 @@ class PurchaseOrderController extends Controller
     {
         // dd($request);
         $purchaseOrder = PurchaseOrder::findOrFail($id);
-        // $purchaseOrder->notes = $request->get('notes');
-        // $purchaseOrder->payment_term = $request->get('payment_term');
 
         $poChangeHeader = new PurchaseOrderChangeHistory();
         $poChangeHeader->po_id          = $purchaseOrder->id;
@@ -345,8 +344,6 @@ class PurchaseOrderController extends Controller
         $poChangeHeader->vendor_change  = $request->get('payment_term') ?? '';
         $poChangeHeader->notes_old      = $purchaseOrder->notes;
         $poChangeHeader->notes_change   = $request->get('notes');
-        
-        // $poChangeHeader->peyment_term_old       = $purchaseOrder->payment_term;
         $poChangeHeader->save();
 
         $service        = '';
@@ -418,17 +415,18 @@ class PurchaseOrderController extends Controller
             $purchaseOrder->save();
 
             return redirect()->route('admin.purchase-order.index')->with('status', 'Purchase order has been updated & waiting approval');
-        }
-
-        $poChange = \sapHelp::sendPOchangeToSap($purchaseOrder->PO_NUMBER);
-        if ($poChange) {
-            $purchaseOrder->status_approval = PurchaseOrder::Approved;
-            $purchaseOrder->save();
-            return redirect()->route('admin.purchase-order.index')->with('status', 'Purchase order has been updated');
+        } else {
+            $poChange = \sapHelp::sendPOchangeToSap($purchaseOrder->PO_NUMBER);
+            if ($poChange) {
+                $purchaseOrder->status_approval = PurchaseOrder::Approved;
+                $purchaseOrder->save();
+                return redirect()->route('admin.purchase-order.index')->with('status', 'Purchase order has been updated');
+            } else {
+                \Session::flash('error', 'Internal server error');
+            }
         }
 
         return redirect()->route('admin.purchase-order.index');
-        \Session::flash('error', 'Internal server error');
     }
 
     /**

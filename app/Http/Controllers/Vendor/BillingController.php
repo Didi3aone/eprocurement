@@ -343,8 +343,140 @@ class BillingController extends Controller
         $billing = Billing::find($id);
         $details = BillingDetail::where('billing_id', $id)
             ->get();
+        $rekening =  VendorBankDetails::where('vendor_id', \Auth::user()->id)
+            ->get()
+            ->pluck('account_no', 'id');
 
-        return view('vendor.billing.edit',compact('billing', 'details'));
+        return view('vendor.billing.edit',compact('billing', 'details','rekening'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            \DB::beginTransaction();
+            // save file
+            $filePoName = '';
+            $suratJalanName = '';
+            $fileFakturName  = '';
+            $fileInvoiceName = '';
+            $fileBebasName = '';
+            $path = 'billing/';
+
+            if ($request->file('po') != null) {
+                $filePo = $request->file('po');
+                $filePoName = time() . $filePo->getClientOriginalName();
+                $filePo->move(public_path() . '/files/uploads/', $filePoName);
+            }
+
+            if ($request->file('no_surat_jalan') != null) {
+                $suratJalan = $request->file('no_surat_jalan');
+                $suratJalanName = time() . $suratJalan->getClientOriginalName();
+                $suratJalan->move(public_path() . '/files/uploads/', $suratJalanName);
+            }
+
+            if ($request->file('surat_ket_bebas_pajak') != null) {
+                $fileBebas = $request->file('surat_ket_bebas_pajak');
+                $fileBebasName = time() . $fileBebas->getClientOriginalName();
+                $fileBebas->move(public_path() . '/files/uploads/', $fileBebasName);
+            }
+            
+            if ($request->file('file_faktur') != null) {
+                $fileFaktur = $request->file('file_faktur');
+                $fileFakturName = time() . $fileFaktur->getClientOriginalName();
+                $fileFaktur->move(public_path() . '/files/uploads/', $fileFakturName);
+            }
+            
+            if ($request->file('file_invoice') != null) {
+                $fileInvoice = $request->file('file_invoice');
+                $fileInvoiceName = time() . $fileInvoice->getClientOriginalName();
+                $fileInvoice->move(public_path() . '/files/uploads/', $fileInvoiceName);
+            }
+
+            $nominal_inv_after_ppn =  str_replace(',', '.', $request->nominal_inv_after_ppn);
+
+            $billing = Billing::find($id);
+            $billing->billing_no            = date('y').substr(time(),0,-19)."".time();
+            $billing->tgl_faktur            = $request->tgl_faktur;
+            $billing->no_faktur             = $request->no_faktur;
+            $billing->no_invoice            = $request->no_invoice;
+            $billing->tgl_invoice           = $request->tgl_invoice;
+            $billing->nominal_inv_after_ppn = $nominal_inv_after_ppn;
+            $billing->ppn                   = $request->ppn;
+            $billing->dpp                   = $request->dpp;
+            $billing->no_rekening           = $request->no_rekening;
+            $billing->npwp                  = $request->npwp;
+            $billing->status                = Billing::WaitingApprove;
+            
+            if( $suratJalanName != '' ) {
+                $billing->no_surat_jalan        = $suratJalanName;
+            }
+            if( $fileBebasName != '' ) {
+                $billing->surat_ket_bebas_pajak = $fileBebasName;
+            } 
+            if( $filePoName != '' ) {
+                $billing->po                    = $filePoName;
+            }
+            if( $fileFakturName != '' ) {
+                $billing->file_faktur           = $fileFakturName;
+            }
+            if( $fileInvoiceName != '' ) {
+                $billing->file_invoice          = $fileInvoiceName;
+            }
+            $billing->keterangan_po         = $request->keterangan_po;
+            $billing->vendor_id             = Auth::user()->code;
+            $billing->save();
+
+            if( $request->has('idDetails') ) {
+                foreach ($request->get('idDetails') as $key => $val) {
+                    $billingDetail = BillingDetail::find($val);
+                    //jika rubah qty
+                    if( $billingDetail->qty != $request->get('qty')[$key] ) {
+                        $poGr = PurchaseOrderGr::where('po_no', $billingDetail->po_no)
+                            ->where('po_item', $billingDetail->PO_ITEM)
+                            ->where('material_no', $billingDetail->material_id)
+                            ->first();
+
+                        $poGr->qty    += $billingDetail->qty;
+                        $poGr->update();
+
+                        $poDetail = PurchaseOrdersDetail::find($billingDetail->purchase_order_detail_id);
+                        $poDetail->qty_billing -= $billingDetail->qty;
+                        $poDetail->update();
+                    }
+
+                    $poNo               = $request->get('po_no')[$key];
+                    $qty                = $request->get('qty')[$key];
+                    $qty_old            = $request->get('qty_old')[$key];
+
+                    $billingDetail->billing_id   = $id;
+                    $billingDetail->po_no        = $poNo;
+                    $billingDetail->qty          = $qty;
+                    $billingDetail->qty_old      = $qty_old;
+                    $billingDetail->update();
+
+                    $_poGr = PurchaseOrderGr::where('po_no', $poNo)
+                            ->where('po_item', $billingDetail->PO_ITEM)
+                            ->where('material_no', $billingDetail->material_id)
+                            ->first();
+
+                    $_poGr->qty_billing = $qty;
+                    $_poGr->qty         = $qty_old - $qty;
+                    $_poGr->update();
+
+                    $poDetail_ = PurchaseOrdersDetail::find($billingDetail->purchase_order_detail_id);
+                    $poDetail_->qty_billing = $qty;
+                    $poDetail_->update();
+                }
+            }
+
+            \DB::commit();
+        } catch (\Throwable $th) {
+            throw $th;
+            \DB::rollback();
+            return redirect()->route('vendor.billing-create')->withInput();
+        }
+
+        return redirect()->route('vendor.billing')->with('status', 'Billing has been successfully saved');
     }
 
     public function poGR ($po_no)
