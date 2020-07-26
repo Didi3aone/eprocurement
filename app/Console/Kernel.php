@@ -33,7 +33,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('po:gr')->everyMinute();
 
         //get GR debet H
-        $schedule->command('po:gr-min')->cron('*/2 * * * *')
+        $schedule->command('po:gr-min')->cron('*/2 * * * *');
     }
 
     /**
