@@ -26,7 +26,7 @@ class Quotation extends Model
 
     public const TypeStatusApproval = [
         0 => 'Waiting For Approval',
-        10 => 'Waitinr Approval Proc Head',
+        10 => 'Waiting Approval Proc Head',
         20 => 'Approved',
         30 => 'Rejected'
     ];
