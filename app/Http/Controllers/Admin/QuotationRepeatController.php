@@ -329,6 +329,7 @@ class QuotationRepeatController extends Controller
                 $quotationDetail = QuotationDetail::where('quotation_order_id', $id)->get();
                 $quotationDeliveryDate = QuotationDelivery::where('quotation_id', $id)->get();
 
+                // $sendSap = true;
                 $sendSap = \sapHelp::sendPoToSap($quotation, $quotationDetail,$quotationDeliveryDate);
                 if( $sendSap ) {
                     $this->_clone_purchase_orders($quotation, $quotationDetail, $sendSap);
@@ -448,7 +449,7 @@ class QuotationRepeatController extends Controller
                 'purchasing_document'       => $rows->purchasing_document ?? 0,
                 'PR_NO'                     => $rows->PR_NO,
                 'assets_no'                 => $rows->assets_no,
-                'acp_id'                    => $rows->acp_id,
+                'acp_id'                    => $rows->acp_id ?? 0,
                 'short_text'                => $rows->short_text,
                 'text_id'                   => $rows->text_id,
                 'text_form'                 => $rows->text_form,
@@ -499,7 +500,7 @@ class QuotationRepeatController extends Controller
         $quotDelivery = QuotationDelivery::where('quotation_id', $header->id)->get();
 
         foreach( $quotDelivery as $rec ) {
-            $poDel = new PurchaseOrderDelivery;
+            $poDel = new \App\Models\PurchaseOrderDelivery;
             $poDel->purchase_order_id = $po->id;
             $poDel->purchase_order_detail_id = $detail->id;
             $poDel->sched_line = $rec->SCHED_LINE;
@@ -507,7 +508,7 @@ class QuotationRepeatController extends Controller
             $poDel->delivery_date = $rec->DELIVERY_DATE;
             $poDel->preq_no = $rec->PREQ_NO;
             $poDel->preq_item = $rec->PREQ_ITEM;
-            $poDel->qty = $rec->QTY;
+            $poDel->qty = $rec->QUANTITY;
             $poDel->save();
         }
 
