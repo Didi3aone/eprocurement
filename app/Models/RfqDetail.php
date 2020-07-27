@@ -12,6 +12,9 @@ class RfqDetail extends Model
 
     public static function getRfq($materialId, $text = null)
     {
+        ini_set('memory_limit', '20000M');
+        //ini_set('memory_limit', '-1');
+        set_time_limit(0);
         return RfqDetail::join('rfqs','rfqs.rfq_number','=','rfq_details.rfq_number')
         ->select(
             'rfqs.id',

@@ -312,6 +312,9 @@ class PurchaseRequestController extends Controller
      */
     public function repeat(Request $request, $ids, $quantities, $docs)
     {
+        ini_set('memory_limit', '20000M');
+        //ini_set('memory_limit', '-1');
+        set_time_limit(0);
         $ids = base64_decode($ids);
         $quantities = base64_decode($quantities);
         $docs = base64_decode($docs);

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Email\vendorNotifEmailGr;
 
 class PoGrGet extends Command
 {
@@ -73,7 +74,7 @@ class PoGrGet extends Command
             //     // 1 => '3010002759'
             // ];
             $poHeader = [];
-            $poDetail = [];
+            $poDetail = []; 
 
             foreach( $purchaseOrder as $key => $row ) {
                 echo "..... \n";

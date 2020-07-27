@@ -9,7 +9,7 @@
 <table style="width: 85%; height: auto; margin: 20px auto !important; background: #fff; border-spacing: 0; border: 0;">
 	<tr>
 		<td colspan="2" style="padding: 10px; line-height: 1.5; background: #196A39; text-align: center; color: #fff; border-bottom: 3px solid #ddd;">
-			<h1 style="font-size: 20px; margin: 0;">Purchase Request</h1>
+			<h1 style="font-size: 20px; margin: 0;">Purchase Order Good Receipt</h1>
 		</td>
 	</tr>
 
@@ -20,12 +20,10 @@
 			</h3>
 
             <p style="font-size: 13px;">
-                Berikut ini adalah informasi purchase requesition telah disetujui
+				Below is the item information that has been gr
 			</p>
 			<p style="font-size: 13px;">
-                Pembuat : {{ \getProfileLocal($pr->created_by)->name }} <br>
-                No Dok  : {{  $pr->request_no }} <br>
-                Notes   : {{  $pr->notes }} <br>
+      
 			</p>
 
 			<div style="border-top: 1px dashed #ddd; border-bottom:1px dashed #ddd">
@@ -54,31 +52,7 @@
 						</th>
 					</tr>
 					</thead>
-					<tbody>
-					{{-- @foreach($pr->purchaseDetail as $key => $value) --}}
-					{{-- <tr>
-						<td style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
-                            <div>
-								{{ $key + 1 }} 	
-							</div>
-						</td>
-						<td style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
-                            <div>
-								{{ $value->material_id." - ".$value->description }} 	
-							</div>
-						</td>
-                        <td style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
-                            <div>
-								{{ $value->qty }} 	
-							</div>
-						</td>
-						<td style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
-                            <div>
-								{{ $value->unit }} 	
-							</div>
-						</td>
-					</tr> --}}
-					{{-- @endforeach --}}
+					
 					</tbody>
 				</table>
 			</div>

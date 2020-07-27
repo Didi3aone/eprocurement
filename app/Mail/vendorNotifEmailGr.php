@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class enesisNotifEmailGr extends Mailable
+class vendorNotifEmailGr extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -27,7 +27,7 @@ class enesisNotifEmailGr extends Mailable
 
     /**
      * Build the message.
-     *
+     * 
      * @return $this
      */
     public function build()
