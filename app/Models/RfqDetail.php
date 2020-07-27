@@ -39,4 +39,33 @@ class RfqDetail extends Model
         )
         ->get();
     }
+
+    public static function getLastPo($materialId)
+    {
+        return RfqDetail::join('rfqs','rfqs.rfq_number','=','rfq_details.rfq_number')
+        ->select(
+            'rfqs.id',
+            'rfq_details.material_id',
+            'rfqs.po_number',
+            'rfqs.rfq_number',
+            'rfqs.vendor_id',
+            'rfq_details.net_price',
+            'rfq_details.currency',
+            'rfqs.is_from_po',
+        )
+        ->where('material_id', $materialId)
+        ->orderBy('rfqs.id','desc')
+        // ->distinct()
+        ->groupBy(
+            'rfqs.id',
+            'rfq_details.material_id',
+            'rfqs.po_number',
+            'rfqs.rfq_number',
+            'rfqs.vendor_id',
+            'rfq_details.net_price',
+            'rfq_details.currency',
+            'rfqs.is_from_po'
+        )
+        ->first();
+    }
 }
