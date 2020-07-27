@@ -201,11 +201,6 @@ class BillingController extends Controller
         $billing->verify_date       = date('Y-m-d');
 
         $billing->update();
-        $name  = "didi";
-        $email = 'diditriawan13@gmail.com';
-        // $getEmailVendor = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
-
-        \Mail::to($email)->send(new billingIncompleted($billing, $name));
 
         \Session::flash('status','Billing has been verify');
         return \redirect()->route('admin.billing-edit',$request->id);
