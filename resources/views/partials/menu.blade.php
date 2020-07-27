@@ -158,7 +158,7 @@
                         <li>
                             <a href="{{ route('admin.purchase-order-change-ass') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
-                                Approval Change (ASS)
+                                Approval Change Assproc
                             </a>
                         </li>
                         @endcan
@@ -166,7 +166,7 @@
                         <li>
                             <a href="{{ route('admin.purchase-order-change-head') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
-                                Approval Change (HEAD)
+                                Approval Change Head
                             </a>
                         </li>
                         @endcan

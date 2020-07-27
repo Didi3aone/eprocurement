@@ -172,6 +172,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('purchase-order-show-head/{id}','PurchaseOrderController@showApprovalHead')->name('purchase-order-show-head');
     Route::get('purchase-order-change-ass','PurchaseOrderController@approvalPoChange')->name('purchase-order-change-ass');
     Route::get('purchase-order-change-head','PurchaseOrderController@approvalPoChangeHead')->name('purchase-order-change-head');
+    Route::get('purchase-order-check-qty-pr','PurchaseOrderController@checkQtyPr')->name('purchase-order-check-qty-pr');
     Route::resource('purchase-order', 'PurchaseOrderController');
 
     Route::resource('purchase-order-detail', 'PurchaseOrderDetailController');

@@ -73,7 +73,7 @@ class PurchaseOrderController extends Controller
      */
     public function approvalPoChange()
     {
-        abort_if(Gate::denies('purchase_order_approval_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('purchase_order_approval_change_ass_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $po = PurchaseOrder::leftJoin('vendors', 'vendors.code', '=', 'purchase_orders.vendor_id')
                 ->where('purchase_orders.approved_asspro', \Auth::user()->nik)
@@ -99,7 +99,7 @@ class PurchaseOrderController extends Controller
      */
     public function approvalPoChangeHead()
     {
-        abort_if(Gate::denies('purchase_order_approval_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('purchase_order_approval_change_head_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $po = PurchaseOrder::leftJoin('vendors', 'vendors.code', '=', 'purchase_orders.vendor_id')
             // ->where('purchase_orders.approved_asspro', \Auth::user()->nik)
@@ -405,8 +405,9 @@ class PurchaseOrderController extends Controller
                     'qty'           => $qty,
                 ]);
         }
-
+        // dd($totalPrice);
         if ( $purchaseOrder->total_price != $totalPrice ) {
+            // dd('1');
             $purchaseOrder->total_price     = $totalPrice;
             $purchaseOrder->status_approval = PurchaseOrder::Rejected;
             $purchaseOrder->is_approve_head = 1;//balik ke assproc lagi
@@ -416,7 +417,9 @@ class PurchaseOrderController extends Controller
 
             return redirect()->route('admin.purchase-order.index')->with('status', 'Purchase order has been updated & waiting approval');
         } else {
-            $poChange = \sapHelp::sendPOchangeToSap($purchaseOrder->PO_NUMBER);
+            $poChange = true;
+            // dd('2');
+            // $poChange = \sapHelp::sendPOchangeToSap($purchaseOrder->PO_NUMBER);
             if ($poChange) {
                 $purchaseOrder->status_approval = PurchaseOrder::Approved;
                 $purchaseOrder->save();
@@ -565,6 +568,33 @@ class PurchaseOrderController extends Controller
 
             $success = true;
             $message = '';
+
+            return response()->json([
+                'success' => $success,
+                'message' => $message,
+            ], 200);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function checkQtyPr(Request $request)
+    {
+        if (isset($request->id)) {
+
+            $prDetail = PurchaseRequestsDetail::findOrFail($request->id);
+            $success = true;
+            $message = '';
+
+            if( $prDetail->qty < $request->qty ) {
+                $success = false;
+                $message = 'Quantity cannot be more than default quantity request';
+            }
 
             return response()->json([
                 'success' => $success,

@@ -162,6 +162,19 @@
         "ordering": false
     });
 
+    $(document).on('change', '.qty-change', function () {
+        $tr = $(this).closest('tr')
+        $qty_old = parseInt($tr.find('.qty-old').val())
+        $this = $(this)
+
+        if (parseInt($(this).val()) > $qty_old) {
+            alert('Quantity cannot be more than default quantity')
+            $this.val($qty_old)
+
+            return false
+        }
+    }).trigger('change')
+
     let index = 1
     $(document).ready(function() {
         $('#add_item').on('click', function (e) {
