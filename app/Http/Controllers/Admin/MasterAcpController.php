@@ -322,6 +322,8 @@ class MasterAcpController extends Controller
                     $rfqDetailNew->rfq_number                   = $val['rfq_number'];
                     $rfqDetailNew->po_item                      = $poItem;
                     $rfqDetailNew->is_from_po                   = 2;
+                    $rfqDetailNew->po_number                    = 0;
+                    $rfqDetailNew->vendor_id                    = $val['vendor'];
                     $rfqDetailNew->save();
                 }
             }

@@ -350,16 +350,6 @@ class PurchaseRequestController extends Controller
                 ->where('code', $type)
                 ->get();
         $currency = Currency::all();
-        $rfqDetail = RfqDetail::join('rfqs','rfqs.rfq_number','=','rfq_details.rfq_number')
-            ->select(
-                'rfqs.po_number',
-                'rfqs.rfq_number',
-                'rfqs.vendor_id',
-                'rfq_details.net_price',
-                'rfq_details.currency',
-                'rfqs.is_from_po',
-            )
-            ->get();
 
         $uri = [
             'ids' => base64_encode($ids),
@@ -374,7 +364,6 @@ class PurchaseRequestController extends Controller
             'uri',
             'top',
             'currency',
-            'rfqDetail'
         ));
     }
 

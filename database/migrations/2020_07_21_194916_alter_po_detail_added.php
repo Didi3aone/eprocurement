@@ -13,11 +13,11 @@ class AlterPoDetailAdded extends Migration
      */
     public function up()
     {
-        Schema::table('purchase_orders_details', function (Blueprint $table) {
-            // $table->bigInteger('rfq_number')->nullable();
-            $table->date('delivery_date_old')->nullable();
-            $table->decimal('qty_old')->default('0.00');
-        });
+        // Schema::table('purchase_orders_details', function (Blueprint $table) {
+        //     // $table->bigInteger('rfq_number')->nullable();
+        //     $table->date('delivery_date_old')->nullable();
+        //     $table->decimal('qty_old')->default('0.00');
+        // });
 
         // Schema::table('quotation_details', function (Blueprint $table) {
         //     $table->bigInteger('rfq_number')->nullable();
@@ -27,9 +27,14 @@ class AlterPoDetailAdded extends Migration
         //     $table->string('currency')->nullable();
         // });
 
-        // Schema::table('rfqs', function (Blueprint $table) {
-        //     $table->integer('is_from_po')->default(1);
-        // });
+        Schema::table('rfqs', function (Blueprint $table) {
+            $table->dropColumn('po_number');
+        });
+
+        Schema::table('rfq_details', function (Blueprint $table) {
+            $table->string('po_number')->nullable();
+            $table->string('vendor_id')->nullable();
+        });
 
         // Schema::table('purchase_order_change_history_detail', function (Blueprint $table) {
         //     $table->date('delivery_date_old')->nullable();
