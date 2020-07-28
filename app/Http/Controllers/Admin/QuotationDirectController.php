@@ -447,14 +447,14 @@ class QuotationDirectController extends Controller
 
             // insert RFQ
             // by acp id
-            $rfqs = Rfq::where('acp_id', $row->acp_id)->first();
-            $rfqs->doc_type_po = $header->doc_type;
-            $rfqs->update();
+            // $rfqs = Rfq::where('acp_id', $rows->acp_id)->first();
+            // $rfqs->doc_type_po = $header->doc_type;
+            // $rfqs->update();
 
-            RfqDetail::where('rfq_number',$rfqs->rfq_number )
-                ->update([
-                    'po_number'   => $poNumber
-                ]);
+            // RfqDetail::where('rfq_number',$rfqs->rfq_number )
+            //     ->update([
+            //         'po_number'   => $poNumber
+            //     ]);
 
             $detail = PurchaseOrdersDetail::create([
                 'purchase_order_id'         => $poId->id,
@@ -565,7 +565,7 @@ class QuotationDirectController extends Controller
             if( $detail['item_category'] == QuotationDetail::SERVICE ) {
 
                 $subpackgparent    .= (2+($i*2));
-                $lineNumber        .= $i;
+                $lineNumber        .= $i + 1;
                 if( $i % 2 == 0 ) {
                     //anak genap
                     $ke3 =  $i+1;
