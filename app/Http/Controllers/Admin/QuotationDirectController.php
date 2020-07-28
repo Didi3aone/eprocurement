@@ -447,9 +447,12 @@ class QuotationDirectController extends Controller
 
             // insert RFQ
             // by acp id
-            Rfq::where('acp_id',$rows->acp_id )
+            $rfqs = Rfq::where('acp_id', $row->acp_id)->first();
+            $rfqs->doc_type_po = $header->doc_type;
+            $rfqs->update();
+
+            RfqDetail::where('rfq_number',$rfqs->rfq_number )
                 ->update([
-                    'doc_type_po' => $header->doc_type,
                     'po_number'   => $poNumber
                 ]);
 
@@ -605,7 +608,7 @@ class QuotationDirectController extends Controller
             $quotationDetail->account_assignment        = $detail['account_assignment'];
             $quotationDetail->purchasing_group_code     = $detail['purchasing_group_code'];
             $quotationDetail->preq_name                 = $detail['preq_name'];
-            $quotationDetail->gl_acct_code              = $detail['gl_acct_code'];
+            $quotationDetail->gl_acct_code              = $detail['gl_acct_code']; 
             $quotationDetail->cost_center_code          = $detail['cost_center_code'];
             $quotationDetail->profit_center_code        = $detail['profit_center_code'];
             $quotationDetail->storage_location          = $detail['storage_location'];
