@@ -263,7 +263,7 @@ class BillingController extends Controller
             $billing->tgl_invoice           = $request->tgl_invoice;
             $billing->nominal_inv_after_ppn = $nominal_inv_after_ppn;
             $billing->ppn                   = $request->ppn;
-            $billing->dpp                   = $request->dpp;
+            $billing->dpp                   = str_replace(',','',$request->dpp);
             $billing->no_rekening           = $request->no_rekening;
             $billing->no_surat_jalan        = $suratJalanName;
             $billing->npwp                  = $request->npwp;
@@ -315,16 +315,18 @@ class BillingController extends Controller
 
                 $po_gr = PurchaseOrderGr::where('po_no', $po_no)
                         ->where('po_item', $PO_ITEM)
+                        ->where('doc_gr', $request->get('doc_gr')[$key])
                         ->where('material_no', $material_no)
                         ->first();
 
                 $po_gr->qty_billing = $qty;
-                $po_gr->qty = $qty_old - $qty;
+                $po_gr->qty         = $qty_old - $qty;
                 $po_gr->save();
 
                 $poDetail = PurchaseOrdersDetail::where('id', $request->get('purchase_order_detail_id')[$key])
+                            ->where('PO_ITEM',$PO_ITEM)
                             ->first();
-                $poDetail->qty_billing = $qty;
+                $poDetail->qty_billing += $qty;
                 $poDetail->save();
             }
 
@@ -433,6 +435,7 @@ class BillingController extends Controller
                     if( $billingDetail->qty != $request->get('qty')[$key] ) {
                         $poGr = PurchaseOrderGr::where('po_no', $billingDetail->po_no)
                             ->where('po_item', $billingDetail->PO_ITEM)
+                            ->where('doc_gr', $billingDetail->doc_gr)
                             ->where('material_no', $billingDetail->material_id)
                             ->first();
 
@@ -457,6 +460,7 @@ class BillingController extends Controller
                     $_poGr = PurchaseOrderGr::where('po_no', $poNo)
                             ->where('po_item', $billingDetail->PO_ITEM)
                             ->where('material_no', $billingDetail->material_id)
+                            ->where('doc_gr', $billingDetail->doc_gr)
                             ->first();
 
                     $_poGr->qty_billing = $qty;

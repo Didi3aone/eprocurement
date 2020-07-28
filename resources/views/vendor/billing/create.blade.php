@@ -59,7 +59,7 @@
                                 </div>
                                 <div class="form-group col-lg-4">
                                     <label>DPP <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control form-control-line {{ $errors->has('dpp') ? 'is-invalid' : '' }}" name="dpp" id="dpp" value="{{ old('dpp', '') }}"> 
+                                    <input type="text" class="form-control form-control-line {{ $errors->has('dpp') ? 'is-invalid' : '' }}" name="dpp" id="dpp" onkeyup="leadingZero(this.value, $(this), true)" value="{{ old('dpp', '') }}"> 
                                     @if($errors->has('dpp'))
                                         <div class="invalid-feedback">
                                             {{ $errors->first('dpp') }}
@@ -269,7 +269,7 @@
                         </tr>
                     `
                 });
-                $(document).find('#billing-detail').html(template)
+                $(document).find('#billing-detail').append(template)
 
             })
         }
@@ -390,6 +390,43 @@
         pdffile_url=URL.createObjectURL(pdffile);
         
         $('#viewer_faktur').attr('href',pdffile_url);
+    }
+
+    window.leadingZero = function(value, element, decimal = false) {
+        var convert_number = removeChar(value);
+
+        if(decimal) {
+            if(value != '') {
+            element.val(keyupFormatUangWithDecimal(value));
+            } else {
+            element.val(0);
+            }
+        } else {
+            if(value != '') {
+            element.val(keyupFormatUang(parseInt(convert_number)));
+            } else {
+            element.val(0);
+            }
+        }
+    }
+
+    function removeChar(value) {
+        return value.toString().replace(/[.*+?^${}()|[\]\\]/g, '');
+    }
+
+    window.keyupFormatUang = function(value) {
+        var number = '';    
+        var value_rev = value.toString().split('').reverse().join('');
+        
+        for(var i = 0; i < value_rev.length; i++) {
+            if(i % 3 == 0) number += value_rev.substr(i, 3) + '.';
+        }
+        
+        return number.split('', number.length - 1).reverse().join('');
+        }
+
+        window.keyupFormatUangWithDecimal = function(value) {
+        return value.replace(/^0+/, '').replace(/(?!\.)\D/g, "").replace(/(?<=\..*)\./g, "").replace(/(?<=\.\d\d).*/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
 </script>
