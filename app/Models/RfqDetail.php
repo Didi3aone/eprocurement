@@ -10,8 +10,9 @@ class RfqDetail extends Model
     public $timestamps = false;
 
 
-    public static function getRfq($materialId, $text = null)
+    public static function getRfq($materialId)
     {
+        // echo $materialId;die;
         ini_set('memory_limit', '20000M');
         //ini_set('memory_limit', '-1');
         set_time_limit(0);
