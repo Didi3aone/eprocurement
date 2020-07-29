@@ -66,20 +66,22 @@ class PurchaseRequestController extends Controller
             ->where('purchase_requests_details.is_validate', PurchaseRequestsDetail::YesValidate)
             ->whereIn('purchase_requests_details.purchasing_group_code', $userMapping)
             ->where('purchase_requests_details.qty', '>', '0.00')
+            ->whereIn('purchase_requests_details.status_approval', [PurchaseRequestsDetail::Approved,PurchaseRequestsDetail::ApprovedPurchasing])
             // ->where('purchase_requests_details.line_no', '0000000001')
             //     ->orWhere('purchase_requests_details.line_no', '000000000')
-            ->where(function ($query) {
-                $query->where('purchase_requests_details.status_approval', PurchaseRequestsDetail::Approved)
-                    ->orWhere('purchase_requests_details.status_approval', PurchaseRequestsDetail::ApprovedPurchasing);
-            })
-            ->where(function ($query) {
-                $query->where('purchase_requests.status_approval', PurchaseRequest::ApprovedDept)
-                    ->orWhere('purchase_requests.status_approval', PurchaseRequest::ApprovedProc);
-            });
+            // ->where(function ($query) {
+            //     $query->where('purchase_requests_details.status_approval', PurchaseRequestsDetail::Approved)
+            //         ->orWhere('purchase_requests_details.status_approval', PurchaseRequestsDetail::ApprovedPurchasing);
+            // })
+            ->whereIn('purchase_requests.status_approval', [PurchaseRequest::ApprovedDept,PurchaseRequest::ApprovedProc]);
+            // ->where(function ($query) {
+            //     $query->where('purchase_requests.status_approval', PurchaseRequest::ApprovedDept)
+            //         ->orWhere('purchase_requests.status_approval', PurchaseRequest::ApprovedProc);
+            // });
         // ->orderBy('purchase_requests.created_at', 'asc');
         if (\request()->ajax()) {
             $q = \collect($request->all())->forget('draw')->forget('_')->toJson();
-            $result = \Cache::remember($q, 60, function () use ($request, $materials, $q) {
+            $result = \Cache::remember($q.\Auth::user()->user_id, 60, function () use ($request, $materials, $q) {
                 $columns = [
                     0 => 'id',
                     1 => 'PR_NO',
@@ -106,6 +108,7 @@ class PurchaseRequestController extends Controller
                     ->when($request->input('search.value'), function ($q) use ($request) {
                         $search = $request->input('search.value');
                         $q->where('PR_NO', 'ILIKE', "%{$search}%")
+                        // ->whereIn('purchase_requests_details.purchasing_group_code', $userMapping)
                             ->orWhere('material_id', 'ILIKE', "%{$search}%")
                             ->orWhere('short_text', 'ILIKE', "%{$search}%");
                     })
