@@ -321,6 +321,7 @@ class MasterAcpController extends Controller
                     $rfqDetailNew->unit                         = $unit;
                     $rfqDetailNew->rfq_number                   = $val['rfq_number'];
                     $rfqDetailNew->po_item                      = $poItem;
+                    $rfqDetailNew->net_price                    = str_replace(',','',$val['price']);
                     $rfqDetailNew->is_from_po                   = 2;
                     $rfqDetailNew->po_number                    = 0;
                     $rfqDetailNew->vendor_id                    = $val['vendor'];

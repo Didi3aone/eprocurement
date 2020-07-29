@@ -134,7 +134,7 @@
                                 <input type="hidden" class="qty" name="qty[]" readonly value="{{ empty($value->qty) ? 0 : $value->qty }}">
                                 <td>{!! $value->material_id .'<br>'.$value->description !!}
                                     @php
-                                        $materialId = '';
+                                        $materialId = $value->description;
                                         if( $value->material_id != '' ) {
                                             $materialId = $value->material_id;
                                         }
@@ -145,7 +145,7 @@
                                 <td>
                                     <select name="rfq[]" id="history" class="select2 history" required>
                                         <option> -- Select --</option>
-                                        @foreach(\App\Models\RfqDetail::getRfq($materialId,$value->description) as $key => $rows)
+                                        @foreach(\App\Models\RfqDetail::getRfq($materialId) as $key => $rows)
                                             @if($rows->po_number != '')
                                                 <option value="{{ $rows->rfq_number }}"
                                                     data-price="{{ $rows->net_price }}"

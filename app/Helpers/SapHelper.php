@@ -1753,6 +1753,88 @@ class SapHelper {
                     'FINAL_REASON' => ''
                 ];
 
+                $POSERVICES = [
+                    "PCKG_NO" => '',//0 = 9X 1; CHILD = 2 DST 
+                    "LINE_NO" =>  '',//0 = 9X 1; CHILD = 2 DST
+                    "EXT_LINE" =>  "",//CHILD = 0 = 9X 1
+                    "OUTL_LEVEL" => "",
+                    "OUTL_NO" => "",    
+                    "OUTL_IND" => "",
+                    "SUBPCKG_NO" => '',// 0 = 9X 2;
+                    "SERVICE" => "", 
+                    "SERV_TYPE" =>"",    
+                    "EDITION" =>"",
+                    "SSC_ITEM" => "",
+                    "EXT_SERV" => "",
+                    "QUANTITY" => '',//DARI PR 
+                    "BASE_UOM" => '',//$quotationDetail[$i]->unit,     
+                    "UOM_ISO" => "",    
+                    "OVF_TOL" => "",
+                    "OVF_UNLIM" => "",    
+                    "PRICE_UNIT" => "",
+                    "GR_PRICE" => '',//NET PRICE 
+                    "FROM_LINE" => "",    
+                    "TO_LINE" => "",    
+                    "SHORT_TEXT" =>'',// DARI PR
+                    "DISTRIB" =>  "",    
+                    "PERS_NO" =>  "",
+                    "WAGETYPE" => "",    
+                    "PLN_PCKG" => "",
+                    "PLN_LINE" => "",
+                    "CON_PCKG" => "",
+                    "CON_LINE" => "",
+                    "TMP_PCKG" => "",
+                    "TMP_LINE" => "",
+                    "SSC_LIM" => "",    
+                    "LIMIT_LINE" => "",
+                    "TARGET_VAL" => "",
+                    "BASLINE_NO" => "",
+                    "BASIC_LINE" => "",    
+                    "ALTERNAT" => "",    
+                    "BIDDER" => "",    
+                    "SUPP_LINE" => "",    
+                    "OPEN_QTY" => "",    
+                    "INFORM" => "",    
+                    "BLANKET" => "",    
+                    "EVENTUAL" => "",    
+                    "TAX_CODE" => "",    
+                    "TAXJURCODE" => "",  
+                    "PRICE_CHG" => "",    
+                    "MATL_GROUP" => "",    
+                    "DATE" => "", 
+                    "BEGINTIME" => "",                        
+                    "ENDTIME" => "",                        
+                    "EXTPERS_NO" => "", 
+                    "FORMULA" => "",   
+                    "FORM_VAL1" => "",
+                    "FORM_VAL2" => "",
+                    "FORM_VAL3" => "",
+                    "FORM_VAL4" => "",
+                    "FORM_VAL5" => "",
+                    "USERF1_NUM" => "",
+                    "USERF2_NUM" => "",
+                    "USERF1_TXT" => "",    
+                    "USERF2_TXT" => "",
+                    "HI_LINE_NO" => "",
+                    "EXTREFKEY" => "",
+                    "DELETE_IND" => "",    
+                    "PER_SDATE" => "",
+                    "PER_EDATE" => "",
+                    "EXTERNAL_ITEM_ID" => "",
+                    "SERVICE_ITEM_KEY" => "",
+                    "NET_VALUE" =>"",
+                ];
+
+                $POSRVACCESSVALUES = [
+                    "PCKG_NO" => '',// 0 = 9X  2 DST 
+                    "LINE_NO" => '',//  0 = 9X  2 DST 
+                    "SERNO_LINE" => '',//01
+                    "PERCENTAGE" => "",// 100
+                    "SERIAL_NO" => "",//01
+                    "QUANTITY" => '',
+                    "NET_VALUE" => ""///>
+                ];
+
             } else if( $quotation->doc_type == 'Z104' && $quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::SERVICE) {
                 $POITEM = [
                     'PO_ITEM' => $quotationDetail[$i]->PO_ITEM,//LINE
@@ -2300,7 +2382,7 @@ class SapHelper {
                     $createLine = $k + 1;
                     $POSERVICES = [
                         "PCKG_NO" => $dataChild[$k]->package_no,//0 = 9X 1; CHILD = 2 DST 
-                        "LINE_NO" =>  '000000000'.$createLine,//0 = 9X 1; CHILD = 2 DST
+                        "LINE_NO" => $quotationDetail[$i]->line_no,// '000000000'.$createLine,//0 = 9X 1; CHILD = 2 DST
                         "EXT_LINE" =>  "",//CHILD = 0 = 9X 1
                         "OUTL_LEVEL" => "",
                         "OUTL_NO" => "",    
@@ -2370,17 +2452,29 @@ class SapHelper {
                         "NET_VALUE" =>"",
                     ];
                     $params[0]['POSERVICES']['item'][$k] = $POSERVICES;
+
+                    $params[0]['POSERVICES']['item'][$k] = $POSERVICES;
+                    $POSRVACCESSVALUES = [
+                        "PCKG_NO" => $dataChild[$k]->subpackage_no,// 0 = 9X  2 DST 
+                        "LINE_NO" => $quotationDetail[$i]->line_no,//'000000000'.$createLine,//$quotationDetail[$i]->subpackage_no,//  0 = 9X  2 DST 
+                        "SERNO_LINE" => '01',//01
+                        "PERCENTAGE" => "100",// 100
+                        "SERIAL_NO" => "01",//01
+                        "QUANTITY" => $quotationDetail[$i]->qty,
+                        "NET_VALUE" => ""///>
+                    ];
+                    $params[0]['POSRVACCESSVALUES']['item'][$k] = $POSRVACCESSVALUES;
                 }
 
-                $POSRVACCESSVALUES = [
-                    "PCKG_NO" => $quotationDetail[$i]->subpackage_no,// 0 = 9X  2 DST 
-                    "LINE_NO" => $quotationDetail[$i]->subpackage_no,//  0 = 9X  2 DST 
-                    "SERNO_LINE" => '01',//01
-                    "PERCENTAGE" => "100",// 100
-                    "SERIAL_NO" => "01",//01
-                    "QUANTITY" => $quotationDetail[$i]->qty,
-                    "NET_VALUE" => ""///>
-                ];
+                // $POSRVACCESSVALUES = [
+                //     "PCKG_NO" => $quotationDetail[$i]->subpackage_no,// 0 = 9X  2 DST 
+                //     "LINE_NO" => $quotationDetail[$i]->subpackage_no,//  0 = 9X  2 DST 
+                //     "SERNO_LINE" => '01',//01
+                //     "PERCENTAGE" => "100",// 100
+                //     "SERIAL_NO" => "01",//01
+                //     "QUANTITY" => $quotationDetail[$i]->qty,
+                //     "NET_VALUE" => ""///>
+                // ];
 
             } else if($quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::SERVICE) {
                 $POITEM = [
@@ -2926,10 +3020,10 @@ class SapHelper {
 
                 $dataChild = QuotationServiceChild::where('quotation_id', $quotation->id)->get();
                 for( $k = 0; $k < count($dataChild); $k++ ) {
-                    $createLine = $k + 1;
+                    $createLine = $k + 1;//
                     $POSERVICES = [
                         "PCKG_NO" => $dataChild[$k]->package_no,//0 = 9X 1; CHILD = 2 DST 
-                        "LINE_NO" =>  '000000000'.$createLine,//0 = 9X 1; CHILD = 2 DST
+                        "LINE_NO" =>  $quotationDetail[$i]->line_no,//'000000000'.$createLine,//0 = 9X 1; CHILD = 2 DST
                         "EXT_LINE" =>  "",//CHILD = 0 = 9X 1
                         "OUTL_LEVEL" => "",
                         "OUTL_NO" => "",    
@@ -2999,17 +3093,18 @@ class SapHelper {
                         "NET_VALUE" =>"",
                     ];
                     $params[0]['POSERVICES']['item'][$k] = $POSERVICES;
+                    $POSRVACCESSVALUES = [
+                        "PCKG_NO" => $dataChild[$k]->subpackage_no,// 0 = 9X  2 DST 
+                        "LINE_NO" => $quotationDetail[$i]->line_no,//'000000000'.$createLine,//$quotationDetail[$i]->subpackage_no,//  0 = 9X  2 DST 
+                        "SERNO_LINE" => '01',//01
+                        "PERCENTAGE" => "100",// 100
+                        "SERIAL_NO" => "01",//01
+                        "QUANTITY" => $quotationDetail[$i]->qty,
+                        "NET_VALUE" => ""///>
+                    ];
+                    $params[0]['POSRVACCESSVALUES']['item'][$k] = $POSRVACCESSVALUES;
                 }
 
-                $POSRVACCESSVALUES = [
-                    "PCKG_NO" => $quotationDetail[$i]->subpackage_no,// 0 = 9X  2 DST 
-                    "LINE_NO" => $quotationDetail[$i]->subpackage_no,//  0 = 9X  2 DST 
-                    "SERNO_LINE" => '01',//01
-                    "PERCENTAGE" => "100",// 100
-                    "SERIAL_NO" => "01",//01
-                    "QUANTITY" => $quotationDetail[$i]->qty,
-                    "NET_VALUE" => ""///>
-                ];
             }
 
             if( $quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::STANDART 
@@ -3019,6 +3114,9 @@ class SapHelper {
                 $params[0]['POITEMX']['item'][$i] = $POITEMX;
                 $params[0]['POSCHEDULE']['item'][$i] = $POSCHEDULE;
                 $params[0]['POSCHEDULEX']['item'][$i] = $POSCHEDULEX;
+                $params[0]['POACCOUNT']['item'][$i] = $POACCOUNT;
+                $params[0]['POACCOUNTX']['item'][$i] = $POACCOUNTX;
+                $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
             }  elseif(  $quotation->doc_type == 'Z104' && $quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::SERVICE)  {
                 $params[0]['POITEM']['item'][$i] = $POITEM;
                 $params[0]['POITEMX']['item'][$i] = $POITEMX;
@@ -3026,7 +3124,7 @@ class SapHelper {
                 $params[0]['POSCHEDULEX']['item'][$i] = $POSCHEDULEX;
                 $params[0]['POACCOUNT']['item'][$i] = $POACCOUNT;
                 $params[0]['POACCOUNTX']['item'][$i] = $POACCOUNTX;
-                $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
+                // $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
             } elseif( $quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::SERVICE ) {
                 $params[0]['POITEM']['item'][$i] = $POITEM;
                 $params[0]['POITEMX']['item'][$i] = $POITEMX;
@@ -3034,7 +3132,7 @@ class SapHelper {
                 $params[0]['POSCHEDULEX']['item'][$i] = $POSCHEDULEX;
                 $params[0]['POACCOUNT']['item'][$i] = $POACCOUNT;
                 $params[0]['POACCOUNTX']['item'][$i] = $POACCOUNTX;
-                $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
+                // $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
             }
         } 
         
@@ -3057,6 +3155,8 @@ class SapHelper {
 
         $params[0]['RETURN'] = $RETURN;
         // dd($params);
+        // echo "<pre>".print_r($params);die;
+        // echo "</pre>";
         $result = $client->__soapCall('ZFM_WS_PO', $params, NULL, $header);
         // dd($result);
         if( $result->EXPPURCHASEORDER) {
@@ -5091,6 +5191,10 @@ class SapHelper {
                 $params[0]['POITEMX']['item'][$i] = $POITEMX;
                 $params[0]['POSCHEDULE']['item'][$i] = $POSCHEDULE;
                 $params[0]['POSCHEDULEX']['item'][$i] = $POSCHEDULEX;
+                // $params[0]['POACCOUNT']['item'][$i] = $POACCOUNT;
+                // $params[0]['POACCOUNTX']['item'][$i] = $POACCOUNTX;
+                // $params[0]['POSERVICES']['item'][$i] = $POSERVICES;
+                // $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
             }  elseif(  $poHeader->doc_type == 'Z104' && $poDetail[$i]->item_category == \App\Models\PurchaseOrdersDetail::SERVICE)  {
                 $params[0]['POITEM']['item'][$i] = $POITEM;
                 $params[0]['POITEMX']['item'][$i] = $POITEMX;

@@ -546,7 +546,7 @@ class QuotationRepeatController extends Controller
             $lineNumber             = '000000000';
             if( $detail['item_category'] == QuotationDetail::SERVICE ) {
                 
-                $lineNumber        .= $i;
+                $lineNumber        .= $i + 1;
                 $subpackgparent    .= (2+($i*2));
                 if( $i % 2 == 0 ) {
                     //anak genap
