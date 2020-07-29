@@ -27,9 +27,9 @@ class AlterPoDetailAdded extends Migration
         //     $table->string('currency')->nullable();
         // });
 
-        Schema::table('billings', function (Blueprint $table) {
-            $table->decimal('dpp',16,2)->default('0.00')->change();
-        });
+        // Schema::table('billings', function (Blueprint $table) {
+        //     $table->decimal('dpp',16,2)->default('0.00')->change();
+        // });
 
         // Schema::table('rfqs', function (Blueprint $table) {
         //     $table->dropColumn('po_number');

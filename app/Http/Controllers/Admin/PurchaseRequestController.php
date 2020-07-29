@@ -178,6 +178,7 @@ class PurchaseRequestController extends Controller
                                 $value->id,
                                 $value->qty,
                                 $value->doc_type,
+                                $value->purchasing_group_code
                             ],
                             $other,
                         ];
@@ -313,7 +314,7 @@ class PurchaseRequestController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function repeat(Request $request, $ids, $quantities, $docs)
+    public function repeat(Request $request, $ids, $quantities, $docs, $groups)
     {
         ini_set('memory_limit', '20000M');
         //ini_set('memory_limit', '-1');
@@ -323,9 +324,18 @@ class PurchaseRequestController extends Controller
         $docs = base64_decode($docs);
         $docs = explode(',', $docs);
 
+        $groups = base64_decode($groups);
+        $groups = explode(',', $groups);
+
         $checkDoc = checkArraySame($docs);
+        $checkGroup = \checkArraySame($groups);
+
         if (false == $checkDoc) {
             return redirect()->route('admin.purchase-request.index')->with('error', 'Doc type. must be the same');
+        }
+
+        if (false == $checkGroup) {
+            return redirect()->route('admin.purchase-request.index')->with('error', 'Purchasing group. must be the same');
         }
 
         $return = $this->createPrPo($ids, $quantities);
@@ -379,17 +389,27 @@ class PurchaseRequestController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function direct(Request $request, $ids, $quantities, $docs)
+    public function direct(Request $request, $ids, $quantities, $docs, $groups)
     {
         $ids = base64_decode($ids);
         $quantities = base64_decode($quantities);
         $docs = base64_decode($docs);
         $docs = explode(',', $docs);
 
+        $groups = base64_decode($groups);
+        $groups = explode(',', $groups);
+
         $checkDoc = checkArraySame($docs);
+        $checkGroup = \checkArraySame($groups);
+
         if (false == $checkDoc) {
             return redirect()->route('admin.purchase-request.index')->with('error', 'Doc type. must be the same');
         }
+
+        if (false == $checkGroup) {
+            return redirect()->route('admin.purchase-request.index')->with('error', 'Purchasing group. must be the same');
+        }
+
         $return = $this->createPrPo($ids, $quantities);
 
         $data = $return['data'];

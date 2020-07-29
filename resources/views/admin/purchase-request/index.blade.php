@@ -113,6 +113,9 @@
 <script id="hidden_doc" type="text-x-custom-template">
     <input type="text" class="form-control doctype" readonly name="doctype[]" style="width: 70%;">
 </script>
+<script id="hidden_group" type="text-x-custom-template">
+    <input type="text" class="form-control groups" readonly name="group[]" style="width: 70%;">
+</script>
 <script id="hidden_dialog" type="text-x-custom-template">
 <a 
     class="modal_link"
@@ -195,6 +198,7 @@
         let quantities = []
         let prices = []
         let docs = []
+        let groups = []
         
         for (let i = 0; i < check_pr.length; i++) {
             let id = check_pr[i].value
@@ -202,19 +206,21 @@
             // quantities.push($('.qty_pr_' + id).val())
             quantities.push($('.qty_' + id).val())
             docs.push($('.docs_' + id).val())
+            groups.push($('.groups_' + id).val())
             // quantities.push($('.qty_open_' + id).val())
         }
-        console.log('ids', ids, 'quantities', quantities,'docs',docs)
+        console.log('ids', ids, 'quantities', quantities,'docs',docs,'groups',groups)
 
         ids = btoa(ids)
         quantities = btoa(quantities)
         docs = btoa(docs)
+        groups = btoa(groups)
 
         $('.bidding-online').attr('href', '{{ url("admin/purchase-request-online") }}/' + ids + '/' + quantities)
 
         if (check_pr.length > 0) {
-            $('.bidding-repeat').attr('href', '{{ url("admin/purchase-request-repeat") }}/' + ids + '/' + quantities +'/'+ docs)
-            $('.bidding-direct').attr('href', '{{ url("admin/purchase-request-direct") }}/' + ids + '/' + quantities +'/'+ docs)
+            $('.bidding-repeat').attr('href', '{{ url("admin/purchase-request-repeat") }}/' + ids + '/' + quantities +'/'+ docs + '/' + groups)
+            $('.bidding-direct').attr('href', '{{ url("admin/purchase-request-direct") }}/' + ids + '/' + quantities +'/'+ docs + '/' + groups)
         } else {
             alert('Please check your material!')
             $('#modal_create_po').modal('hide')
@@ -234,6 +240,7 @@
             var tp2 = $('#hidden_qty').html()
             var tp3 = $('#hidden_dialog').html()
             var tp4 = $("#hidden_doc").html()
+            var tp5 = $("#hidden_group").html()
 
             // console.log(row,data,dataIndex)
             $modal = $(row).children('td')[1]
@@ -247,20 +254,26 @@
             $($modal).children('a').on('click', function() {
                 $(this).parent().children('.modal').modal('toggle')
             })
+            console.log(data[20][3])
             $tp1 = $(row).children('td')[0]
             $tp2 = $(row).children('td')[11]
             $tp4 = $(row).children('td')[2]
+            $tp5 = $(row).children('td')[16]
             $open = $(row).children('td')[12]
             $($open).addClass('qty_open_text')
             $($tp1).html(tp1)
             $($tp2).html(tp2)
             $($tp4).html(tp4)
+            $($tp5).html(tp5)
             $input = $($tp2).children('input')
             $inputs = $($tp4).children('input')
+            $inputss = $($tp5).children('input')
             $input.addClass(`qty_${data[20][0]}`)
             $input.val(data[20][1])
             $inputs.addClass(`docs_${data[20][0]}`)
             $inputs.val(data[20][2])
+            $inputss.addClass(`groups_${data[20][0]}`)
+            $inputss.val(data[20][3])
             $input.on('change blur keyup', function (e) {
                 e.preventDefault()
                 countQty($(this))
