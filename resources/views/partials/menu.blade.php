@@ -31,7 +31,7 @@
                         <li>
                             <a href="{{ route('admin.purchase-request-project') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
-                                Approval PR Project
+                                Verifikasi PR Project
                             </a>
                         </li>
                         @endcan
