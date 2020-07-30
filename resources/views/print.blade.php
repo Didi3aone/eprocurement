@@ -109,6 +109,7 @@
         }
         table tbody tr td {
             border-right: 1px solid #000;
+            overflow:hidden;
         }
         table tbody tr:last-child td {
             border-bottom: 1px solid #000;
@@ -123,6 +124,11 @@
     </style>
 </head>
 <body>
+    @php
+        function trimLongText($string, $length=28) {
+            return mb_strimwidth($string, 0, $length, "...");
+        }
+    @endphp
     <div class="page">
         <!-- Header Start -->
         <div class="header row">
@@ -151,10 +157,10 @@
                         <p>To:</p>
                     </div>
                     <div>
-                        <p>
-                            {{ $po->vendors['name'] }} <br>
-                            {{ $po->vendors['street'] }} <br/>
-                            Telp. {{ $po->vendors['office_telephone'] }} <br/>
+                        <p style="font-size: 11px;">
+                            {{ trim($po->vendors['name']) }} <br>
+                            {{ trim($po->vendors['street']) }} <br/>
+                            Telp. {{ trim($po->vendors['office_telephone']) }} <br/>
                         </p>
                     </div>
                 </div>
@@ -223,7 +229,7 @@
                         if( $totalRows == $key+1 ){
                             $cols = "10";
                         }
-                        $size = $key+1===count($po->orderDetail) ? (700-($key*20)).'px' : 'auto';
+                        $size = $key+1===count($po->orderDetail) ? (700-($key*30)).'px' : 'auto';
                     @endphp
                 <tr>
                     <td>

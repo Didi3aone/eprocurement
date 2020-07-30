@@ -17,7 +17,6 @@
                     <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                             <tr>
-                                {{-- <th>Release Indicator</th> --}}
                                 <th>Purchasing Document</th>
                                 <th>Item Po Line</th>
                                 <th>Rfq/ACP Document</th>
@@ -45,45 +44,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($po as $key => $q)
-                                <tr>
-                                    {{-- <td>-</td> --}}
-                                    <td>{{ $q->PO_NUMBER ?? 0 }}</td>
-                                    <td>{{ $q->PO_ITEM }}</td>
-                                    <td>{{ $q->acp_no ?? $q->purchasing_document }}</td>
-                                    <td>{{ $q->purchasing_group_code }}</td>
-                                    <td>{{ $q->po_date }}</td>
-                                    <td>{{ $q->material_id }}</td>
-                                    <td>{{ $q->short_text }}</td>
-                                    <td>{{ $q->vendor_id." - ".$q->vendor }}</td>
-                                    <td>{{ $q->plant_code }}</td>
-                                    <td>{{ $q->storage_location }}</td>
-                                    <td>{{ $q->qty }}</td>
-                                    <td>{{ $q->unit }}</td>
-                                    <td>{{ $q->qty - $q->qty_gr }}</td>
-                                    <td>{{ $q->qty - $q->qty_billing }}</td>
-                                    <td>{{ $q->original_currency }}</td>
-                                    <td>{{ $q->original_price }}</td>
-                                    <td>{{ $q->currency }}</td>
-                                    <td>{{ $q->price }}</td>
-                                    <td>{{ $q->request_no }}</td>
-                                    <td>{{ '0' }}</td>
-                                    <td>{{ $q->tax_code  }}</td>
-                                    <td>
-                                        <a class="btn btn-xs btn-primary" href="{{ route('admin.purchase-order.show', $q->id) }}">
-                                            <i class="fa fa-eye"></i> {{ trans('global.view') }}
-                                        </a>
-                                        <a class="btn btn-xs btn-info" href="{{ route('admin.purchase-order-print', $q->id) }}" target="_blank">
-                                            <i class="fa fa-print"></i> {{ 'print' }}
-                                        </a>
-                                        @can('purchase_order_edit')
-                                        <a class="btn btn-xs btn-success" href="{{ route('admin.purchase-order.edit', $q->id) }}">
-                                            <i class="fa fa-edit"></i> {{ trans('global.edit') }}
-                                        </a>
-                                        @endcan
-                                    </td>
-                                </tr>
-                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -94,9 +54,33 @@
 @endsection
 @section('scripts')
 @parent
+<script id="hidden_action" type="text/x-custom-template">
+    <a class="btn btn-xs btn-primary" href="{{ route('admin.purchase-order.show', "REPLACE") }}">
+        <i class="fa fa-eye"></i> {{ trans('global.view') }}
+    </a>
+    <a class="btn btn-xs btn-info" href="{{ route('admin.purchase-order-print', "REPLACE") }}" target="_blank">
+        <i class="fa fa-print"></i> {{ 'print' }}
+    </a>
+    @can('purchase_order_edit')
+    <a class="btn btn-xs btn-success" href="{{ route('admin.purchase-order.edit', "REPLACE") }}">
+        <i class="fa fa-edit"></i> {{ trans('global.edit') }}
+    </a>
+    @endcan
+</script>
 <script>
 $('#datatables-run').DataTable({
     dom: 'Bfrtip',
+    processing: true,
+    serverSide: true,
+    pageLength: 10,
+    ajax: "/admin/purchase-order",
+    "createdRow": function( row, data, dataIndex ) {
+        var tp1 = $('#hidden_action').html()
+        tp1 = tp1.replace(/REPLACE/g, data[21][0])
+        $tp1 = $(row).children('td')[21]
+        $($tp1).html(tp1)
+    },
+    searchDelay: 750,
     order: [[0, 'desc']],
     buttons: [
         'copy', 'csv', 'excel', 'pdf', 'print'

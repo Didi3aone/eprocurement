@@ -27,7 +27,7 @@ class PurchaseOrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         abort_if(Gate::denies('purchase_order_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
@@ -35,7 +35,7 @@ class PurchaseOrderController extends Controller
                 ->leftJoin('master_acps', 'master_acps.id', '=', 'purchase_orders_details.acp_id')
                 ->leftJoin('vendors', 'vendors.code', '=', 'purchase_orders.vendor_id')
                 ->where('purchase_orders.status_approval', PurchaseOrder::Approved)
-                ->where('purchase_orders.created_by',\Auth::user()->user_id)
+                ->where('purchase_orders.created_by', \Auth::user()->user_id)
                 ->select(
                     'purchase_orders_details.purchasing_document',
                     'purchase_orders_details.PO_ITEM',
@@ -61,9 +61,99 @@ class PurchaseOrderController extends Controller
                     'purchase_orders.vendor_id',
                     'master_acps.acp_no',
                     'vendors.name as vendor'
-                )
-                ->orderBy('purchase_orders_details.created_at', 'desc')->get();
-        return view('admin.purchase-order.index', compact('po'));
+                );
+        
+        if (\request()->ajax()) {
+            $q = \collect($request->all())->forget('draw')->forget('_')->toJson();
+            $result = \Cache::remember($q.\Auth::user()->user_id, 60, function () use ($request, $po, $q) {
+                $columns = [
+                    0 => 'PO_NUMBER',
+                    1 => 'PO_ITEM',
+                    2 => 'acp_no',
+                    3 => 'purchasing_group_code',
+                    4 => 'po_date',
+                ];
+                $totalData = $po->count();
+
+                $totalFiltered = $po
+                    ->when($request->input('search.value'), function ($q) use ($request) {
+                        $search = $request->input('search.value');
+                        $q->where('PO_NUMBER', 'ILIKE', "%{$search}%")
+                            ->orWhere('PO_ITEM', 'ILIKE', "%{$search}%")
+                            ->orWhere('acp_no', 'ILIKE', "%{$search}%")
+                            ->orWhere('purchasing_document', 'ILIKE', "%{$search}%")
+                            ->orWhere('po_date', 'ILIKE', "%{$search}%");
+                    })->count();
+
+                $limit = $request->input('length');
+                $start = $request->input('start');
+                $order = $columns[$request->input('order.0.column')];
+                $dir = $request->input('order.0.dir');
+                $items = $po
+                    ->when($request->input('search.value'), function ($q) use ($request) {
+                        $search = $request->input('search.value');
+                        $q->where('PO_NUMBER', 'ILIKE', "%{$search}%")
+                        // ->whereIn('purchase_requests_details.purchasing_group_code', $userMapping)
+                            ->orWhere('PO_ITEM', 'ILIKE', "%{$search}%")
+                            ->orWhere('acp_no', 'ILIKE', "%{$search}%")
+                            ->orWhere('purchasing_document', 'ILIKE', "%{$search}%")
+                            ->orWhere('po_date', 'ILIKE', "%{$search}%");
+                    })
+                    ->offset($start)
+                    ->limit($limit)
+                    ->orderBy($order, $dir)
+                    ->get();
+                // $paginate = $materials->paginate(10,['*'],'draw');
+                // $paginate = $materials->paginate(10,['*'],'draw');
+                $result = [
+                    'draw' => (int) \request()->get('draw'),
+                    'recordsTotal' => $totalData,
+                    'recordsFiltered' => $totalFiltered,
+                    'request' => \collect($request->all())->forget('draw')->forget('_'),
+                    'q' => $q,
+                    'data' => \collect($items)->map(function ($value, $key) use ($start) {
+                        return [
+                            $value->PO_NUMBER,
+                            $value->PO_ITEM,
+                            $value->acp_no ?? $value->purchasing_document,
+                            $value->purchasing_group_code,
+                            $value->po_date,
+                            $value->material_id,
+                            $value->short_text,
+                            $value->vendor_id." - ".$value->vendor,
+                            $value->plant_code,
+                            $value->storage_location,
+                            $value->qty,
+                            $value->unit,
+                            $value->qty - $value->qty_gr,
+                            $value->qty - $value->qty_billing,
+                            $value->original_currency,
+                            $value->original_price,
+                            $value->currency,
+                            $value->price,
+                            $value->request_no,
+                            '0',
+                            $value->tax_code,
+                            [
+                                $value->id,
+                                $value->qty,
+                                $value->doc_type,
+                                $value->purchasing_group_code
+                            ]
+                        ];
+                    }),
+                ];
+
+                return $result;
+            });
+            $result['draw'] = (int) \request()->get('draw');
+
+            return \response()->json($result);
+        }
+
+        return view('admin.purchase-order.index', [
+            'po' => $po->orderBy('purchase_orders_details.created_at', 'desc')->limit(10)->get()
+        ]);
     }
 
     /**
@@ -78,7 +168,7 @@ class PurchaseOrderController extends Controller
         $po = PurchaseOrder::leftJoin('vendors', 'vendors.code', '=', 'purchase_orders.vendor_id')
                 ->where('purchase_orders.approved_asspro', \Auth::user()->nik)
                 ->where('status_approval', PurchaseOrder::Rejected)
-                ->where('is_approve_head', PurchaseOrder::ApproveAss) 
+                ->where('is_approve_head', PurchaseOrder::ApproveAss)
                 ->select(
                     'purchase_orders.po_date',
                     'purchase_orders.id',
@@ -321,7 +411,7 @@ class PurchaseOrderController extends Controller
         $purchaseOrder = PurchaseOrder::findOrFail($id);
         $currency = \App\Models\Currency::all();
         $top = \App\Models\PaymentTerm::all();
-        $purchaseOrderDetail = PurchaseOrdersDetail::where('purchase_order_id', $id)->orderBy('PO_ITEM','asc')->get();
+        $purchaseOrderDetail = PurchaseOrdersDetail::where('purchase_order_id', $id)->orderBy('PO_ITEM', 'asc')->get();
 
         return view('admin.purchase-order.edit', compact('purchaseOrder', 'currency', 'top', 'purchaseOrderDetail'));
     }
@@ -389,9 +479,9 @@ class PurchaseOrderController extends Controller
 
             // update po detail
             $poDetail->qty_old              = $poDetail->qty;
-            $poDetail->delivery_date_old    = $poDetail->delivery_date;//yg old2 di update 
+            $poDetail->delivery_date_old    = $poDetail->delivery_date;//yg old2 di update
             $poDetail->qty                  = $qty;
-            $poDetail->price                = $price;// ini harusanya yg baru 
+            $poDetail->price                = $price;// ini harusanya yg baru
             $poDetail->delivery_date        = $request->delivery_date[$key] ?? $poDetail->delivery_date;
             $poDetail->delivery_complete    = $deliveryComplete;
             $poDetail->tax_code             = 1 == $taxCode ? "V1" : "V0";
@@ -406,7 +496,7 @@ class PurchaseOrderController extends Controller
                 ]);
         }
         // dd($totalPrice);
-        if ( $purchaseOrder->total_price != $totalPrice ) {
+        if ($purchaseOrder->total_price != $totalPrice) {
             // dd('1');
             $purchaseOrder->total_price     = $totalPrice;
             $purchaseOrder->status_approval = PurchaseOrder::Rejected;
@@ -561,7 +651,6 @@ class PurchaseOrderController extends Controller
         // abort_if(Gate::denies('purchase_order_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         if (isset($request->id)) {
-
             $delete = PurchaseOrdersDetail::findOrFail($request->id);
             $delete->is_active = 1; //active
             $delete->update();
@@ -586,12 +675,11 @@ class PurchaseOrderController extends Controller
     public function checkQtyPr(Request $request)
     {
         if (isset($request->id)) {
-
             $prDetail = PurchaseRequestsDetail::findOrFail($request->id);
             $success = true;
             $message = '';
 
-            if( $prDetail->qty < $request->qty ) {
+            if ($prDetail->qty < $request->qty) {
                 $success = false;
                 $message = 'Quantity cannot be more than default quantity request';
             }
