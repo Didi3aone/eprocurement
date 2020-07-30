@@ -86,9 +86,11 @@ class PurchaseRequestController extends Controller
                     0 => 'id',
                     1 => 'PR_NO',
                     2 => 'preq_item',
-                    3 => 'release_date',
+                    3 => 'release_date', 
                     4 => 'material_id',
                     5 => 'short_text',
+                    6 => 'plant_code',
+                    7 => 'purchasing_group_code'
                 ];
                 $totalData = $materials->count();
 
