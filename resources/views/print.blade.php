@@ -122,6 +122,9 @@
         table tbody td:nth-child(3), table tbody td:nth-child(4) {
             white-space: wrap;
         }
+        .to-top {
+            margin-top: 1.5px;
+        }
     </style>
 </head>
 <body>
@@ -180,7 +183,7 @@
                 <p></p>
                 <br>
                 <p>
-                    Shipped T0: <br>
+                    Shipped To: <br>
                     @if($po->orderDetail[0]['plant_code'] == '1101')
                         Herlina Indah <br>
                     @elseif($po->orderDetail[0]['plant_code'] == '2101')
@@ -188,7 +191,7 @@
                     @elseif($po->orderDetail[0]['plant_code'] == '1201' OR $po->orderDetail[0]['plant_code'] == '1201')
                         Sari Enesis Indah 
                     @endif
-                    Jl. Rawa Sumur II Blok DD.16 <br>
+                    <span class="to-top">Jl. Rawa Sumur II Blok DD.16 </span>
                     Pulo Gadung Industri Estate, Jakarta <br>
                 </p>
             </div>
@@ -205,8 +208,8 @@
                     <th>Delivery Deadline </th>
                     <th>Qty Units </th>
                     <th>PR Ref </th>
-                    <th>Price </th>
-                    <th>Total Price </th>
+                    <th>Price ({{ $po->currency }})</th>
+                    <th>Total Price ({{ $po->currency }})</th>
                 </tr>
             </thead>
             <tbody>
@@ -239,7 +242,7 @@
                     <td>{{ $value->material_id ?? '' }}</td>
                     <td>{{ $value->short_text }}</td>
                     <td>{{ $value->notes }}</td>
-                    <td>{{ date('d-m-Y',strtotime($value->delivery_date)) }}</td>
+                    <td>{{ date('d.m.Y',strtotime($value->delivery_date)) }}</td>
                     <td>{{ $value->qty." ".$value->unit }}</td>
                     <td>{{ $value->PR_NO }}</td>
                     <td>{{ \toDecimal($value->price) }}</td>
