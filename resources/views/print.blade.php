@@ -102,7 +102,7 @@
             border-right: 1px solid #000;
             border-bottom: 1px solid #000;
         }
-        table thead th, table tbody td {
+        table thead th, table tbody {
             white-space: nowrap;
             text-align: center;
             padding: 4px 2px;
@@ -110,7 +110,8 @@
         table tbody tr td {
             border-right: 1px solid #000;
             overflow:hidden;
-        }
+            margin-top:1.5px;
+        }   
         table tbody tr:last-child td {
             border-bottom: 1px solid #000;
         }
@@ -237,9 +238,9 @@
                     </td>
                     <td>{{ $value->material_id ?? '' }}</td>
                     <td>{{ $value->short_text }}</td>
-                    <td>{{ $value->description }}</td>
+                    <td>{{ $value->notes }}</td>
                     <td>{{ date('d-m-Y',strtotime($value->delivery_date)) }}</td>
-                    <td>{{ $value->qty." - ".$value->unit }}</td>
+                    <td>{{ $value->qty." ".$value->unit }}</td>
                     <td>{{ $value->PR_NO }}</td>
                     <td>{{ \toDecimal($value->price) }}</td>
                     <td>{{ \toDecimal($value->price) }}</td>
