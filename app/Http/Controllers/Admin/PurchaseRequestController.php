@@ -89,8 +89,8 @@ class PurchaseRequestController extends Controller
                     3 => 'release_date', 
                     4 => 'material_id',
                     5 => 'short_text',
-                    6 => 'plant_code',
-                    7 => 'purchasing_group_code'
+                    9 => 'plant_code',
+                    15 => 'purchasing_group_code'
                 ];
                 $totalData = $materials->count();
 
@@ -155,33 +155,33 @@ class PurchaseRequestController extends Controller
                         }
 
                         return [
-                            ($key + 1) + $start,
-                            $value->PR_NO,
-                            $value->doc_type,
-                            $value->preq_item,
-                            $value->release_date,
-                            $value->material_id ?? '-',
-                            $value->short_text,
-                            $value->qty,
-                            $unit,
-                            $value->plant_code,
-                            $value->storage_location,
-                            $value->qty,
-                            $value->qty - $value->qty_order,
-                            'D',
-                            $value->material_group,
-                            $value->purchasing_group_code,
-                            $value->preq_name,
-                            $getLast,
-                            $value->request_no ?? $value->pr_no,
-                            $value->delivery_date,
+                            ($key + 1) + $start,//0
+                            $value->PR_NO,//1
+                            $value->doc_type,//2
+                            $value->preq_item,//3
+                            $value->release_date,//4
+                            $value->material_id ?? '-',//5
+                            $value->short_text,//6
+                            $value->qty,//7
+                            $unit,//8
+                            $value->plant_code,//9
+                            $value->storage_location,//10
+                            $value->qty,//11
+                            $value->qty - $value->qty_order,//12
+                            'D',//13
+                            $value->material_group,//14
+                            $value->purchasing_group_code,//15
+                            $value->preq_name,//16
+                            $getLast,//17
+                            $value->request_no ?? $value->pr_no,//18
+                            $value->delivery_date,//19
                             // '0000',  
                             [
                                 $value->id,
                                 $value->qty,
                                 $value->doc_type,
                                 $value->purchasing_group_code
-                            ],
+                            ],//19
                             $other,
                         ];
                     }),
