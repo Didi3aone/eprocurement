@@ -35,6 +35,7 @@ class PurchaseOrderController extends Controller
                 ->leftJoin('master_acps', 'master_acps.id', '=', 'purchase_orders_details.acp_id')
                 ->leftJoin('vendors', 'vendors.code', '=', 'purchase_orders.vendor_id')
                 ->where('purchase_orders.status_approval', PurchaseOrder::Approved)
+                ->where('purchase_orders.created_by',\Auth::user()->user_id)
                 ->select(
                     'purchase_orders_details.purchasing_document',
                     'purchase_orders_details.PO_ITEM',
@@ -62,7 +63,6 @@ class PurchaseOrderController extends Controller
                     'vendors.name as vendor'
                 )
                 ->orderBy('purchase_orders_details.created_at', 'desc')->get();
-
         return view('admin.purchase-order.index', compact('po'));
     }
 

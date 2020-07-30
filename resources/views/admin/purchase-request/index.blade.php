@@ -258,7 +258,7 @@
             $tp1 = $(row).children('td')[0]
             $tp2 = $(row).children('td')[11]
             $tp4 = $(row).children('td')[2]
-            $tp5 = $(row).children('td')[16]
+            $tp5 = $(row).children('td')[15]
             $open = $(row).children('td')[12]
             $($open).addClass('qty_open_text')
             $($tp1).html(tp1)
