@@ -36,6 +36,26 @@
                                     <th>Payment Terms</th>
                                     <td>{{ $quotation->getTerm['own_explanation'] }}</td>
                                 </tr>
+                                <tr>
+                                    <th>Attachment</th>
+                                    @if(isset($quotation->upload_file))
+                                        <td>
+                                            @php
+                                                $files = @unserialize($quotation->upload_file);
+                                            @endphp
+                                            @if( is_array($files))
+                                                @foreach( unserialize((string)$quotation->upload_file) as $fileUpload)
+                                                    <a href="{{ asset('/files/uploads/'.$fileUpload) ??''}}" target="_blank" download>
+                                                        {{ $fileUpload ??'' }}
+                                                    </a>
+                                                    <br>
+                                                @endforeach
+                                            @else 
+                                                {{-- No file found --}}
+                                            @endif
+                                        </td>
+                                    @endif
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -61,7 +81,7 @@
                                 <td>{{ $value->unit }}</td>
                                 <td>{{ $value->qty }}</td>
                                 <td>{{ $value->currency }}</td>
-                                <td>{{ $value->price }}</td>
+                                <td>{{ \toDecimal($value->price) }}</td>
                             </tr>
                         @endforeach
                     </tbody>

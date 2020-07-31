@@ -72,7 +72,7 @@ $('#datatables-run').DataTable({
     dom: 'Bfrtip',
     processing: true,
     serverSide: true,
-    pageLength: 10,
+    pageLength: 50,
     ajax: "/admin/purchase-order",
     "createdRow": function( row, data, dataIndex ) {
         var tp1 = $('#hidden_action').html()

@@ -117,7 +117,7 @@ class PoGrGetMin extends Command
                                     $insertGr = \App\Models\PurchaseOrderGr::create([
                                         'po_no'                     => $value[$i]->EBELN,
                                         'po_item'                   => $value[$i]->EBELP,
-                                        'vendor_id'                 => str_replace('000','',$value[$i]->LIFNR),//$poHeader->vendor_id ?? '3000046',
+                                        'vendor_id'                 => $poHeader->vendor_id ?? '3000046',
                                         'movement_type'             => $value[$i]->EBELP,
                                         'debet_credit'              => $value[$i]->SHKZG ?? '',//s itu debit h itu kredit
                                         'material_no'               => str_replace('00000000000','',$value[$i]->MATNR),
@@ -142,7 +142,8 @@ class PoGrGetMin extends Command
                                         'price_per_pc'              => ($value[$i]->WRBTR/$qty) * 100,
                                         'cost_center_code'          => $value[$i]->KOSTL, 
                                         'posting_date'              => $value[$i]->BUDAT, 
-                                        'item_category'             => $poDetail->item_category
+                                        'item_category'             => $poDetail->item_category,
+                                        'description'               => $poDetail->description,
                                     ]);
 
                                     $gr = \App\Models\PurchaseOrderGr::where('debet_credit','S')
@@ -188,7 +189,7 @@ class PoGrGetMin extends Command
                                 $insertGr = \App\Models\PurchaseOrderGr::create([
                                     'po_no'                     => $value->EBELN,
                                     'po_item'                   => $value->EBELP,
-                                    'vendor_id'                 => str_replace('000','',$value->LIFNR),//$poHeader->vendor_id ?? '3000046',
+                                    'vendor_id'                 => $poHeader->vendor_id ?? '3000046',
                                     'movement_type'             => $value->EBELP,
                                     'debet_credit'              => $value->SHKZG ?? '',//s itu debit h itu kredit
                                     'material_no'               => str_replace('00000000000','',$value->MATNR),
@@ -213,7 +214,8 @@ class PoGrGetMin extends Command
                                     'price_per_pc'              => ($value->WRBTR/$qty) * 100,
                                     'cost_center_code'          => $value->KOSTL, 
                                     'posting_date'              => $value->BUDAT, 
-                                    'item_category'             => $poDetail->item_category
+                                    'item_category'             => $poDetail->item_category,
+                                    'description'               => $poDetail->description,
                                 ]);
 
                                 $gr = \App\Models\PurchaseOrderGr::where('debet_credit','S')

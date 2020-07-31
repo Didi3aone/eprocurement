@@ -48,8 +48,10 @@
                                         @if($rows->status == \App\Models\Vendor\Billing::Rejected )
                                             <a href="{{ route('vendor.billing-edit',$rows->id) }}" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i> Edit</a>
                                         @endif
+                                        @if($rows->status == \App\Models\Vendor\Billing::Approved)
+                                        <a href="{{ route('vendor.billing-print',$rows->id) }}" class="btn btn-success btn-xs"><i class="fa fa-print"></i> Print</a>
+                                        @endif
                                         <a href="{{ route('vendor.billing-show',$rows->id) }}" class="btn btn-info btn-xs"><i class="fa fa-eye"></i> Show</a>
-                                        <a href="{{ route('vendor.billing-show',$rows->id) }}" class="btn btn-success btn-xs"><i class="fa fa-print"></i> Print</a>
                                     </td>
                                 </tr>
                             @endforeach

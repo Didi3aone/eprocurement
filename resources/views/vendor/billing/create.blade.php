@@ -150,7 +150,7 @@
                                     <div class="row">
                                         <div class="col-lg-8 text-left">
                                             <div class="form-group">
-                                                <select name="search-po" class="choose-po form-control select2">
+                                                <select name="search-po" id="search-po" class="choose-po form-control select2">
                                                     @foreach ($po_gr as $gr)
                                                         <option value="{{ $gr->doc_gr }}">{{ $gr->doc_gr }}</option>
                                                     @endforeach
@@ -191,7 +191,7 @@
                             <div class="row">
                                 <div class="col-lg-12 form-group">
                                     <button type="submit" class="btn btn-success"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
-                                    <a href="{{ route('admin.billing') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i> Back</a>
+                                    <a href="{{ route('vendor.billing') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i> Back</a>
                                 </div>
                             </div>
                         </div>
@@ -216,11 +216,18 @@
 
     $(document).on('click', '#add-material', function (e) {
         e.preventDefault()
+        const $search = $('#search-po').children('option:selected')
+        console.log($search)
+        $search.attr('disabled', 'disabled')
+        const input_po = $search.val()
+        console.log(input_po)
+        $('#search-po').val('').trigger('change')
+        $('#search-po').select2()
 
         const PO_GR = $('.choose-po').val()
 
-        if (PO_GR != '') {
-            $.get(base_url + '/vendor/billing-po-gr/' + PO_GR, function (result) {
+        if (input_po != '') {
+            $.get(base_url + '/vendor/billing-po-gr/' + input_po, function (result) {
                 var template = ''
                 //console.log(result)
                 $.each(result,function(k,v) {
@@ -229,7 +236,7 @@
                     let desc = '-';
                     if( v.material_no != '') {
                         material = v.material_no !='' ?  v.material_no : '-'
-                        desc = v.material.description ? v.material.description : '-'
+                        desc = v.material.description ? v.material.description : v.description
                     }
                     template += `
                         <tr>
@@ -240,9 +247,7 @@
                             <input type="hidden"name="amount[]" value="${v.amount}">
                             <input type="hidden"name="material_document[]" value="${v.material_document}">
                             <input type="hidden"name="reference_document_item[]" value="${v.reference_document_item}">
-                            <input type="hidden"name="doc_gr[]" value="${v.doc_gr}">
                             <input type="hidden" name="debet_credit[]" value="${v.debet_credit}"/>
-                            <input type="hidden" name="item_gr[]" value="${v.item_gr}"/>
                             <input type="hidden" name="storage_location[]" value="${v.storage_location}"/>
                             <input type="hidden" name="unit[]" value="${v.satuan}"/>
                             <input type="hidden" name="reference_document[]" value="${v.reference_document}"/>

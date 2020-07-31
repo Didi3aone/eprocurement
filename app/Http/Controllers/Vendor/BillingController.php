@@ -199,8 +199,10 @@ class BillingController extends Controller
     public function create() 
     {
         $po_gr = PurchaseOrderGr::where('vendor_id', \Auth::user()->code)
-            ->where('qty','>','0.00')
+            ->select('doc_gr')
             ->where('debet_credit','S')
+            ->groupBy('doc_gr')
+            ->orderBy('doc_gr','asc')
             ->get();
         $rekening =  VendorBankDetails::where('vendor_id', \Auth::user()->id)
             ->get()
@@ -213,6 +215,7 @@ class BillingController extends Controller
 
     public function store(StoreBillingRequest $request)
     {
+        // dd($request);
         try {
             \DB::beginTransaction();
             // save file
@@ -253,7 +256,7 @@ class BillingController extends Controller
                 $fileInvoice->move(public_path() . '/files/uploads/', $fileInvoiceName);
             }
 
-            $nominal_inv_after_ppn =  str_replace(',', '.', $request->nominal_inv_after_ppn);
+            $nominal_inv_after_ppn =  str_replace(',', '', $request->nominal_inv_after_ppn);
 
             $billing = new Billing;
             $billing->billing_no            = date('y').substr(time(),0,-19)."".time();
@@ -311,6 +314,7 @@ class BillingController extends Controller
                 $billingDetail->gr_date                     = $request->get('posting_date')[$key];
                 $billingDetail->purchase_order_detail_id    = $request->get('purchase_order_detail_id')[$key];
                 $billingDetail->item_category               = $request->get('item_category')[$key];
+                $billingDetail->description                 = $request->get('description')[$key];
                 $billingDetail->save();
 
                 $po_gr = PurchaseOrderGr::where('po_no', $po_no)
@@ -520,5 +524,11 @@ class BillingController extends Controller
         
 
         return response()->json($model);
+    }
+
+    public function printBilling($id)
+    {
+        $billingId = $id;
+        return view('vendor.billing.print',compact('billingId'));
     }
 }

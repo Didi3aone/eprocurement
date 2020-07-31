@@ -42,7 +42,8 @@ class PurchaseOrderGr extends Model
         'qty_billing',
         'cost_center_code',
         'posting_date',
-        'item_category'
+        'item_category',
+        'description'
     ];
 
     public const YesCancel = 0;

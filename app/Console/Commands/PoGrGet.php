@@ -149,7 +149,8 @@ class PoGrGet extends Command
                                         'price_per_pc'              => ($value[$i]->WRBTR/$qty) * 100,
                                         'cost_center_code'          => $value[$i]->KOSTL, 
                                         'posting_date'              => $value[$i]->BUDAT, 
-                                        'item_category'             => $poDetail->item_category
+                                        'item_category'             => $poDetail->item_category,
+                                        'description'               => $poDetail->description,
                                     ]);
                                 }
                             } 
@@ -185,7 +186,7 @@ class PoGrGet extends Command
                                 $insertGr = \App\Models\PurchaseOrderGr::create([
                                     'po_no'                     => $value->EBELN,
                                     'po_item'                   => $value->EBELP,
-                                    'vendor_id'                 => $poHeader->vendor_id,//str_replace('000','',$value->LIFNR),//$poHeader->vendor_id ?? '3000046',
+                                    'vendor_id'                 => $poHeader->vendor_id ?? '3000046',
                                     'movement_type'             => $value->EBELP,
                                     'debet_credit'              => $value->SHKZG ?? '',//s itu debit h itu kredit
                                     'material_no'               => str_replace('00000000000','',$value->MATNR),
@@ -210,7 +211,8 @@ class PoGrGet extends Command
                                     'price_per_pc'              => ($value->WRBTR/$qty) * 100,
                                     'cost_center_code'          => $value->KOSTL, 
                                     'posting_date'              => $value->BUDAT, 
-                                    'item_category'             => $poDetail->item_category
+                                    'item_category'             => $poDetail->item_category,
+                                    'description'               => $poDetail->description,
                                 ]);
                             }
                         }
