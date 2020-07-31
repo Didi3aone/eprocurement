@@ -311,6 +311,7 @@ class BillingController extends Controller
                 $billingDetail->gr_date                     = $request->get('posting_date')[$key];
                 $billingDetail->purchase_order_detail_id    = $request->get('purchase_order_detail_id')[$key];
                 $billingDetail->item_category               = $request->get('item_category')[$key];
+                $billingDetail->description                 = $request->get('description')[$key];
                 $billingDetail->save();
 
                 $po_gr = PurchaseOrderGr::where('po_no', $po_no)
