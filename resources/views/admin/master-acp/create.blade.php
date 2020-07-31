@@ -229,8 +229,11 @@
         e.preventDefault()
 
         const $search = $('#search-vendor').children('option:selected')
+        $search.attr('disabled', 'disabled')
         const input_vendor = $search.val()
         const $vendorId = $("#search-vendor").val()
+        $('#search-vendor').val('').trigger('change')
+        $('#search-vendor').select2()
 
         if (input_vendor != '-- Select --') {
             const id_vendor = $search.data('id')
@@ -283,7 +286,15 @@
 
     $(document).on('click', '.remove-vendor', function (e) {
         const vendor = $(this).data('vendor')
-
+        var value = $(this).closest('tr').find('.vendor_id').val()
+        console.log(value)
+        $.each($('#search-vendor option'), function(){
+            $this = $(this)
+            if($this.val()===value) {
+                $this.removeAttr('disabled')
+            }
+        })
+        $('#search-vendor').select2()
         $(this).closest('tr').remove()
         $('.material-' + vendor).remove()
 
