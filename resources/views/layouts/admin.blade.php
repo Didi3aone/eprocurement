@@ -282,6 +282,18 @@
                 return true;
             });
         });
+
+        $('#saves').on('click', function () {
+            $("form").submit(function (e) {
+                //var messageLength = CKEDITOR.instances['description'].getData().replace(/<[^>]*>/gi, '').length;
+                $(this).submit(function () {
+                    return false;
+                });
+                $("#save").attr('disabled', 'disabled');
+                $('#save').text('Please wait ...')
+                return true;
+            });
+        });
         $('#mdate').bootstrapMaterialDatePicker({ weekStart : 0, time: false });
         $('.mdate').bootstrapMaterialDatePicker({ weekStart : 0, time: false });
         

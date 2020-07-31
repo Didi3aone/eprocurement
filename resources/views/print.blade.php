@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -31,7 +31,7 @@
             font-weight: inherit;
             font-style: inherit;
             font-size: 100%;
-            font-family: inherit;
+            font-family: "Times New Roman", Times, serif;
             vertical-align: top;
         }
         /* remember to define focus styles! */
@@ -89,7 +89,7 @@
         }
         table.table {
             width: 100%;
-            margin-top: 18px;
+            margin-top: 1px;
             font-size: 12px;
             border-top: 1px solid #000;
             border-left: 1px solid #000;
@@ -123,7 +123,7 @@
             white-space: wrap;
         }
         .to-top {
-            margin-top: 1.5px;
+            padding-top: 3.8px;
         }
     </style>
 </head>
@@ -142,7 +142,7 @@
                         <img src="{{ $print ? asset('index.jpg') : public_path('index.jpg') }}" style="position:absolute; top: -4px;" height="70">
                     </div>
                     <div style="width: 74%;">
-                        <p>
+                        <p class="to-top">
                         @if($po->orderDetail[0]['plant_code'] == '1101')
                         PT. Herlina Indah <br>
                         @elseif($po->orderDetail[0]['plant_code'] == '2101')
@@ -150,21 +150,33 @@
                         @elseif($po->orderDetail[0]['plant_code'] == '1201' OR $po->orderDetail[0]['plant_code'] == '1201')
                         PT. Sari Enesis Indah 
                         @endif
-                        Jl. Rawa Sumur II Blok DD.16 <br>
-                        Pulo Gadung Industri Estate, Jakarta <br>
-                        13930 <br>
+                        </p>
+                        <p class="to-top">
+                        Jl. Rawa Sumur II Blok DD.16 
+                        </p>
+                        <p class="to-top">
+                        Pulo Gadung Industri Estate,
+                        </p> 
+                        <p class="to-top">Jakarta
+                        </p>
+                        <p class="to-top">
+                        13930 
                         </p>
                     </div>
                 </div>
-                <div class="row" style="margin-top: 8px;">
+                <div class="row" style="top: -4px;">
                     <div>
-                        <p>To:</p>
+                        <p class="to-top">To:</p>
                     </div>
                     <div>
-                        <p style="font-size: 11px;">
-                            {{ trim($po->vendors['name']) }} <br>
-                            {{ trim($po->vendors['street']) }} <br/>
-                            Telp. {{ trim($po->vendors['office_telephone']) }} <br/>
+                        <p class="to-top">
+                            {{ trim($po->vendors['name']) }}
+                        </p>
+                        <p class="to-top">
+                            {{ trim($po->vendors['street']) }}
+                        </p>
+                        <p class="to-top">
+                            Telp. {{ trim($po->vendors['office_telephone']) }}
                         </p>
                     </div>
                 </div>
@@ -183,16 +195,22 @@
                 <p></p>
                 <br>
                 <p>
-                    Shipped To: <br>
+                    Shipped To: 
+                </p>
+                <p class="to-top">
                     @if($po->orderDetail[0]['plant_code'] == '1101')
-                        Herlina Indah <br>
+                        Herlina Indah 
                     @elseif($po->orderDetail[0]['plant_code'] == '2101')
                         Marketama Indah 
                     @elseif($po->orderDetail[0]['plant_code'] == '1201' OR $po->orderDetail[0]['plant_code'] == '1201')
                         Sari Enesis Indah 
                     @endif
-                    <span class="to-top">Jl. Rawa Sumur II Blok DD.16 </span>
-                    Pulo Gadung Industri Estate, Jakarta <br>
+                </p>
+                <p class="to-top">
+                    Jl. Rawa Sumur II Blok DD.16
+                </p>
+                <p class="to-top">
+                    Pulo Gadung Industri Estate, Jakarta 
                 </p>
             </div>
         </div>
@@ -239,47 +257,52 @@
                     <td>
                         <div style="display:block; height: {{ $size }}; min-height: {{ $size }};">{{ $key + 1 }}</div>
                     </td>
-                    <td>{{ $value->material_id ?? '' }}</td>
+                    <td style="text-align:center;">{{ $value->material_id ?? '' }}</td>
                     <td>{{ $value->short_text }}</td>
                     <td>{{ $value->notes }}</td>
-                    <td>{{ date('d.m.Y',strtotime($value->delivery_date)) }}</td>
-                    <td>{{ $value->qty." ".$value->unit }}</td>
-                    <td>{{ $value->PR_NO }}</td>
-                    <td>{{ \toDecimal($value->price) }}</td>
-                    <td>{{ \toDecimal($value->price) }}</td>
+                    <td style="text-align:center;">{{ date('d.m.Y',strtotime($value->delivery_date)) }}</td>
+                    <td style="text-align:right;">{{ $value->qty." ".$value->unit }}</td>
+                    <td style="text-align:right;">{{ $value->PR_NO }}</td>
+                    <td style="text-align:right;">{{ \toDecimal($value->price) }}</td>
+                    <td style="text-align:right;">{{ \toDecimal($value->price) }}</td>
                 </tr>
                 @endforeach
             </tbody>
             <tfoot>
                 @php
                     $grandTotal = ($total + $totalTax);
+
+                    $terbilang = "Rupiah";
+                    if( $po->currency != 'IDR' ) {
+                        $terbilang = "Dollar";
+                    }
                 @endphp
                 <tr>
                     <td rowspan="3" colspan="5">
                         <p>
                             Amount <br>
                             <br>
-                            {{ ucfirst(Terbilang::make($grandTotal)) }}
+                            {{ ucfirst(Terbilang::make($grandTotal)) ." ".$terbilang }}
                             <br>
                             <br>
                         </p>
                     </td>
-                    <td colspan="3">Total</td>
+                    <td colspan="3">Total ({{ $po->currency }})</td>
                     <td colspan="1">{{ \toDecimal($total) }}</td>
                 </tr>
                 <tr>
-                    <td colspan="3">Tax</td>
+                    <td colspan="3">Tax ({{ $po->currency }})</td>
                     <td colspan="1">{{ \toDecimal($totalTax) }}</td>
                 </tr>
                 <tr>
-                    <td colspan="3">Grand Total</td>
+                    <td colspan="3">Grand Total ({{ $po->currency }})</td>
                     <td colspan="1">{{ \toDecimal($grandTotal) }}</td>
                 </tr>
                 <tr>
                     <td colspan="5">
                         <p>
                         Term of payment
-                            : {{ $po->paymentTerm['no_of_days'] }}
+                            : {{ $po->paymentTerm['no_of_days'] }} Days
                         </p>
                     </td>
                     <td colspan="4">{{ $po->notes }}</td>

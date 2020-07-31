@@ -496,7 +496,7 @@ class PurchaseOrderController extends Controller
                 ]);
         }
         // dd($totalPrice);
-        if ($purchaseOrder->total_price != $totalPrice) {
+        if ($purchaseOrder->total_price < $totalPrice) {
             // dd('1');
             $purchaseOrder->total_price     = $totalPrice;
             $purchaseOrder->status_approval = PurchaseOrder::Rejected;
