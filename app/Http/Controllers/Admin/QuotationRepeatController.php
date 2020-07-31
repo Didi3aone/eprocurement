@@ -518,7 +518,7 @@ class QuotationRepeatController extends Controller
             ->setOptions(['debugCss' => true, 'isPhpEnabled' => true])
             ->setWarnings(true);
         $pdf->save(public_path("storage/{$po->id}_print.pdf"));
-        \Mail::to('diditriawan13@gmail.com')->send(new SendMail($po));
+        \Mail::to('yunan.yazid@enesis.com')->send(new SendMail($po));
         $print = true;
     }
 

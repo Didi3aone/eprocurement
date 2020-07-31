@@ -447,14 +447,17 @@ class QuotationDirectController extends Controller
 
             // insert RFQ
             // by acp id
-            // $rfqs = Rfq::where('acp_id', $rows->acp_id)->first();
-            // $rfqs->doc_type_po = $header->doc_type;
-            // $rfqs->update();
+            $rfqs = Rfq::where('acp_id', $rows->acp_id)->first();
+            if( $rfqs != null ) {
+                $rfqs->doc_type_po = $header->doc_type;
+                $rfqs->update();
+                
+                RfqDetail::where('rfq_number',$rfqs->rfq_number )
+                    ->update([
+                        'po_number'   => $poNumber
+                    ]);
+            }
 
-            // RfqDetail::where('rfq_number',$rfqs->rfq_number )
-            //     ->update([
-            //         'po_number'   => $poNumber
-            //     ]);
 
             $detail = PurchaseOrdersDetail::create([
                 'purchase_order_id'         => $poId->id,
@@ -537,7 +540,7 @@ class QuotationDirectController extends Controller
             ->setOptions(['debugCss' => true, 'isPhpEnabled' => true])
             ->setWarnings(true);
         $pdf->save(public_path("storage/{$po->id}_print.pdf"));
-        \Mail::to('diditriawan13@gmail.com')->send(new SendMail($po));
+        \Mail::to('yunan.yazid@enesis.com')->send(new SendMail($po));
     }
 
     private function _insert_details($details, $id)
