@@ -448,11 +448,11 @@ class PurchaseOrderController extends Controller
 
             if ($poDetail->qty != $request->qty[$key]) {
                 $prDetail               = PurchaseRequestsDetail::find($poDetail->request_detail_id);
-                $prDetail->qty         += $poDetail->qty;
+                $prDetail->qty         += $poDetail->qty;//balikin dlu stockny
                 $prDetail->qty_order    = 0;
                 $prDetail->update();
 
-                $prDetail->qty      -= $request->qty[$key];
+                $prDetail->qty      -= $request->qty[$key];//trus dikurangin lagi
                 $prDetail->qty_order = $request->qty[$key];
                 $prDetail->save();
             }
