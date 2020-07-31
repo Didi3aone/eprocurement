@@ -199,7 +199,7 @@ class BillingController extends Controller
     public function create() 
     {
         $po_gr = PurchaseOrderGr::where('vendor_id', \Auth::user()->code)
-            ->where('qty','>',0)
+            ->where('qty','>','0.00')
             ->where('debet_credit','S')
             ->get();
         $rekening =  VendorBankDetails::where('vendor_id', \Auth::user()->id)
@@ -213,8 +213,8 @@ class BillingController extends Controller
 
     public function store(StoreBillingRequest $request)
     {
-        \DB::beginTransaction();
         try {
+            \DB::beginTransaction();
             // save file
             $filePoName = '';
             $suratJalan = '';
@@ -317,7 +317,7 @@ class BillingController extends Controller
                 $po_gr = PurchaseOrderGr::where('po_no', $po_no)
                         ->where('po_item', $PO_ITEM)
                         ->where('doc_gr', $request->get('doc_gr')[$key])
-                        ->where('material_no', $material_no)
+                        // ->where('material_no', $material_no)
                         ->first();
 
                 $po_gr->qty_billing = $qty;
@@ -487,8 +487,10 @@ class BillingController extends Controller
     public function poGR ($po_no)
     { 
         $model = PurchaseOrderGr::with('material')->where('doc_gr', $po_no)
+            ->where('qty','>','0.00')
             ->where('is_cancel',PurchaseOrderGr::NoCancel)
-            ->where('debet_credit','S')->get();
+            ->where('debet_credit','S')
+            ->get();
 
         // $material_description = $model->material ? $model->material->description : '';
         
