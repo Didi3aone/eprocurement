@@ -5,7 +5,7 @@
         <h3 class="text-themecolor">Billing</h3>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="javascript:void(0)"></a></li>
-            <li class="breadcrumb-item active">Create</li>
+            <li class="breadcrumb-item active">Edit</li>
         </ol>
     </div>
 </div>
@@ -59,7 +59,7 @@
                                 </div>
                                 <div class="form-group col-lg-4">
                                     <label>DPP <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control form-control-line {{ $errors->has('dpp') ? 'is-invalid' : '' }}" name="dpp" id="dpp" value="{{ old('dpp', $billing->dpp) }}"> 
+                                    <input type="text" class="form-control form-control-line {{ $errors->has('dpp') ? 'is-invalid' : '' }}" name="dpp" id="dpp" onkeyup="leadingZero(this.value, $(this), true)" value="{{ old('dpp', $billing->dpp) }}"> 
                                     @if($errors->has('dpp'))
                                         <div class="invalid-feedback">
                                             {{ $errors->first('dpp') }}
@@ -324,14 +324,14 @@
    $('select').on('change', function() {
        var ppn =  this.value;
        var dpp = $("#dpp").val();
-       tt = dpp.replace(/,/g, '.');
+       tt = dpp.replace(/,/g, '')
        if(ppn == "V1") {
            var count = parseFloat(tt) * 1.1;
            var roundedString = count.toFixed(2);
-           var cm = roundedString.replace(".", ",");
+           var cm = roundedString.replace(/,/g, '')
            $("#nominal_inv_after_ppn").val(cm);
        } else if(ppn == "V0") {
-           var cm = dpp.replace(".", ",");
+           var cm = dpp.replace(/,/g, '')
            $("#nominal_inv_after_ppn").val(cm);
        }
 
