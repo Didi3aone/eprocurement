@@ -79,7 +79,7 @@
                                DPP
                             </th>
                             <td>
-                                {{ \toDecimal($billing->dpp) }}
+                                {{ \toDecimal(\removeComma($billing->dpp)) }}
                             </td>
                         </tr>
                         <tr>
@@ -99,7 +99,7 @@
                                 Nominal Invoice After VAT
                             </th>
                             <td>
-                                {{ \toDecimal($billing->nominal_inv_after_ppn) }}
+                                {{ \toDecimal(\removeComma($billing->nominal_inv_after_ppn)) }}
                             </td>
                         </tr>
                         <tr>
