@@ -4,22 +4,17 @@
     <div class="col-md-5 col-8 align-self-center">
         <h3 class="text-themecolor">Master</h3>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="javascript:void(0)">{{ trans('cruds.material_type.title') }}</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Ship To</a></li>
             <li class="breadcrumb-item active">Index</li>
         </ol>
     </div>
 </div>
-@can('material_type_create')
+@can('ship_to_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-6">
-            <a class="btn btn-success" href="{{ route("admin.material_type.create") }}">
-                <i class='fa fa-plus'></i> {{ trans('global.add') }} {{ trans('cruds.material_type.title_singular') }}
+            <a class="btn btn-success" href="{{ route("admin.ship-to.create") }}">
+                <i class='fa fa-plus'></i> {{ trans('global.add') }} Ship To
             </a>
-        </div>
-        <div class="col-lg-6 text-right">
-            <button class="btn btn-info" data-toggle="modal" data-target="#modal_import">
-                <i class="fa fa-download"></i> {{ trans('cruds.material_type.import') }}
-            </button>
         </div>
     </div>
 @endcan
@@ -35,13 +30,10 @@
 
                                 </th>
                                 <th>
-                                    {{ trans('cruds.material_type.fields.id') }}
+                                    PT
                                 </th>
                                 <th>
-                                    {{ trans('cruds.material_type.fields.code') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.material_type.fields.description') }}
+                                    Address
                                 </th>
                                 <th>
                                     &nbsp;
@@ -49,29 +41,26 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($materialType as $key => $mt)
-                                <tr data-entry-id="{{ $mt->id }}">
+                            @foreach($shipTo ?? '' as $key => $st)
+                                <tr>
+                                    <td>{{ $st->id ?? '' }}</td>
+                                    <td>{{ $st->name ?? '' }}</td>
+                                    <td>{{ $st->alamat ?? '' }}</td>
                                     <td>
-
-                                    </td>
-                                    <td>{{ $mt->id ?? '' }}</td>
-                                    <td>{{ $mt->code ?? '' }}</td>
-                                    <td>{{ $mt->description ?? '' }}</td>
-                                    <td>
-                                        @can('material_type_show')
-                                            <a class="btn btn-xs btn-primary" href="{{ route('admin.material_type.show', $mt->id) }}">
+                                        @can('ship_to_show')
+                                            <a class="btn btn-xs btn-primary" href="{{ route('admin.ship-to.show', $st->id) }}">
                                                 {{ trans('global.view') }}
                                             </a>
                                         @endcan
 
-                                        @can('material_type_edit')
-                                            <a class="btn btn-xs btn-info" href="{{ route('admin.material_type.edit', $mt->id) }}">
+                                        @can('ship_to_edit')
+                                            <a class="btn btn-xs btn-info" href="{{ route('admin.ship-to.edit', $st->id) }}">
                                                 {{ trans('global.edit') }}
                                             </a>
                                         @endcan
 
-                                        @can('material_type_delete')
-                                            <form action="{{ route('admin.material_type.destroy', $mt->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
+                                        @can('ship_to_delete')
+                                            <form action="{{ route('admin.ship-to.destroy', $st->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                                 <input type="hidden" name="_method" value="DELETE">
                                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                 <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">

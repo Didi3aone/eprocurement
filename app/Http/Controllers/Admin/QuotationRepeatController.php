@@ -116,6 +116,10 @@ class QuotationRepeatController extends Controller
      */
     public function store(Request $request)
     {
+        $validatedData = $request->validate([
+            'ship_id' => 'required',
+            'notes' => 'required'
+        ]);
         $qty = 0;
         $price = 0;
         $details = [];
@@ -209,6 +213,7 @@ class QuotationRepeatController extends Controller
             $quotation->vendor_id       = $request->vendor_id;
             $quotation->status          = Quotation::QuotationRepeat;
             $quotation->exchange_rate   = $request->exchange_rate;
+            $quotation->ship_id         = $request->ship_id;
             $quotation->approval_status = Quotation::Waiting;
 
             $quotation->save();

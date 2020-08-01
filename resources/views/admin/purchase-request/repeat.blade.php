@@ -37,25 +37,25 @@
                         </select>
                     </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label>Term Of Payment Desciption</label>
-                <textarea id="notes" class="form-control form-control-line {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes"></textarea>
-                @if($errors->has('notes'))
-                    <div class="invalid-feedback">
-                        {{ $errors->first('notes') }}
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="">Ship To</label>
+                        <select name="ship_id" id="ship_id" class="form-control select2 {{ $errors->has('ship_id') ? 'is-invalid' : '' }}">
+                            <option value="">-- Select  --</option>
+                            @foreach($shipTo as $id => $name)
+                                <option value="{{ $id }}">
+                                    {{ $name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @if($errors->has('ship_id'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('ship_id') }}
+                            </div>
+                        @endif
+                        <span class="help-block"></span>
                     </div>
-                @endif
-            </div>
-            <div class="form-group">
-                <label class="required" for="upload_file">{{ trans('cruds.purchase-order.fields.upload_file') }}</label>
-                <input class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" type="file" name="upload_file[]" multiple id="upload_file">
-                @if($errors->has('upload_file'))
-                    <div class="invalid-feedback">
-                        {{ $errors->first('upload_file') }}
-                    </div>
-                @endif
-                <span class="help-block"></span>
+                </div>
             </div>
             <div class="row">
                 <div class="col-lg-6">
@@ -76,6 +76,29 @@
                         <input type="text" class="form-control form-control-line exchange_rate" name="exchange_rate" value="{{ old('exchange_rate', '') }}" disabled> 
                     </div>
                 </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label class="required" for="upload_file">{{ trans('cruds.purchase-order.fields.upload_file') }}</label>
+                        <input class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" type="file" name="upload_file[]" multiple id="upload_file">
+                        @if($errors->has('upload_file'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('upload_file') }}
+                            </div>
+                        @endif
+                        <span class="help-block"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Term Of Payment Desciption</label>
+                <textarea id="notes" class="form-control form-control-line {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes"></textarea>
+                @if($errors->has('notes'))
+                    <div class="invalid-feedback">
+                        {{ $errors->first('notes') }}
+                    </div>
+                @endif
             </div>
         </div>
     </div>

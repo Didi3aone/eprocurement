@@ -220,6 +220,20 @@
                                 </ul>
                             </li>
                         @endcan
+                        @can('ship_to_access')
+                            <li class="">
+                                <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-map"></i>
+                                    <span class="hide-menu"> Ship To </span>
+                                </a>
+                                <ul aria-expanded="false" class="collapse">
+                                    <li>
+                                        <a href="{{ route('admin.ship-to.index') }}" class="">
+                                            <i class="fa fas fa-caret-right"></i> List Ship To
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        @endcan
                         @can('material_management_access')
                         <li>
                             <a href="#" class="has-arrow">
@@ -321,7 +335,7 @@
                             </ul>
                         </li>
                         @endcan
-                        <li class=""> 
+                        {{-- <li class=""> 
                             <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-file"></i>
                                 <span class="hide-menu"> RFQ </span>
                             </a>
@@ -333,7 +347,7 @@
                                     </a>
                                 </li>
                             </ul>
-                        </li>
+                        </li> --}}
                         @can('vendor_management_access')
                         <li>
                             <a href="#" class="has-arrow">

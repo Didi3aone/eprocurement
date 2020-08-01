@@ -31,7 +31,7 @@
             font-weight: inherit;
             font-style: inherit;
             font-size: 100%;
-            font-family: inherit;
+            font-family: "Times New Roman", Times, serif;
             vertical-align: top;
         }
         /* remember to define focus styles! */
@@ -89,7 +89,7 @@
         }
         table.table {
             width: 100%;
-            margin-top: 18px;
+            margin-top: 1px;
             font-size: 12px;
             border-top: 1px solid #000;
             border-left: 1px solid #000;
@@ -123,7 +123,7 @@
             white-space: wrap;
         }
         .to-top {
-            margin-top: 1.5px;
+            padding-top: 3.8px;
         }
     </style>
 </head>
@@ -142,11 +142,25 @@
                         <img src="{{ $print ? asset('index.jpg') : public_path('index.jpg') }}" style="position:absolute; top: -4px;" height="70">
                     </div>
                     <div style="width: 74%;">
-                        <p>
+                        <p class="to-top">
+                        @if($data['plant_code'][0] == '1101')
                         PT. Herlina Indah <br>
-                        Jl. Rawa Sumur II Blok DD.16 <br>
-                        Pulo Gadung Industri Estate, Jakarta <br>
-                        13930 <br>
+                        @elseif($data['plant_code'][0] == '2101')
+                        PT. Marketama Indah 
+                        @elseif($data['plant_code'][0] == '1201' OR $data['plant_code'][0] == '1201')
+                        PT. Sari Enesis Indah 
+                        @endif
+                        </p>
+                        <p class="to-top">
+                        Jl. Rawa Sumur II Blok DD.16 
+                        </p>
+                        <p class="to-top">
+                        Pulo Gadung Industri Estate,
+                        </p> 
+                        <p class="to-top">Jakarta
+                        </p>
+                        <p class="to-top">
+                        13930 
                         </p>
                     </div>
                 </div>
@@ -178,9 +192,8 @@
                 <br>
                 <p>
                     Shipped To: <br>
-                    Herlina Indah <br>
-                    <span class="to-top">Jl. Rawa Sumur II Blok DD.16 </span>
-                    Pulo Gadung Industri Estate, Jakarta <br>
+                    {{ $ship->name }} <br>
+                    <span class="to-top">{{ $ship->alamat }}</span> <br>
                 </p>
             </div>
         </div>
@@ -210,13 +223,13 @@
                         $material = \App\Models\PurchaseRequestsDetail::where('material_id', $data['material_id'][$key])->first();
                         $tax = 0;
                         if( isset($data['tax_code'])) {
-                            $tax = ($data['price'][$key] * 10/100);
+                            $tax = (\removeComma($data['price'][$key]) * 10/100);
                         }
 
                         $totalTax += $tax;
 
                         $totalRows = count($data['id']);
-                        $total += $data['price'][$key];
+                        $total += \removeComma($data['price'][$key]);
 
                         $cols = "";
                         if( $totalRows == $key+1 ){
@@ -234,8 +247,8 @@
                     <td>{{ date('d.m.Y',strtotime($data['delivery_date'][$key])) }}</td>
                     <td>{{ $data['qty'][$key]." ".$data['unit'][$key] }}</td>
                     <td>{{ $data['PR_NO'][$key] }}</td>
-                    <td>{{ \toDecimal($data['price'][$key]) }}</td>
-                    <td>{{ \toDecimal($data['price'][$key]) }}</td>
+                    <td>{{ \toDecimal(\removeComma($data['price'][$key])) }}</td>
+                    <td>{{ \toDecimal(\removeComma($data['price'][$key])) }}</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -268,7 +281,7 @@
                     <td colspan="5">
                         <p>
                         Term of payment
-                            : {{ $data['payment_term'] }}
+                            : {{ $paymentTerm->no_of_days." days" }}
                         </p>
                     </td>
                     <td colspan="4">{{ $data['payment_terms'] }}</td>

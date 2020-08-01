@@ -62,9 +62,9 @@ class PurchaseRequestController extends Controller
             'purchase_requests.id as uuid'
         )
             ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
+            ->where('purchase_requests_details.qty', '>', 0)
             ->where('purchase_requests_details.is_validate', PurchaseRequestsDetail::YesValidate)
             ->whereIn('purchase_requests_details.purchasing_group_code', $userMapping)
-            ->where('purchase_requests_details.qty', '>', '0.00')
             ->whereIn('purchase_requests_details.status_approval', [PurchaseRequestsDetail::Approved, PurchaseRequestsDetail::ApprovedPurchasing])
             // ->where('purchase_requests_details.line_no', '0000000001')
             //     ->orWhere('purchase_requests_details.line_no', '000000000')
@@ -363,7 +363,7 @@ class PurchaseRequestController extends Controller
         $docTypes = DocumentType::where('type', '2')
                 ->where('code', $type)
                 ->get();
-        $currency = Currency::all();
+        $shipTo   = \App\Models\MasterShipToAdress::all()->pluck('name','id');
 
         $uri = [
             'ids' => base64_encode($ids),
@@ -377,7 +377,7 @@ class PurchaseRequestController extends Controller
             'vendor',
             'uri',
             'top',
-            'currency',
+            'shipTo'
         ));
     }
 
@@ -437,7 +437,7 @@ class PurchaseRequestController extends Controller
                 ->where('code', $type)
                 ->get();
 
-        $currency = Currency::all();
+        $shipTo   = \App\Models\MasterShipToAdress::all()->pluck('name','id');
 
         $uri = [
             'ids' => base64_encode($ids),
@@ -451,7 +451,7 @@ class PurchaseRequestController extends Controller
             'vendor',
             'uri',
             'top',
-            'currency'
+            'shipTo'
         ));
     }
 
@@ -706,24 +706,23 @@ class PurchaseRequestController extends Controller
     public function confirmation(Request $request)
     {
         $data = $request->all();
+        // dd($data['plant_code'][0]);
         $docType = DocumentType::where('code', $request->input('doc_type'))->first();
         $paymentTerm = PaymentTerm::where('payment_terms', $request->input('payment_term'))->first();
         $max = Quotation::select(\DB::raw('count(id) as id'))->first()->id;
         $poNo = 'PO/'.date('m').'/'.date('Y').'/'.sprintf('%07d', ++$max);
         $vendor = Vendor::where('code', $request->input('vendor_id'))->first();
         $title = 'Purchase Order';
+        $ship = \App\Models\MasterShipToAdress::find($request->ship_id);
         $print = false;
         // dd($request->all());
-        $pdf = PDF::loadview('prints/purchase-order', \compact('data', 'poNo', 'vendor', 'docType', 'paymentTerm', 'title', 'print'))
+        $pdf = PDF::loadview('prints/purchase-order', \compact('data', 'poNo', 'vendor', 'docType', 'paymentTerm', 'title', 'print','ship'))
             ->setPaper('A4', 'potrait')
             ->setOptions(['debugCss' => true, 'isPhpEnabled' => true])
             ->setWarnings(true);
         // $pdf->save(public_path("storage/{$id}_print.pdf"));
         // Mail::to('jul14n4v@gmail.com')->send(new SendMail($po));
         // $print = true;
-
         return $pdf->stream();
-
-        return \view('admin.purchase-request.confirmation', \compact('data', 'poNo', 'vendor', 'docType', 'paymentTerm'));
     }
 }

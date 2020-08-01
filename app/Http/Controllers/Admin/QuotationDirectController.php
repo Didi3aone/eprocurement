@@ -114,6 +114,11 @@ class QuotationDirectController extends Controller
      */
     public function store(Request $request)
     {
+        $validatedData = $request->validate([
+            'ship_id' => 'required',
+            'notes' => 'required'
+        ]);
+
         $qty = 0;
         $price = 0;
         $details = [];
@@ -205,6 +210,7 @@ class QuotationDirectController extends Controller
             $quotation->payment_term    = $request->get('payment_term') ?? $payVendor;
             $quotation->vendor_id       = $request->vendor_id;
             $quotation->exchange_rate   = $request->exchange_rate;
+            $quotation->ship_id         = $request->ship_id;
             $quotation->approved_head   = 'PROCUREMENT01';
             $quotation->acp_id          = $request->acp_id[0];
             $quotation->approval_status = Quotation::Waiting;

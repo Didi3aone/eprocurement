@@ -278,6 +278,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('acp-net-price', 'MasterAcpController@getNetPrice')->name('acp-net-price');
     Route::resource('master-acp', 'MasterAcpController');
 
+    Route::resource('ship-to', 'MasterShipToController');
+
     // SOAP
     // Route::get('soap', 'SoapController@show')->name('soap');
 });

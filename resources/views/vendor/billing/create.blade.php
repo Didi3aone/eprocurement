@@ -349,14 +349,14 @@
    $('select').on('change', function() {
        var ppn =  this.value;
        var dpp = $("#dpp").val();
-       tt = dpp.replace(/,/g, '.');
+       tt = dpp.replace(/,/g, '')
        if(ppn == "V1") {
            var count = parseFloat(tt) * 1.1;
            var roundedString = count.toFixed(2);
-           var cm = roundedString.replace(".", ",");
+           var cm = roundedString.replace(/,/g, '')
            $("#nominal_inv_after_ppn").val(cm);
        } else if(ppn == "V0") {
-           var cm = dpp.replace(".", ",");
+           var cm = dpp.replace(/,/g, '')
            $("#nominal_inv_after_ppn").val(cm);
        }
 
