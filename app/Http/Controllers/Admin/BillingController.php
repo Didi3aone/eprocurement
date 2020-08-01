@@ -19,6 +19,8 @@ use App\Http\Requests\UpdateBillingRequest;
 use Symfony\Component\HttpFoundation\Response;
 use App\Mail\billingIncompleted;
 use App\Mail\billingRejected;
+use App\Mail\billingApproved;
+use App\Mail\billingVerify;
 class BillingController extends Controller
 {
     /**
@@ -154,6 +156,12 @@ class BillingController extends Controller
             $billing->status                = Billing::Approved;
             $billing->is_spv                = Billing::sendToSpv;//approve spv
             $billing->update();
+
+            $vendor = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
+            $name   = $vendor->name;
+            $email = 'diditriawan13@gmail.com';
+
+            \Mail::to($email)->send(new billingApproved($billing, $name));
             \Session::flash('status','Billing has been approved');
             return \redirect()->route('admin.billing');
         } catch (\Throwable $th) {
@@ -170,24 +178,10 @@ class BillingController extends Controller
 
         $billing->update();
 
-        // foreach( $billing->detail as $key => $rows ) {
-        //     $poGr = PurchaseOrderGr::where('po_no', $rows->po_no)
-        //         ->where('po_item', $rows->PO_ITEM)
-        //         ->where('material_no', $rows->material_id)
-        //         ->first();
+        $vendor = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
 
-        //     $poGr->qty += $rows->qty;
-
-        //     $poGr->save();
-
-        //     $poDetail = PurchaseOrdersDetail::where('id', $rows->purchase_order_detail_id)
-        //                 ->first();
-        //     $poDetail->qty_billing -= $rows->qty;
-        //     $poDetail->save();
-        // }
-        $name  = "didi";
+        $name  = $vendor->name;
         $email = 'diditriawan13@gmail.com';
-        // $getEmailVendor = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
 
         \Mail::to($email)->send(new billingRejected($billing, $name));
         \Session::flash('status','Billing has been rejected');
@@ -202,6 +196,11 @@ class BillingController extends Controller
 
         $billing->update();
 
+        $vendor = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
+        $name  = $vendor->name;
+        $email = 'diditriawan13@gmail.com';
+
+        \Mail::to($email)->send(new billingVerify($billing, $name));
         \Session::flash('status','Billing has been verify');
         return \redirect()->route('admin.billing-edit',$request->id);
     }
@@ -213,9 +212,10 @@ class BillingController extends Controller
         $billing->reason_rejected   = $request->reason;
 
         $billing->update();
-        $name  = "didi";
+
+        $vendor = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
+        $name  = $vendor->name;
         $email = 'diditriawan13@gmail.com';
-        // $getEmailVendor = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
 
         \Mail::to($email)->send(new billingIncompleted($billing, $name));
 

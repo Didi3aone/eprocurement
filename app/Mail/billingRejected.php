@@ -32,6 +32,6 @@ class billingRejected extends Mailable
      */
     public function build()
     {
-        return $this->subject('BILLING - REJECTED')->view('emails.billingRejected');
+        return $this->subject('BILLING ID '.$this->billing->billing_no." REJECTED")->view('emails.billing.billingRejected');
     }
 }

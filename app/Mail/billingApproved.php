@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class billingIncompleted extends Mailable
+class billingApproved extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -32,6 +32,6 @@ class billingIncompleted extends Mailable
      */
     public function build()
     {
-        return $this->subject('BILLING ID '.$this->billing->billing_no." INCOMPLETED")->view('emails.billing.billingIncompleted');
+        return $this->subject('BILLING ID '.$this->billing->billing_no." APPROVED")->view('emails.billing.billingApproved');
     }
 }
