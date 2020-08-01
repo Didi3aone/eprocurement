@@ -121,6 +121,7 @@
                                         <th style="width:10%;">Qty</th>
                                         <th>Value</th>
                                         <th>Material</th>
+                                        <th>Description</th>
                                         <th>PO No</th>
                                         <th>PO Item</th>
                                         <th>GR Doc</th>
@@ -135,7 +136,8 @@
                                         <input type="hidden" name="po_no" value="{{ $val->po_no }}">
                                         <td>{{ $val->qty }}</td>
                                         <td>{{ $val->amount }}</td>
-                                        <td>{{ $val->material_id." - ".$val->material->description }}</td>
+                                        <td>{{ $val->material_id }}</td>
+                                        <td>{{ $val->description }}</td>
                                         <td>{{ $val->po_no }}</td>
                                         <td>{{ $val->PO_ITEM }}</td>
                                         <td>{{ $val->doc_gr }}</td>
