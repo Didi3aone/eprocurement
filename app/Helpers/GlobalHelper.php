@@ -450,6 +450,11 @@
         return str_replace('.','',$titik);
     }
 
+    function removeComma($comma)
+    {
+        return str_replace(',','',$comma);
+    }
+
     function toDecimal($duit)
     {
         return number_format($duit, 2, ".", ",");

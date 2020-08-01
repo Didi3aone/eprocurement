@@ -311,8 +311,8 @@
             } else {
                 FixedPrice = price 
             }
-            net.val(FixedPrice)
-            ori.val(FixedPrice)
+            net.val(formatNumber(FixedPrice))
+            ori.val(formatNumber(FixedPrice))
         } else {
             net.val(0)
             ori.val(0)
@@ -391,6 +391,10 @@
             let pay = $('#vendor_id option:selected').data('payment')
             getPayment(pay)
         })
+    }
+
+    function formatNumber(num) {
+        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
     }
 </script>
 @endsection

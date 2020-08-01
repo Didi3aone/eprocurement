@@ -122,6 +122,7 @@ class QuotationDirectController extends Controller
             $qty += $qy;
             // update material qty
             $material = PurchaseRequestsDetail::where('id', $request->id[$i])->first();
+            $material->qty_requested = $material->qty;
 
             // insert to pr history
             $requestNo = '';

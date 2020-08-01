@@ -25,6 +25,7 @@ class PurchaseRequestHistory extends Model
     {
         $prHistory = new PurchaseRequestHistory;
         $prHistory->pr_id           = $data['pr_id'];
+        $prHistory->purchase_id     = $data['request_detail_id'];
         $prHistory->request_no      = $data['rn_no'];
         $prHistory->material_id     = $data['material_id'];
         $prHistory->vendor_id       = $data['vendor_id'];

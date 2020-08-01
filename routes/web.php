@@ -330,6 +330,7 @@ Route::group(['prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor', 
     Route::get('billing-create', 'BillingController@create')->name('billing-create');
     Route::get('billing', 'BillingController@index')->name('billing');
     Route::get('billing-show/{id}', 'BillingController@show')->name('billing-show');
+    Route::get('billing-print/{id}', 'BillingController@printBilling')->name('billing-print');
     Route::get('billing-po-gr/{po_no}', 'BillingController@poGR')->name('billing-po-gr');
     Route::get('billing-edit/{id}', 'BillingController@edit')->name('billing-edit');
     Route::post('billing-post', 'BillingController@store')->name('billing-post');

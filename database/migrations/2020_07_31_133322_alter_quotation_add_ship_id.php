@@ -20,6 +20,14 @@ class AlterQuotationAddShipId extends Migration
         Schema::table('purchase_orders', function (Blueprint $table) {
             $table->integer('ship_id')->nullable();
         });
+
+        Schema::table('purchase_order_gr', function (Blueprint $table) {
+            $table->string('description')->nullable();
+        });
+
+        Schema::table('billing_details', function (Blueprint $table) {
+            $table->string('description')->nullable();
+        });
     }
 
     /**

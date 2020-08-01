@@ -85,7 +85,7 @@
                                 <td>{{ $value->unit }}</td>
                                 <td>{{ $value->qty }}</td>
                                 <td>{{ $value->currency }}</td>
-                                <td>{{ $value->price }}</td>
+                                <td>{{ \toDecimal($value->price) }}</td>
                             </tr>
                         @endforeach
                     </tbody>

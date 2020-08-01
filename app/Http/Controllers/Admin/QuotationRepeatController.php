@@ -125,6 +125,7 @@ class QuotationRepeatController extends Controller
 
             // update material qty
             $material = PurchaseRequestsDetail::where('id', $request->idDetail[$i])->first();
+            $material->qty_requested = $material->qty;
             // insert to pr history
             $requestNo = '';
             if( $request->get('rn_no')[$i] == 'DIRECT') {
@@ -529,7 +530,7 @@ class QuotationRepeatController extends Controller
         $totalPrice = 0;
         $assProc    = "";
         foreach ($details as $detail) {
-            $totalPrice += $detail['price'];
+            $totalPrice += \removeComma($detail['price']);
             $schedLine  = sprintf('%05d', (1+$i));
             $poItem     =  ('000'.(10+($i*10)));
             
@@ -578,8 +579,8 @@ class QuotationRepeatController extends Controller
             $quotationDetail->description               = $detail['description'];
             $quotationDetail->notes                     = $detail['notes'];
             $quotationDetail->plant_code                = $detail['plant_code'];
-            $quotationDetail->price                     = $detail['price'];
-            $quotationDetail->orginal_price             = $detail['original_price'];
+            $quotationDetail->price                     = \removeComma($detail['price']);
+            $quotationDetail->orginal_price             = \removeComma($detail['original_price']);
             $quotationDetail->is_assets                 = $detail['is_assets'];
             $quotationDetail->assets_no                 = $detail['assets_no'];
             $quotationDetail->short_text                = $detail['short_text'];
