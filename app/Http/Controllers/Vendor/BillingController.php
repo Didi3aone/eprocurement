@@ -528,7 +528,8 @@ class BillingController extends Controller
 
     public function printBilling($id)
     {
-        $billingId = $id;
+        $billingId = Billing::find($id);
+        $billingId = $billingId->billing_no;
         return view('vendor.billing.print',compact('billingId'));
     }
 }
