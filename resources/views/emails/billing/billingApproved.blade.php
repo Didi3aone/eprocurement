@@ -20,7 +20,7 @@
 
 			<div style="border-top: 1px dashed #ddd; border-bottom:1px dashed #ddd">
                 <p style="font-size: 13px;">
-                Your input billing id ({{ $billing->billing_no }}) approved 
+                Your input billing id ( {{ $billing->billing_no }} ) approved 
                 </p>
                 <p style="font-size: 13px;">
                 please send hardcopy to Enesis 
