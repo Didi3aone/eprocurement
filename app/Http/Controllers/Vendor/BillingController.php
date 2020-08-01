@@ -260,7 +260,7 @@ class BillingController extends Controller
             $nominal_inv_after_ppn =  str_replace(',', '', $request->nominal_inv_after_ppn);
 
             $billing = new Billing;
-            $billing->billing_no            = date('y').substr(time(),0,-19)."".time();
+            $billing->billing_no            = date('ymd').substr(time(),0,-25)."".time();
             $billing->tgl_faktur            = $request->tgl_faktur;
             $billing->no_faktur             = $request->no_faktur;
             $billing->no_invoice            = $request->no_invoice;
@@ -495,35 +495,7 @@ class BillingController extends Controller
             ->where('is_cancel',PurchaseOrderGr::NoCancel)
             ->where('debet_credit','S')
             ->get();
-
-        // $material_description = $model->material ? $model->material->description : '';
         
-        // $data['po_no']                      = $model->po_no;
-        // $data['po_item']                    = $model->po_item;
-        // $data['material']                   = $model->material_no;
-        // $data['qty']                        = $model->qty;
-        // $data['doc_gr']                     = $model->doc_gr;
-        // $data['item_gr']                    = $model->item_gr;
-        // $data['posting_date']               = $model->posting_date;
-        // $data['reference_document']         = $model->reference_document;
-        // $data['description']                = $material_description;
-        // $data['debet_credit']               = $model->debet_credit;
-        // $data['currency']                   = $model->currency;
-        // $data['plant']                      = $model->plant;
-        // $data['gl_account']                 = $model->gl_account;
-        // $data['profit_center']              = $model->profit_center;
-        // $data['amount']                     = $model->amount;
-        // $data['material_document']          = $model->material_document;
-        // $data['reference_document_item']    = $model->reference_document_item;
-        // $data['doc_gr']                     = $model->doc_gr;
-        // $data['storage_location']           = $model->storage_location;
-        // $data['satuan']                     = $model->satuan;
-        // $data['material_doc_item']          = $model->material_doc_item;
-        // $data['price_per_pc']               = $model->price_per_pc;
-        // $data['cost_center_code']           = $model->cost_center_code;
-        // $data['tahun_gr']                   = $model->tahun_gr;
-        
-
         return response()->json($model);
     }
 

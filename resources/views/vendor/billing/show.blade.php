@@ -26,6 +26,14 @@
                     <tbody>
                         <tr>
                             <th>
+                                Billing ID
+                            </th>
+                            <td>
+                                {{ $billing->billing_no }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
                                 Tax Invoice Number
                             </th>
                             <td>
@@ -45,7 +53,7 @@
                                 Tax Invoice File
                             </th>
                             <td>
-                                <a href="{{ asset('files/uploads', $billing->file_faktur) }}">
+                                <a target="_blank" href="{{ asset('files/uploads/'.$billing->file_faktur) }}">
                                     {{ $billing->file_faktur }}
                                 </a>
                             </td>
@@ -79,17 +87,19 @@
                                 Invoice File
                             </th>
                             <td>
-                                <a href="{{ asset('files/uploads', $billing->file_invoice) }}">
+                                <a target="_blank" href="{{ asset('files/uploads/'.$billing->file_invoice) }}">
                                     {{ $billing->file_invoice }}
                                 </a>
                             </td>
                         </tr>
                         <tr>
                             <th>
-                                No. Surat Jalan
+                                Delivery Order
                             </th>
                             <td>
-                                {{ $billing->no_surat_jalan }}
+                                <a target="_blank" href="{{ asset('files/uploads/'.$billing->no_surat_jalan ) }}">
+                                    {{ $billing->no_surat_jalan }}
+                                </a>
                             </td>
                         </tr>
                         <tr>
@@ -105,7 +115,7 @@
                                 PO 
                             </th>
                             <td>
-                                <a href="{{ asset('files/uploads', $billing->po) }}">
+                                <a target="_blank" href="{{ asset('files/uploads/'.$billing->po) }}">
                                     {{ $billing->po }}
                                 </a>
                             </td>
@@ -137,7 +147,7 @@
                     <thead>
                         <tr>
                             <th style="">Qty GR</th>
-                            <th style="">Qty</th>
+                            <th style="">Qty Billing</th>
                             <th style="">Material</th>
                             <th style="">PO No</th>
                             <th style="">PO Item</th>
