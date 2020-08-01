@@ -201,6 +201,7 @@ class BillingController extends Controller
         $po_gr = PurchaseOrderGr::where('vendor_id', \Auth::user()->code)
             ->select('doc_gr')
             ->where('debet_credit','S')
+            ->where('is_cancel',PurchaseOrderGr::NoCancel)
             ->groupBy('doc_gr')
             ->orderBy('doc_gr','asc')
             ->get();
