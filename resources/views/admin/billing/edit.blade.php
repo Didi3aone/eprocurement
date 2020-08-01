@@ -243,12 +243,13 @@
                                     @foreach ($billing->detail as $val)
                                     @php
                                         $totalSum += $val->amount;
+                                        $totalVl = ($val->price_per_pc * $val->qty)
                                     @endphp
                                     <tr>
                                         <input type="hidden" value="{{ $val->id }}" name="iddetail[]">
                                         <input type="hidden" value="{{ $val->po_no }}" name="po_no">
                                         <td>{{ $val->qty }}</td>
-                                        <td><input type="text" class="amount" name="amount[]" id="amount" value="{{ $val->amount }}" onkeyup="leadingZero(this.value, $(this), true)"/></td>
+                                        <td><input type="text" class="amount" name="amount[]" id="amount" value="{{ number_format($totalVl) }}" onkeyup="leadingZero(this.value, $(this), true)"/></td>
                                         <td>{{ $val->material_id }}</td>
                                         <td>{{ $val->description }}</td>
                                         <td>{{ $val->po_no }}</td>

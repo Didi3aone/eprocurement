@@ -5464,7 +5464,7 @@ class SapHelper {
             $billing->status            = \App\Models\Vendor\Billing::Submitted;
             $billing->submitted_date    =  date('Y-m-d H:i:s');
             $billing->update();
-            return true;
+            return 'YES';
         } else {
             \App\Models\employeeApps\SapLogSoap::create([
                 'log_type' => 'BILLING',
@@ -5473,8 +5473,8 @@ class SapHelper {
                 'log_response_sap' => \json_encode($result),
                 'status' => 'FAILED',
             ]); 
-            // dd($result);
-            return false;
+            dd($result);
+            return 'NO';
         }
     }
 }

@@ -81,25 +81,25 @@ class BillingController extends Controller
 
     public function edit ($id)
     {
-        $billing = Billing::find($id);
-        $payments = PaymentTerm::all();
-        $tipePphs = MasterPph::all();
-        $currency = Currency::all();
-        $bankHouse = MasterBankHouse::all();
+        $billing    = Billing::find($id);
+        $payments   = PaymentTerm::all();
+        $tipePphs   = MasterPph::all();
+        $currency   = Currency::all();
+        $bankHouse  = MasterBankHouse::where('plant_code', $billing->detail[0]->plant_code)->get();
 
         return view('admin.billing.edit', compact('billing', 'bankHouse','payments', 'tipePphs','currency'));
     }
 
     public function store (Request $request)
     {
-        \DB::beginTransaction();
         try {
+            \DB::beginTransaction();
             $billing = Billing::find($request->id);
             //get partner bank
             $vendor     = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
             $vendorBank = \App\Models\Vendor\VendorBankDetails::where('vendor_id',$vendor->id)->first();
             
-            $billing->status                = Billing::Submitted;
+            // $billing->status                = Billing::Submitted;
             $billing->assignment            = $request->assignment;
             $billing->payment_term_claim    = $request->payment_term_claim;
             $billing->tipe_pph              = $request->tipe_pphs;
@@ -132,7 +132,7 @@ class BillingController extends Controller
             }
             
             $postSap = \sapHelp::sendBillingToSap($request);
-            if( $postSap ) {
+            if( $postSap == 'YES') {
                 \Session::flash('status','Billing has been submitted');
                 \DB::commit();
             } else {
@@ -159,7 +159,7 @@ class BillingController extends Controller
 
             $vendor = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
             $name   = $vendor->name;
-            $email = 'diditriawan13@gmail.com';
+            $email = 'ari.budiman@enesis.com';
 
             \Mail::to($email)->send(new billingApproved($billing, $name));
             \Session::flash('status','Billing has been approved');
@@ -181,7 +181,7 @@ class BillingController extends Controller
         $vendor = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
 
         $name  = $vendor->name;
-        $email = 'diditriawan13@gmail.com';
+        $email = 'ari.budiman@enesis.com';
 
         \Mail::to($email)->send(new billingRejected($billing, $name));
         \Session::flash('status','Billing has been rejected');
@@ -198,7 +198,7 @@ class BillingController extends Controller
 
         $vendor = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
         $name  = $vendor->name;
-        $email = 'diditriawan13@gmail.com';
+        $email = 'ari.budiman@enesis.com';
 
         \Mail::to($email)->send(new billingVerify($billing, $name));
         \Session::flash('status','Billing has been verify');
@@ -215,11 +215,11 @@ class BillingController extends Controller
 
         $vendor = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
         $name  = $vendor->name;
-        $email = 'diditriawan13@gmail.com';
+        $email = 'ari.budiman@enesis.com';
 
         \Mail::to($email)->send(new billingIncompleted($billing, $name));
 
-        \Session::flash('status','Billing has been canceled');
+        \Session::flash('status','Billing has been incompleted');
         return \redirect()->route('admin.billing');
     }
 }
