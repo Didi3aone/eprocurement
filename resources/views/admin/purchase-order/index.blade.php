@@ -2,10 +2,10 @@
 @section('content')
 <div class="row page-titles">
     <div class="col-md-5 col-8 align-self-center">
-        <h3 class="text-themecolor">Master</h3>
+        <h3 class="text-themecolor">Purchase Order</h3>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="javascript:void(0)">{{ trans('cruds.purchase-order.title') }}</a></li>
-            <li class="breadcrumb-item active">Index</li>
+            <li class="breadcrumb-item active">List</li>
         </ol>
     </div>
 </div>

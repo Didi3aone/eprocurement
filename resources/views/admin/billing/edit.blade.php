@@ -228,6 +228,7 @@
                                         <th style="width:10%;">Qty</th>
                                         <th>Value</th>
                                         <th>Material</th>
+                                        <th>Description</th>
                                         <th>PO No</th>
                                         <th>PO Item</th>
                                         <th>GR Doc</th>
@@ -248,7 +249,8 @@
                                         <input type="hidden" value="{{ $val->po_no }}" name="po_no">
                                         <td>{{ $val->qty }}</td>
                                         <td><input type="text" class="amount" name="amount[]" id="amount" value="{{ $val->amount }}" onkeyup="leadingZero(this.value, $(this), true)"/></td>
-                                        <td>{{ $val->material_id." - ".$val->material->description }}</td>
+                                        <td>{{ $val->material_id }}</td>
+                                        <td>{{ $val->description }}</td>
                                         <td>{{ $val->po_no }}</td>
                                         <td>{{ $val->PO_ITEM }}</td>
                                         <td>{{ $val->doc_gr }}</td>
