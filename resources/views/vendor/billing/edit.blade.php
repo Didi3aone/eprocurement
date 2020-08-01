@@ -217,7 +217,7 @@
                             <div class="row">
                                 <div class="col-lg-12 form-group">
                                     <button type="submit" class="btn btn-success"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
-                                    <a href="{{ route('admin.billing') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i> Back</a>
+                                    <a href="{{ route('vendor.billing') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i> Back</a>
                                 </div>
                             </div>
                         </div>
