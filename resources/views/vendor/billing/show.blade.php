@@ -26,7 +26,7 @@
                     <tbody>
                         <tr>
                             <th>
-                                No. Faktur
+                                Tax Invoice Number
                             </th>
                             <td>
                                 {{ $billing->no_faktur }}
@@ -34,7 +34,7 @@
                         </tr>
                         <tr>
                             <th>
-                                Tgl. Faktur
+                                Tax Invoice Date
                             </th>
                             <td>
                                 {{ \Carbon\Carbon::parse($billing->tgl_faktur)->format('d-m-Y') }}
@@ -42,7 +42,7 @@
                         </tr>
                         <tr>
                             <th>
-                                File
+                                Tax Invoice File
                             </th>
                             <td>
                                 <a href="{{ asset('files/uploads', $billing->file_faktur) }}">
@@ -52,7 +52,7 @@
                         </tr>
                         <tr>
                             <th>
-                                No. Invoice
+                                Invoice Number
                             </th>
                             <td>
                                 {{ $billing->no_invoice }}
@@ -60,7 +60,7 @@
                         </tr>
                         <tr>
                             <th>
-                                Tgl. Invoice
+                                 Invoice Date
                             </th>
                             <td>
                                 {{ \Carbon\Carbon::parse($billing->tgl_invoice)->format('d-m-Y') }}
@@ -68,7 +68,7 @@
                         </tr>
                         <tr>
                             <th>
-                                Nominal Setelah PPN
+                                Nominal Invoice After VAT
                             </th>
                             <td>
                                 {{ $billing->nominal_inv_after_ppn }}
@@ -76,7 +76,7 @@
                         </tr>
                         <tr>
                             <th>
-                                File Invoice
+                                Invoice File
                             </th>
                             <td>
                                 <a href="{{ asset('files/uploads', $billing->file_invoice) }}">
@@ -94,7 +94,7 @@
                         </tr>
                         <tr>
                             <th>
-                                Tgl. Surat Jalan
+                                Delivery Date
                             </th>
                             <td>
                                 {{ \Carbon\Carbon::parse($billing->tgl_surat_jalan)->format('d-m-Y') }}
@@ -102,7 +102,7 @@
                         </tr>
                         <tr>
                             <th>
-                                PO
+                                PO 
                             </th>
                             <td>
                                 <a href="{{ asset('files/uploads', $billing->po) }}">
@@ -112,7 +112,7 @@
                         </tr>
                         <tr>
                             <th>
-                                Keterangan PO
+                                Description PO
                             </th>
                             <td>
                                 {{ $billing->keterangan_po }}
@@ -121,7 +121,7 @@
                         @if($billing->status == \App\Models\Vendor\Billing::Rejected OR $billing->status == \App\Models\Vendor\Billing::Incompleted)
                         <tr>
                             <th>
-                                Keterangan dibatalkan
+                                Reason Rejected
                             </th>
                             <td>
                                 {{ $billing->reason_rejected }}

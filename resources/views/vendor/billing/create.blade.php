@@ -22,7 +22,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="form-group col-lg-4">
-                                    <label>No Faktur Pajak</label>
+                                    <label>Tax Invoice Number</label>
                                     <input type="text" class="form-control form-control-line {{ $errors->has('no_faktur') ? 'is-invalid' : '' }}" name="no_faktur" value="{{ old('no_faktur', '') }}"> 
                                     @if($errors->has('no_faktur'))
                                         <div class="invalid-feedback">
@@ -31,7 +31,7 @@
                                     @endif
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>Faktur Date <span class="text-danger">*</span></label>
+                                    <label>Tax Invoice Date <span class="text-danger">*</span></label>
                                     <input type="text" id="mdate" class="form-control form-control-line {{ $errors->has('tgl_faktur') ? 'is-invalid' : '' }}" name="tgl_faktur" value="{{ old('tgl_faktur', '') }}"> 
                                     @if($errors->has('tgl_faktur'))
                                         <div class="invalid-feedback">
@@ -40,7 +40,7 @@
                                     @endif
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>No. Invoice</label>
+                                    <label>Invoice Number</label>
                                     <input type="text" class="form-control form-control-line {{ $errors->has('no_invoice') ? 'is-invalid' : '' }}" name="no_invoice" value="{{ old('no_invoice', '') }}"> 
                                     @if($errors->has('no_invoice'))
                                         <div class="invalid-feedback">
@@ -67,7 +67,7 @@
                                     @endif
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>PPN <span class="text-danger">*</span></label>
+                                    <label>VAT <span class="text-danger">*</span></label>
                                     {{-- <input type="text" class="form-control form-control-line {{ $errors->has('ppn') ? 'is-invalid' : '' }}" name="ppn" value="{{ old('ppn', '') }}">  --}}
                                     <select class="form-control select2" name="ppn" id="ppn" placeholder="Choose">
                                         <option value=""> Choose </option>
@@ -82,7 +82,7 @@
                                 </div>
                                 <p id="demo"></p>
                                 <div class="form-group col-lg-4">
-                                    <label>Nominal Invoice Sesudah PPN <span class="text-danger">*</span></label>
+                                    <label>Nominal Invoice After VAT<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control form-control-line" name="nominal_inv_after_ppn" id="nominal_inv_after_ppn" value="{{ old('nominal_inv_after_ppn', '') }}" readonly> 
                                 </div>
                                 <div class="form-group col-lg-4">
@@ -123,7 +123,7 @@
                                     <a href="" class="" id="viewer_do" target="_blank" onclick="PreviewImageDo()">Preview File DO</a>
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>Surat Ket. Bebas Pajak</label>
+                                    <label>Letter of information. Tax-free</label>
                                     <input type="file" id="surat" class="form-control form-control-line {{ $errors->has('surat_ket_bebas_pajak') ? 'is-invalid' : '' }}" name="surat_ket_bebas_pajak" value="{{ old('surat_ket_bebas_pajak', '') }}"> 
                                     <a href="" class="" id="viewer_surat" target="_blank" onclick="PreviewImageSurat()">Preview File Surat Ket. Bebas Pajak</a>
                                 </div>
@@ -133,7 +133,7 @@
                                     <a href="" class="" id="viewer_invoice" target="_blank" onclick="PreviewImageInvoice()">Preview File Invoice</a>
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>Upload File Faktur <span class="text-danger">*</span></label>
+                                    <label>Upload File Tax Invoice <span class="text-danger">*</span></label>
                                     <input type="file" class="form-control form-control-line" id="file_faktur" name="file_faktur" value="{{ old('file_faktur', '') }}">
                                     <a href="" class="" id="viewer_faktur" target="_blank" onclick="PreviewImageFaktur()">Preview File Faktur</a>
                                 </div>
