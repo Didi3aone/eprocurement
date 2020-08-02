@@ -92,9 +92,9 @@ class SapHelper {
         set_time_limit(0);
         $soapFile = \sapHelp::getSoapXml('PURCHASE_REQUEST');
         if( $soapFile->is_active_env == \App\Models\BaseModel::Development ) {
-            $wsdl = public_path()."/xml/zbn_eproc_pr.xml";
+            $wsdl = public_path()."/soap-xml/zbn_eproc_pr.xml";
         } else {
-            $wsdl = public_path() ."/xml/". $soapFile->xml_file;
+            $wsdl = public_path() ."/soap-xml/". $soapFile->xml_file;
         }
         
         $username = \sapHelp::Username;
@@ -131,20 +131,20 @@ class SapHelper {
         $is_array = (count($data)>1)?true:false;
         $i = 0;
         foreach( $data as $row ) {
-            if($row['CATEGORY'] == \App\Models\RequestNotesDetail::Material
-            OR $row['CATEGORY'] == \App\Models\RequestNotesDetail::MaterialText) {
-                $category = \App\Models\RequestNotesDetail::Material;
+            if($row['CATEGORY'] == \App\Models\RN\RequestNoteDetail::Material
+            OR $row['CATEGORY'] == \App\Models\RN\RequestNoteDetail::MaterialText) {
+                $category = \App\Models\RN\RequestNoteDetail::Material;
             }
             
             //check category
             if($row['CATEGORY'] == PurchaseRequest::STANDART 
-                OR $row['CATEGORY'] == \App\Models\RequestNotesDetail::MaterialText) {
+                OR $row['CATEGORY'] == \App\Models\RN\RequestNoteDetail::MaterialText) {
                 
                 $unit = '';
                 if( $row['MATERIAL'] != '' ) {
-                    $unit = \App\Models\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_2;
+                    $unit = \App\Models\RN\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_2;
                 } else {
-                    $unit = \App\Models\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1;
+                    $unit = \App\Models\RN\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1;
                 }
 
                 $REQUISITION_ITEMS_item = [
@@ -239,8 +239,8 @@ class SapHelper {
                 $REQUISITION_ITEM_TEXT_item = [
                     'PREQ_NO'       => '',
                     'PREQ_ITEM'     => $row['PREQ_ITEM'],
-                    'TEXT_ID'       => $row['TEXT_ID'], // 'B01',
-                    'TEXT_FORM'     => $row['TEXT_FORM'], // 'EN',
+                    'TEXT_ID'       => 'B01',//$row['TEXT_ID'], // 'B01',
+                    'TEXT_FORM'     => 'EN',//$row['TEXT_FORM'], // 'EN',
                     'TEXT_LINE'     => $row['TEXT_LINE'] // 'UNTUK RUANG TRAVO TRIMAS'
                 ];
 
@@ -415,14 +415,23 @@ class SapHelper {
                     "CONT_PERC"     => '',
                 ];
 
+                $REQUISITION_ITEM_TEXT_item = [
+                    'PREQ_NO'       => '',
+                    'PREQ_ITEM'     => $row['PREQ_ITEM'],//('000'.(10+($i*10))),
+                    'TEXT_ID'       => 'B01',
+                    'TEXT_FORM'     => 'EN',
+                    'TEXT_LINE'     => $row['TEXT_LINE'] // 'UNTUK RUANG TRAVO TRIMAS'
+                ];
+                $params[0]['REQUISITION_SERVICES']['item'][$i] = $REQUISITION_ITEM_SERVICE_item;
+                $params[0]['REQUISITION_SRV_ACCASS_VALUES']['item'][$i] = $REQUISISTION_ITEMS_SRV_ACCASS_VALUES_item;
+
             } elseif($row['DOC_TYPE'] == 'Z104' && $row['CATEGORY'] == PurchaseRequest::SERVICE ) {
-                //ga dipake
+
                 if( $row['LINE_NO'] == '0000000001' ) {
                     $package_no = $row['PACKAGE_NO'];
                 } else {
                     $package_no = $row['SUBPACKAGE_NO'];
                 }
-                // end ga dipake
 
                 $REQUISITION_ITEMS_item = [
                     'PREQ_NO'           => '',
@@ -441,7 +450,7 @@ class SapHelper {
                     'MAT_GRP'           => $row['MAT_GRP'],//'T12075',, 
                     'SUPPL_PLNT'        => '',
                     'QUANTITY'          => $row['QUANTITY'], // '1.000',
-                    'UNIT'              => \App\Models\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1, // 'LOT',
+                    'UNIT'              => \App\Models\RN\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1, // 'LOT',
                     'DEL_DATCAT'        => '',
                     'DELIV_DATE'        => $row['DELIV_DATE'],//'2020-06-23',
                     'REL_DATE'          => $row['REL_DATE'],//'2020-03-06',//
@@ -571,13 +580,13 @@ class SapHelper {
                 ];
 
                 $sub = '0000000000';
-                $dataChild = \App\Models\PurchaseRequestServiceChild::where('purchase_request_id',$row['HEADER_ID'])->get();
-                for ($k=0; $k < count($dataChild); $k++) {
+                $dataChild = \App\Models\RN\PurchaseRequestServiceChild::where('purchase_request_id',$row['HEADER_ID'])->get();
+                for ($k=0; $k < count($dataChild) ; $k++) {
                     $createLine = $k + 1;
                     $REQUISITION_ITEM_SERVICE_item = [
                         "PCKG_NO"            => $dataChild[$k]->package_no,//'000000000'.$createLine,//$row['package'],//'000000000'.$createLine,//$row['PACKAGE_NO'],
                         "LINE_NO"            => '000000000'.$createLine,
-                        "EXT_LINE"           => '',
+                        "EXT_LINE"           => '0000000000',
                         "OUTL_LEVEL"         => '0',
                         "OUTL_NO"            => '',
                         "OUTL_IND"           => '',
@@ -588,7 +597,7 @@ class SapHelper {
                         "SSC_ITEM"           => '',  
                         "EXT_SERV"           => '', 
                         "QUANTITY"           => $row['QUANTITY'], 
-                        "BASE_UOM"           => \App\Models\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1,//$row['UNIT'], 
+                        "BASE_UOM"           => \App\Models\RN\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1,//$row['UNIT'], 
                         "UOM_ISO"            => '', 
                         "OVF_TOL"            => '', 
                         "OVF_UNLIM"          => '', 
@@ -647,17 +656,18 @@ class SapHelper {
                     ];
                     
                     $params[0]['REQUISITION_SERVICES']['item'][$k] = $REQUISITION_ITEM_SERVICE_item;
+
+                    $REQUISISTION_ITEMS_SRV_ACCASS_VALUES_item = [
+                        "PCKG_NO"       => $dataChild[$k]->package_no,
+                        "LINE_NO"       => '000000000'.$createLine,//$row['SUBPACKAGE_NO'],
+                        "SERNO_LINE"    => '01',
+                        "PERCENTAGE"    => '100',
+                        "SERIAL_NO"     => '01',
+                        "QUANTITY"      => $row['QUANTITY'], 
+                        "NET_VALUE"     =>''
+                    ];
+                    $params[0]['REQUISITION_SRV_ACCASS_VALUES']['item'][$k] = $REQUISISTION_ITEMS_SRV_ACCASS_VALUES_item;
                 }
-                $REQUISISTION_ITEMS_SRV_ACCASS_VALUES_item = [
-                    "PCKG_NO"       => $row['SUBPACKAGE_NO'],
-                    "LINE_NO"       => $row['SUBPACKAGE_NO'],
-                    "SERNO_LINE"    => '01',
-                    "PERCENTAGE"    => '100',
-                    "SERIAL_NO"     => '01',
-                    "QUANTITY"      => $row['QUANTITY'], 
-                    "NET_VALUE"     =>''
-                ];
-                $params[0]['REQUISITION_SRV_ACCASS_VALUES']['item'][$i] = $REQUISISTION_ITEMS_SRV_ACCASS_VALUES_item;
 
 
                 $REQUISITION_ITEM_TEXT_item = [
@@ -702,19 +712,17 @@ class SapHelper {
                     "CONT_PERC"     => '',
                 ];
             } else if( $row['CATEGORY'] == PurchaseRequest::SERVICE ) {
-                //ga dipake
                 if( $row['LINE_NO'] == '0000000001' ) {
                     $package_no = $row['PACKAGE_NO'];
                 } else {
                     $package_no = $row['SUBPACKAGE_NO'];
                 }
-                
+
                 if( $i == 0) {
                     $package_no = '000000000';
                 } else {
                     $package_no = '0000000001';
                 }
-                // end ga dipake
 
                 $REQUISITION_ITEMS_item = [
                     'PREQ_NO'           => '',
@@ -733,7 +741,7 @@ class SapHelper {
                     'MAT_GRP'           => $row['MAT_GRP'],//'T12075',, 
                     'SUPPL_PLNT'        => '',
                     'QUANTITY'          => $row['QUANTITY'], // '1.000',
-                    'UNIT'              => \App\Models\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1, // 'LOT',
+                    'UNIT'              => \App\Models\RN\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1, // 'LOT',
                     'DEL_DATCAT'        => '',
                     'DELIV_DATE'        => $row['DELIV_DATE'],//'2020-06-23',
                     'REL_DATE'          => $row['REL_DATE'],//'2020-03-06',//
@@ -864,13 +872,13 @@ class SapHelper {
 
                 $sub = '0000000000';
                 $pak = '0000000000';
-                $dataChild = \App\Models\PurchaseRequestServiceChild::where('purchase_request_id',$row['HEADER_ID'])->get();
+                $dataChild = \App\Models\RN\PurchaseRequestServiceChild::where('purchase_request_id',$row['HEADER_ID'])->get();
                 for ($k=0; $k < count($dataChild); $k++) {
-                    $pak = '000000000'.($k+1);
+                    $pak ='000000000'.$k+1;
                     $REQUISITION_ITEM_SERVICE_item = [
                         "PCKG_NO"            => $dataChild[$k]->package_no,//$row['PACKAGE_NO'],
                         "LINE_NO"            => '000000000'.$pak,
-                        "EXT_LINE"           => '',
+                        "EXT_LINE"           => '0000000000',
                         "OUTL_LEVEL"         => '0',
                         "OUTL_NO"            => '',
                         "OUTL_IND"           => '',
@@ -881,7 +889,7 @@ class SapHelper {
                         "SSC_ITEM"           => '',  
                         "EXT_SERV"           => '', 
                         "QUANTITY"           => $row['QUANTITY'], 
-                        "BASE_UOM"           => \App\Models\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1, 
+                        "BASE_UOM"           => \App\Models\RN\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1, 
                         "UOM_ISO"            => '', 
                         "OVF_TOL"            => '', 
                         "OVF_UNLIM"          => '', 
@@ -939,17 +947,20 @@ class SapHelper {
                         "NET_VALUE"          => '', 
                     ];
                     $params[0]['REQUISITION_SERVICES']['item'][$k] = $REQUISITION_ITEM_SERVICE_item;
+                    
+                    $REQUISISTION_ITEMS_SRV_ACCASS_VALUES_item = [
+                        "PCKG_NO"       => $dataChild[$k]->package_no,
+                        "LINE_NO"       => '000000000'.$pak,
+                        "SERNO_LINE"    =>'01',
+                        "PERCENTAGE"    => '100',
+                        "SERIAL_NO"     => '01',
+                        "QUANTITY"      => $row['QUANTITY'], 
+                        "NET_VALUE"     =>''
+                    ];
+
+                    $params[0]['REQUISITION_SRV_ACCASS_VALUES']['item'][$k] = $REQUISISTION_ITEMS_SRV_ACCASS_VALUES_item;
                 }
 
-                $REQUISISTION_ITEMS_SRV_ACCASS_VALUES_item = [
-                    "PCKG_NO"       => $row['SUBPACKAGE_NO'],
-                    "LINE_NO"       => $row['SUBPACKAGE_NO'],
-                    "SERNO_LINE"    =>'01',
-                    "PERCENTAGE"    => '100',
-                    "SERIAL_NO"     => '01',
-                    "QUANTITY"      => $row['QUANTITY'], 
-                    "NET_VALUE"     =>''
-                ];
 
                 $REQUISITION_ITEM_TEXT_item = [
                     'PREQ_NO'       => '',
@@ -997,7 +1008,6 @@ class SapHelper {
             $params[0]['REQUISITION_ITEMS']['item'][$i] = $REQUISITION_ITEMS_item;
             $params[0]['REQUISITION_ITEM_TEXT']['item'][$i] = $REQUISITION_ITEM_TEXT_item;
             $params[0]['REQUISITION_ACCOUNT_ASSIGNMENT']['item'][$i] = $REQUISITION_ACCOUNT_ASSIGNMENT_item;
-            $params[0]['REQUISITION_SRV_ACCASS_VALUES']['item'][$i] = $REQUISISTION_ITEMS_SRV_ACCASS_VALUES_item;
             $params[0]['REQUISITION_SERVICES_TEXT']['item'][$i] = $REQUISITION_SERVICES_TEXT_item;
             $params[0]['REQUISITION_LIMITS']['item'][$i] = $REQUISITION_LIMITS_item;
 
@@ -1007,9 +1017,11 @@ class SapHelper {
         // dd($params);
         try {
             $result = $client->__soapCall("ZFM_WS_PR", $params, NULL, $header);
+            // dd($result);
             return $result;
         } catch (\Exception $e){
-            throw new \Exception("Soup request failed! Response: ".$client->__getLastResponse());
+            // echo $e;die;
+            throw new \Exception("Soap request failed! Response: ".$client->__getLastResponse());
         }
     }
 
@@ -1022,7 +1034,13 @@ class SapHelper {
      */
     public static function sendPoToSap($quotation, $quotationDetail, $quotationDeliveryDate)
     {
-        $wsdl = public_path() . "/xml/zbn_eproc_po.xml";
+        set_time_limit(0);
+        $soapFile = \sapHelp::getSoapXml('PURCHASE_ORDER');
+        if( $soapFile->is_active_env == \App\Models\BaseModel::Development ) {
+            $wsdl = public_path()."/xml/zbn_eproc_po.xml";
+        } else {
+            $wsdl = public_path() ."/xml/". $soapFile->xml_file;
+        }
         
         $username = "IT_02";
         $password = "ademsari";
@@ -3190,7 +3208,12 @@ class SapHelper {
      */
     public static function sendPOchangeToSap($poNumber)
     {
-        $wsdl = public_path() . "/xml/zbn_eproc_pochange.xml";
+        $soapFile = \sapHelp::getSoapXml('PURCHASE_ORDER_CHANGE');
+        if( $soapFile->is_active_env == \App\Models\BaseModel::Development ) {
+            $wsdl = public_path()."/xml/zbn_eproc_pochange.xml";
+        } else {
+            $wsdl = public_path() ."/xml/". $soapFile->xml_file;
+        }
         
         $username = "IT_02";
         $password = "ademsari";
@@ -5253,6 +5276,13 @@ class SapHelper {
         $docType = $purchaseOrder->doc_type;
 
         $wsdl = public_path() . "/xml/zbn_wms_do.xml";
+        $soapFile = \sapHelp::getSoapXml('BILLING');
+        if( $soapFile->is_active_env == \App\Models\BaseModel::Development ) {
+            $wsdl = public_path()."/xml/zbn_wms_do.xml";
+        } else {
+            $wsdl = public_path() ."/xml/". $soapFile->xml_file;
+        }
+        
         
         $username = "IT_02";
         $password = "ademsari";
