@@ -107,8 +107,8 @@ class VendorController extends Controller
 
             $user_vendors_import = UserVendorsImport::select('*')
                                     ->where('has_migrate', 0)
-                                    ->whereIn('account_group', ['Z001', 'Z002', 'Z003', 'Z004'])
-                                    ->limit(1000)
+                                    // ->whereIn('account_group', ['Z001', 'Z002', 'Z003', 'Z004'])
+                                    // ->limit(1000)
                                     ->get();
                                     // ->count();
             // echo json_encode($user_vendors_import); die();
@@ -186,11 +186,12 @@ class VendorController extends Controller
 
             $user_vendors_import_bank = UserVendorsImportBank::select()
                                     ->where('has_migrate', 0)
-                                    ->limit(1000)
+                                    // ->limit(1000)
                                     ->get();
             // echo json_encode($user_vendors_import_bank); die();
             foreach ($user_vendors_import_bank as $row) {
                 $user_vendors = UserVendors::where('code', $row->vendor)->get()->first();
+                // dd($user_vendors);
                 if (!$user_vendors) continue;
                 VendorBankDetails::create([
                     'vendor_id' => $user_vendors->id,

@@ -16,39 +16,39 @@ class VendorsImport implements ToModel
     */
     public function model(array $row)
     {
-        return new UserVendorsImport([
-            'vendor' => $row[0],
-            'country' => $row[1],
-            'name' => $row[2],
-            'city' => $row[3],
-            'postal_code' => $row[4],
-            'search_term' => $row[5],
-            'street' => $row[6],
-            'street_2' => $row[7],
-            'street_3' => $row[8],
-            'street_4' => $row[9],
-            'street_5' => $row[10],
-            'title' => $row[11],
-            'account_group' => $row[12],
-            'tax_number_1' => $row[13],
-            'telephone_1' => $row[14],
-            'telephone_2' => $row[15],
-            'fax_number' => $row[16],
-            'payment_terms' => $row[17],
-            'email' => $row[18]
-        ]);
-        // BANK
-        // return new UserVendorsImportBank([
+        // return new UserVendorsImport([
         //     'vendor' => $row[0],
-        //     'bank_country' => $row[1],
-        //     'bank_key' => $row[2],
-        //     'bank_account' => $row[3],
-        //     'bank_control_key' => $row[4],
-        //     'bank_type' => $row[5],
-        //     'collection_authorization' => $row[6],
-        //     'reference_details' => $row[7],
-        //     'account_holder' => $row[8]
+        //     'country' => $row[1],
+        //     'name' => $row[2],
+        //     'city' => $row[3],
+        //     'postal_code' => $row[4],
+        //     'search_term' => $row[5],
+        //     'street' => $row[6],
+        //     'street_2' => $row[7],
+        //     'street_3' => $row[8],
+        //     'street_4' => $row[9],
+        //     'street_5' => $row[10],
+        //     'title' => $row[11],
+        //     'account_group' => $row[12],
+        //     'tax_number_1' => $row[13],
+        //     'telephone_1' => $row[14],
+        //     'telephone_2' => $row[15],
+        //     'fax_number' => $row[16],
+        //     'payment_terms' => $row[17],
+        //     'email' => $row[18]
         // ]);
+        // BANK
+        return new UserVendorsImportBank([
+            'vendor' => $row[0],
+            'bank_country' => $row[1],
+            'bank_key' => $row[2],
+            'bank_account' => $row[3],
+            'bank_control_key' => $row[4],
+            'bank_type' => $row[5],
+            'collection_authorization' => $row[6],
+            'reference_details' => $row[7],
+            'account_holder' => $row[8]
+        ]);
         // return new UserVendorsImportBank([
         //     'vendor' => $row[0],
         //     'bank_country' => $row[1],
