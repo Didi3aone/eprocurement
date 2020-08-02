@@ -82,9 +82,8 @@
 									<td>{{ $row->material_id ?? '-'}}</td>
 									<td>{{ \App\Models\MasterMaterial::getMaterialName($row->material_id)->description ?? $row->material_id  }}</td>
 									<td>{{ $row->uom_code }}</td>
-									<td>{{ $row->qty }}</td>
-									<td>{{ $row->currency }}</td>
 									<td>{{ $row->price }}</td>
+									<td>{{ $row->qty }}</td>
 							</tr>
 							@endforeach
 						@endforeach
