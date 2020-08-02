@@ -76,10 +76,30 @@
                         </tr>
                         <tr>
                             <th>
+                               DPP
+                            </th>
+                            <td>
+                                {{ \toDecimal(\removeComma($billing->dpp)) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                               VAT
+                            </th>
+                            <td>
+                                @if($billing->ppn == 'V1' )
+                                    10%
+                                @else 
+                                    None
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
                                 Nominal Invoice After VAT
                             </th>
                             <td>
-                                {{ $billing->nominal_inv_after_ppn }}
+                                {{ \toDecimal(\removeComma($billing->nominal_inv_after_ppn)) }}
                             </td>
                         </tr>
                         <tr>

@@ -5,7 +5,7 @@
         <h3 class="text-themecolor">Billing</h3>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="javascript:void(0)"></a></li>
-            <li class="breadcrumb-item active">Create</li>
+            <li class="breadcrumb-item active">Edit</li>
         </ol>
     </div>
 </div>
@@ -22,7 +22,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="form-group col-lg-4">
-                                    <label>No Faktur Pajak</label>
+                                    <label>Tax Invoice Number</label>
                                     <input type="text" class="form-control form-control-line {{ $errors->has('no_faktur') ? 'is-invalid' : '' }}" name="no_faktur" value="{{ old('no_faktur', $billing->no_faktur) }}"> 
                                     @if($errors->has('no_faktur'))
                                         <div class="invalid-feedback">
@@ -31,7 +31,7 @@
                                     @endif
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>Faktur Date <span class="text-danger">*</span></label>
+                                    <label>Tax Invoice Date <span class="text-danger">*</span></label>
                                     <input type="text" id="mdate" class="form-control form-control-line {{ $errors->has('tgl_faktur') ? 'is-invalid' : '' }}" name="tgl_faktur" value="{{ old('tgl_faktur', $billing->tgl_faktur) }}"> 
                                     @if($errors->has('tgl_faktur'))
                                         <div class="invalid-feedback">
@@ -40,7 +40,7 @@
                                     @endif
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>No. Invoice</label>
+                                    <label>Invoice Number</label>
                                     <input type="text" class="form-control form-control-line {{ $errors->has('no_invoice') ? 'is-invalid' : '' }}" name="no_invoice" value="{{ old('no_invoice', $billing->no_invoice) }}"> 
                                     @if($errors->has('no_invoice'))
                                         <div class="invalid-feedback">
@@ -49,7 +49,7 @@
                                     @endif
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>Invoice Date <span class="text-danger">*</span></label>
+                                    <label>Invoice Date  <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control mdate2 form-control-line {{ $errors->has('tgl_invoice') ? 'is-invalid' : '' }}" name="tgl_invoice" value="{{ old('tgl_invoice', $billing->tgl_invoice) }}"> 
                                     @if($errors->has('tgl_invoice'))
                                         <div class="invalid-feedback">
@@ -59,7 +59,7 @@
                                 </div>
                                 <div class="form-group col-lg-4">
                                     <label>DPP <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control form-control-line {{ $errors->has('dpp') ? 'is-invalid' : '' }}" name="dpp" id="dpp" value="{{ old('dpp', $billing->dpp) }}"> 
+                                    <input type="text" class="form-control form-control-line {{ $errors->has('dpp') ? 'is-invalid' : '' }}" name="dpp" id="dpp" onkeyup="leadingZero(this.value, $(this), true)" value="{{ old('dpp', $billing->dpp) }}"> 
                                     @if($errors->has('dpp'))
                                         <div class="invalid-feedback">
                                             {{ $errors->first('dpp') }}
@@ -67,7 +67,7 @@
                                     @endif
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>PPN <span class="text-danger">*</span></label>
+                                    <label>VAT <span class="text-danger">*</span></label>
                                     {{-- <input type="text" class="form-control form-control-line {{ $errors->has('ppn') ? 'is-invalid' : '' }}" name="ppn" value="{{ old('ppn', '') }}">  --}}
                                     <select class="form-control select2" name="ppn" id="ppn" placeholder="Choose">
                                         <option value=""> Choose </option>
@@ -82,7 +82,7 @@
                                 </div>
                                 <p id="demo"></p>
                                 <div class="form-group col-lg-4">
-                                    <label>Nominal Invoice Sesudah PPN <span class="text-danger">*</span></label>
+                                    <label>Nominal Invoice After VAT <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control form-control-line" name="nominal_inv_after_ppn" id="nominal_inv_after_ppn" value="{{ old('nominal_inv_after_ppn', $billing->nominal_inv_after_ppn) }}" readonly> 
                                 </div>
                                 <div class="form-group col-lg-4">
@@ -127,7 +127,7 @@
                                     <a href="" class="" id="viewer_do" target="_blank" onclick="PreviewImageDo()">Preview File DO</a>
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>Surat Ket. Bebas Pajak</label>
+                                    <label>Letter of information. Tax-free</label>
                                     <input type="file" id="surat" class="form-control form-control-line {{ $errors->has('surat_ket_bebas_pajak') ? 'is-invalid' : '' }}" name="surat_ket_bebas_pajak" value="{{ old('surat_ket_bebas_pajak', '') }}"> 
                                     {{ $billing->surat_ket_bebas_pajak }}
                                     <br>
@@ -217,7 +217,7 @@
                             <div class="row">
                                 <div class="col-lg-12 form-group">
                                     <button type="submit" class="btn btn-success"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
-                                    <a href="{{ route('admin.billing') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i> Back</a>
+                                    <a href="{{ route('vendor.billing') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i> Back</a>
                                 </div>
                             </div>
                         </div>
@@ -324,14 +324,14 @@
    $('select').on('change', function() {
        var ppn =  this.value;
        var dpp = $("#dpp").val();
-       tt = dpp.replace(/,/g, '.');
+       tt = dpp.replace(/,/g, '')
        if(ppn == "V1") {
            var count = parseFloat(tt) * 1.1;
            var roundedString = count.toFixed(2);
-           var cm = roundedString.replace(".", ",");
+           var cm = roundedString.replace(/,/g, '')
            $("#nominal_inv_after_ppn").val(cm);
        } else if(ppn == "V0") {
-           var cm = dpp.replace(".", ",");
+           var cm = dpp.replace(/,/g, '')
            $("#nominal_inv_after_ppn").val(cm);
        }
 
@@ -370,6 +370,43 @@
         pdffile_url=URL.createObjectURL(pdffile);
         
         $('#viewer_faktur').attr('href',pdffile_url);
+    }
+
+    window.leadingZero = function(value, element, decimal = false) {
+        var convert_number = removeChar(value);
+
+        if(decimal) {
+            if(value != '') {
+            element.val(keyupFormatUangWithDecimal(value));
+            } else {
+            element.val(0);
+            }
+        } else {
+            if(value != '') {
+            element.val(keyupFormatUang(parseInt(convert_number)));
+            } else {
+            element.val(0);
+            }
+        }
+    }
+
+    function removeChar(value) {
+        return value.toString().replace(/[.*+?^${}()|[\]\\]/g, '');
+    }
+
+    window.keyupFormatUang = function(value) {
+        var number = '';    
+        var value_rev = value.toString().split('').reverse().join('');
+        
+        for(var i = 0; i < value_rev.length; i++) {
+            if(i % 3 == 0) number += value_rev.substr(i, 3) + '.';
+        }
+        
+        return number.split('', number.length - 1).reverse().join('');
+        }
+
+        window.keyupFormatUangWithDecimal = function(value) {
+        return value.replace(/^0+/, '').replace(/(?!\.)\D/g, "").replace(/(?<=\..*)\./g, "").replace(/(?<=\.\d\d).*/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
 </script>

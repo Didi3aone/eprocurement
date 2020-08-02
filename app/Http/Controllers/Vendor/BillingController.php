@@ -399,10 +399,9 @@ class BillingController extends Controller
                 $fileInvoice->move(public_path() . '/files/uploads/', $fileInvoiceName);
             }
 
-            $nominal_inv_after_ppn =  str_replace(',', '.', $request->nominal_inv_after_ppn);
+            $nominal_inv_after_ppn =  str_replace(',', '', $request->nominal_inv_after_ppn);
 
             $billing = Billing::find($id);
-            $billing->billing_no            = date('y').substr(time(),0,-19)."".time();
             $billing->tgl_faktur            = $request->tgl_faktur;
             $billing->no_faktur             = $request->no_faktur;
             $billing->no_invoice            = $request->no_invoice;
@@ -464,7 +463,7 @@ class BillingController extends Controller
 
                     $_poGr = PurchaseOrderGr::where('po_no', $poNo)
                             ->where('po_item', $billingDetail->PO_ITEM)
-                            ->where('material_no', $billingDetail->material_id)
+                            // ->where('material_no', $billingDetail->material_id)
                             ->where('doc_gr', $billingDetail->doc_gr)
                             ->first();
 

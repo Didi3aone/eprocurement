@@ -61,6 +61,14 @@
                             <input type="text" class="form-control form-control-line" name="billing_no" value="{{ $billing->billing_no ?? old('billing_no', '') }}" readonly> 
                         </div>
                         <div class="form-group col-lg-4">
+                            <label>Document No</label>
+                            <input type="text" class="form-control form-control-line" name="vendor_id" value="{{ $billing->document_no }}" readonly> 
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>Posting Date</label>
+                            <input type="text" class="form-control form-control-line" name="vendor_id" value="{{ $billing->posting_date }}" readonly> 
+                        </div>
+                        <div class="form-group col-lg-4">
                             <label>No Faktur Pajak</label>
                             <input type="text" class="form-control form-control-line" name="no_faktur" value="{{ $billing->no_faktur ?? old('no_faktur', '') }}" readonly> 
                         </div>
