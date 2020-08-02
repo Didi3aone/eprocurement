@@ -109,10 +109,10 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        {{-- <div class="form-group col-lg-4">
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.document_no') }}</label>
-                            <input type="text" class="form-control form-control-line" name="document_no" value="" readonly> 
-                        </div> --}}
+                            <input type="text" class="form-control form-control-line" name="document_no" value="{{ $billing->document_no }}" readonly> 
+                        </div>
                         {{-- <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.proposal_date') }}</label>
                             <input type="text" class="form-control form-control-line " name="proposal_date" value="{{ $billing->proposal_date ?? old('proposal_date', '') }}" readonly> 
