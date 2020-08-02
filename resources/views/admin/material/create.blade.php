@@ -25,15 +25,6 @@
                         @endif
                     </div>
                     <div class="form-group">
-                        <label>{{ trans('cruds.masterMaterial.fields.small_description') }}</label>
-                        <input type="text" class="form-control form-control-line {{ $errors->has('small_description') ? 'is-invalid' : '' }}" name="small_description" value="{{ old('small_description', '') }}"> 
-                        @if($errors->has('small_description'))
-                            <div class="invalid-feedback">
-                                {{ $errors->first('small_description') }}
-                            </div>
-                        @endif
-                    </div>
-                    <div class="form-group">
                         <label>{{ trans('cruds.masterMaterial.fields.description') }}</label>
                         <input type="text" class="form-control form-control-line {{ $errors->has('description') ? 'is-invalid' : '' }}" name="description" value="{{ old('description', '') }}"> 
                         @if($errors->has('description'))
@@ -44,57 +35,57 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.masterMaterial.fields.m_group_id') }}</label>
-                        <select class="form-control select2 {{ $errors->has('m_group_id') ? 'is-invalid' : '' }}" name="m_group_id" id="m_group_id" required>
+                        <select class="form-control select2 {{ $errors->has('material_group_code') ? 'is-invalid' : '' }}" name="material_group_code" id="material_group_code" required>
                             @foreach($materialGroups as $id => $mg)
-                                <option value="{{ $mg->id }}" {{ old('m_group_id', '') ? 'selected' : '' }}>{{ $mg->code }} - {{ $mg->description }}</option>
+                                <option value="{{ $mg->code }}" {{ old('material_group_code', '') ? 'selected' : '' }}>{{ $mg->code }} - {{ $mg->description }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.masterMaterial.fields.m_type_id') }}</label>
-                        <select class="form-control select2 {{ $errors->has('m_type_id') ? 'is-invalid' : '' }}" name="m_type_id" id="m_type_id" required>
+                        <select class="form-control select2 {{ $errors->has('material_type_code') ? 'is-invalid' : '' }}" name="material_type_code" id="material_type_code" required>
                             @foreach($materialTypes as $id => $mt)
-                                <option value="{{ $mt->id }}" {{ old('m_type_id', '') ? 'selected' : '' }}>{{ $mt->code }} - {{ $mt->description }}</option>
+                                <option value="{{ $mt->code }}" {{ old('material_type_code', '') ? 'selected' : '' }}>{{ $mt->code }} - {{ $mt->description }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Unit</label>
-                        <select class="form-control select2 {{ $errors->has('m_unit_id') ? 'is-invalid' : '' }}" name="m_unit_id" id="m_unit_id" required>
+                        <select class="form-control select2 {{ $errors->has('uom_code') ? 'is-invalid' : '' }}" name="uom_code" id="uom_code" required>
                             @foreach($unit as $id => $mt)
-                                <option value="{{ $mt->id }}" {{ old('m_unit_id', '') ? 'selected' : '' }}>{{ $mt->uom }} - {{ $mt->text }}</option>
+                                <option value="{{ $mt->code }}" {{ old('uom_code', '') ? 'selected' : '' }}>{{ $mt->uom }} - {{ $mt->text }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Storage Location</label>
-                        <select class="form-control select2 {{ $errors->has('storage_location') ? 'is-invalid' : '' }}" name="storage_location" id="storage_location" required>
+                        <select class="form-control select2 {{ $errors->has('storage_location_code') ? 'is-invalid' : '' }}" name="storage_location_code" id="storage_location_code" required>
                             @foreach($storage as $id => $st)
-                                <option value="{{ $st->code }}" {{ old('storage_location', '') ? 'selected' : '' }}>{{ $st->code }} - {{ $st->description }}</option>
+                                <option value="{{ $st->code }}" {{ old('storage_location_code', '') ? 'selected' : '' }}>{{ $st->code }} - {{ $st->description }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.masterMaterial.fields.m_plant_id') }}</label>
-                        <select class="form-control select2 {{ $errors->has('m_plant_id') ? 'is-invalid' : '' }}" name="m_plant_id" id="m_plant_id" required>
+                        <select class="form-control select2 {{ $errors->has('plant_code') ? 'is-invalid' : '' }}" name="plant_code" id="plant_code" required>
                             @foreach($plants as $id => $pl)
-                                <option value="{{ $pl->id }}" {{ old('m_plant_id', '') ? 'selected' : '' }}>{{ $pl->code }} - {{ $pl->description }}</option>
+                                <option value="{{ $pl->code }}" {{ old('plant_code', '') ? 'selected' : '' }}>{{ $pl->code }} - {{ $pl->description }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.masterMaterial.fields.m_purchasing_id') }}</label>
-                        <select class="form-control select2 {{ $errors->has('m_purchasing_id') ? 'is-invalid' : '' }}" name="m_purchasing_id" id="m_purchasing_id" required>
+                        <select class="form-control select2 {{ $errors->has('purchasing_group_code') ? 'is-invalid' : '' }}" name="purchasing_group_code" id="purchasing_group_code" required>
                             @foreach($purchasingGroups as $id => $pg)
-                                <option value="{{ $pg->id }}" {{ old('m_purchasing_id', '') ? 'selected' : '' }}>{{ $pg->code }} - {{ $pg->description }}</option>
+                                <option value="{{ $pg->code }}" {{ old('purchasing_group_code', '') ? 'selected' : '' }}>{{ $pg->code }} - {{ $pg->description }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="form-group">
                         <label>{{ trans('cruds.masterMaterial.fields.m_profit_id') }}</label>
-                        <select class="form-control select2 {{ $errors->has('m_profit_id') ? 'is-invalid' : '' }}" name="m_profit_id" id="m_profit_id" required>
+                        <select class="form-control select2 {{ $errors->has('profit_center_code') ? 'is-invalid' : '' }}" name="profit_center_code" id="profit_center_code" required>
                             @foreach($profitCenters as $id => $pc)
-                                <option value="{{ $pc->id }}" {{ old('m_profit_id', '') ? 'selected' : '' }}>{{ $pc->code }} - {{ $pc->description }}</option>
+                                <option value="{{ $pc->code }}" {{ old('profit_center_code', '') ? 'selected' : '' }}>{{ $pc->code }} - {{ $pc->description }}</option>
                             @endforeach
                         </select>
                     </div>

@@ -177,23 +177,23 @@
                 render: function(data) {
                     console.log(data)
                     let html = ''
-                    const show_url = '{{ url('admin/material/') }}' + data.id
-                    const edit_url = '{{ url('admin/material/') }}' + data.id + '/edit'
+                    const show_url = '{{ url('admin/material/') }}' +'/'+data.id
+                    const edit_url = '{{ url('admin/material/') }}' +'/'+data.id + '/edit'
 
                     @can('material_show')
-                    html = `<a class="btn btn-xs btn-primary" href="${show_url}">
+                    html += `<a class="btn btn-xs btn-primary" href="${show_url}">
                             {{ trans('global.view') }}
                         </a>`
                     @endcan
 
                     @can('material_edit')
-                    html = `<a class="btn btn-xs btn-info" href="${edit_url}">
+                    html += `<a class="btn btn-xs btn-info" href="${edit_url}">
                             {{ trans('global.edit') }}
                         </a>`
                     @endcan
 
                     @can('material_delete')
-                    html = `<button class="btn btn-xs btn-danger" onclick="deleteConfirmation(${data.id})">Delete</button>`
+                    html += `<button class="btn btn-xs btn-danger" onclick="deleteConfirmation(${data.id})">Delete</button>`
                     @endcan
 
                     return html
