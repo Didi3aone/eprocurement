@@ -54,7 +54,7 @@
                         <label>Unit</label>
                         <select class="form-control select2 {{ $errors->has('uom_code') ? 'is-invalid' : '' }}" name="uom_code" id="uom_code">
                             @foreach($unit as $id => $mt)
-                                <option value="{{ $mt->code }}" {{ $mt->code == $material->uom_code ? 'selected' : ''  }}>{{ $mt->uom }} - {{ $mt->text }}</option>
+                                <option value="{{ $mt->uom }}" {{ $mt->uom == $material->uom_code ? 'selected' : ''  }}>{{ $mt->uom }} - {{ $mt->text }}</option>
                             @endforeach
                         </select>
                     </div>
