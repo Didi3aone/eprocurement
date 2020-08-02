@@ -38,7 +38,10 @@ class MaterialController extends Controller
     
     public function list ()
     {
-        return DataTables::of(MasterMaterial::limit(10000)->get())->make(true);
+        set_time_limit(0);
+        ini_set('memory_limit', '2048M');
+
+        return DataTables::of(MasterMaterial::get())->make(true);
     }
 
     public function select2 (Request $request)
@@ -77,8 +80,6 @@ class MaterialController extends Controller
 
     public function import(Request $request)
     {
-        // abort_if(Gate::denies('vendor_import_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-        
         $path = 'xls/';
         $file = $request->file('xls_file');
         

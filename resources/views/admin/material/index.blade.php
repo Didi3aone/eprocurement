@@ -147,14 +147,7 @@
     $("#danger-alert").fadeTo(2000, 500).slideUp(500, function(){
         $("#danger-alert").slideUp(500);
     });
-
-    // $('#datatables-run').DataTable({
-    //     dom: 'Bfrtip',
-    //     buttons: [
-    //         'copy', 'csv', 'excel', 'pdf', 'print'
-    //     ]
-    // });
-
+    
     $('#datatables-run').DataTable({
         dom: 'Bfrtip',
         // order: [[0, 'desc']],
@@ -219,11 +212,12 @@
             cancelButtonText: "No, cancel!",
             reverseButtons: !0
         }).then(function (e) {
-            if (e.value === true) {
+            console.log(e)
+            if (e == true) {
                 var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
                 $.ajax({
                     type: 'POST',
-                    url: "{{ url('admin.material.destroy') }}"+id ,
+                    url: "{{ url('/admin/material/destroy/')"+id ,
                     data: {_token: CSRF_TOKEN},
                     dataType: 'JSON',
                     success: function (results) {

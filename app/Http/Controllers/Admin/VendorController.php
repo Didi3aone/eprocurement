@@ -78,7 +78,6 @@ class VendorController extends Controller
 
     public function import(Request $request)
     {
-        // abort_if(Gate::denies('vendor_import_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         ini_set('max_execution_time', 0);
         
         $path = 'xls/';
@@ -245,6 +244,7 @@ class VendorController extends Controller
         $post['email'] = $row->email;
         $post['payment_terms'] = $row->payment_terms;
         $post['status'] = 1;
+        $post['is_export'] = 1;
         $do_insert = UserVendors::create($post);
         if (!$do_insert) throw new Exception('Failed at insert_user_vendor');
 
