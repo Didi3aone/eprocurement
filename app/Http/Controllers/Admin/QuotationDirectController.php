@@ -433,6 +433,8 @@ class QuotationDirectController extends Controller
      */
     private function _clone_purchase_orders($header, $detail, $poNumber)
     {
+        $configEnv = \configEmailNotification();
+        
         $poId = PurchaseOrder::create([
             'quotation_id' => $header->id,
             'notes'        => $header->notes,
@@ -547,7 +549,13 @@ class QuotationDirectController extends Controller
             ->setOptions(['debugCss' => true, 'isPhpEnabled' => true])
             ->setWarnings(true);
         $pdf->save(public_path("storage/{$po->id}_print.pdf"));
-        \Mail::to('yunan.yazid@enesis.com')->send(new SendMail($po));
+        if (\App\Models\BaseModel::Development == $configEnv->type) {
+            $email = $configEnv->value;
+        } else {
+            $email = $po->vendors['email'] ?? 'diditriawan13@gmail.com';
+        }
+        \Mail::to($email)->send(new SendMail($po));
+        // \Mail::to('yunan.yazid@enesis.com')->send(new SendMail($po));
     }
 
     private function _insert_details($details, $id)
