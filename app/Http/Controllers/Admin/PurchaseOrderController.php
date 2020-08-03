@@ -35,7 +35,6 @@ class PurchaseOrderController extends Controller
                 ->leftJoin('master_acps', 'master_acps.id', '=', 'purchase_orders_details.acp_id')
                 ->leftJoin('vendors', 'vendors.code', '=', 'purchase_orders.vendor_id')
                 ->where('purchase_orders.status_approval', PurchaseOrder::Approved)
-                ->where('purchase_orders.created_by', \Auth::user()->user_id)
                 ->select(
                     'purchase_orders_details.purchasing_document',
                     'purchase_orders_details.PO_ITEM',
@@ -62,10 +61,20 @@ class PurchaseOrderController extends Controller
                     'master_acps.acp_no',
                     'vendors.name as vendor'
                 );
+
+        if( \Auth::user()->roles[0]->title == 'staff-accounting'
+            || \Auth::user()->roles[0]->title ==' Admin' ) {
+                $cache = "";
+            } else {
+                $cache = \Auth::user()->user_id;
+                $po = $po->where('purchase_orders.created_by', \Auth::user()->user_id);
+
+            }
+
         
         if (\request()->ajax()) {
             $q = \collect($request->all())->forget('draw')->forget('_')->toJson();
-            $result = \Cache::remember($q.\Auth::user()->user_id, 60, function () use ($request, $po, $q) {
+            $result = \Cache::remember($q.$cache, 60, function () use ($request, $po, $q) {
                 $columns = [
                     0 => 'PO_NUMBER',
                     1 => 'PO_ITEM',
