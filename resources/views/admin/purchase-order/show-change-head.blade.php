@@ -48,7 +48,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="card-body">
+                {{-- <div class="card-body">
                     <table class="table table-bordered table-striped">
                         <thead>
                             <tr>
@@ -73,7 +73,7 @@
                             @endforeach
                         </tbody>
                     </table>
-                </div>
+                </div> --}}
                 <div class="card-body">
                     <div class="row" style="margin-top: 20px">
                         <div class="col-lg-12">

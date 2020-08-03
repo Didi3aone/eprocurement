@@ -71,7 +71,7 @@
                     </table>
                 </div>
 
-                <div class="card-body">
+                {{-- <div class="card-body">
                     <table class="table table-bordered table-striped">
                         <thead>
                             <tr>
@@ -80,11 +80,15 @@
                                 <th>Qty</th>
                                 <th>Price</th>
                             </tr>
-                        </thead>
+                        </thead> 
                         <tbody>
                             @foreach($history->detail as $key => $value)
+                            @php
+                                dd($value);
+                            @endphp
                             <tr>
-                                <td>{{ $value->material_id." - ".$value->description }}</td>
+                                <td>{{ \App\Models\PurchaseOrdersDetail::where('id',$value->po_detail_id)->material_id ??  
+                                    \App\Models\PurchaseOrdersDetail::where('id',$value->po_detail_id)->short_text }}</td>
                                 <td>{{ $value->unit }}</td>
                                 <td>{{ $value->qty }}</td>
                                 <td>{{ $value->price }}</td>
@@ -92,7 +96,7 @@
                             @endforeach
                         </tbody>
                     </table>
-                </div>
+                </div> --}}
 
                 <div class="card-body">
                     <div class="row" style="margin-top: 20px">

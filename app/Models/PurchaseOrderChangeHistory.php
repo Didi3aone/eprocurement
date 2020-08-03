@@ -12,6 +12,6 @@ class PurchaseOrderChangeHistory extends Model
 
     public function detail()
     {
-        return $this->hasMany(\App\Models\PurchaseOrderChangeHistoryDetail::class,'po_history_id','id');
+        return $this->hasMany(\App\Models\PurchaseOrderChangeHistoryDetail::class,'id','po_history_id');
     }
 }

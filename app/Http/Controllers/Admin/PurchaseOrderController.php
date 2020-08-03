@@ -186,7 +186,7 @@ class PurchaseOrderController extends Controller
                     'purchase_orders.notes',
                     'vendors.name as vendor',
                 )
-                ->orderBy('purchase_orders.created_at', 'desc')->get();
+                ->orderBy('purchase_orders.created_at', 'desc')->get(); 
 
         return view('admin.purchase-order.approval-po-change', compact('po'));
     }
@@ -396,14 +396,15 @@ class PurchaseOrderController extends Controller
         $purchaseOrder = PurchaseOrder::find($id);
         $history       = PurchaseOrderChangeHistory::where('po_id', $id)->first();
 
-        return view('admin.purchase-order.show-change-ass', compact('purchaseOrder'));
+        return view('admin.purchase-order.show-change-ass', compact('purchaseOrder','history'));
     }
 
     public function showApprovalHead($id)
     {
         $purchaseOrder = PurchaseOrder::find($id);
+        $history       = PurchaseOrderChangeHistory::where('po_id', $id)->first();
 
-        return view('admin.purchase-order.show-change-head', compact('purchaseOrder'));
+        return view('admin.purchase-order.show-change-head', compact('purchaseOrder','history'));
     }
 
     /**
