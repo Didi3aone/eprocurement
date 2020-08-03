@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>{{ $vendor->name."_".'0000' }}</title>
     <style>
-        @page {
+         @page {
             size:  auto;
             margin: 8mm 4mm;
             counter-increment: page;
@@ -164,7 +164,7 @@
                         </p>
                     </div>
                 </div>
-                <div class="row" style="margin-top: 8px;">
+                <div class="row" style="margin-top: -4px;">
                     <div>
                         <p>To:</p>
                     </div>
@@ -245,7 +245,7 @@
                     <td>{{ $value['short_text'] ?? '' }}</td>
                     <td>{{ $data['notes'] }}</td>
                     <td>{{ date('d.m.Y',strtotime($data['delivery_date'][$key])) }}</td>
-                    <td>{{ $data['qty'][$key]." ".$data['unit'][$key] }}</td>
+                    <td>{{ $data['qty'][$key]." ".\App\Models\UomConvert::where('uom_1', $data['unit'][$key])->first()->uom_2}}</td>
                     <td>{{ $data['PR_NO'][$key] }}</td>
                     <td>{{ \toDecimal(\removeComma($data['price'][$key])) }}</td>
                     <td>{{ \toDecimal(\removeComma($data['price'][$key])) }}</td>
