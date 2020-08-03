@@ -207,10 +207,10 @@
                     @endif
                 </p>
                 <p class="to-top">
-                    Jl. Rawa Sumur II Blok DD.16
+                    {{ $po->getShip['name'] }}
                 </p>
                 <p class="to-top">
-                    Pulo Gadung Industri Estate, Jakarta 
+                    {{ $po->getShip['alamat'] }}
                 </p>
             </div>
         </div>
@@ -261,7 +261,7 @@
                     <td>{{ $value->short_text }}</td>
                     <td>{{ $value->notes == "PR MRP" ? "" :  $value->notes }}</td>
                     <td style="text-align:center;">{{ date('d.m.Y',strtotime($value->delivery_date)) }}</td>
-                    <td style="text-align:right;">{{ $value->qty." ".\App\Models\UomConvert::where('uom_1', $value->unit)->first()->uom_2 ?? $value->unit }}</td>
+                    <td style="text-align:right;">{{  $value->qty." ".$value->unit }}</td>
                     <td style="text-align:right;">{{ $value->PR_NO }}</td>
                     <td style="text-align:right;">{{ \toDecimal($value->price) }}</td>
                     <td style="text-align:right;">{{ \toDecimal($value->price) }}</td>

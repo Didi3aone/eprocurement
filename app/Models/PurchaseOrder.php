@@ -101,6 +101,6 @@ class PurchaseOrder extends Model
 
     public function getShip()
     {
-        return $this->hasOne(\App\Models\MasterShipToAdress::class,'ship_id','id');
+        return $this->hasOne(\App\Models\MasterShipToAdress::class,'id','ship_id');
     }
 }
