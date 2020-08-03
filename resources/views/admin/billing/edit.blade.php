@@ -265,7 +265,7 @@
                     </div>
                     <div class="form-group col-lg-4">
                         @php
-                            $balance = $billing->dpp - $totalSum;
+                            $balance = $billing->dpp - $totalVl;
                         @endphp
                         <input type="hidden" class="form-control form-control-line" name="nominal_balances" id="nominal_balances" value="{{ toDecimal($balance) }}"> 
                         <input type="hidden" class="form-control form-control-line" name="summary" id="summary" value="{{ toDecimal($totalSum) }}"> 

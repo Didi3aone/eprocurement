@@ -23,6 +23,8 @@ use App\Models\RfqDetail;
 use App\Mail\PurchaseOrderMail;
 use PDF;
 use App\Mail\SendMail;
+use App\Mail\poApprovalAssproc;
+use App\Mail\poApprovalHead;
 
 class QuotationDirectController extends Controller
 {
@@ -317,6 +319,19 @@ class QuotationDirectController extends Controller
                 $quotation->approved_asspro     = \Auth::user()->user_id;
                 $quotation->approved_date_ass   = date('Y-m-d');
                 $quotation->save();
+
+                $configEnv = \configEmailNotification();
+                if (\App\Models\BaseModel::Development == $configEnv->type) {
+                    $email = $configEnv->value;
+                    $name  = "Didi Ganteng";
+                } else {
+                    $head  = \App\Models\User::where('user_id', 'PROCUREMENT1')->first();
+                    $email = $head->email;
+                    $name  = $head->name;
+                }
+
+                $po = $quotation;
+                \Mail::to($email)->send(new poApprovalHead($po,$name));
             }
 
             return redirect()->route('admin.quotation-direct-approval-ass')->with('status', 'Direct Order has been approved!');
@@ -561,6 +576,8 @@ class QuotationDirectController extends Controller
 
     private function _insert_details($details, $id)
     {
+        $configEnv = \configEmailNotification();
+
         $i = 0;
         $lineNo = 1;
         $totalPrice = 0;
@@ -689,11 +706,23 @@ class QuotationDirectController extends Controller
             $i++;
         }
 
+        if (\App\Models\BaseModel::Development == $configEnv->type) {
+            $email = $configEnv->value;
+            $name  = "Didi Ganteng";
+        } else {
+            $assProcs = \App\Models\User::where('user_id', $assProc->user_id)->first();
+            $email = $assProcs->email;
+            $name  = $assProcs->name;
+        }
+
         $quotation = Quotation::find($id);
         $quotation->total_price     = $totalPrice;
         $quotation->approved_asspro = $assProc->user_id;
         $quotation->approved_head   = 'PROCUREMENT01';
         $quotation->save();
+
+        $po = $quotation;
+        \Mail::to($email)->send(new poApprovalAssproc($po,$name));
     }
 
     public function fileUpload($request)
