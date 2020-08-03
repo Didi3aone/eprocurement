@@ -96,9 +96,11 @@ class PurchaseRequestController extends Controller
                 $totalFiltered = $materials
                     ->when($request->input('search.value'), function ($q) use ($request) {
                         $search = $request->input('search.value');
-                        $q->where('PR_NO', 'ILIKE', "%{$search}%")
-                            ->orWhere('material_id', 'ILIKE', "%{$search}%")
-                            ->orWhere('short_text', 'ILIKE', "%{$search}%");
+                        $q->where(function ($q) use ($search) {
+                            $q->where('PR_NO', 'ILIKE', "%{$search}%")
+                                ->orWhere('material_id', 'ILIKE', "%{$search}%")
+                                ->orWhere('short_text', 'ILIKE', "%{$search}%");
+                        });
                     })->count();
 
                 $limit = $request->input('length');
@@ -108,10 +110,12 @@ class PurchaseRequestController extends Controller
                 $items = $materials
                     ->when($request->input('search.value'), function ($q) use ($request) {
                         $search = $request->input('search.value');
-                        $q->where('PR_NO', 'ILIKE', "%{$search}%")
-                        // ->whereIn('purchase_requests_details.purchasing_group_code', $userMapping)
-                            ->orWhere('material_id', 'ILIKE', "%{$search}%")
-                            ->orWhere('short_text', 'ILIKE', "%{$search}%");
+                        $q->where(function ($q) use ($search) {
+                            $q->where('PR_NO', 'ILIKE', "%{$search}%")
+                            // ->whereIn('purchase_requests_details.purchasing_group_code', $userMapping)
+                                ->orWhere('material_id', 'ILIKE', "%{$search}%")
+                                ->orWhere('short_text', 'ILIKE', "%{$search}%");
+                        });
                     })
                     ->offset($start)
                     ->limit($limit)
