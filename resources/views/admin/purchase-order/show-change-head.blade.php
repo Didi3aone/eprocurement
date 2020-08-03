@@ -64,7 +64,7 @@
                             @foreach($purchaseOrder->orderDetail as $key => $value)
                             <tr>
                                 <td>{{ $value->material_id." - ".$value->description }}</td>
-                                <td>{{ $value->unit }}</td>
+                                <td>{{ \App\Models\UomConvert::where('uom_1', $value->unit)->first()->uom_2 }}</td>
                                 <td>{{ $value->qty_old }}</td>
                                 <td>{{ $value->qty }}</td>
                                 <td>{{ $value->original_price }}</td>
