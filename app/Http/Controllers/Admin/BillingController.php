@@ -158,8 +158,14 @@ class BillingController extends Controller
             $billing->update();
 
             $vendor = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
-            $name   = $vendor->name;
-            $email = 'ari.budiman@enesis.com';
+            $configEnv = \configEmailNotification();
+            if (\App\Models\BaseModel::Development == $configEnv->type) {
+                $email = 'ari.budiman@enesis.com';
+                $name  = $vendor->name;
+            } else {
+                $email = $vendor->email;
+                $name  = $vendor->name;
+            }
 
             \Mail::to($email)->send(new billingApproved($billing, $name));
             \Session::flash('status','Billing has been approved');
@@ -180,8 +186,14 @@ class BillingController extends Controller
 
         $vendor = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
 
-        $name  = $vendor->name;
-        $email = 'ari.budiman@enesis.com';
+        $configEnv = \configEmailNotification();
+        if (\App\Models\BaseModel::Development == $configEnv->type) {
+            $email = 'ari.budiman@enesis.com';
+            $name  = $vendor->name;
+        } else {
+            $email = $vendor->email;
+            $name  = $vendor->name;
+        }
 
         \Mail::to($email)->send(new billingRejected($billing, $name));
         \Session::flash('status','Billing has been rejected');
@@ -197,8 +209,14 @@ class BillingController extends Controller
         $billing->update();
 
         $vendor = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
-        $name  = $vendor->name;
-        $email = 'ari.budiman@enesis.com';
+        $configEnv = \configEmailNotification();
+        if (\App\Models\BaseModel::Development == $configEnv->type) {
+            $email = 'ari.budiman@enesis.com';
+            $name  = $vendor->name;
+        } else {
+            $email = $vendor->email;
+            $name  = $vendor->name;
+        }
 
         \Mail::to($email)->send(new billingVerify($billing, $name));
         \Session::flash('status','Billing has been verify');
@@ -214,8 +232,14 @@ class BillingController extends Controller
         $billing->update();
 
         $vendor = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
-        $name  = $vendor->name;
-        $email = 'ari.budiman@enesis.com';
+        $configEnv = \configEmailNotification();
+        if (\App\Models\BaseModel::Development == $configEnv->type) {
+            $email = 'ari.budiman@enesis.com';
+            $name  = $vendor->name;
+        } else {
+            $email = $vendor->email;
+            $name  = $vendor->name;
+        }
 
         \Mail::to($email)->send(new billingIncompleted($billing, $name));
 
