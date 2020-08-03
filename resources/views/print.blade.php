@@ -259,7 +259,7 @@
                     </td>
                     <td style="text-align:center;">{{ $value->material_id ?? '' }}</td>
                     <td>{{ $value->short_text }}</td>
-                    <td>{{ $value->notes == "PR MRP" ? "" :  $value->notes }}</td>
+                    <td>{{ $value->notes == "PR MRP FROM SAP" ? "" :  $value->notes }}</td>
                     <td style="text-align:center;">{{ date('d.m.Y',strtotime($value->delivery_date)) }}</td>
                     <td style="text-align:right;">{{ $value->qty." ".$value->unit }}</td>
                     <td style="text-align:right;">{{ $value->PR_NO }}</td>
