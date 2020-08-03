@@ -90,6 +90,8 @@ class PurchaseRequestController extends Controller
                     5 => 'short_text',
                     9 => 'plant_code',
                     15 => 'purchasing_group_code',
+                    18 => 'request_no',
+                    18 => 'pr_no',
                 ];
                 $totalData = $materials->count();
 
