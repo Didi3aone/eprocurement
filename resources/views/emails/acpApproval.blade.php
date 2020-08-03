@@ -29,6 +29,16 @@
 				<table style="width: 100%; background:#f2f2f2;" border=1>
 					<thead>
 					<tr>
+						<th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+                            <div>
+								Vendor
+							</div>
+						</th>
+						<th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+                            <div>
+								Winner 	
+							</div>
+						</th>
                         <th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
                             <div>
 								Material 	
@@ -58,14 +68,24 @@
 					</thead>
 					<tbody>
 						@foreach($acp->detail as $rows)
+							@php
+								$winner = '<span class="badge badge-danger">Lose</span>';
+								if( $rows->is_winner == \App\Models\AcpTableDetail::Winner ) {
+									$winner = '<span class="badge badge-primary">Winner</span>';
+								}
+								$rowSpan = count(\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id));
+							@endphp
 							@foreach (\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id) as $row)
-							<tr>
-								<td>{{ $row->material_id ?? '-'}}</td>
-								<td>{{ \App\Models\MasterMaterial::getMaterialName($row->material_id)->description ?? $row->material_id  }}</td>
-								<td>{{ $row->uom_code }}</td>
-								<td>{{ $row->price }}</td>
-								<td>{{ $row->qty }}</td>
-							</tr>
+								<tr>
+									<td>{{ $rows->vendor['name'] }}</td>
+									<td>{!! $winner !!}</td>
+									<td>{{ $row->material_id ?? '-'}}</td>
+									<td>{{ \App\Models\MasterMaterial::getMaterialName($row->material_id)->description ?? $row->material_id  }}</td>
+									<td>{{ $row->uom_code }}</td>
+									<td>{{ $row->price }}</td>
+									<td>{{ $row->qty }}</td>
+								</tr>
+							@endforeach
 						@endforeach
 					</tbody>
 				</table>
