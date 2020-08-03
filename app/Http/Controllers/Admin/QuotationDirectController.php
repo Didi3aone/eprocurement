@@ -448,6 +448,7 @@ class QuotationDirectController extends Controller
             'total_price'  => $header->total_price,
             'created_by'   => $header->created_by,
             'updated_by'   => $header->updated_by,
+            'ship_id'      => $header->ship_id
         ]);
 
         $po = $poId;

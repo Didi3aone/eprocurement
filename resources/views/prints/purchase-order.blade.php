@@ -164,7 +164,7 @@
                         </p>
                     </div>
                 </div>
-                <div class="row" style="margin-top: -4px;">
+                <div class="row" style="margin-top: 9px;">
                     <div>
                         <p>To:</p>
                     </div>
@@ -190,7 +190,7 @@
                 </p>
                 <p></p>
                 <br>
-                <p>
+                <p class="to-top">
                     Shipped To: <br>
                     {{ $ship->name }} <br>
                     <span class="to-top">{{ $ship->alamat }}</span> <br>

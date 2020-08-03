@@ -28,7 +28,8 @@ class PurchaseOrder extends Model
         'approved_asspro',
         'approved_head',
         'status_approval',
-        'reject_reason'
+        'reject_reason',
+        'ship_id'
     ];
 
     public const POrepeat  = 0;
@@ -96,5 +97,10 @@ class PurchaseOrder extends Model
     public function orderGrDetail()
     {
         return $this->hasMany(\App\Models\PurchaseOrderGr::class,'po_no','PO_NUMBER');
+    }
+
+    public function getShip()
+    {
+        return $this->hasOne(\App\Models\MasterShipToAdress::class,'ship_id','id');
     }
 }
