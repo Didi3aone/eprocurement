@@ -124,17 +124,28 @@
         }
         .to-top {
             padding-top: 3.8px;
+            white-space: nowrap;
         }
     </style>
 </head>
 <body>
     @php
+        function cutWord($text, $length, $count = 6) {
+            $numwords = $count;
+            preg_match("/(\S+\s*){0,$numwords}/", $text, $regs);
+            if(strlen($regs[0])>$length) {
+                return trim(cutWord($regs[0], $length, $count-1));
+            }
+            return trim($regs[0]);
+        }
         function trimLongText($string, $length=28) {
-            return mb_strimwidth($string, 0, $length, "...");
+            $tick = strlen($string)>$length?'...':'';
+            return cutWord($string, $length).$tick;
+            return mb_strimwidth($string, 0, $length, "-");
         }
     @endphp
     <div class="page">
-        <!-- Header Start -->
+        <!-- Header Startrimt -->
         <div class="header row">
             <div class="left">
                 <div class="row">
@@ -207,10 +218,10 @@
                     @endif
                 </p>
                 <p class="to-top">
-                    {{ $po->getShip['name'] }}
+                    {{ $po->getShip['name'] ?? '' }}
                 </p>
                 <p class="to-top">
-                    {{ $po->getShip['alamat'] }}
+                    {{ $po->getShip['alamat'] ?? '' }}
                 </p>
             </div>
         </div>
@@ -221,8 +232,8 @@
                 <tr>
                     <th>No</th>
                     <th>Item Code </th>
-                    <th>Description </th>
-                    <th>Spesification </th>
+                    <th width="20%">Description </th>
+                    <th width="20%">Spesification </th>
                     <th>Delivery Deadline </th>
                     <th>Qty Units </th>
                     <th>PR Ref </th>
@@ -251,15 +262,15 @@
                         if( $totalRows == $key+1 ){
                             $cols = "10";
                         }
-                        $size = $key+1===count($po->orderDetail) ? (700-($key*30)).'px' : 'auto';
+                        $size = $key+1===count($po->orderDetail) ? (700-($key*37)).'px' : 'auto';
                     @endphp
                 <tr>
                     <td>
                         <div style="display:block; height: {{ $size }}; min-height: {{ $size }};">{{ $key + 1 }}</div>
                     </td>
                     <td style="text-align:center;">{{ $value->material_id ?? '' }}</td>
-                    <td>{{ $value->short_text }}</td>
-                    <td>{{ $value->notes == "PR MRP" ? "" :  $value->notes }}</td>
+                    <td>{{ trimLongText($value->short_text, 44) }}</td>
+                    <td>{{ $value->notes == "PR MRP" ? "" :  trimLongText($value->notes, 44) }}</td>
                     <td style="text-align:center;">{{ date('d.m.Y',strtotime($value->delivery_date)) }}</td>
                     <td style="text-align:right;">{{ $value->qty." ".$value->unit }}</td>
                     <td style="text-align:right;">{{ $value->PR_NO }}</td>
