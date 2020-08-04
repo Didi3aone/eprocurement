@@ -173,11 +173,11 @@
         checked = $("input[type=checkbox]:checked").length;
         vendorGet = $(".vendor_id").length
 
-        if( vendorGet < 3 ) {
+       /* if( vendorGet < 3 ) {
             swal('Oops','Please choose at least 3 vendors','error')
             return false;
-        }
-        console.log(vendorGet)
+        }*/
+        //console.log(vendorGet)
         if(!checked) {
             swal('Oops','Please check winner vendor','error')
             return false;
