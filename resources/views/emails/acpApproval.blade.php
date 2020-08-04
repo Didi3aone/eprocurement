@@ -82,7 +82,7 @@
 									<td>{{ $row->material_id ?? '-'}}</td>
 									<td>{{ \App\Models\MasterMaterial::getMaterialName($row->material_id)->description ?? $row->material_id  }}</td>
 									<td>{{ $row->uom_code }}</td>
-									<td>{{ $row->price }}</td>
+									<td>{{ \toDecimal($row->price) }}</td>
 									<td>{{ $row->qty }}</td>
 								</tr>
 							@endforeach

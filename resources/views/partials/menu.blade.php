@@ -75,6 +75,13 @@
                         <li>
                             <a href="{{ route('admin.acp-approval') }}">
                                 <i class="fa fas fa-caret-right"></i> 
+                                List Acp Approval
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{{ route('admin.list-acp') }}">
+                                <i class="fa fas fa-caret-right"></i> 
                                 List Acp
                             </a>
                         </li>

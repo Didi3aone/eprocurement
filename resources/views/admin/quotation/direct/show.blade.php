@@ -25,6 +25,10 @@
                                     <td>{{ $quotation->po_no }}</td>
                                 </tr>
                                 <tr>
+                                    <th>Plant</th>
+                                    <td>{{ \getplan($quotation->detail[0]['plant_code'])->description }}</td>
+                                </tr>
+                                <tr>
                                     <th>Vendor</th>
                                     <td>{{ $quotation->getVendor['name'] }}</td>
                                 </tr>
@@ -37,27 +41,27 @@
                                     <td>{{ $quotation->getTerm['own_explanation'] }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Term Of Payment Desciption</th>
+                                    <th>Terms Of Payment description</th>
                                     <td>{{ $quotation->notes }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Attachment</th>
+                                    <th>
+                                        Upload File
+                                    </th>
                                     @if(isset($quotation->upload_file))
-                                        <td>
-                                            @php
-                                                $files = @unserialize($quotation->upload_file);
-                                            @endphp
-                                            @if( is_array($files))
+                                        @php
+                                            $files = @unserialize($quotation->upload_file);
+                                        @endphp
+                                        @if( $files !== false )
+                                            <td>
                                                 @foreach( unserialize((string)$quotation->upload_file) as $fileUpload)
-                                                    <a href="{{ asset('/files/uploads/'.$fileUpload) ??''}}" target="_blank" download>
+                                                    <a href="{{ asset('files/uploads/'.$fileUpload) }}" target="_blank" download>
                                                         {{ $fileUpload ??'' }}
                                                     </a>
                                                     <br>
                                                 @endforeach
-                                            @else 
-                                                {{-- No file found --}}
-                                            @endif
-                                        </td>
+                                            </td>
+                                        @endif
                                     @endif
                                 </tr>
                             </tbody>

@@ -25,6 +25,10 @@
                                     <td>{{ $quotation->po_no }}</td>
                                 </tr>
                                 <tr>
+                                    <th>Plant</th>
+                                    <td>{{ \getplan($quotation->detail[0]['plant_code'])->description }}</td>
+                                </tr>
+                                <tr>
                                     <th>Vendor</th>
                                     <td>{{ $quotation->getVendor['name'] }}</td>
                                 </tr>
@@ -35,6 +39,10 @@
                                 <tr>
                                     <th>Payment Terms</th>
                                     <td>{{ $quotation->getTerm['own_explanation'] }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Terms Of Payment description</th>
+                                    <td>{{ $quotation->notes }}</td>
                                 </tr>
                                 <tr>
                                     <th>

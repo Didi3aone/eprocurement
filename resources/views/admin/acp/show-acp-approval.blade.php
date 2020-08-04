@@ -101,7 +101,7 @@
                         <label>Reason</label>
                         <textarea type="text" class="form-control form-control-line" name="description" disabled>{{ $acp->description }}</textarea>
                     </div>
-
+                    @if($acp->status_approval != 2 )
                     <div class="row" style="margin-top: 20px">
                         <div class="col-lg-12">
                             <div class="form-actions">
@@ -110,6 +110,7 @@
                             </div>
                         </div>
                     </div>
+                    @endif
                 </form>
             </div>
             {{-- <div class="card-body">

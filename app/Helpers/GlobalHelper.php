@@ -6,7 +6,7 @@
     use App\Mail\enesisApprovalAcpMail;
     use App\Models\AcpTable;
     use App\Models\AcpTableDetail;
-    use App\Models\AcpTableMaterials;
+    use App\Models\Plant;
 
     function configEmailNotification()
     {
@@ -16,6 +16,11 @@
     function getEmailLocal($nik)
     {
         return u::where('nik',$nik)->first();
+    }
+
+    function getplan($code)
+    {
+        return Plant::where('code',$code)->first();
     }
 
     function getProfileLocal($nik)

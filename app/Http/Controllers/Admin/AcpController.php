@@ -34,6 +34,16 @@ class AcpController extends Controller
         return view('admin.acp.acp', compact('quotation'));
     }
 
+    public function listAcpApproval()
+    {
+        $quotation = QuotationApproval::where('nik', \Auth::user()->nik)
+                    ->where('flag', QuotationApproval::alreadyApproval)
+                    ->where('acp_type', 'ACP')
+                    ->get();
+
+        return view('admin.acp.list-data', compact('quotation'));
+    }
+
     public function biddingAcp ()
     {
         $quotation = QuotationApproval::where('nik', \Auth::user()->nik)
