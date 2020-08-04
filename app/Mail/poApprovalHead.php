@@ -11,7 +11,7 @@ class poApprovalHead extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $po;
+    public $quotation;
     public $name;
 
     /**
@@ -19,9 +19,9 @@ class poApprovalHead extends Mailable
      *
      * @return void
      */
-    public function __construct($po, $name)
+    public function __construct($quotation, $name)
     {
-        $this->po   = $po;
+        $this->quotation   = $quotation;
         $this->name = $name;
     }
 

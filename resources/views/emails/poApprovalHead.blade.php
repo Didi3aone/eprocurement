@@ -23,8 +23,8 @@
                 Berikut ini adalah informasi purchase order membutuhkan approval anda
 			</p>
 			<p style="font-size: 13px;">
-                No Dok  : {{  $po->po_no }} <br>
-                Notes   : {{  $po->notes }} <br>
+                No Dok  : {{  $quotation->po_no }} <br>
+                Notes   : {{  $quotation->notes }} <br>
 			</p>
 
 			<div style="border-top: 1px dashed #ddd; border-bottom:1px dashed #ddd">
@@ -59,7 +59,7 @@
 					</tr>
 					</thead>
 					<tbody>
-					@foreach($po->detail as $key => $value)
+					@foreach($quotation->detail as $key => $value)
 					<tr>
 						<td style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
                             <div>

@@ -322,8 +322,7 @@ class QuotationRepeatController extends Controller
                     $name  = $head->name;
                 }
 
-                $po = $quotation;
-                \Mail::to($email)->send(new poApprovalHead($po,$name));
+                \Mail::to($email)->send(new poApprovalHead($quotation,$name));
             }
 
             return redirect()->route('admin.quotation-repeat-approval-ass')->with('status', 'Direct Order has been approved!');
@@ -698,8 +697,7 @@ class QuotationRepeatController extends Controller
         $quotation->approved_head   = 'PROCUREMENT01';
         $quotation->save();
 
-        $po = $quotation;
-        \Mail::to($email)->send(new poApprovalAssproc($po,$name));
+        \Mail::to($email)->send(new poApprovalAssproc($quotation,$name));
     }
 
     public function fileUpload($request)
