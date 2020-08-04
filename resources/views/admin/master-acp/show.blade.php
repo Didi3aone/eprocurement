@@ -112,7 +112,15 @@
                             <tr>
                                 <td>{{ $value->nik }}</td>
                                 <td>{{ $value->getUser['name'] }}</td>
-                                <td>{{ $value->status == 0 ? 'Waiting For Approval' : 'Approved' }}</td>
+                                <td>
+                                    @if($value->status == 0) 
+                                        Waiting Approval 
+                                    @elseif($value->status == 2) 
+                                        Approved 
+                                    @elseif($value->status == 3)
+                                        Rejected 
+                                    @endif
+                                </td>
                                 <td>{{ $value->approve_date ?? '-' }}</td>
                             </tr>
                         @endforeach
