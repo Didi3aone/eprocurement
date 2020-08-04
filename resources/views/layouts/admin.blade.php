@@ -143,6 +143,7 @@
                             </a>
                             <div class="dropdown-menu dropdown-menu-right scale-up">
                                 <ul class="dropdown-user">
+                                    <li><a href="{{ route('form.change.password')}}">Change Password</a></li>
                                     <li role="separator" class="divider"></li>
                                     <li><a href="{{ route('logout') }}"
                                         onclick="event.preventDefault();

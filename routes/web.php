@@ -348,6 +348,7 @@ Route::group(['prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor', 
     Route::post('logout', '\App\Http\Controllers\AuthVendor\LoginController@logout')->name('logout');
 });
 
-Route::group(['namespace' => 'Admin', 'middleware' => ['auth', 'auth:vendor']], function () {
-    Route::get('users/change_password', 'UsersController@changePassword')->name('users.changePassword');
+Route::group(['middleware' => ['auth:vendor,web']], function () {
+    Route::get('change-password', 'ChangePasswordController@index')->name('form.change.password');
+    Route::post('change-password', 'ChangePasswordController@store')->name('change.password');
 });
