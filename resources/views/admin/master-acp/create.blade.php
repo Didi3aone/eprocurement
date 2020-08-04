@@ -204,9 +204,6 @@
                 <td>
                     <select name="material_${vendor}[]" id="" class="choose-material form-control select2"></select>
                 </td>
-                <td class="uni">
-                    <input type="text" name="uni_${vendor}[]" class="unis form-control"/>
-                </td>
                 <td>
                     <select name="currency_${vendor}[]" id="" class="choose-currency form-control select2"></select>
                 </td>
