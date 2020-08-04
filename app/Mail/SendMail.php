@@ -33,7 +33,7 @@ class SendMail extends Mailable
     {
         $name = $this->po->vendors['name'].'_'.$this->po->PO_NUMBER;
 
-        return $this->view('emails.vendor.purchaseOrderVendor')
+        return $this->subject('Purchase Order - '. $this->po->PO_NUMBER)->view('emails.vendor.purchaseOrderVendor')
         ->with([
             'po' => $this->po,
             'print' => true,
