@@ -203,6 +203,10 @@ class AcpController extends Controller
                 'approve_date'  => \Carbon\Carbon::now(),
             ]);
 
+        $acp = AcpTable::find($request->id);
+        $acp->status_approval = AcpTable::Rejected;
+        $acp->update();
+
         \Session::flash('status','Acp has been rejected');
     }
-}
+} 
