@@ -216,15 +216,6 @@
                     Shipped To: 
                 </p>
                 <p class="to-top">
-                    @if($po->orderDetail[0]['plant_code'] == '1101')
-                        Herlina Indah 
-                    @elseif($po->orderDetail[0]['plant_code'] == '2101')
-                        Marketama Indah 
-                    @elseif($po->orderDetail[0]['plant_code'] == '1201' OR $po->orderDetail[0]['plant_code'] == '1201')
-                        Sari Enesis Indah 
-                    @endif
-                </p>
-                <p class="to-top">
                     {{ $po->getShip['name'] ?? '' }}
                 </p>
                 <p class="to-top">
