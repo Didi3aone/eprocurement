@@ -219,14 +219,14 @@ class MasterAcpController extends Controller
                     }
 
                     $filename = '';
-                    if ($request['file_attachment_'.$value[$i]]) {
-                        //dd('iya');
-                        $path = public_path().'files/uploads/';
-                        $file = $request['file_attachment_'.$value[$i]];
-                        $filename = 'acp_'.strtolower($file->getClientOriginalName());
+                    // if ($request['file_attachment_'.$value[$i]]) {
+                    //     //dd('iya');
+                    //     $path = public_path().'files/uploads/';
+                    //     $file = $request['file_attachment_'.$value[$i]];
+                    //     $filename = 'acp_'.strtolower($file->getClientOriginalName());
 
-                        $file->move($path, $filename);
-                    }
+                    //     $file->move($path, $filename);
+                    // }
 
                     $temp['purchasing_document']    = $rfq->purchasing_document ?? 0;
                     $temp['rfq_number']             = $rfqNew->rfq_number ?? 0;
@@ -272,7 +272,9 @@ class MasterAcpController extends Controller
                 } else {
                     $cMo = \App\Models\PurchaseRequestsDetail::where('description',$val['material'])
                             ->orWhere('material_id', $val['material'])
+                            ->orWhere('short_text', $val['material'])
                             ->first();
+                            // dd($cMo);
                     if( $cMo->purchasing_group_code == 'S03' ||
                         $cMo->purchasing_group_code == 'H09' ||
                         $cMo->purchasing_group_code == 'M09' ||
@@ -302,7 +304,8 @@ class MasterAcpController extends Controller
                     // dd($materialName->uom_code);
 
                     if( $materialName == null ) {
-                        $nonMaterial    =  \App\Models\PurchaseRequestsDetail::where('description',$val['material'])->first();
+                        $nonMaterial    =  \App\Models\PurchaseRequestsDetail::where('description',$val['material'])
+                            ->orWhere('short_text', $val['material'])->first();
                         $desc           = $val['material'];
                         $unit           = $nonMaterial->unit;
                         $storage        = $nonMaterial->storage_location_code;
