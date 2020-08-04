@@ -124,6 +124,8 @@
         }
         .to-top {
             padding-top: 3.8px;
+        }
+        .left .to-top {
             white-space: nowrap;
         }
     </style>
@@ -260,7 +262,7 @@
                         if( $totalRows == $key+1 ){
                             $cols = "10";
                         }
-                        $size = $key+1===count($po->orderDetail) ? (700-($key*37)).'px' : 'auto';
+                        $size = $key+1===count($po->orderDetail) ? (680-($key*37)).'px' : 'auto';
                     @endphp
                 <tr>
                     <td>
