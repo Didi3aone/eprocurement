@@ -167,12 +167,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('purchase-order/direct', 'PurchaseOrderController@direct')->name('purchase-order.direct');
     Route::put('purchase-order-destroy', 'PurchaseOrderController@destroyItem')->name('purchase-order-destroy');
     Route::put('purchase-order-restore', 'PurchaseOrderController@restoreItem')->name('purchase-order-restore');
-    Route::get('purchase-order-print/{id}','PurchaseOrderController@printPo')->name('purchase-order-print');
-    Route::get('purchase-order-show-ass/{id}','PurchaseOrderController@showApprovalAss')->name('purchase-order-show-ass');
-    Route::get('purchase-order-show-head/{id}','PurchaseOrderController@showApprovalHead')->name('purchase-order-show-head');
-    Route::get('purchase-order-change-ass','PurchaseOrderController@approvalPoChange')->name('purchase-order-change-ass');
-    Route::get('purchase-order-change-head','PurchaseOrderController@approvalPoChangeHead')->name('purchase-order-change-head');
-    Route::get('purchase-order-check-qty-pr','PurchaseOrderController@checkQtyPr')->name('purchase-order-check-qty-pr');
+    Route::get('purchase-order-print/{id}', 'PurchaseOrderController@printPo')->name('purchase-order-print');
+    Route::get('purchase-order-show-ass/{id}', 'PurchaseOrderController@showApprovalAss')->name('purchase-order-show-ass');
+    Route::get('purchase-order-show-head/{id}', 'PurchaseOrderController@showApprovalHead')->name('purchase-order-show-head');
+    Route::get('purchase-order-change-ass', 'PurchaseOrderController@approvalPoChange')->name('purchase-order-change-ass');
+    Route::get('purchase-order-change-head', 'PurchaseOrderController@approvalPoChangeHead')->name('purchase-order-change-head');
+    Route::get('purchase-order-check-qty-pr', 'PurchaseOrderController@checkQtyPr')->name('purchase-order-check-qty-pr');
     Route::resource('purchase-order', 'PurchaseOrderController');
 
     Route::resource('purchase-order-detail', 'PurchaseOrderDetailController');
@@ -293,6 +293,11 @@ Route::get('vendor/register', '\App\Http\Controllers\AuthVendor\LoginController@
 Route::post('vendor/register', '\App\Http\Controllers\AuthVendor\LoginController@register')->name('vendor.register');
 Route::post('vendor/login', '\App\Http\Controllers\AuthVendor\LoginController@login')->name('vendor.login');
 Route::get('vendor/set-password/{code}', '\App\Http\Controllers\AuthVendor\LoginController@setPassword')->name('vendor.set-password');
+// Reset Pass
+Route::get('vendor/password/reset/{token}', '\App\Http\Controllers\AuthVendor\ResetPasswordController@showResetForm')->name('vendor.password.reset');
+Route::post('vendor/password/reset', '\App\Http\Controllers\AuthVendor\ResetPasswordController@reset')->name('vendor.password.update');
+Route::get('vendor/password/reset', '\App\Http\Controllers\AuthVendor\ForgotPasswordController@showLinkRequestForm')->name('vendor.password.request');
+Route::post('vendor/password/email', '\App\Http\Controllers\AuthVendor\ForgotPasswordController@sendResetLinkEmail')->name('vendor.password.email');
 
 Route::group(['prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor', 'middleware' => ['auth:vendor']], function () {
     Route::get('/', 'VendorController@index')->name('home');
@@ -341,4 +346,8 @@ Route::group(['prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor', 
 
     // logout
     Route::post('logout', '\App\Http\Controllers\AuthVendor\LoginController@logout')->name('logout');
+});
+
+Route::group(['namespace' => 'Admin', 'middleware' => ['auth', 'auth:vendor']], function () {
+    Route::get('users/change_password', 'UsersController@changePassword')->name('users.changePassword');
 });
