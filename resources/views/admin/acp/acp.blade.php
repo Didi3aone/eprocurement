@@ -39,11 +39,11 @@
                                             <td>{{ $val->id ?? '' }}</td>
                                             <td>{{ $val->acp['acp_no'] ?? '' }}</td>
                                             <td>
-                                                 @if($val->status_approval == 0)
+                                                 @if($val->acp['status_approval'] == 0)
                                                     <span class="badge badge-primary">Waiting For Approval</span>
-                                                @elseif( $val->status_approval == 2)
+                                                @elseif( $val->acp['status_approval'] == 2)
                                                     <span class="badge badge-primary">Approved</span>
-                                                @elseif( $val->status_approval == 3)
+                                                @elseif( $val->acp['status_approval'] == 3)
                                                     <span class="badge badge-primary">Rejected</span>
                                                 @endif
                                             </td>
