@@ -31,7 +31,13 @@
                                             <td>{{ $val->id ?? '' }}</td>
                                             <td>{{ $val->acp['acp_no'] ?? '' }}</td>
                                             <td>
-                                                <span class="badge badge-primary">Approved</span>
+                                                @if($val->status_approval == 0)
+                                                    <span class="badge badge-primary">Waiting For Approval</span>
+                                                @elseif( $val->status_approval == 2)
+                                                    <span class="badge badge-primary">Approved</span>
+                                                @elseif( $val->status_approval == 3)
+                                                    <span class="badge badge-primary">Rejected</span>
+                                                @endif
                                             </td>
                                             <td>
                                                 <a class="btn btn-xs btn-warning" href="{{ route('admin.show-acp-approval', $val->acp['id']) }}">
