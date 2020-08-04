@@ -23,8 +23,9 @@
                 Berikut ini adalah informasi purchase order membutuhkan approval anda
 			</p>
 			<p style="font-size: 13px;">
-                No Dok  : {{  $quotation->po_no }} <br>
-                Notes   : {{  $quotation->notes }} <br>
+                No Doc  : {{  $quotation->po_no }} <br>
+                Terms of payment : {{  $quotation->getTerm['own_explanation'] ?? ''}} <br>
+				Terms of payment Desc : {{ $quotation->notes ?? ''}}
 			</p>
 
 			<div style="border-top: 1px dashed #ddd; border-bottom:1px dashed #ddd">
