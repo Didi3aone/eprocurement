@@ -171,7 +171,13 @@
 
     $('#saves').click(function() {
         checked = $("input[type=checkbox]:checked").length;
+        vendorGet = $(".vendor_id").length
 
+        if( vendorGet < 3 ) {
+            swal('Oops','Please choose at least 3 vendors','error')
+            return false;
+        }
+        console.log(vendorGet)
         if(!checked) {
             swal('Oops','Please check winner vendor','error')
             return false;
@@ -181,6 +187,9 @@
             swal('Oops','Choose the winner of one vendor','error')
             return false;
         }
+        $("#save").attr('disabled', 'disabled');
+        $('#save').text('Please wait ...')
+        return true;
     });
 
 
