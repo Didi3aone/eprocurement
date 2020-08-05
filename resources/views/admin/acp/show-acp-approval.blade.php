@@ -84,12 +84,19 @@
                                         $winner = '<span class="badge badge-primary">Winner</span>';
                                     }
                                     $rowSpan = count(\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id));
+                                    $totalPrice = 0;
                                 @endphp
                                 <tr>
                                     <td rowspan={{ $rowSpan }}>{{ $rows->vendor['name'] }}</td>
                                     <td rowspan={{ $rowSpan }}>{!! $winner !!}</td>
-                                    @foreach (\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id) as $row)
-                                        <td>{{ $row->material_id ?? '-'}}</td>
+                                    @foreach (\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id) as $key => $row)
+                                        @php
+                                            $total = (\removeComma($row->price) * $row->qty);
+                                            $totalPrice += ($total);
+                                            $data = count(\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id));
+                                           // dd($data);
+                                        @endphp
+                                        <td>{{ $row->material_id ?? $row->material_id }}</td>
                                         <td>{{ \App\Models\MasterMaterial::getMaterialName($row->material_id)->description ?? $row->material_id  }}</td>
                                         <td>{{ $row->uom_code }}</td>
                                         <td>{{ $row->qty }}</td>
@@ -97,6 +104,12 @@
                                         <td>{{ \toDecimal($row->price) }}</td>
                                 </tr>
                                 @endforeach
+                                <tr>
+                                    <td colspan={{ $rowSpan + 2 }}></td>
+                                    <td colspan={{ $rowSpan + $rowSpan }}>
+                                        {{ \toDecimal($totalPrice) }}
+                                    </td>
+                                </tr>
                             @endforeach
                             </tbody>
                         </table>

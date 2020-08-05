@@ -72,7 +72,6 @@
                                     <th style="text-align:center;">Per</th>
                                     <th style="text-align:center;">Currency</th>
                                     <th style="text-align:center;">Price</th>
-                                    <th style="text-align:center;" colspan=2>Total</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -101,14 +100,14 @@
                                         <td>{{ $row->qty }}</td>
                                         <td>{{ $row->currency }}</td>
                                         <td>{{ \toDecimal($row->price) }}</td>
-                                        {{-- <td>{{ \toDecimal(\removeComma($row->price) * $row->qty) }}</td> --}}
-                                        <td>
-                                            @if($data == $key + 1) 
-                                                {{ \toDecimal($totalPrice) }}
-                                            @endif
-                                        </td>
                                 </tr>
                                 @endforeach
+                                <tr>
+                                    <td colspan={{ $rowSpan + 2 }}></td>
+                                    <td colspan={{ $rowSpan + $rowSpan }}>
+                                        {{ \toDecimal($totalPrice) }}
+                                    </td>
+                                </tr>
                             @endforeach
                             </tbody>
                         </table>
