@@ -13,7 +13,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <a href="{{ route('admin.quotation-direct.index') }}" class="btn btn-primary btn-xs">Back To List</a>
+                <a href="{{ route('admin.quotation-repeat.index') }}" class="btn btn-primary btn-xs">Back To List</a>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -80,6 +80,7 @@
                             <th>Qty</th>
                             <th>Currency</th>
                             <th>Price</th>
+                            <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -90,6 +91,7 @@
                                 <td>{{ $value->qty }}</td>
                                 <td>{{ $quotation->currency }}</td>
                                 <td>{{ \toDecimal($value->price) }}</td>
+                                <td>{{ (\removeComma($value->price) * $value->qty) }}</td>
                             </tr>
                         @endforeach
                     </tbody>

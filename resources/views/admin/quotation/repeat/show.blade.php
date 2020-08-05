@@ -80,6 +80,7 @@
                             <th>Qty</th>
                             <th>Currency</th>
                             <th>Price</th>
+                            <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -90,6 +91,7 @@
                                 <td>{{ $value->qty }}</td>
                                 <td>{{ $quotation->currency }}</td>
                                 <td>{{ \toDecimal($value->price) }}</td>
+                                <td>{{ (\removeComma($value->price) * $value->qty) }}</td>
                             </tr>
                         @endforeach
                     </tbody>
