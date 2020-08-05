@@ -65,6 +65,7 @@ class PurchaseOrderController extends Controller
         if( \Auth::user()->roles[0]->title == 'staff-accounting'
             || \Auth::user()->roles[0]->title ==' Admin' ) {
                 $cache = "";
+                $po = $po;
             } else {
                 $cache = \Auth::user()->user_id;
                 $po = $po->where('purchase_orders.created_by', \Auth::user()->user_id);
