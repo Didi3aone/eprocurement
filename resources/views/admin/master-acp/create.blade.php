@@ -278,16 +278,92 @@
                 </tr>
             `
             $('#vendors').append(template)
+            duplicateTable(input_vendor)
         } else {
             swal('Oops','No vendor selected','error')
             return false
         }
     })
-
+    function duplicateTable(targetClass) {
+        $.each($('#vendors .select2'), function(){
+            try {
+                $(this).select2("destroy")
+            } catch (error) {}
+        })
+        var $trEl = $('#vendors > tr')
+        if($trEl.length>2) {
+            var $materialEl = $($trEl[1]).find('tbody > tr')
+            if($materialEl.length>=3) {
+                var $targetEl = $(`.material-${targetClass} tbody`)
+                $.each($($materialEl), function(){
+                    var $el = $(this).clone()
+                    $targetEl.append($el)
+                    // console.log(this, $el, $targetEl)
+                })
+                $(`.material-${targetClass} tbody .choose-material`).attr('name', `material_${targetClass}[]`)
+                $(`.material-${targetClass} tbody .choose-currency`).attr('name', `currency_${targetClass}[]`)
+                $(`.material-${targetClass} tbody .prices`).attr('name', `price_${targetClass}[]`)
+                $(`.material-${targetClass} tbody .qty input`).attr('name', `qty_${targetClass}[]`)
+            }
+        }
+        $("#vendors .select2").select2()
+        var $elMaterial = $(document).find('#vendors .choose-material')
+        $elMaterial.select2('destroy')
+        $elMaterial.select2({
+            ajax: {
+                url: base_url + '/admin/master-acp-material',
+                dataType: 'json',
+                tokenSeparators: [",", " "],
+                //tokenSeparators: [',', ', ', ' '],
+                delay: 250,
+                data: function(params) {
+                    return {
+                        q: params.term, // search term
+                        page: params.page,
+                        fromPr : $("input[name='is_from_pr']:checked").val()
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: response
+                    }
+                },
+                cache: true
+            },
+            escapeMarkup: function(markup) {
+                return markup;
+            },
+            templateSelection: function(data) {
+                return data.title;
+            },
+            allowClear: true
+        })
+        var $elCurrency = $(document).find('#vendors .choose-currency')
+        $elCurrency.select2('destroy')
+        $elCurrency.select2({
+            ajax: {
+                url: base_url + '/admin/master-acp-currency',
+                dataType: 'json',
+                delay: 300,
+                processResults: function (response) {
+                    return {
+                        results: response
+                    }
+                },
+                cache: true
+            },
+            escapeMarkup: function(markup) {
+                return markup;
+            },
+            templateSelection: function(data) {
+                return data.title;
+            },
+            allowClear: true
+        })
+    }
     $(document).on('click', '.remove-vendor', function (e) {
         const vendor = $(this).data('vendor')
         var value = $(this).closest('tr').find('.vendor_id').val()
-        console.log(value)
         $.each($('#search-vendor option'), function(){
             $this = $(this)
             if($this.val()===value) {
