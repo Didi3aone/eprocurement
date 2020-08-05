@@ -208,7 +208,7 @@ class QuotationRepeatController extends Controller
             $quotation->po_no           = $poNo;
             $quotation->notes           = $request->get('notes');
             $quotation->doc_type        = $request->get('doc_type');
-            $quotation->upload_file     = $request->get('upload_files');
+            $quotation->upload_file     = $file_upload;
             $quotation->currency        = $request->get('currency');
             $quotation->exchange_rate   = $request->get('exchange_rate');
             $quotation->payment_term    = $request->get('payment_term') ?? $payVendor;
@@ -687,7 +687,9 @@ class QuotationRepeatController extends Controller
             $name  = "Didi Ganteng";
         } else {
             $assProcs = \App\Models\User::where('user_id', $assProc->user_id)->first();
-            $email = $assProcs->email;
+            // $email = $assProcs->email;
+            // $name  = $assProcs->name;
+            $email = 'yunan.yazid@enesis.com';
             $name  = $assProcs->name;
         }
 
