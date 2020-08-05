@@ -85,7 +85,7 @@
                     <tbody>
                         @foreach($quotation->detail as $key => $value)
                             <tr>
-                                <td>{{ $value->material." - ".$value->description }}</td>
+                                <td>{{ $value->material." - ".$value->short_text }}</td>
                                 <td>{{ \App\Models\UomConvert::where('uom_1', $value->unit)->first()->uom_2 ?? $value->unit }}</td>
                                 <td>{{ $value->qty }}</td>
                                 <td>{{ $quotation->currency }}</td>
