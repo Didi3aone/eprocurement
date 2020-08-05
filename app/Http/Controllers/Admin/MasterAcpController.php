@@ -306,13 +306,13 @@ class MasterAcpController extends Controller
                     if( $materialName == null ) {
                         $nonMaterial    =  \App\Models\PurchaseRequestsDetail::where('description',$val['material'])
                             ->orWhere('short_text', $val['material'])->first();
-                        $desc           = $val['material'];
-                        $unit           = $nonMaterial->unit;
-                        $storage        = $nonMaterial->storage_location_code;
+                        $desc           = $val['material'] ?? '';
+                        $unit           = $nonMaterial->unit ?? '';
+                        $storage        = $nonMaterial->storage_location_code ?? '';
                     } else {
-                        $desc           = $materialName->description;
-                        $unit           = $materialName->uom_code;
-                        $storage        = $materialName->storage_location_code;
+                        $desc           = $materialName->description ?? '';
+                        $unit           = $materialName->uom_code ?? '';
+                        $storage        = $materialName->storage_location_code ?? '';
                     }
                     // dd($val['rfq_number']);
                     $rfqDetailNew = new RfqDetail;
