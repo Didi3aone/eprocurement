@@ -26,6 +26,7 @@
                 No Doc  : {{  $quotation->po_no }} <br>
                 Terms of payment : {{  $quotation->getTerm['own_explanation'] ?? ''}} <br>
 				Terms of payment Desc : {{ $quotation->notes ?? '' }}
+				Supplier : {{ $quotation->getVendor['name'] ?? ''}}
 			</p>
 
 			<div style="border-top: 1px dashed #ddd; border-bottom:1px dashed #ddd">
@@ -57,6 +58,11 @@
 								Price 	
 							</div>
 						</th>
+						<th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+                            <div>
+								Price 	
+							</div>
+						</th>
 					</tr>
 					</thead>
 					<tbody>
@@ -82,9 +88,14 @@
 								{{ $value->unit }} 	
 							</div>
 						</td>
+						<td style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+                            <div>
+								{{ $value->currency }} 	
+							</div>
+						</td>
                         <td style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
                             <div>
-								{{ $value->price }} 	
+								{{ \toDecimal($value->price) }} 	
 							</div>
 						</td>
 					</tr>
