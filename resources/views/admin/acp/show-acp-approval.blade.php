@@ -34,6 +34,10 @@
                                         <td>{{ $acp->is_project == 1 ? 'Project' : '-' }}</td>
                                     </tr>
                                     <tr>
+                                        <th>Plant</th>
+                                        <td>{{  \getplan($acp->plant_id)->description }}</td>
+                                    </tr>
+                                    <tr>
                                         <th>File</th>
                                         @if(isset($acp->upload_file))
                                             <td>
@@ -90,7 +94,7 @@
                                         <td>{{ $row->uom_code }}</td>
                                         <td>{{ $row->qty }}</td>
                                         <td>{{ $row->currency }}</td>
-                                        <td>{{ $row->price }}</td>
+                                        <td>{{ \toDecimal($row->price) }}</td>
                                 </tr>
                                 @endforeach
                             @endforeach
