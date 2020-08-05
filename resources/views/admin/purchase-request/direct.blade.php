@@ -71,6 +71,30 @@
                             </div>
                         @endif
                     </div>
+                    <div class="form-group">
+                        <label>Attachment PR</label>
+                        @foreach($data as $key => $values)
+                            @if($values->upload_file != 'NO_FILE')
+                                @if(isset($values->upload_file))
+                                    <td>
+                                        @php
+                                            $files = @unserialize($values->upload_file);
+                                        @endphp
+                                        @if( is_array($files))
+                                            @foreach( unserialize((string)$values->upload_file) as $fileUpload)
+                                                <a href="https://employee.enesis.com/uploads/{{ $fileUpload  }}" target="_blank" download>
+                                                    {{ $fileUpload ??'' }}
+                                                </a>
+                                                <br>
+                                            @endforeach
+                                        @else 
+                                            No File found
+                                        @endif
+                                    </td>
+                                @endif
+                            @endif
+                        @endforeach
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
