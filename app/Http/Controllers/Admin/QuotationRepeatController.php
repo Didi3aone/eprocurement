@@ -687,9 +687,8 @@ class QuotationRepeatController extends Controller
             $name  = "Didi Ganteng";
         } else {
             $assProcs = \App\Models\User::where('user_id', $assProc->user_id)->first();
-            // $email = $assProcs->email;
-            // $name  = $assProcs->name;
-            $email = 'yunan.yazid@enesis.com';
+            // $email = 'yunan.yazid@enesis.com';
+            $email = $assProcs->email;
             $name  = $assProcs->name;
         }
 
