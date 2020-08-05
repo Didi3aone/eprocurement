@@ -307,6 +307,7 @@
                 $.each($($materialEl), function(){
                     var $el = $(this).clone()
                     $targetEl.append($el)
+                    //commend
                     // console.log(this, $el, $targetEl)
                 })
                 $(`.material-${targetClass} tbody .choose-material`).attr('name', `material_${targetClass}[]`)
