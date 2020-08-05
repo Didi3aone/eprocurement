@@ -30,21 +30,22 @@ class AcpTableMaterial extends Model
             ->where('master_acp_id', $acp_id)
             ->join('vendors','vendors.code','=','mam.master_acp_vendor_id')
             ->leftJoin('master_materials as mm','mm.code','=','mam.material_id')
-            ->leftJoin('purchase_requests_details as prd','prd.description','=','mam.material_id')
+            ->leftJoin('purchase_requests_details as prd','prd.short_text','=','mam.material_id')
             ->select(
                 \DB::raw("
-                mam.material_id,
-                CASE
-                WHEN (mm.code IS NULL OR mm.code = '') THEN prd.description 
-                ELSE mm.code
-               END AS material_id,
-               case 
-               when  (mm.uom_code is null or MM.uom_code  = '') then prd.unit 
-               else mm.uom_code
-               end as uom_code,
-               mam.qty,
-               mam.currency,
-               mam.price")
+                    mam.material_id,
+                    CASE
+                        WHEN (mm.code IS NULL OR mm.code = '') THEN prd.short_text 
+                    ELSE mm.code
+                    END AS material_id,
+                    case 
+                        when  (mm.uom_code is null or MM.uom_code  = '') then prd.unit 
+                    else mm.uom_code
+                    end as uom_code,
+                    mam.qty,
+                    mam.currency,
+                    mam.price
+                ")
             )->from('master_acp_materials','mam')
             ->distinct()
             ->get();
