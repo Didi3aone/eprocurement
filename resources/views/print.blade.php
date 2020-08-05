@@ -248,15 +248,16 @@
                 @endphp
                 @foreach($po->orderDetail as $key => $value)
                     @php
+                        $totals = ($value->price * $value->qty); 
                         $tax = 0;
                         if( $value->tax_code == 'V1' ) {
-                            $tax = ($value->price * 10/100);
+                            $tax = ($totals * 10/100);
                         }
 
                         $totalTax += $tax;
 
                         $totalRows = count($po->orderDetail);
-                        $total += $value->price;
+                        $total += $totals;
 
                         $cols = "";
                         if( $totalRows == $key+1 ){
@@ -272,10 +273,11 @@
                     <td>{{ $value->short_text }}</td>
                     <td>{{ $value->notes == "PR MRP" ? "" :  $value->notes }}</td>
                     <td style="text-align:center;">{{ date('d.m.Y',strtotime($value->delivery_date)) }}</td>
-                    <td style="text-align:right;">{{ $value->qty." ".$value->unit }}</td>
+                    <td style="text-align:right;">{{ $value->qty." ".
+                    \App\Models\UomConvert::where('uom_1',$value->unit)->first()->uom_2 }}</td>
                     <td style="text-align:right;">{{ $value->PR_NO }}</td>
                     <td style="text-align:right;">{{ \toDecimal($value->price) }}</td>
-                    <td style="text-align:right;">{{ \toDecimal($value->price) }}</td>
+                    <td style="text-align:right;">{{ \toDecimal($totals) }}</td>
                 </tr>
                 @endforeach
             </tbody>
