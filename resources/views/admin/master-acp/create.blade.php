@@ -108,12 +108,12 @@
                                         value="{{ $val->code }}"
                                         data-id="{{ $val->id }}"
                                         data-title="{{ $val->title }}"
-                                        data-name="{{ $val->name }}"
+                                        data-name="{{ $val->company_name }}"
                                         data-email="{{ $val->email }}"
                                         data-street="{{ $val->street }}"
                                         data-city="{{ $val->city }}"
                                     >
-                                        {{ $val->code." - ".$val->name }}
+                                        {{ $val->code." - ".$val->company_name }}
                                     </option>
                                     @endforeach
                                 </select>
