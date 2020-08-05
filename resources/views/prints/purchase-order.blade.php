@@ -129,8 +129,25 @@
 </head>
 <body>
     @php
-        function trimLongText($string, $length=28) {
-            return mb_strimwidth($string, 0, $length, "...");
+        if (!function_exists('cutWord'))  
+        { 
+            function cutWord($text, $length, $count = 6) {
+                $numwords = $count;
+                preg_match("/(\S+\s*){0,$numwords}/", $text, $regs);
+                if(strlen($regs[0])>$length) {
+                    return trim(cutWord($regs[0], $length, $count-1));
+                }
+                return trim($regs[0]);
+            }
+        }  
+
+        if (!function_exists('trimLongText'))  
+        { 
+            function trimLongText($string, $length=28) {
+                $tick = strlen($string)>$length?'...':'';
+                return cutWord($string, $length).$tick;
+                return mb_strimwidth($string, 0, $length, "-");
+            }
         }
     @endphp
     <div class="page">
