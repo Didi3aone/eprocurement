@@ -325,7 +325,7 @@ class QuotationDirectController extends Controller
                     $email = $configEnv->value;
                     $name  = "Didi Ganteng";
                 } else {
-                    $head  = \App\Models\User::where('user_id', 'PROCUREMENT1')->first();
+                    $head  = \App\Models\User::where('user_id', 'PROCUREMENT01')->first();
                     $email = $head->email;
                     $name  = $head->name;
                 }
