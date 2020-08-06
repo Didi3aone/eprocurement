@@ -294,7 +294,7 @@
         }
     })
     function duplicateTable(targetClass) {
-        $.each($('#vendors .select2'), function(){
+        $.each($('#vendors .select2:not(span)'), function(){
             try {
                 $(this).select2("destroy")
             } catch (error) {}
@@ -302,7 +302,7 @@
         var $trEl = $('#vendors > tr')
         if($trEl.length>2) {
             var $materialEl = $($trEl[1]).find('tbody > tr')
-            if($materialEl.length>=3) {
+            if($materialEl.length>=1) {
                 var $targetEl = $(`.material-${targetClass} tbody`)
                 $.each($($materialEl), function(){
                     var $el = $(this).clone()
