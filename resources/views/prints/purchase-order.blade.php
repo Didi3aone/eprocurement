@@ -260,7 +260,7 @@ libxml_use_internal_errors(true);
                             $materialId = $data['short_text'][$key];
                         }
 
-                        $qtyAcp = \App\Models\AcpTableMaterial::getQtyAcp($materialId, $data['acp_id']);
+                        $qtyAcp = \App\Models\AcpTableMaterial::getQtyAcp($materialId, $data['acp_id'][$key]);
                         $perQty = ($data['qty'][$key]/$qtyAcp->qty);
                         $totalPrice = (\removeComma($data['price'][$key]) * $perQty);
 

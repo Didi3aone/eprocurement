@@ -88,8 +88,9 @@ class AcpTableMaterial extends Model
 
     public static function getQtyAcp($material_id, $acp_id)
     {
-        return AcpTableMaterial::where('material_id', $material_id)
-            ->where('master_acp_id', $acp_id)
+        // dd($acp_id);
+        return AcpTableMaterial::where('material_id', (string)$material_id)
+            ->where('master_acp_id', (int) $acp_id)
             ->first();
     }
 
