@@ -31,8 +31,15 @@
                             <span class="btn btn-info btn-xs deselect-all" style="border-radius: 0">{{ trans('global.deselect_all') }}</span>
                         </div>
                         <select class="form-control select2" name="purchasing_group_code[]" multiple id="purchasing_group_code">
-                            @foreach ($prg as $prgs)
-                                <option value="{{ $prgs->code }}">{{ $prgs->code }} - {{ $prgs->description }}</option>
+                            @foreach ($prg as $prgs) 
+                                @php
+                                    $explode = explode(',', $model->purchasing_group_code);
+                                    $select = '';
+                                    if( in_array($prgs->code,$explode) ) {
+                                        $select = 'selected';
+                                    }
+                                @endphp
+                                <option value="{{ $prgs->code }}" {{ $select }}>{{ $prgs->code }} - {{ $prgs->description }}</option>
                             @endforeach
                         </select>
                     </div>
