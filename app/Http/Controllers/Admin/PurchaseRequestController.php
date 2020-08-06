@@ -62,6 +62,7 @@ class PurchaseRequestController extends Controller
             'purchase_requests.id as uuid'
         )
             ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
+            ->whereNotNull('purchase_requests.PR_NO')
             ->where('purchase_requests_details.qty', '>', 0)
             ->where('purchase_requests_details.is_validate', PurchaseRequestsDetail::YesValidate)
             ->whereIn('purchase_requests_details.purchasing_group_code', $userMapping)
@@ -492,10 +493,22 @@ class PurchaseRequestController extends Controller
                         $prDetail->plant_code
                     );
 
-                if (PurchaseRequest::Project == $prHeader->is_project) {
-                    $delivery_date = date('Y-m-d', strtotime('+30 weekday'));
+                if( $prHeader->is_project == PurchaseRequest::Project ) {
+                    if( PurchaseRequestDetail::MaterialText 
+                        OR PurchaseRequestDetail::Service ) {
+                            $grProccess = $prDetail->gr_processing_time;
+                            $delivPlan  = $prDetail->deliv_plan_processing_time;
+                            $finalLeadTime = ($grProccess + $delivPlan + 30 + 1);
+                            $delivery_date = date('Y-m-d', strtotime('+'.$finalLeadTime.' weekday'));
+                        }
                 } else {
-                    $delivery_date = date('Y-m-d', strtotime('+14 weekday'));
+                    if( PurchaseRequestDetail::MaterialText 
+                        OR PurchaseRequestDetail::Service ) {
+                            $grProccess    = $prDetail->gr_processing_time;
+                            $delivPlan     = $prDetail->deliv_plan_processing_time;
+                            $finalLeadTime = ($grProccess + $delivPlan + 14 + 1);
+                            $delivery_date = date('Y-m-d', strtotime('+'.$finalLeadTime.' weekday'));
+                        }
                 }
 
                 //echo $delivery_date;die;

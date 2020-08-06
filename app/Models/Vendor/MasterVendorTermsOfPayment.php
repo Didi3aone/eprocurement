@@ -12,6 +12,7 @@ class MasterVendorTermsOfPayment extends Model
 
     protected $fillable = [
         'code',
+        'number_of_days',
         'description'
     ];
 }

@@ -152,6 +152,23 @@
                 return mb_strimwidth($string, 0, $length, "-");
             }
         }
+
+        function nl2p($string, $line_breaks = true, $xml = true) {
+
+        $string = str_replace(array('<p>', '</p>', '<br>', '<br />'), '', $string);
+
+        // It is conceivable that people might still want single line-breaks
+        // without breaking into a new paragraph.
+        if ($line_breaks == true)
+            return '<p>'.preg_replace(array("/([\n]{2,})/i", "/([^>])\n([^<])/i"), array("</p>\n<p>", '$1<br'.($xml == true ? ' /' : '').'>$2'), trim($string)).'</p>';
+        else 
+            return '<p>'.preg_replace(
+            array("/([\n]{2,})/i", "/([\r\n]{3,})/i","/([^>])\n([^<])/i"),
+            array("</p>\n<p>", "</p>\n<p>", '$1<br'.($xml == true ? ' /' : '').'>$2'),
+
+            trim($string)).'</p>'; 
+        }
+
     @endphp
     <div class="page">
         <!-- Header Startrimt -->
@@ -248,16 +265,29 @@
                 @endphp
                 @foreach($po->orderDetail as $key => $value)
                     @php
-                        $totals = ($value->price * $value->qty); 
+                        //$totals = ($value->price * $value->qty); 
+                        $totalRows = count($po->orderDetail);
+                        //$total += $totals;
+                        $materialId = $value->material_id;
+                        if( $materialId == '' ) {
+                            $materialId = $value->short_text;
+                        }
+
+                        $qtyAcp = \App\Models\AcpTableMaterial::getQtyAcp($materialId, $value->acp_id);
+                        if( null != $qtyAcp ) {
+                            $perQty = ($value->qty/$qtyAcp->qty);
+                            $totalPrice = (\removeComma($value->price) * $perQty);
+                        } else {
+                            $totalPrice = ($value->price * $value->qty);
+                        }
+
+                        $total += $totalPrice;
                         $tax = 0;
                         if( $value->tax_code == 'V1' ) {
-                            $tax = ($totals * 10/100);
+                            $tax = ($totalPrice * 10/100);
                         }
 
                         $totalTax += $tax;
-
-                        $totalRows = count($po->orderDetail);
-                        $total += $totals;
 
                         $cols = "";
                         if( $totalRows == $key+1 ){
@@ -270,14 +300,14 @@
                         <div style="display:block; height: {{ $size }}; min-height: {{ $size }};">{{ $key + 1 }}</div>
                     </td>
                     <td style="text-align:center;">{{ $value->material_id ?? '' }}</td>
-                    <td>{{ $value->short_text }}</td>
-                    <td>{{ $value->notes == "PR MRP" ? "" :  $value->notes }}</td>
+                    <td>{!! \wordwrap($value->short_text,20,'<br>') !!}</td>
+                    <td>{!! $value->notes == "PR MRP" ? "" :  \wordwrap($value->notes,20,'<br>') !!}</td>
                     <td style="text-align:center;">{{ date('d.m.Y',strtotime($value->delivery_date)) }}</td>
                     <td style="text-align:right;">{{ $value->qty." ".
                     \App\Models\UomConvert::where('uom_1',$value->unit)->first()->uom_2 }}</td>
                     <td style="text-align:right;">{{ $value->PR_NO }}</td>
                     <td style="text-align:right;">{{ \toDecimal($value->price) }}</td>
-                    <td style="text-align:right;">{{ \toDecimal($totals) }}</td>
+                    <td style="text-align:right;">{{ \toDecimal($totalPrice) }}</td>
                 </tr>
                 @endforeach
             </tbody>

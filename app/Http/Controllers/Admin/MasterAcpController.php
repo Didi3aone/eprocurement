@@ -20,9 +20,15 @@ class MasterAcpController extends Controller
 {
     public function index()
     {
-        $model = AcpTable::orderBy('created_at', 'desc')
-                ->where('created_by', \Auth::user()->nik)
-            ->get();
+        $model = AcpTable::orderBy('created_at', 'desc');
+
+        if( \Auth::user()->roles[0]->title == 'Admin' ) {
+            $model = $model;
+        } else {
+            $model = $model->where('created_by', \Auth::user()->nik);
+        }
+
+        $model = $model->get();
 
         return view('admin.master-acp.index', compact('model'));
     }
