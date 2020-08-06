@@ -36,14 +36,14 @@
                             @foreach($billing as $key => $rows)
                                 <tr>
                                     <td>{{ $rows->billing_no }}</td>
-                                    <td>{{ isset($rows->vendor) ? $rows->vendor->name : '' }}</td>
+                                    <td>{{ isset($rows->vendor) ? $rows->vendor->code." - ".$rows->vendor->name : '' }}</td>
                                     <td>{{ $rows->no_faktur }}</td>
                                     <td>{{ $rows->no_invoice }}</td>
                                     <td>{{ App\Models\Vendor\Billing::TypeStatus[$rows->status] }}</td>
                                     <td>
                                         <a href="{{ route('admin.billing-show-staff',$rows->id) }}" class="btn btn-info btn-xs"><i class="fa fa-eye"></i> Show</a>
-                                        @if($rows->status == \App\Models\Vendor\Billing::WaitingApprove )
-                                        {{-- <a href="{{ route('admin.billing-edit',$rows->id) }}" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> Edit</a> --}}
+                                        @if($rows->status == \App\Models\Vendor\Billing::Verify )
+                                            <a href="{{ route('admin.billing-edit',$rows->id) }}" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> Edit</a>
                                         @endif
                                     </td>
                                 </tr>

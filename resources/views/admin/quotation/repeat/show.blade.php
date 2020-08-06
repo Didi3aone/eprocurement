@@ -25,6 +25,10 @@
                                     <td>{{ $quotation->po_no }}</td>
                                 </tr>
                                 <tr>
+                                    <th>Plant</th>
+                                    <td>{{ \getplan($quotation->detail[0]['plant_code'])->description }}</td>
+                                </tr>
+                                <tr>
                                     <th>Vendor</th>
                                     <td>{{ $quotation->getVendor['name'] }}</td>
                                 </tr>
@@ -35,6 +39,30 @@
                                 <tr>
                                     <th>Payment Terms</th>
                                     <td>{{ $quotation->getTerm['own_explanation'] }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Terms Of Payment description</th>
+                                    <td>{{ $quotation->notes }}</td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        Upload File
+                                    </th>
+                                    @if(isset($quotation->upload_file))
+                                        @php
+                                            $files = @unserialize($quotation->upload_file);
+                                        @endphp
+                                        @if( $files !== false )
+                                            <td>
+                                                @foreach( unserialize((string)$quotation->upload_file) as $fileUpload)
+                                                    <a href="{{ asset('files/uploads/'.$fileUpload) }}" target="_blank" download>
+                                                        {{ $fileUpload ??'' }}
+                                                    </a>
+                                                    <br>
+                                                @endforeach
+                                            </td>
+                                        @endif
+                                    @endif
                                 </tr>
                             </tbody>
                         </table>
@@ -52,16 +80,18 @@
                             <th>Qty</th>
                             <th>Currency</th>
                             <th>Price</th>
+                            <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($quotation->detail as $key => $value)
                             <tr>
-                                <td>{{ $value->material." - ".$value->description }}</td>
-                                <td>{{ $value->unit }}</td>
+                                <td>{{ $value->material." - ".$value->short_text }}</td>
+                                <td>{{ \App\Models\UomConvert::where('uom_1', $value->unit)->first()->uom_2 ?? $value->unit }}</td>
                                 <td>{{ $value->qty }}</td>
-                                <td>{{ $value->currency }}</td>
-                                <td>{{ $value->price }}</td>
+                                <td>{{ $quotation->currency }}</td>
+                                <td>{{ \toDecimal($value->price) }}</td>
+                                <td>{{ (\removeComma($value->price) * $value->qty) }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -78,6 +108,7 @@
                         <tr>
                             <th>#</th>
                             <th>User ID</th>
+                            <th>Name</th>
                             <th>Status</th>
                             <th>Date</th>
                         </tr>
@@ -85,14 +116,16 @@
                     <tbody>
                         <tr>
                             <td>1</td>
+                            <td>{{ $quotation->getUserAss['user_id'] }}</td>
                             <td>{{ $quotation->getUserAss['name'] }}</td>
                             <td>
                                 @php
-                                    if( $quotation->status_approval == \App\Models\Vendor\Quotation::Waiting ) {
+                                    if( $quotation->approval_status == \App\Models\Vendor\Quotation::Waiting ) {
                                         echo "Waiting For Approval";
-                                    } else if( $quotation->status_approval == \App\Models\Vendor\Quotation::ApprovalAss ) {
+                                    } else if( $quotation->approval_status == \App\Models\Vendor\Quotation::ApprovalAss 
+                                        OR $quotation->approval_status == \App\Models\Vendor\Quotation::ApprovalHead) {
                                         echo "Approved";
-                                    } else if( $quotation->status_approval == \App\Models\Vendor\Quotation::Rejected ) {
+                                    } else if( $quotation->approval_status == \App\Models\Vendor\Quotation::Rejected ) {
                                         echo 'Rejected';
                                     }
                                 @endphp
@@ -101,14 +134,15 @@
                         </tr>
                         <tr>
                             <td>2</td>
+                            <td>{{  'PROCUREMENT01' }}</td>
                             <td>{{ $quotation->getUserHead['name'] }}</td>
                             <td>
                                 @php
-                                    if( $quotation->status_approval == \App\Models\Vendor\Quotation::Waiting ) {
+                                    if( $quotation->approval_status == \App\Models\Vendor\Quotation::Waiting ) {
                                         echo "Waiting For Approval";
-                                    } else if( $quotation->status_approval == \App\Models\Vendor\Quotation::ApprovalHead ) {
+                                    } else if( $quotation->approval_status == \App\Models\Vendor\Quotation::ApprovalHead ) {
                                         echo "Approved";
-                                    } else if( $quotation->status_approval == \App\Models\Vendor\Quotation::Rejected ) {
+                                    } else if( $quotation->approval_status == \App\Models\Vendor\Quotation::Rejected ) {
                                         echo 'Rejected';
                                     }
                                 @endphp

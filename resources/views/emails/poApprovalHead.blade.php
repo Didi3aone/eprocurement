@@ -9,7 +9,7 @@
 <table style="width: 85%; height: auto; margin: 20px auto !important; background: #fff; border-spacing: 0; border: 0;">
 	<tr>
 		<td colspan="2" style="padding: 10px; line-height: 1.5; background: #196A39; text-align: center; color: #fff; border-bottom: 3px solid #ddd;">
-			<h1 style="font-size: 20px; margin: 0;">Purchase Request</h1>
+			<h1 style="font-size: 20px; margin: 0;">Purchase Order</h1>
 		</td>
 	</tr>
 
@@ -19,8 +19,14 @@
 			<h3 style="font-size: 14px; margin: 0;">Dear {{ $name }}
 			</h3>
 
+            <p style="font-size: 13px;">
+                Berikut ini adalah informasi purchase order membutuhkan approval anda
+			</p>
 			<p style="font-size: 13px;">
-                The following is the billing you submitted, but it is still incomplete
+                No Doc  : {{  $quotation->po_no }} <br>
+                Terms of payment : {{  $quotation->getTerm['own_explanation'] ?? ''}} <br>
+				Terms of payment Desc : {{ $quotation->notes ?? ''}} <br>
+				Supplier : {{ $quotation->getVendor['name'] ?? ''}}
 			</p>
 
 			<div style="border-top: 1px dashed #ddd; border-bottom:1px dashed #ddd">
@@ -47,10 +53,26 @@
 								Unit 	
 							</div>
 						</th>
+                        <th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+                            <div>
+								Currency 	
+							</div>
+						</th>
+						<th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+                            <div>
+								Price 	
+							</div>
+						</th>
 					</tr>
 					</thead>
 					<tbody>
-					{{-- @foreach($pr->purchaseDetail as $key => $value)
+					@php
+						$totals = 0;
+					@endphp
+					@foreach($quotation->detail as $key => $value)
+					@php
+						$totals += \removeComma($value->price) * $value->qty;
+					@endphp
 					<tr>
 						<td style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
                             <div>
@@ -72,13 +94,34 @@
 								{{ $value->unit }} 	
 							</div>
 						</td>
+						<td style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+                            <div>
+								{{ $value->currency }} 	
+							</div>
+						</td>
+                        <td style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+                            <div>
+								{{ toDecimal(\removeComma($value->price) * $value->qty) }} 	
+							</div>
+						</td>
 					</tr>
-					@endforeach --}}
+					@endforeach
 					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="5" style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+							</td>
+							<td style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+								<div>
+									<b>{{ \toDecimal($totals) }}</b>
+								</div>
+							</td>
+						</tr>
+					</tfoot>
 				</table>
 			</div>
             <p style="font-size: 13px;">
-                {{-- Untuk info detail <a href='https://employee.enesis.com'>link</a> --}}
+                Untuk info detail <a href='https://employee.enesis.com'>link</a>
             </p>
 		</td>
 	</tr>

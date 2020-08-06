@@ -8,8 +8,6 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Vendor;
 use App\Models\MasterRfq;
 use App\Models\MasterRfqDetail;
-use App\Models\Rfq;
-use App\Models\RfqDetail;
 use App\Imports\RfqImport;
 use Gate;
 use Symfony\Component\HttpFoundation\Response;

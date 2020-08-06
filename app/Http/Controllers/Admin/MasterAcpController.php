@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use App\Models\AcpTableDetail;
 use App\Models\MasterMaterial;
 use App\Models\MasterRfqDetail;
+use App\Models\Rfq;
+use App\Models\RfqDetail;
 use App\Models\AcpTableMaterial;
 use App\Http\Controllers\Controller;
 use App\Models\Vendor\QuotationApproval;
@@ -197,6 +199,17 @@ class MasterAcpController extends Controller
                     $rfq->language_key        = 'EN';
                     $rfq->acp_id              = $acp->id;
                     $rfq->save();
+
+                    $maxNumber = Rfq::max('rfq_number');
+                    $rfqNew             = new Rfq;
+                    $rfqNew->rfq_number = $maxNumber + 1;
+                    $rfqNew->vendor_id  = $value;
+                    $rfqNew->acp_id     = $acp->id;
+                    $rfqNew->plant      = $request->get('plant_id');
+                    $rfqNew->is_from_po = 2;
+
+                    $rfqNew->save();
+
                 }
 
                 foreach ($request['material_'.$value] as $i => $row) {
@@ -206,16 +219,17 @@ class MasterAcpController extends Controller
                     }
 
                     $filename = '';
-                    if ($request['file_attachment_'.$value[$i]]) {
-                        //dd('iya');
-                        $path = public_path().'files/uploads/';
-                        $file = $request['file_attachment_'.$value[$i]];
-                        $filename = 'acp_'.strtolower($file->getClientOriginalName());
+                    // if ($request['file_attachment_'.$value[$i]]) {
+                    //     //dd('iya');
+                    //     $path = public_path().'files/uploads/';
+                    //     $file = $request['file_attachment_'.$value[$i]];
+                    //     $filename = 'acp_'.strtolower($file->getClientOriginalName());
 
-                        $file->move($path, $filename);
-                    }
+                    //     $file->move($path, $filename);
+                    // }
 
                     $temp['purchasing_document']    = $rfq->purchasing_document ?? 0;
+                    $temp['rfq_number']             = $rfqNew->rfq_number ?? 0;
                     $temp['vendor']                 = $value;
                     $temp['material']               = $row;
                     $temp['price']                  = $request['price_'.$value][$i];
@@ -230,11 +244,13 @@ class MasterAcpController extends Controller
             $price = 0;
             $assProc = '';
             foreach ($result as $key => $val) {
+                $i = $key + 1;
+                $poItem = (0+($i*10));
                 $material = new AcpTableMaterial();
                 $material->master_acp_id        = $acp->id;
                 $material->master_acp_vendor_id = $val['vendor'];
                 $material->material_id          = $val['material'];
-                $material->price                = str_replace(',','.',$val['price']);
+                $material->price                = str_replace(',','',$val['price']);
                 $material->qty                  = $val['qty'];
                 $material->currency             = $val['currency'] ?? 'IDR';
                 $material->file_attachment      = $val['file_attachment'];
@@ -256,7 +272,9 @@ class MasterAcpController extends Controller
                 } else {
                     $cMo = \App\Models\PurchaseRequestsDetail::where('description',$val['material'])
                             ->orWhere('material_id', $val['material'])
+                            ->orWhere('short_text', $val['material'])
                             ->first();
+                            // dd($cMo);
                     if( $cMo->purchasing_group_code == 'S03' ||
                         $cMo->purchasing_group_code == 'H09' ||
                         $cMo->purchasing_group_code == 'M09' ||
@@ -273,14 +291,44 @@ class MasterAcpController extends Controller
                 //     return redirect()->route('admin.master-acp.index');
                 // }
                 if (1 == $val['winner']) {
-                    $price += $val['price'];
+                    $price += str_replace(',','',$val['price']);//$val['price'];
                     $isAcp = true;
                     // insert to rfq detail
                     $rfqDetail = new MasterRfqDetail();
                     $rfqDetail->purchasing_document = $val['purchasing_document'];
                     $rfqDetail->material            = $val['material'];
-                    $rfqDetail->net_order_price     = str_replace(',','.',$val['price']);
+                    $rfqDetail->net_order_price     = str_replace(',','',$val['price']);
                     $rfqDetail->save();
+
+                    $materialName = \App\Models\MasterMaterial::getMaterialName($val['material']);
+                    // dd($materialName->uom_code);
+
+                    if( $materialName == null ) {
+                        $nonMaterial    =  \App\Models\PurchaseRequestsDetail::where('description',$val['material'])
+                            ->orWhere('short_text', $val['material'])->first();
+                        $desc           = $val['material'] ?? '';
+                        $unit           = $nonMaterial->unit ?? '';
+                        $storage        = $nonMaterial->storage_location_code ?? '';
+                    } else {
+                        $desc           = $materialName->description ?? '';
+                        $unit           = $materialName->uom_code ?? '';
+                        $storage        = $materialName->storage_location_code ?? '';
+                    }
+                    // dd($val['rfq_number']);
+                    $rfqDetailNew = new RfqDetail;
+                    $rfqDetailNew->material_id                  = $val['material'] ?? '';
+                    $rfqDetailNew->short_text                   = $desc;
+                    $rfqDetailNew->plant_code                   = $request->get('plant_id');
+                    $rfqDetailNew->storage_location_code        = $storage;
+                    $rfqDetailNew->qty                          = $val['qty'];
+                    $rfqDetailNew->unit                         = $unit;
+                    $rfqDetailNew->rfq_number                   = $val['rfq_number'];
+                    $rfqDetailNew->po_item                      = $poItem;
+                    $rfqDetailNew->net_price                    = str_replace(',','',$val['price']);
+                    $rfqDetailNew->is_from_po                   = 2;
+                    $rfqDetailNew->po_number                    = 0;
+                    $rfqDetailNew->vendor_id                    = $val['vendor'];
+                    $rfqDetailNew->save();
                 }
             }
 
@@ -304,7 +352,7 @@ class MasterAcpController extends Controller
                     }
                     \saveApprovals($assProc, $acp->id, 'COO', 'ACP', $isPlant, $isCmo);
                 }
-            }
+            } 
 
             \DB::commit();
 

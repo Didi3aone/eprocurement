@@ -31,7 +31,7 @@
                         <li>
                             <a href="{{ route('admin.purchase-request-project') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
-                                Approval PR Project
+                                Verifikasi PR Project
                             </a>
                         </li>
                         @endcan
@@ -74,6 +74,13 @@
                     <ul aria-expanded="false" class="collapse">
                         <li>
                             <a href="{{ route('admin.acp-approval') }}">
+                                <i class="fa fas fa-caret-right"></i> 
+                                List Acp Approval
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{{ route('admin.list-acp') }}">
                                 <i class="fa fas fa-caret-right"></i> 
                                 List Acp
                             </a>
@@ -158,7 +165,7 @@
                         <li>
                             <a href="{{ route('admin.purchase-order-change-ass') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
-                                Approval Change (ASS)
+                                Approval Change Assproc
                             </a>
                         </li>
                         @endcan
@@ -166,7 +173,7 @@
                         <li>
                             <a href="{{ route('admin.purchase-order-change-head') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
-                                Approval Change (HEAD)
+                                Approval Change Head
                             </a>
                         </li>
                         @endcan
@@ -175,7 +182,7 @@
                 @endcan
                 @can('billing_access')
                 <li class=""> 
-                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-clipboard"></i>
+                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-credit-card"></i>
                         <span class="hide-menu"> {{ 'Billing' }} </span>
                     </a>
                     <ul aria-expanded="false" class="collapse">
@@ -187,14 +194,14 @@
                             </a>
                         </li>
                         @endcan
-                        @can('accounting_spv')
+                        {{-- @can('accounting_spv')
                         <li>
                             <a href="{{ route('admin.billing-spv-list') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
                                 List Billing Spv
                             </a>
                         </li>
-                        @endcan
+                        @endcan --}}
                     </ul>
                 </li>
                 @endcan
@@ -215,6 +222,20 @@
                                     <li>
                                         <a href="{{ route('admin.master-acp.index') }}" class="">
                                             <i class="fa fas fa-caret-right"></i> List ACP
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        @endcan
+                        @can('ship_to_access')
+                            <li class="">
+                                <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-map"></i>
+                                    <span class="hide-menu"> Ship To </span>
+                                </a>
+                                <ul aria-expanded="false" class="collapse">
+                                    <li>
+                                        <a href="{{ route('admin.ship-to.index') }}" class="">
+                                            <i class="fa fas fa-caret-right"></i> List Ship To
                                         </a>
                                     </li>
                                 </ul>
@@ -321,7 +342,7 @@
                             </ul>
                         </li>
                         @endcan
-                        <li class=""> 
+                        {{-- <li class=""> 
                             <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-file"></i>
                                 <span class="hide-menu"> RFQ </span>
                             </a>
@@ -333,7 +354,7 @@
                                     </a>
                                 </li>
                             </ul>
-                        </li>
+                        </li> --}}
                         @can('vendor_management_access')
                         <li>
                             <a href="#" class="has-arrow">

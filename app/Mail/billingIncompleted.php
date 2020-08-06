@@ -32,6 +32,6 @@ class billingIncompleted extends Mailable
      */
     public function build()
     {
-        return $this->subject('BILLING - INCOMPLETED')->view('emails.billingIncompleted');
+        return $this->subject('BILLING ID '.$this->billing->billing_no." INCOMPLETED")->view('emails.billing.billingIncompleted');
     }
 }

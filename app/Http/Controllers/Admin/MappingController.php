@@ -48,16 +48,16 @@ class MappingController extends Controller
     {
         $model = UserMap::find($id);
         $users = User::all();
-        $plants = Plant::get();
+        $prg = PurchasingGroup::all();
 
-        return view('admin.mapping.edit', compact('model', 'users', 'plants'));
+        return view('admin.mapping.edit', compact('model', 'users','prg'));
     }
 
     public function update (Request $request, $id)
     {
         $model = UserMap::find($id);
-        $model->nik = $request->get('nik');
-        $model->plant = $request->get('plant');
+        $model->user_id = $request->get('user_id');
+        $model->purchasing_group_code = implode(',',$request->get('purchasing_group_code'));
         $model->save();
 
         return redirect()->route('admin.mapping.index')->with('success', 'User map has been updated successfully');

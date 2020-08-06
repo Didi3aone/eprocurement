@@ -28,7 +28,8 @@ class PurchaseOrder extends Model
         'approved_asspro',
         'approved_head',
         'status_approval',
-        'reject_reason'
+        'reject_reason',
+        'ship_id'
     ];
 
     public const POrepeat  = 0;
@@ -47,7 +48,7 @@ class PurchaseOrder extends Model
             try {
                 $user              = \Auth::user();
                 // $model->created_by = $user->nik;
-                $model->updated_by = $user->nik;
+              //  $model->updated_by = $user->nik;
             } catch (UnsatisfiedDependencyException $e) {
                 abort(500, $e->getMessage());
             }
@@ -56,7 +57,7 @@ class PurchaseOrder extends Model
         static::updating(function ($model) {
             try {
                 $user              = \Auth::user();
-                $model->updated_by = $user->nik;
+              //  $model->updated_by = $user->nik;
             } catch (UnsatisfiedDependencyException $e) {
                 abort(500, $e->getMessage());
             }
@@ -71,6 +72,11 @@ class PurchaseOrder extends Model
     public function vendor ()
     {
         return $this->hasOne(\App\Models\Vendor::class, 'id', 'vendor_id');
+    }
+
+    public function plant ()
+    {
+        return $this->hasOne(\App\Models\Plant::class, 'plant_code','code');
     }
 
     public function paymentTerm ()
@@ -91,5 +97,10 @@ class PurchaseOrder extends Model
     public function orderGrDetail()
     {
         return $this->hasMany(\App\Models\PurchaseOrderGr::class,'po_no','PO_NUMBER');
+    }
+
+    public function getShip()
+    {
+        return $this->hasOne(\App\Models\MasterShipToAdress::class,'id','ship_id');
     }
 }

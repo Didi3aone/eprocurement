@@ -6,7 +6,7 @@
     use App\Mail\enesisApprovalAcpMail;
     use App\Models\AcpTable;
     use App\Models\AcpTableDetail;
-    use App\Models\AcpTableMaterials;
+    use App\Models\Plant;
 
     function configEmailNotification()
     {
@@ -16,6 +16,11 @@
     function getEmailLocal($nik)
     {
         return u::where('nik',$nik)->first();
+    }
+
+    function getplan($code)
+    {
+        return Plant::where('code',$code)->first();
     }
 
     function getProfileLocal($nik)
@@ -137,6 +142,7 @@
     // puyeng aink
     function saveApprovals($assProc, $quotation_id, $tingkat,$type, $isPlant, $isCmo = false)
     {
+        $configEnv = \configEmailNotification();
         $acp   = AcpTable::find($quotation_id);
         $plantHead ='';
         
@@ -159,8 +165,15 @@
                     'acp_type'              => $type,
                     'acp_id'                => $quotation_id
                 ]);
-                $email = "diditriawan13@gmail.com";
-                $name  = "didi";
+               
+                if (\App\Models\BaseModel::Development == $configEnv->type) {
+                    $email = "diditriawan13@gmail.com";
+                    $name  = "didi";
+                } else {
+                    $email = \Auth::user()->email;
+                    $name  = \Auth::user()->name;
+                }
+                
                 \Mail::to($email)->send(new enesisApprovalAcpMail($acp, $name));
 
                 QuotationApproval::create([
@@ -193,8 +206,14 @@
                     'acp_id'                => $quotation_id
                 ]);
 
-                $email = "diditriawan13@gmail.com";
-                $name  = "didi";
+                if (\App\Models\BaseModel::Development == $configEnv->type) {
+                    $email = "diditriawan13@gmail.com";
+                    $name  = "didi";
+                } else {
+                    $email = \Auth::user()->email;
+                    $name  = \Auth::user()->name;
+                }
+                
                 \Mail::to($email)->send(new enesisApprovalAcpMail($acp, $name));
     
                 QuotationApproval::create([
@@ -219,8 +238,13 @@
                     'acp_type'              => $type,
                     'acp_id'                => $quotation_id
                 ]);
-                $email = "diditriawan13@gmail.com";
-                $name  = "didi";
+                if (\App\Models\BaseModel::Development == $configEnv->type) {
+                    $email = "diditriawan13@gmail.com";
+                    $name  = "didi";
+                } else {
+                    $email = \Auth::user()->email;
+                    $name  = \Auth::user()->name;
+                }
                 \Mail::to($email)->send(new enesisApprovalAcpMail($acp, $name));
 
                 QuotationApproval::create([
@@ -278,8 +302,13 @@
                     'acp_id'                => $quotation_id
                 ]);
                     
-                $email = "diditriawan13@gmail.com";
-                $name  = "didi";
+                if (\App\Models\BaseModel::Development == $configEnv->type) {
+                    $email = "diditriawan13@gmail.com";
+                    $name  = "didi";
+                } else {
+                    $email = \Auth::user()->email;
+                    $name  = \Auth::user()->name;
+                }
                 \Mail::to($email)->send(new enesisApprovalAcpMail($acp, $name));
 
                 QuotationApproval::create([
@@ -328,8 +357,13 @@
                     'acp_id'                => $quotation_id
                 ]);
 
-                $email = "diditriawan13@gmail.com";
-                $name  = "didi";
+                if (\App\Models\BaseModel::Development == $configEnv->type) {
+                    $email = "diditriawan13@gmail.com";
+                    $name  = "didi";
+                } else {
+                    $email = \Auth::user()->email;
+                    $name  = \Auth::user()->name;
+                }
                 \Mail::to($email)->send(new enesisApprovalAcpMail($acp, $name));
 
                 QuotationApproval::create([
@@ -395,8 +429,13 @@
                     'acp_id'                => $quotation_id
                 ]);
 
-                $email = "diditriawan13@gmail.com";
-                $name  = "didi";
+                if (\App\Models\BaseModel::Development == $configEnv->type) {
+                    $email = "diditriawan13@gmail.com";
+                    $name  = "didi";
+                } else {
+                    $email = \Auth::user()->email;
+                    $name  = \Auth::user()->name;
+                }
                 \Mail::to($email)->send(new enesisApprovalAcpMail($acp, $name));
     
                 QuotationApproval::create([
@@ -450,9 +489,14 @@
         return str_replace('.','',$titik);
     }
 
+    function removeComma($comma)
+    {
+        return str_replace(',','',$comma);
+    }
+
     function toDecimal($duit)
     {
-        return number_format($duit, 2, ",", ".");
+        return number_format($duit, 2, ".", ",");
     }
 
     function date_compare($a, $b)

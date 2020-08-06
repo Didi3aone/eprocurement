@@ -22,7 +22,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="form-group col-lg-4">
-                                    <label>No Faktur Pajak</label>
+                                    <label>Tax Invoice Number</label>
                                     <input type="text" class="form-control form-control-line {{ $errors->has('no_faktur') ? 'is-invalid' : '' }}" name="no_faktur" value="{{ old('no_faktur', '') }}"> 
                                     @if($errors->has('no_faktur'))
                                         <div class="invalid-feedback">
@@ -31,7 +31,7 @@
                                     @endif
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>Faktur Date <span class="text-danger">*</span></label>
+                                    <label>Tax Invoice Date <span class="text-danger">*</span></label>
                                     <input type="text" id="mdate" class="form-control form-control-line {{ $errors->has('tgl_faktur') ? 'is-invalid' : '' }}" name="tgl_faktur" value="{{ old('tgl_faktur', '') }}"> 
                                     @if($errors->has('tgl_faktur'))
                                         <div class="invalid-feedback">
@@ -40,7 +40,7 @@
                                     @endif
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>No. Invoice</label>
+                                    <label>Invoice Number</label>
                                     <input type="text" class="form-control form-control-line {{ $errors->has('no_invoice') ? 'is-invalid' : '' }}" name="no_invoice" value="{{ old('no_invoice', '') }}"> 
                                     @if($errors->has('no_invoice'))
                                         <div class="invalid-feedback">
@@ -59,7 +59,7 @@
                                 </div>
                                 <div class="form-group col-lg-4">
                                     <label>DPP <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control form-control-line {{ $errors->has('dpp') ? 'is-invalid' : '' }}" name="dpp" id="dpp" value="{{ old('dpp', '') }}"> 
+                                    <input type="text" class="form-control form-control-line {{ $errors->has('dpp') ? 'is-invalid' : '' }}" name="dpp" id="dpp" onkeyup="leadingZero(this.value, $(this), true)" value="{{ old('dpp', '') }}"> 
                                     @if($errors->has('dpp'))
                                         <div class="invalid-feedback">
                                             {{ $errors->first('dpp') }}
@@ -67,7 +67,7 @@
                                     @endif
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>PPN <span class="text-danger">*</span></label>
+                                    <label>VAT <span class="text-danger">*</span></label>
                                     {{-- <input type="text" class="form-control form-control-line {{ $errors->has('ppn') ? 'is-invalid' : '' }}" name="ppn" value="{{ old('ppn', '') }}">  --}}
                                     <select class="form-control select2" name="ppn" id="ppn" placeholder="Choose">
                                         <option value=""> Choose </option>
@@ -82,7 +82,7 @@
                                 </div>
                                 <p id="demo"></p>
                                 <div class="form-group col-lg-4">
-                                    <label>Nominal Invoice Sesudah PPN <span class="text-danger">*</span></label>
+                                    <label>Nominal Invoice After VAT<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control form-control-line" name="nominal_inv_after_ppn" id="nominal_inv_after_ppn" value="{{ old('nominal_inv_after_ppn', '') }}" readonly> 
                                 </div>
                                 <div class="form-group col-lg-4">
@@ -123,7 +123,7 @@
                                     <a href="" class="" id="viewer_do" target="_blank" onclick="PreviewImageDo()">Preview File DO</a>
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>Surat Ket. Bebas Pajak</label>
+                                    <label>Letter of information. Tax-free</label>
                                     <input type="file" id="surat" class="form-control form-control-line {{ $errors->has('surat_ket_bebas_pajak') ? 'is-invalid' : '' }}" name="surat_ket_bebas_pajak" value="{{ old('surat_ket_bebas_pajak', '') }}"> 
                                     <a href="" class="" id="viewer_surat" target="_blank" onclick="PreviewImageSurat()">Preview File Surat Ket. Bebas Pajak</a>
                                 </div>
@@ -133,7 +133,7 @@
                                     <a href="" class="" id="viewer_invoice" target="_blank" onclick="PreviewImageInvoice()">Preview File Invoice</a>
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label>Upload File Faktur <span class="text-danger">*</span></label>
+                                    <label>Upload File Tax Invoice <span class="text-danger">*</span></label>
                                     <input type="file" class="form-control form-control-line" id="file_faktur" name="file_faktur" value="{{ old('file_faktur', '') }}">
                                     <a href="" class="" id="viewer_faktur" target="_blank" onclick="PreviewImageFaktur()">Preview File Faktur</a>
                                 </div>
@@ -150,7 +150,7 @@
                                     <div class="row">
                                         <div class="col-lg-8 text-left">
                                             <div class="form-group">
-                                                <select name="search-po" class="choose-po form-control select2">
+                                                <select name="search-po" id="search-po" class="choose-po form-control select2">
                                                     @foreach ($po_gr as $gr)
                                                         <option value="{{ $gr->doc_gr }}">{{ $gr->doc_gr }}</option>
                                                     @endforeach
@@ -191,7 +191,7 @@
                             <div class="row">
                                 <div class="col-lg-12 form-group">
                                     <button type="submit" class="btn btn-success"> <i class="fa fa-save"></i> {{ trans('global.save') }}</button>
-                                    <a href="{{ route('admin.billing') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i> Back</a>
+                                    <a href="{{ route('vendor.billing') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i> Back</a>
                                 </div>
                             </div>
                         </div>
@@ -216,17 +216,28 @@
 
     $(document).on('click', '#add-material', function (e) {
         e.preventDefault()
+        const $search = $('#search-po').children('option:selected')
+        console.log($search)
+        $search.attr('disabled', 'disabled')
+        const input_po = $search.val()
+        console.log(input_po)
+        $('#search-po').val('').trigger('change')
+        $('#search-po').select2()
 
         const PO_GR = $('.choose-po').val()
 
-        if (PO_GR != '') {
-            $.get(base_url + '/vendor/billing-po-gr/' + PO_GR, function (result) {
+        if (input_po != '') {
+            $.get(base_url + '/vendor/billing-po-gr/' + input_po, function (result) {
                 var template = ''
                 //console.log(result)
                 $.each(result,function(k,v) {
                    // console.log(v.material.description)
-                    let material = v.material_no ?  v.material_no : '-'
-                    let desc = v.material.description ? v.material.description : '-'
+                    let material = '-';
+                    let desc = '-';
+                    if( v.material_no != '') {
+                        material = v.material_no !='' ?  v.material_no : '-'
+                        desc = v.material.description ? v.material.description : v.description
+                    }
                     template += `
                         <tr>
                             <input type="hidden"name="currency[]" value="${v.currency}">
@@ -236,9 +247,7 @@
                             <input type="hidden"name="amount[]" value="${v.amount}">
                             <input type="hidden"name="material_document[]" value="${v.material_document}">
                             <input type="hidden"name="reference_document_item[]" value="${v.reference_document_item}">
-                            <input type="hidden"name="doc_gr[]" value="${v.doc_gr}">
                             <input type="hidden" name="debet_credit[]" value="${v.debet_credit}"/>
-                            <input type="hidden" name="item_gr[]" value="${v.item_gr}"/>
                             <input type="hidden" name="storage_location[]" value="${v.storage_location}"/>
                             <input type="hidden" name="unit[]" value="${v.satuan}"/>
                             <input type="hidden" name="reference_document[]" value="${v.reference_document}"/>
@@ -246,6 +255,7 @@
                             <input type="hidden" name="cost_center_code[]" value="${v.cost_center_code}"/>
                             <input type="hidden" name="tahun_gr[]" value="${v.tahun_gr}"/>
                             <input type="hidden" name="price_per_pc[]" value="${v.price_per_pc}"/>
+                            <input type="hidden" name="item_category[]" value="${v.item_category}"/>
                             <input type="hidden" name="purchase_order_detail_id[]" value="${v.purchase_order_detail_id}"/>
                             <td><input type="number" class="qty-old form-control" name="qty_old[]" value="${v.qty}" readonly></td>
                             <td><input type="number" class="qty form-control" name="qty[]" value="${v.qty}" required/></td>
@@ -264,7 +274,7 @@
                         </tr>
                     `
                 });
-                $(document).find('#billing-detail').html(template)
+                $(document).find('#billing-detail').append(template)
 
             })
         }
@@ -339,14 +349,14 @@
    $('select').on('change', function() {
        var ppn =  this.value;
        var dpp = $("#dpp").val();
-       tt = dpp.replace(/,/g, '.');
+       tt = dpp.replace(/,/g, '')
        if(ppn == "V1") {
            var count = parseFloat(tt) * 1.1;
            var roundedString = count.toFixed(2);
-           var cm = roundedString.replace(".", ",");
+           var cm = roundedString.replace(/,/g, '')
            $("#nominal_inv_after_ppn").val(cm);
        } else if(ppn == "V0") {
-           var cm = dpp.replace(".", ",");
+           var cm = dpp.replace(/,/g, '')
            $("#nominal_inv_after_ppn").val(cm);
        }
 
@@ -355,36 +365,73 @@
    function PreviewImagePo() {
         pdffile=document.getElementById("files").files[0];
         pdffile_url=URL.createObjectURL(pdffile);
-        console.log(pdffile_url)
+        
         $('#viewer').attr('href',pdffile_url);
     }
 
     function PreviewImageDo() {
         pdffile=document.getElementById("files_do").files[0];
         pdffile_url=URL.createObjectURL(pdffile);
-        console.log(pdffile_url)
+        
         $('#viewer_do').attr('href',pdffile_url);
     }
 
     function PreviewImageSurat() {
         pdffile=document.getElementById("surat").files[0];
         pdffile_url=URL.createObjectURL(pdffile);
-        console.log(pdffile_url)
+        
         $('#viewer_surat').attr('href',pdffile_url);
     }
 
     function PreviewImageInvoice() {
         pdffile=document.getElementById("files_invoice").files[0];
         pdffile_url=URL.createObjectURL(pdffile);
-        console.log(pdffile_url)
+        
         $('#viewer_invoice').attr('href',pdffile_url);
     }
 
     function PreviewImageFaktur() {
         pdffile=document.getElementById("file_faktur").files[0];
         pdffile_url=URL.createObjectURL(pdffile);
-        console.log(pdffile_url)
+        
         $('#viewer_faktur').attr('href',pdffile_url);
+    }
+
+    window.leadingZero = function(value, element, decimal = false) {
+        var convert_number = removeChar(value);
+
+        if(decimal) {
+            if(value != '') {
+            element.val(keyupFormatUangWithDecimal(value));
+            } else {
+            element.val(0);
+            }
+        } else {
+            if(value != '') {
+            element.val(keyupFormatUang(parseInt(convert_number)));
+            } else {
+            element.val(0);
+            }
+        }
+    }
+
+    function removeChar(value) {
+        return value.toString().replace(/[.*+?^${}()|[\]\\]/g, '');
+    }
+
+    window.keyupFormatUang = function(value) {
+        var number = '';    
+        var value_rev = value.toString().split('').reverse().join('');
+        
+        for(var i = 0; i < value_rev.length; i++) {
+            if(i % 3 == 0) number += value_rev.substr(i, 3) + '.';
+        }
+        
+        return number.split('', number.length - 1).reverse().join('');
+        }
+
+        window.keyupFormatUangWithDecimal = function(value) {
+        return value.replace(/^0+/, '').replace(/(?!\.)\D/g, "").replace(/(?<=\..*)\./g, "").replace(/(?<=\.\d\d).*/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
 </script>

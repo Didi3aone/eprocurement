@@ -9,4 +9,9 @@ class PurchaseOrderChangeHistory extends Model
     protected $connection = 'pgsql';
 
     public $table = 'purchase_order_change_history';
+
+    public function detail()
+    {
+        return $this->hasMany(\App\Models\PurchaseOrderChangeHistoryDetail::class,'id','po_history_id');
+    }
 }

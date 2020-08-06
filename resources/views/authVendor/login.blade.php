@@ -56,6 +56,11 @@
                         </div>
                     </div>
                     <div class="form-group m-b-0">
+                        <div class="col-sm-12">
+                            <p class="text-center"><a href="{{ route('vendor.password.request') }}" class="text-info m-l-5"><b>Forgot Password</b></a></p>
+                        </div>
+                    </div>
+                    <div class="form-group m-b-0">
                         <div class="col-sm-12 text-center">
                             <p>Don't have an account? <a href="{{ route('vendor.register') }}" class="text-info m-l-5"><b>Sign Up</b></a></p>
                         </div>

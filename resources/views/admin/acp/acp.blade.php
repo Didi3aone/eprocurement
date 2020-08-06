@@ -2,10 +2,10 @@
 @section('content')
 <div class="row page-titles">
     <div class="col-md-5 col-8 align-self-center">
-        <h3 class="text-themecolor">Repeat Order</h3>
+        <h3 class="text-themecolor">ACP</h3>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="javascript:void(0)">Direct Order</a></li>
-            <li class="breadcrumb-item active">Index</li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">ACP</a></li>
+            <li class="breadcrumb-item active">ACP Approval</li>
         </ol>
     </div>
 </div>
@@ -28,7 +28,7 @@
                                 <thead>
                                     <tr>
                                         <th>{{ trans('cruds.quotation.fields.id') }}</th>
-                                        <th>PO Eprocurement</th>
+                                        <th>Acp No</th>
                                         <th>{{ trans('cruds.quotation.fields.status') }}</th>
                                         <th>&nbsp;</th>
                                     </tr>
@@ -39,10 +39,12 @@
                                             <td>{{ $val->id ?? '' }}</td>
                                             <td>{{ $val->acp['acp_no'] ?? '' }}</td>
                                             <td>
-                                                @if($val->status_approval == 0)
+                                                 @if($val->acp['status_approval'] == 0)
                                                     <span class="badge badge-primary">Waiting For Approval</span>
-                                                @else 
+                                                @elseif( $val->acp['status_approval'] == 2)
                                                     <span class="badge badge-primary">Approved</span>
+                                                @elseif( $val->acp['status_approval'] == 3)
+                                                    <span class="badge badge-primary">Rejected</span>
                                                 @endif
                                             </td>
                                             <td>

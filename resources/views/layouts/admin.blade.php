@@ -143,6 +143,7 @@
                             </a>
                             <div class="dropdown-menu dropdown-menu-right scale-up">
                                 <ul class="dropdown-user">
+                                    <li><a href="{{ route('form.change.password')}}">Change Password</a></li>
                                     <li role="separator" class="divider"></li>
                                     <li><a href="{{ route('logout') }}"
                                         onclick="event.preventDefault();
@@ -272,6 +273,18 @@
     <script src="{{ asset('js/global.js') }}"></script>
     <script>
         $('#save').on('click', function () {
+            $("form").submit(function (e) {
+                //var messageLength = CKEDITOR.instances['description'].getData().replace(/<[^>]*>/gi, '').length;
+                $(this).submit(function () {
+                    return false;
+                });
+                $("#save").attr('disabled', 'disabled');
+                $('#save').text('Please wait ...')
+                return true;
+            });
+        });
+
+        $('#saves').on('click', function () {
             $("form").submit(function (e) {
                 //var messageLength = CKEDITOR.instances['description'].getData().replace(/<[^>]*>/gi, '').length;
                 $(this).submit(function () {

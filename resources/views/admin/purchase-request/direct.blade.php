@@ -16,17 +16,6 @@
                 <div class="card-body">
                     @csrf
                     <div class="row">
-                        {{-- <div class="col-lg-6">
-                            <div class="form-group">
-                                <label>{{ trans('cruds.purchase-order.fields.po_no') }}</label>
-                                <input type="text" class="form-control form-control-line {{ $errors->has('po_no') ? 'is-invalid' : '' }}" name="po_no" value="{{ old('po_no', $po_no) }}" readonly> 
-                                @if($errors->has('po_no'))
-                                    <div class="invalid-feedback">
-                                        {{ $errors->first('po_no') }}
-                                    </div>
-                                @endif
-                            </div>
-                        </div> --}}
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>{{ trans('cruds.purchase-order.fields.doc_type') }}</label>
@@ -39,13 +28,21 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <label>Term Of Payment Desciption</label>
-                                <input type="text" id="notes" class="form-control form-control-line {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" value="{{ old('notes', '') }}" required>
-                                @if($errors->has('notes'))
+                                <label for="">Ship To</label>
+                                <select name="ship_id" id="ship_id" class="form-control select2 {{ $errors->has('ship_id') ? 'is-invalid' : '' }}">
+                                    <option value="">-- Select  --</option>
+                                    @foreach($shipTo as $id => $name)
+                                        <option value="{{ $id }}">
+                                            {{ $name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @if($errors->has('ship_id'))
                                     <div class="invalid-feedback">
-                                        {{ $errors->first('notes') }}
+                                        {{ $errors->first('ship_id') }}
                                     </div>
                                 @endif
+                                <span class="help-block"></span>
                             </div>
                         </div>
                     </div>
@@ -64,6 +61,39 @@
                                 <input type="text" class="form-control form-control-line exchange_rate" name="exchange_rate" value="{{ old('exchange_rate', '') }}" disabled> 
                             </div>
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Term Of Payment Desciption</label>
+                        <input type="text" id="notes" class="form-control form-control-line {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" value="{{ old('notes', '') }}" required>
+                        @if($errors->has('notes'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('notes') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>Attachment PR</label>
+                        @foreach($data as $key => $values)
+                            @if($values->upload_file != 'NO_FILE')
+                                @if(isset($values->upload_file))
+                                    <td>
+                                        @php
+                                            $files = @unserialize($values->upload_file);
+                                        @endphp
+                                        @if( is_array($files))
+                                            @foreach( unserialize((string)$values->upload_file) as $fileUpload)
+                                                <a href="https://employee.enesis.com/uploads/{{ $fileUpload  }}" target="_blank" download>
+                                                    {{ $fileUpload ??'' }}
+                                                </a>
+                                                <br>
+                                            @endforeach
+                                        @else 
+                                            No File found
+                                        @endif
+                                    </td>
+                                @endif
+                            @endif
+                        @endforeach
                     </div>
                 </div>
                 <div class="card-body">
@@ -119,13 +149,13 @@
                                             <input type="hidden" name="category[]" value="{{ $value->category }}">
                                             <input type="hidden" class="qty" name="qty[]" value="{{ empty($value->qty) ? 0 : $value->qty }}">
                                             <input type="hidden" class="acp_id" name="acp_id[]" id="acp_id" value="0">
-                                            <td>{!! $value->material_id .'<br>'.$value->description !!}</td>
-                                            <td>{{ $value->unit }}</td>
+                                            <td>{!! $value->material_id .'<br>'.$value->short_text !!}</td>
+                                            <td>{{  \App\Models\UomConvert::where('uom_1',$value->unit)->first()->uom_2 }}</td>
                                             <td>{{ empty($value->qty) ? 0 : $value->qty }}</td>
                                             <td>
                                                 @php
                                                     if( $value->material_id == '' ) {
-                                                        $paramM = $value->description;
+                                                        $paramM = $value->short_text;
                                                     } else {
                                                         $paramM = $value->material_id;
                                                     }
@@ -312,8 +342,8 @@
             $("#image_loading").hide()
             if(items.master_acp_id) {
                 let nets = items.price ? items.price : '0.00'
-                net.val(nets)
-                ori.val(nets)
+                net.val(formatNumber(nets))
+                ori.val(formatNumber(nets))
             } else {
                 net.val('0.00')
                 ori.val('0.00')
@@ -394,6 +424,10 @@
             $('#image_loading').hide()
             $currency.html(newOptions)
         });
+    }
+
+    function formatNumber(num) {
+        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
     }
 </script>
 @endsection

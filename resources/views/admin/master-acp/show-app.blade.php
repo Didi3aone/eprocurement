@@ -34,6 +34,10 @@
                                         <td>{{ $acp->is_project == 1 ? 'Project' : '-' }}</td>
                                     </tr>
                                     <tr>
+                                        <th>Plant</th>
+                                        <td>{{  \getplan($acp->plant_id)->description }}</td>
+                                    </tr>
+                                    <tr>
                                         <th>File</th>
                                         @if(isset($acp->upload_file))
                                             <td>
@@ -82,24 +86,36 @@
                                         $winner = '<span class="badge badge-primary">Winner</span>';
                                     }
                                     $rowSpan = count(\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id));
+                                    $totalPrice = 0;
                                 @endphp
                                 <tr>
                                     <td rowspan={{ $rowSpan }}>{{ $rows->vendor['name'] }}</td>
                                     <td rowspan={{ $rowSpan }}>{!! $winner !!}</td>
-                                    @foreach (\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id) as $row)
-                                        <td>{{ $row->material_id ?? '-'}}</td>
+                                    @foreach (\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id) as $key => $row)
+                                        @php
+                                            $total = (\removeComma($row->price) * $row->qty);
+                                            $totalPrice += ($total);
+                                            $data = count(\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id));
+                                           // dd($data);
+                                        @endphp
+                                        <td>{{ $row->material_id ?? $row->material_id }}</td>
                                         <td>{{ \App\Models\MasterMaterial::getMaterialName($row->material_id)->description ?? $row->material_id  }}</td>
                                         <td>{{ $row->uom_code }}</td>
                                         <td>{{ $row->qty }}</td>
                                         <td>{{ $row->currency }}</td>
-                                        <td>{{ number_format($row->price,2) }}</td>
+                                        <td>{{ \toDecimal($row->price) }}</td>
                                 </tr>
                                 @endforeach
+                                <tr>
+                                    <td colspan={{ $rowSpan + 2 }}></td>
+                                    <td colspan={{ $rowSpan + $rowSpan }}>
+                                        <b style="color:black;font-size:17px;">{{ \toDecimal($totalPrice) }}</b>
+                                    </td>
+                                </tr>
                             @endforeach
                             </tbody>
                         </table>
                     </div>
-
                     {{-- <div class="row" style="margin-top: 20px">
                         <div class="col-lg-12">
                             <div class="form-actions">

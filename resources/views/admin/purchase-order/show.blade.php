@@ -34,7 +34,7 @@
                         </tr>
                         <tr>
                             <th>Vendor</th>
-                            <td>{{ $purchaseOrder->vendors['name'] }}</td>
+                            <td>{{ $purchaseOrder->vendor_id." - ".$purchaseOrder->vendors['name'] }}</td>
                         </tr>
                         <tr>
                             <th>Payment Term</th>
@@ -63,7 +63,7 @@
                         @foreach($purchaseOrder->orderDetail as $key => $value)
                         <tr>
                             <td>{{ $value->material_id." - ".$value->description }}</td>
-                            <td>{{ $value->unit }}</td>
+                            <td>{{ \App\Models\UomConvert::where('uom_1', $value->unit)->first()->uom_2 }}</td>
                             <td>{{ $value->qty }}</td>
                             <td>{{ $value->price }}</td>
                         </tr>

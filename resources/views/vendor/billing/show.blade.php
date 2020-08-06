@@ -26,7 +26,15 @@
                     <tbody>
                         <tr>
                             <th>
-                                No. Faktur
+                                Billing ID
+                            </th>
+                            <td>
+                                {{ $billing->billing_no }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Tax Invoice Number
                             </th>
                             <td>
                                 {{ $billing->no_faktur }}
@@ -34,7 +42,7 @@
                         </tr>
                         <tr>
                             <th>
-                                Tgl. Faktur
+                                Tax Invoice Date
                             </th>
                             <td>
                                 {{ \Carbon\Carbon::parse($billing->tgl_faktur)->format('d-m-Y') }}
@@ -42,17 +50,17 @@
                         </tr>
                         <tr>
                             <th>
-                                File
+                                Tax Invoice File
                             </th>
                             <td>
-                                <a href="{{ asset('files/uploads', $billing->file_faktur) }}">
+                                <a target="_blank" href="{{ asset('files/uploads/'.$billing->file_faktur) }}">
                                     {{ $billing->file_faktur }}
                                 </a>
                             </td>
                         </tr>
                         <tr>
                             <th>
-                                No. Invoice
+                                Invoice Number
                             </th>
                             <td>
                                 {{ $billing->no_invoice }}
@@ -60,7 +68,7 @@
                         </tr>
                         <tr>
                             <th>
-                                Tgl. Invoice
+                                 Invoice Date
                             </th>
                             <td>
                                 {{ \Carbon\Carbon::parse($billing->tgl_invoice)->format('d-m-Y') }}
@@ -68,33 +76,55 @@
                         </tr>
                         <tr>
                             <th>
-                                Nominal Setelah PPN
+                               DPP
                             </th>
                             <td>
-                                {{ $billing->nominal_inv_after_ppn }}
+                                {{ \toDecimal(\removeComma($billing->dpp)) }}
                             </td>
                         </tr>
                         <tr>
                             <th>
-                                File Invoice
+                               VAT
                             </th>
                             <td>
-                                <a href="{{ asset('files/uploads', $billing->file_invoice) }}">
+                                @if($billing->ppn == 'V1' )
+                                    10%
+                                @else 
+                                    None
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Nominal Invoice After VAT
+                            </th>
+                            <td>
+                                {{ \toDecimal(\removeComma($billing->nominal_inv_after_ppn)) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Invoice File
+                            </th>
+                            <td>
+                                <a target="_blank" href="{{ asset('files/uploads/'.$billing->file_invoice) }}">
                                     {{ $billing->file_invoice }}
                                 </a>
                             </td>
                         </tr>
                         <tr>
                             <th>
-                                No. Surat Jalan
+                                Delivery Order
                             </th>
                             <td>
-                                {{ $billing->no_surat_jalan }}
+                                <a target="_blank" href="{{ asset('files/uploads/'.$billing->no_surat_jalan ) }}">
+                                    {{ $billing->no_surat_jalan }}
+                                </a>
                             </td>
                         </tr>
                         <tr>
                             <th>
-                                Tgl. Surat Jalan
+                                Delivery Date
                             </th>
                             <td>
                                 {{ \Carbon\Carbon::parse($billing->tgl_surat_jalan)->format('d-m-Y') }}
@@ -102,17 +132,17 @@
                         </tr>
                         <tr>
                             <th>
-                                PO
+                                PO 
                             </th>
                             <td>
-                                <a href="{{ asset('files/uploads', $billing->po) }}">
+                                <a target="_blank" href="{{ asset('files/uploads/'.$billing->po) }}">
                                     {{ $billing->po }}
                                 </a>
                             </td>
                         </tr>
                         <tr>
                             <th>
-                                Keterangan PO
+                                Description PO
                             </th>
                             <td>
                                 {{ $billing->keterangan_po }}
@@ -121,7 +151,7 @@
                         @if($billing->status == \App\Models\Vendor\Billing::Rejected OR $billing->status == \App\Models\Vendor\Billing::Incompleted)
                         <tr>
                             <th>
-                                Keterangan dibatalkan
+                                Reason Rejected
                             </th>
                             <td>
                                 {{ $billing->reason_rejected }}
@@ -137,7 +167,7 @@
                     <thead>
                         <tr>
                             <th style="">Qty GR</th>
-                            <th style="">Qty</th>
+                            <th style="">Qty Billing</th>
                             <th style="">Material</th>
                             <th style="">PO No</th>
                             <th style="">PO Item</th>

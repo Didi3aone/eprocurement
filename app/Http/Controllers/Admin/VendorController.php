@@ -91,7 +91,6 @@ class VendorController extends Controller
 
     public function import(Request $request)
     {
-        // abort_if(Gate::denies('vendor_import_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         ini_set('max_execution_time', 0);
         
         $path = 'xls/';
@@ -121,8 +120,8 @@ class VendorController extends Controller
 
             $user_vendors_import = UserVendorsImport::select('*')
                                     ->where('has_migrate', 0)
-                                    ->whereIn('account_group', ['Z001', 'Z002', 'Z003', 'Z004'])
-                                    ->limit(1000)
+                                    // ->whereIn('account_group', ['Z001', 'Z002', 'Z003', 'Z004'])
+                                    // ->limit(1000)
                                     ->get();
                                     // ->count();
             // echo json_encode($user_vendors_import); die();
@@ -200,11 +199,12 @@ class VendorController extends Controller
 
             $user_vendors_import_bank = UserVendorsImportBank::select()
                                     ->where('has_migrate', 0)
-                                    ->limit(1000)
+                                    // ->limit(1000)
                                     ->get();
             // echo json_encode($user_vendors_import_bank); die();
             foreach ($user_vendors_import_bank as $row) {
                 $user_vendors = UserVendors::where('code', $row->vendor)->get()->first();
+                // dd($user_vendors);
                 if (!$user_vendors) continue;
                 VendorBankDetails::create([
                     'vendor_id' => $user_vendors->id,
@@ -258,6 +258,7 @@ class VendorController extends Controller
         $post['email'] = $row->email;
         $post['payment_terms'] = $row->payment_terms;
         $post['status'] = 1;
+        $post['is_export'] = 1;
         $do_insert = UserVendors::create($post);
         if (!$do_insert) throw new Exception('Failed at insert_user_vendor');
 

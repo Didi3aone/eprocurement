@@ -61,6 +61,14 @@
                             <input type="text" class="form-control form-control-line" name="billing_no" value="{{ $billing->billing_no ?? old('billing_no', '') }}" readonly> 
                         </div>
                         <div class="form-group col-lg-4">
+                            <label>Document No</label>
+                            <input type="text" class="form-control form-control-line" name="vendor_id" value="{{ $billing->document_no }}" readonly> 
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>Posting Date</label>
+                            <input type="text" class="form-control form-control-line" name="vendor_id" value="{{ $billing->posting_date }}" readonly> 
+                        </div>
+                        <div class="form-group col-lg-4">
                             <label>No Faktur Pajak</label>
                             <input type="text" class="form-control form-control-line" name="no_faktur" value="{{ $billing->no_faktur ?? old('no_faktur', '') }}" readonly> 
                         </div>
@@ -121,6 +129,7 @@
                                         <th style="width:10%;">Qty</th>
                                         <th>Value</th>
                                         <th>Material</th>
+                                        <th>Description</th>
                                         <th>PO No</th>
                                         <th>PO Item</th>
                                         <th>GR Doc</th>
@@ -135,7 +144,8 @@
                                         <input type="hidden" name="po_no" value="{{ $val->po_no }}">
                                         <td>{{ $val->qty }}</td>
                                         <td>{{ $val->amount }}</td>
-                                        <td>{{ $val->material_id." - ".$val->material->description }}</td>
+                                        <td>{{ $val->material_id }}</td>
+                                        <td>{{ $val->description }}</td>
                                         <td>{{ $val->po_no }}</td>
                                         <td>{{ $val->PO_ITEM }}</td>
                                         <td>{{ $val->doc_gr }}</td>
@@ -155,7 +165,7 @@
                         <a href="javascript:;" id="reject" data-toggle="modal" data-id="{{ $billing->id }}" data-target="#modal_rejected_reason" type="button" class="btn btn-danger"> 
                             <i class="fa fa-times"></i> {{ trans('global.reject') }}
                         </a>
-                        @elseif($billing->status == \App\Models\Vendor\Billing::Approved )
+                        @elseif($billing->status == \App\Models\Vendor\Billing::Approved OR $billing->status == \App\Models\Vendor\Billing::Incompleted)
                         <a href="javascript:;" id="verify" type="button" class="btn btn-success"> <i class="fa fa-check"></i> {{ 'verify' }}</a>
                         <a href="javascript:;" id="rejects" data-toggle="modal" data-id="{{ $billing->id }}" data-target="#modal_rejected_reasons" type="button" class="btn btn-warning"> 
                         <i class="fa fa-times"></i> {{ 'Incomplete' }}</a>
@@ -185,7 +195,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
-                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Submit</button>
                 </div>
             </form>
         </div>
@@ -210,7 +220,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
-                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Submit</button>
                 </div>
             </form>
         </div>

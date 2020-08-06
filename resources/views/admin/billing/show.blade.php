@@ -109,10 +109,10 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        {{-- <div class="form-group col-lg-4">
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.document_no') }}</label>
-                            <input type="text" class="form-control form-control-line" name="document_no" value="" readonly> 
-                        </div> --}}
+                            <input type="text" class="form-control form-control-line" name="document_no" value="{{ $billing->document_no }}" readonly> 
+                        </div>
                         {{-- <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.proposal_date') }}</label>
                             <input type="text" class="form-control form-control-line " name="proposal_date" value="{{ $billing->proposal_date ?? old('proposal_date', '') }}" readonly> 
@@ -198,6 +198,7 @@
                                         <th style="width:10%;">Qty</th>
                                         <th>Value</th>
                                         <th>Material</th>
+                                        <th>Description</th>
                                         <th>PO No</th>
                                         <th>PO Item</th>
                                         <th>GR Doc</th>
@@ -212,7 +213,8 @@
                                         <input type="hidden" name="po_no" value="{{ $val->po_no }}">
                                         <td>{{ $val->qty }}</td>
                                         <td>{{ $val->amount }}</td>
-                                        <td>{{ $val->material_id." - ".$val->material->description }}</td>
+                                        <td>{{ $val->material_id }}</td>
+                                        <td>{{ $val->description }}</td>
                                         <td>{{ $val->po_no }}</td>
                                         <td>{{ $val->PO_ITEM }}</td>
                                         <td>{{ $val->doc_gr }}</td>
@@ -254,7 +256,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-trash"></i> Close</button>
-                    <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Save</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Submit</button>
                 </div>
             </form>
         </div>

@@ -4,7 +4,7 @@
     <div class="col-md-5 col-8 align-self-center">
         <h3 class="text-themecolor">Purchase Request</h3>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="javascript:void(0)">Purchase Request Approval</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">PR Project Verify</a></li>
             <li class="breadcrumb-item active">View</li>
         </ol>
     </div>
@@ -17,7 +17,7 @@
             <div class="card">
                 <div class="card-body">
                     <a class="btn btn-primary btn-xs" href="{{ route('admin.purchase-request-project') }}"><i class="fa fa-arrow-left"></i> Back To list</a>
-                    <button class="btn btn-success btn-xs approve" type="submit"><i class="fa fa-check"></i> Approve</button>
+                    <button class="btn btn-success btn-xs approve" type="submit"><i class="fa fa-check"></i> Verify</button>
                     <a class="btn btn-danger btn-xs reject" href="#" data-id="{{ $prProject->id }}"><i class="fa fa-times"></i> Reject</a>
                     <br/><br>
                     <table class="table table-bordered table-striped">

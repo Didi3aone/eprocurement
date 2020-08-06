@@ -34,6 +34,16 @@ class AcpController extends Controller
         return view('admin.acp.acp', compact('quotation'));
     }
 
+    public function listAcpApproval()
+    {
+        $quotation = QuotationApproval::where('nik', \Auth::user()->nik)
+                    ->where('flag', QuotationApproval::alreadyApproval)
+                    ->where('acp_type', 'ACP')
+                    ->get();
+
+        return view('admin.acp.list-data', compact('quotation'));
+    }
+
     public function biddingAcp ()
     {
         $quotation = QuotationApproval::where('nik', \Auth::user()->nik)
@@ -127,6 +137,7 @@ class AcpController extends Controller
 
     public function approvalAcp(Request $request)
     {
+        $configEnv = \configEmailNotification();
         \DB::beginTransaction();
         try {
             //get data
@@ -160,11 +171,15 @@ class AcpController extends Controller
                     'flag'   => QuotationApproval::NotYetApproval,
                 ]);
 
-                $users = getProfileLocal(\Auth::user()->nik);
-                // $email = $users->email;
-                // $name  = $users->name;
-                $name  = "didi";
-                $email = 'diditriawan13@gmail.com';
+                
+                if (\App\Models\BaseModel::Development == $configEnv->type) {
+                    $email = $configEnv->value;
+                    $name  = "Didi Ganteng";
+                } else {
+                    $email = \Auth::user()->email;
+                    $name  = \Auth::user()->name;
+                }
+                
                 \Mail::to($email)->send(new enesisApprovalAcpMail($acp, $name));
             }
             \DB::commit();
@@ -188,6 +203,10 @@ class AcpController extends Controller
                 'approve_date'  => \Carbon\Carbon::now(),
             ]);
 
+        $acp = AcpTable::find($request->id);
+        $acp->status_approval = AcpTable::Rejected;
+        $acp->update();
+
         \Session::flash('status','Acp has been rejected');
     }
-}
+} 

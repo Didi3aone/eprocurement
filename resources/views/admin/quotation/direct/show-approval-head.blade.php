@@ -25,6 +25,10 @@
                                     <td>{{ $quotation->po_no }}</td>
                                 </tr>
                                 <tr>
+                                    <th>Plant</th>
+                                    <td>{{ \getplan($quotation->detail[0]['plant_code'])->description }}</td>
+                                </tr>
+                                <tr>
                                     <th>Vendor</th>
                                     <td>{{ $quotation->getVendor['name'] }}</td>
                                 </tr>
@@ -35,6 +39,30 @@
                                 <tr>
                                     <th>Payment Terms</th>
                                     <td>{{ $quotation->getTerm['own_explanation'] }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Terms Of Payment description</th>
+                                    <td>{{ $quotation->notes }}</td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        Upload File
+                                    </th>
+                                    @if(isset($quotation->upload_file))
+                                        @php
+                                            $files = @unserialize($quotation->upload_file);
+                                        @endphp
+                                        @if( $files !== false )
+                                            <td>
+                                                @foreach( unserialize((string)$quotation->upload_file) as $fileUpload)
+                                                    <a href="{{ asset('files/uploads/'.$fileUpload) }}" target="_blank" download>
+                                                        {{ $fileUpload ??'' }}
+                                                    </a>
+                                                    <br>
+                                                @endforeach
+                                            </td>
+                                        @endif
+                                    @endif
                                 </tr>
                             </tbody>
                         </table>
@@ -52,16 +80,18 @@
                             <th>Qty</th>
                             <th>Currency</th>
                             <th>Price</th>
+                            <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($quotation->detail as $key => $value)
                             <tr>
-                                <td>{{ $value->material." - ".$value->description }}</td>
-                                <td>{{ $value->unit }}</td>
+                                <td>{{ $value->material." - ".$value->short_text }}</td>
+                                <td>{{ \App\Models\UomConvert::where('uom_1', $value->unit)->first()->uom_2 ?? $value->unit }}</td>
                                 <td>{{ $value->qty }}</td>
-                                <td>{{ $value->currency }}</td>
-                                <td>{{ $value->price }}</td>
+                                <td>{{ $quotation->currency }}</td>
+                                <td>{{ \toDecimal($value->price) }}</td>
+                                <td>{{ toDecimal(\removeComma($value->price) * $value->qty) }}</td>
                             </tr>
                         @endforeach
                     </tbody>

@@ -18,7 +18,13 @@ use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrdersDetail;
 use App\Models\MasterRfq;
 use App\Models\Vendor;
+use App\Models\Rfq;
+use App\Models\RfqDetail;
 use App\Mail\PurchaseOrderMail;
+use PDF;
+use App\Mail\SendMail;
+use App\Mail\poApprovalAssproc;
+use App\Mail\poApprovalHead;
 
 class QuotationDirectController extends Controller
 {
@@ -110,6 +116,11 @@ class QuotationDirectController extends Controller
      */
     public function store(Request $request)
     {
+        $validatedData = $request->validate([
+            'ship_id' => 'required',
+            'notes' => 'required'
+        ]);
+
         $qty = 0;
         $price = 0;
         $details = [];
@@ -118,6 +129,7 @@ class QuotationDirectController extends Controller
             $qty += $qy;
             // update material qty
             $material = PurchaseRequestsDetail::where('id', $request->id[$i])->first();
+            $material->qty_requested = $material->qty;
 
             // insert to pr history
             $requestNo = '';
@@ -200,6 +212,7 @@ class QuotationDirectController extends Controller
             $quotation->payment_term    = $request->get('payment_term') ?? $payVendor;
             $quotation->vendor_id       = $request->vendor_id;
             $quotation->exchange_rate   = $request->exchange_rate;
+            $quotation->ship_id         = $request->ship_id;
             $quotation->approved_head   = 'PROCUREMENT01';
             $quotation->acp_id          = $request->acp_id[0];
             $quotation->approval_status = Quotation::Waiting;
@@ -306,6 +319,18 @@ class QuotationDirectController extends Controller
                 $quotation->approved_asspro     = \Auth::user()->user_id;
                 $quotation->approved_date_ass   = date('Y-m-d');
                 $quotation->save();
+
+                $configEnv = \configEmailNotification();
+                if (\App\Models\BaseModel::Development == $configEnv->type) {
+                    $email = $configEnv->value;
+                    $name  = "Didi Ganteng";
+                } else {
+                    $head  = \App\Models\User::where('user_id', 'PROCUREMENT01')->first();
+                    $email = $head->email;
+                    $name  = $head->name;
+                }
+
+                \Mail::to($email)->send(new poApprovalHead($quotation,$name));
             }
 
             return redirect()->route('admin.quotation-direct-approval-ass')->with('status', 'Direct Order has been approved!');
@@ -338,7 +363,7 @@ class QuotationDirectController extends Controller
                                     ->get();
 
                 $sendSap = \sapHelp::sendPoToSap($quotation, $quotationDetail,$quotationDeliveryDate);
-                
+                // $sendSap = true;
                 if( $sendSap ) {
                     $this->_clone_purchase_orders($quotation, $quotationDetail, $sendSap);
                     $quotation->approval_status     = Quotation::ApprovalHead;
@@ -422,6 +447,8 @@ class QuotationDirectController extends Controller
      */
     private function _clone_purchase_orders($header, $detail, $poNumber)
     {
+        $configEnv = \configEmailNotification();
+        
         $poId = PurchaseOrder::create([
             'quotation_id' => $header->id,
             'notes'        => $header->notes,
@@ -435,11 +462,27 @@ class QuotationDirectController extends Controller
             'total_price'  => $header->total_price,
             'created_by'   => $header->created_by,
             'updated_by'   => $header->updated_by,
+            'ship_id'      => $header->ship_id
         ]);
 
-        
+        $po = $poId;
         foreach ($detail as $rows) {
             $sched = QuotationDelivery::where('quotation_detail_id', $rows->id)->first();
+
+            // insert RFQ
+            // by acp id
+            $rfqs = Rfq::where('acp_id', $rows->acp_id)->first();
+            if( $rfqs != null ) {
+                $rfqs->doc_type_po = $header->doc_type;
+                $rfqs->update();
+                
+                RfqDetail::where('rfq_number',$rfqs->rfq_number )
+                    ->update([
+                        'po_number'   => $poNumber
+                    ]);
+            }
+
+
             $detail = PurchaseOrdersDetail::create([
                 'purchase_order_id'         => $poId->id,
                 'description'               => $rows->description ?? '-',
@@ -471,11 +514,11 @@ class QuotationDirectController extends Controller
                 'original_price'            => $rows->orginal_price,
                 'currency'                  => $rows->currency,
                 'preq_name'                 => $rows->preq_name,
-                'delivery_date'             => $sched->DELIVERY_DATE,
+                'delivery_date'             => $rows->delivery_date,
                 'item_category'             => $rows->item_category,
                 'request_no'                => $rows->request_no,
                 'plant_code'                => $rows->plant_code,
-                'tax_code'                  => $rows->tax_code == 1 ? 'V1' : 'V0',
+                'tax_code'                  => $rows->tax_code,
                 'package_no'                => $rows->package_no,
                 'subpackage_no'             => $rows->subpackage_no,
                 'line_no'                   => $rows->line_no,
@@ -500,16 +543,46 @@ class QuotationDirectController extends Controller
                 }
             }
         }
+        
+        $quotDelivery = QuotationDelivery::where('quotation_id', $header->id)->get();
+        foreach( $quotDelivery as $rec ) {
+            $poDel = new \App\Models\PurchaseOrderDelivery;
+            $poDel->purchase_order_id           = $po->id;
+            $poDel->purchase_order_detail_id    = 9999;
+            $poDel->sched_line                  = $rec->SCHED_LINE;
+            $poDel->po_item                     = $rec->PO_ITEM;
+            $poDel->delivery_date               = $rec->DELIVERY_DATE;
+            $poDel->preq_no                     = $rec->PREQ_NO;
+            $poDel->preq_item                   = $rec->PREQ_ITEM;
+            $poDel->qty                         = $rec->QUANTITY;
+            $poDel->save();
+        }
+
+        $print = false;
+        $pdf = PDF::loadview('print', \compact('po', 'print'))
+            ->setPaper('A4', 'potrait')
+            ->setOptions(['debugCss' => true, 'isPhpEnabled' => true])
+            ->setWarnings(true);
+        $pdf->save(public_path("storage/{$po->id}_print.pdf"));
+        if (\App\Models\BaseModel::Development == $configEnv->type) {
+            $email = $configEnv->value;
+        } else {
+            $email = $po->vendors['email'] ?? 'diditriawan13@gmail.com';
+        }
+        \Mail::to($email)->send(new SendMail($po));
+        // \Mail::to('yunan.yazid@enesis.com')->send(new SendMail($po));
     }
 
     private function _insert_details($details, $id)
     {
+        $configEnv = \configEmailNotification();
+
         $i = 0;
         $lineNo = 1;
         $totalPrice = 0;
         $assProc    = "";
         foreach ($details as $detail) {
-            $totalPrice += $detail['price'];
+            $totalPrice +=  \removeComma($detail['price']);
             $schedLine  = sprintf('%05d', (1+$i));
             $poItem     =  ('000'.(10+($i*10)));
             
@@ -523,9 +596,11 @@ class QuotationDirectController extends Controller
             $subpackgparent         = '000000000';
             $childPackageParent     = '000000000';
             $noLine                 = '';
+            $lineNumber             = '000000000';
             if( $detail['item_category'] == QuotationDetail::SERVICE ) {
 
                 $subpackgparent    .= (2+($i*2));
+                $lineNumber        .= $i + 1;
                 if( $i % 2 == 0 ) {
                     //anak genap
                     $ke3 =  $i+1;
@@ -556,8 +631,8 @@ class QuotationDirectController extends Controller
             $quotationDetail->description               = $detail['description'];
             $quotationDetail->notes                     = $detail['notes'];
             $quotationDetail->plant_code                = $detail['plant_code'];
-            $quotationDetail->price                     = $detail['price'];
-            $quotationDetail->orginal_price             = $detail['original_price'];
+            $quotationDetail->price                     = \removeComma($detail['price']);
+            $quotationDetail->orginal_price             = \removeComma($detail['original_price']);
             $quotationDetail->is_assets                 = $detail['is_assets'];
             $quotationDetail->assets_no                 = $detail['assets_no'];
             $quotationDetail->short_text                = $detail['short_text'];
@@ -568,7 +643,7 @@ class QuotationDirectController extends Controller
             $quotationDetail->account_assignment        = $detail['account_assignment'];
             $quotationDetail->purchasing_group_code     = $detail['purchasing_group_code'];
             $quotationDetail->preq_name                 = $detail['preq_name'];
-            $quotationDetail->gl_acct_code              = $detail['gl_acct_code'];
+            $quotationDetail->gl_acct_code              = $detail['gl_acct_code']; 
             $quotationDetail->cost_center_code          = $detail['cost_center_code'];
             $quotationDetail->profit_center_code        = $detail['profit_center_code'];
             $quotationDetail->storage_location          = $detail['storage_location'];
@@ -585,7 +660,7 @@ class QuotationDirectController extends Controller
             $quotationDetail->tax_code                  = $detail['tax_code'] == 1 ? 'V1' : 'V0';
             $quotationDetail->package_no                = $packageParent;
             $quotationDetail->subpackage_no             = $subpackgparent;
-            $quotationDetail->line_no                   = '000000000'.$i;
+            $quotationDetail->line_no                   = $lineNumber;
             $quotationDetail->request_detail_id         = $detail['request_detail_id'];
             $quotationDetail->save();
 
@@ -630,10 +705,22 @@ class QuotationDirectController extends Controller
             $i++;
         }
 
+        if (\App\Models\BaseModel::Development == $configEnv->type) {
+            $email = $configEnv->value;
+            $name  = "Didi Ganteng";
+        } else {
+            $assProcs = \App\Models\User::where('user_id', $assProc->user_id)->first();
+            $email = $assProcs->email;
+            $name  = $assProcs->name;
+        }
+
         $quotation = Quotation::find($id);
         $quotation->total_price     = $totalPrice;
         $quotation->approved_asspro = $assProc->user_id;
+        $quotation->approved_head   = 'PROCUREMENT01';
         $quotation->save();
+
+        \Mail::to($email)->send(new poApprovalAssproc($quotation,$name));
     }
 
     public function fileUpload($request)

@@ -9,15 +9,7 @@
         </ol>
     </div>
 </div>
-@if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-        {{ session('success') }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-@endif
-@can('gl_create')
+@can('material_type_create')
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-6">
             <a class="btn btn-success" href="{{ route("admin.material_type.create") }}">
@@ -66,19 +58,19 @@
                                     <td>{{ $mt->code ?? '' }}</td>
                                     <td>{{ $mt->description ?? '' }}</td>
                                     <td>
-                                        @can('gl_show')
+                                        @can('material_type_show')
                                             <a class="btn btn-xs btn-primary" href="{{ route('admin.material_type.show', $mt->id) }}">
                                                 {{ trans('global.view') }}
                                             </a>
                                         @endcan
 
-                                        @can('gl_edit')
+                                        @can('material_type_edit')
                                             <a class="btn btn-xs btn-info" href="{{ route('admin.material_type.edit', $mt->id) }}">
                                                 {{ trans('global.edit') }}
                                             </a>
                                         @endcan
 
-                                        @can('gl_delete')
+                                        @can('material_type_delete')
                                             <form action="{{ route('admin.material_type.destroy', $mt->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                                 <input type="hidden" name="_method" value="DELETE">
                                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">

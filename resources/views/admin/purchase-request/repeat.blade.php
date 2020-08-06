@@ -37,25 +37,25 @@
                         </select>
                     </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label>Term Of Payment Desciption</label>
-                <textarea id="notes" class="form-control form-control-line {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes"></textarea>
-                @if($errors->has('notes'))
-                    <div class="invalid-feedback">
-                        {{ $errors->first('notes') }}
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="">Ship To</label>
+                        <select name="ship_id" id="ship_id" class="form-control select2 {{ $errors->has('ship_id') ? 'is-invalid' : '' }}">
+                            <option value="">-- Select  --</option>
+                            @foreach($shipTo as $id => $name)
+                                <option value="{{ $id }}">
+                                    {{ $name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @if($errors->has('ship_id'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('ship_id') }}
+                            </div>
+                        @endif
+                        <span class="help-block"></span>
                     </div>
-                @endif
-            </div>
-            <div class="form-group">
-                <label class="required" for="upload_file">{{ trans('cruds.purchase-order.fields.upload_file') }}</label>
-                <input class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" type="file" name="upload_file[]" multiple id="upload_file">
-                @if($errors->has('upload_file'))
-                    <div class="invalid-feedback">
-                        {{ $errors->first('upload_file') }}
-                    </div>
-                @endif
-                <span class="help-block"></span>
+                </div>
             </div>
             <div class="row">
                 <div class="col-lg-6">
@@ -76,6 +76,53 @@
                         <input type="text" class="form-control form-control-line exchange_rate" name="exchange_rate" value="{{ old('exchange_rate', '') }}" disabled> 
                     </div>
                 </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label class="required" for="upload_file">{{ trans('cruds.purchase-order.fields.upload_file') }}</label>
+                        <input class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" type="file" name="upload_file[]" multiple id="upload_file">
+                        @if($errors->has('upload_file'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('upload_file') }}
+                            </div>
+                        @endif
+                        <span class="help-block"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Term Of Payment Desciption</label>
+                <textarea id="notes" class="form-control form-control-line {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes"></textarea>
+                @if($errors->has('notes'))
+                    <div class="invalid-feedback">
+                        {{ $errors->first('notes') }}
+                    </div>
+                @endif
+            </div>
+            <div class="form-group">
+                <label>Attachment PR</label>
+                @foreach($data as $key => $values)
+                    @if($values->upload_file != 'NO_FILE')
+                        @if(isset($values->upload_file))
+                            <td>
+                                @php
+                                    $files = @unserialize($values->upload_file);
+                                @endphp
+                                @if( is_array($files))
+                                    @foreach( unserialize((string)$values->upload_file) as $fileUpload)
+                                        <a href="https://employee.enesis.com/uploads/{{ $fileUpload  }}" target="_blank" download>
+                                            {{ $fileUpload ??'' }}
+                                        </a>
+                                        <br>
+                                    @endforeach
+                                @else 
+                                    No File found
+                                @endif
+                            </td>
+                        @endif
+                    @endif
+                @endforeach
             </div>
         </div>
     </div>
@@ -134,7 +181,10 @@
                                 <input type="hidden" class="qty" name="qty[]" readonly value="{{ empty($value->qty) ? 0 : $value->qty }}">
                                 <td>{!! $value->material_id .'<br>'.$value->description !!}
                                     @php
-                                        $hist = \sapHelp::getHistoryPo($value->material_id);
+                                        $materialId = $value->description;
+                                        if( $value->material_id != '' ) {
+                                            $materialId = $value->material_id;
+                                        }
                                     @endphp
                                 </td>
                                 <td>{{ $value->unit }}</td>
@@ -142,7 +192,19 @@
                                 <td>
                                     <select name="rfq[]" id="history" class="select2 history" required>
                                         <option> -- Select --</option>
-                                        @if( !empty($hist['header']->item) )
+                                        @foreach(\App\Models\RfqDetail::getRfq($materialId) as $key => $rows)
+                                            @if($rows->po_number != '')
+                                                <option value="{{ $rows->rfq_number }}"
+                                                    data-price="{{ $rows->net_price }}"
+                                                    data-vendor="{{ $rows->vendor_id }}"
+                                                    data-currency="{{ $rows->currency }}"
+                                                    data-is-from-po="{{ $rows->is_from_po }}"
+                                                    >
+                                                    {{ $rows->po_number."/".$rows->rfq_number }}
+                                                </option>
+                                            @endif
+                                        @endforeach
+                                        {{-- @if( !empty($hist['header']->item) )
                                             @foreach($hist['header']->item as $key => $rows)
                                                 @if( !empty($hist['detail']->item[$key]) )
                                                     @if($hist['detail']->item[$key]->EBELN == $rows->EBELN)
@@ -155,7 +217,7 @@
                                                     @endif
                                                 @endif
                                             @endforeach
-                                        @endif
+                                        @endif --}}
                                     </select>
                                 </td>
                                 <td><input type="text" class="original_currency" name="original_currency[]" id="original_currency" value="" readonly></td>
@@ -290,14 +352,15 @@
         getCurrency(oriCurrency)
 
         if( price ) {
+            console.log('PRICE' + price * 100)
             let FixedPrice = 0
             if( oriCurrency == 'IDR' ) {
                 FixedPrice = price * 100
             } else {
                 FixedPrice = price 
             }
-            net.val(FixedPrice)
-            ori.val(FixedPrice)
+            net.val(formatNumber(Math.round(FixedPrice)))
+            ori.val(formatNumber(price))
         } else {
             net.val(0)
             ori.val(0)
@@ -376,6 +439,10 @@
             let pay = $('#vendor_id option:selected').data('payment')
             getPayment(pay)
         })
+    }
+
+    function formatNumber(num) {
+        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
     }
 </script>
 @endsection

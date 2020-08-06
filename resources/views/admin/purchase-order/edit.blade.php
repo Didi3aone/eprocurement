@@ -81,7 +81,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table id="datatables-run" class="table table-condesed">
+                        <table id="datatables-runss" class="table table-condesed">
                             <thead>
                                 <tr>
                                     <th style="width: 40%">Material</th>
@@ -97,42 +97,49 @@
                                 </tr>
                              </thead>
                             <tbody id="poItem">
-                                @foreach($purchaseOrder->orderDetail as $key => $value) 
+                                @foreach($purchaseOrderDetail as $key => $value) 
                                     @php
                                         $readonly = '';
                                         $disabled = '';
                                         if( $value->is_gr == \App\Models\PurchaseOrdersDetail::YesGr ) {
                                             $readonly = 'readonly';
-                                            $disabled = 'disabled';
+                                            $disabled = 'disabled="disabled"';
                                         }
                                     @endphp
-                                    @if($value->is_active == \App\Models\PurchaseOrdersDetail::Active)
                                     <tr id="item_{{ $key }}">
+                                        @if( $value->is_gr == \App\Models\PurchaseOrdersDetail::YesGr )
+                                            <input type="hidden" class="ida" name="tax_code[]" id="tax_codes" value="{{ $value->tax_code == 'V1' ? 1 : 0 }}">
+                                            <input type="hidden" class="ida" name="delivery_complete[]" id="delivery_complete" value="{{ $value->delivery_complete == '1' ? 1 : 0 }}">
+                                        @endif
                                         <input type="hidden" class="id" name="idDetail[]" id="id" value="{{ $value->id }}">
                                         <input type="hidden" class="id" name="idPrDetail[]" id="idPrDetail" value="">
                                        <td>{{ $value->material_id." - ". $value->description }}</td>
                                        <td>{{ $value->unit }}</td>
                                        <td><input type="text" class="qty" name="qty[]" id="qty" {{ $readonly }} value="{{ $value->qty }}"></td>
                                        <td><input type="text" class="price" name="price[]" id="price" {{ $readonly }} value="{{ $value->price }}"</td>
-                                       <td><input type="text" class="delivery_date mdate" disabled name="delivery_date[]" id="delivery_date" value="{{ $value->delivery_date }}"></td>
+                                       <td><input type="text" class="delivery_date mdate" {{ $disabled }} name="delivery_date[]" id="delivery_date" value="{{ $value->delivery_date }}"></td>
                                        <td>
-                                            <input type="checkbox" class="" id="check_{{ $value->id }}" name="tax_code[]" {{ $disabled }} value="1"
+                                            <input type="checkbox" class="" id="check_{{ $value->id }}" <?= $disabled ?> name="tax_code[]" value="1"
                                                 @if($value->tax_code == 'V1') checked @endif>
                                             <label for="check_{{ $value->id }}">&nbsp;</label>
                                        </td>
                                        <td>
-                                            <input type="checkbox" class="" id="checks_{{ $key }}" name="delivery_complete[]" value="1">
+                                            <input type="checkbox" class="" id="checks_{{ $key }}" @if($value->delivery_complete == '1') checked @endif name="delivery_complete[]" value="1">
                                             <label for="checks_{{ $key }}">&nbsp;</label>
                                        </td>
                                        <td>
-                                            @if( $value->is_gr == \App\Models\PurchaseOrdersDetail::NoGr )
+                                            @if( $value->is_gr == \App\Models\PurchaseOrdersDetail::NoGr && $value->is_active == 1)
                                             <a href="javascript:;" data-key="{{ $key }}" data-id="{{ $value->id }}" data-po="{{ $purchaseOrder->PO_NUMBER }}"  class="remove-item btn btn-danger btn-xs">
                                                 <i class="fa fa-trash"></i> Delete
                                             </a>
                                             @endif
+                                            @if($value->is_active == 0)
+                                            <a href="javascript:;" data-key="{{ $key }}" data-id="{{ $value->id }}" data-po="{{ $purchaseOrder->PO_NUMBER }}"  class="undelete btn btn-success btn-xs">
+                                                <i class="fa fa-check"></i> Restore
+                                            </a>
+                                            @endif
                                        </td>
                                     </tr>
-                                    @endif
                                 @endforeach
                             </tbody>
                         </table>
@@ -151,13 +158,26 @@
 @section('scripts')
 @parent
 <script>
-    $('#datatables-run').DataTable({
+    $('#datatables-runa').DataTable({
         "searching": false,
         "bPaginate": false,
         "bLengthChange": false,
         "bInfo": false,
         "ordering": false
     });
+
+    $(document).on('change', '.qty-change', function () {
+        $tr = $(this).closest('tr')
+        $qty_old = parseInt($tr.find('.qty-old').val())
+        $this = $(this)
+
+        if (parseInt($(this).val()) > $qty_old) {
+            alert('Quantity cannot be more than default quantity')
+            $this.val($qty_old)
+
+            return false
+        }
+    }).trigger('change')
 
     let index = 1
     $(document).ready(function() {
@@ -256,6 +276,28 @@
             });
         }
     });
+
+    $(document).on('click','.undelete',function(e) {
+         e.preventDefault()
+        let id = $(this).data('id');
+        let deleteFile = confirm("Do you really want to Restore?");
+        const $key = $(this).data('key')
+
+        if (deleteFile == true) {
+            $.ajax({
+                url: '{{ route("admin.purchase-order-restore") }}',
+                type: 'PUT',
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    id:id
+                },
+                success: function(response){
+                    location.reload();
+                    //swal('Oops',response.message,'error')
+                }
+            });
+        }
+    })
 
     $('.history').on('change', function (e) {
         e.preventDefault()

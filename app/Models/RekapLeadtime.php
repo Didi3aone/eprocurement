@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class RekapLeadtime extends Model
 {
     protected $connection = 'pgsql';
-    public static function getLeadTime($material, $plant, $pg)
+
+    public static function calculateLeadTime($material, $plant)
     {
         return RekapLeadtime::where('material_id', $material)
-            ->where('plant_code', $plant)
-            ->where('purchasing_group', $pg)
+            ->where('plant', $plant)
             ->first();
     }
 }

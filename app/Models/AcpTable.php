@@ -36,7 +36,7 @@ class AcpTable extends Model
 
     public const WaitingApproval = 0;
     public const Approved        = 2;
-    public const Rejected        = 2;
+    public const Rejected        = 3;
     public const MaterialPr      = 1;
 
     public static function boot()

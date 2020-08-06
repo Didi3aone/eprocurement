@@ -48,7 +48,7 @@ class Billing extends Model
 
     public const TypeStatus = [
         1 => 'Waiting For Approval',
-        2 => 'Approved',
+        2 => 'Approved', 
         3 => 'Rejected',
         4 => 'Submitted',
         8 => 'Incompleted',
@@ -64,6 +64,8 @@ class Billing extends Model
     public const Verify = 6;
     public const sendToSpv = 1;
     public const Incompleted = 8;
+    
+    public const NoCalculate = 0;
 
     protected static function boot()
     {

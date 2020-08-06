@@ -9,6 +9,7 @@ use App\Models\Vendor\QuotationServiceChild;
 use App\Models\Vendor\Billing;
 use App\Models\Vendor\BillingDetail;
 use App\Models\PurchaseOrdersDetail;
+use App\Models\PurchaseOrderDelivery;
 use App\Models\PurchaseRequestDetail;
 use App\Models\Materials;
 use App\Models\RequestNotesDetail;
@@ -91,9 +92,9 @@ class SapHelper {
         set_time_limit(0);
         $soapFile = \sapHelp::getSoapXml('PURCHASE_REQUEST');
         if( $soapFile->is_active_env == \App\Models\BaseModel::Development ) {
-            $wsdl = public_path()."/xml/zbn_eproc_pr.xml";
+            $wsdl = public_path()."/soap-xml/zbn_eproc_pr.xml";
         } else {
-            $wsdl = public_path() ."/xml/". $soapFile->xml_file;
+            $wsdl = public_path() ."/soap-xml/". $soapFile->xml_file;
         }
         
         $username = \sapHelp::Username;
@@ -130,20 +131,20 @@ class SapHelper {
         $is_array = (count($data)>1)?true:false;
         $i = 0;
         foreach( $data as $row ) {
-            if($row['CATEGORY'] == \App\Models\RequestNotesDetail::Material
-            OR $row['CATEGORY'] == \App\Models\RequestNotesDetail::MaterialText) {
-                $category = \App\Models\RequestNotesDetail::Material;
+            if($row['CATEGORY'] == \App\Models\RN\RequestNoteDetail::Material
+            OR $row['CATEGORY'] == \App\Models\RN\RequestNoteDetail::MaterialText) {
+                $category = \App\Models\RN\RequestNoteDetail::Material;
             }
             
             //check category
             if($row['CATEGORY'] == PurchaseRequest::STANDART 
-                OR $row['CATEGORY'] == \App\Models\RequestNotesDetail::MaterialText) {
+                OR $row['CATEGORY'] == \App\Models\RN\RequestNoteDetail::MaterialText) {
                 
                 $unit = '';
                 if( $row['MATERIAL'] != '' ) {
-                    $unit = \App\Models\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_2;
+                    $unit = \App\Models\RN\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_2;
                 } else {
-                    $unit = \App\Models\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1;
+                    $unit = \App\Models\RN\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1;
                 }
 
                 $REQUISITION_ITEMS_item = [
@@ -238,8 +239,8 @@ class SapHelper {
                 $REQUISITION_ITEM_TEXT_item = [
                     'PREQ_NO'       => '',
                     'PREQ_ITEM'     => $row['PREQ_ITEM'],
-                    'TEXT_ID'       => $row['TEXT_ID'], // 'B01',
-                    'TEXT_FORM'     => $row['TEXT_FORM'], // 'EN',
+                    'TEXT_ID'       => 'B01',//$row['TEXT_ID'], // 'B01',
+                    'TEXT_FORM'     => 'EN',//$row['TEXT_FORM'], // 'EN',
                     'TEXT_LINE'     => $row['TEXT_LINE'] // 'UNTUK RUANG TRAVO TRIMAS'
                 ];
 
@@ -414,14 +415,23 @@ class SapHelper {
                     "CONT_PERC"     => '',
                 ];
 
+                $REQUISITION_ITEM_TEXT_item = [
+                    'PREQ_NO'       => '',
+                    'PREQ_ITEM'     => $row['PREQ_ITEM'],//('000'.(10+($i*10))),
+                    'TEXT_ID'       => 'B01',
+                    'TEXT_FORM'     => 'EN',
+                    'TEXT_LINE'     => $row['TEXT_LINE'] // 'UNTUK RUANG TRAVO TRIMAS'
+                ];
+                $params[0]['REQUISITION_SERVICES']['item'][$i] = $REQUISITION_ITEM_SERVICE_item;
+                $params[0]['REQUISITION_SRV_ACCASS_VALUES']['item'][$i] = $REQUISISTION_ITEMS_SRV_ACCASS_VALUES_item;
+
             } elseif($row['DOC_TYPE'] == 'Z104' && $row['CATEGORY'] == PurchaseRequest::SERVICE ) {
-                //ga dipake
+
                 if( $row['LINE_NO'] == '0000000001' ) {
                     $package_no = $row['PACKAGE_NO'];
                 } else {
                     $package_no = $row['SUBPACKAGE_NO'];
                 }
-                // end ga dipake
 
                 $REQUISITION_ITEMS_item = [
                     'PREQ_NO'           => '',
@@ -440,7 +450,7 @@ class SapHelper {
                     'MAT_GRP'           => $row['MAT_GRP'],//'T12075',, 
                     'SUPPL_PLNT'        => '',
                     'QUANTITY'          => $row['QUANTITY'], // '1.000',
-                    'UNIT'              => \App\Models\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1, // 'LOT',
+                    'UNIT'              => \App\Models\RN\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1, // 'LOT',
                     'DEL_DATCAT'        => '',
                     'DELIV_DATE'        => $row['DELIV_DATE'],//'2020-06-23',
                     'REL_DATE'          => $row['REL_DATE'],//'2020-03-06',//
@@ -570,13 +580,13 @@ class SapHelper {
                 ];
 
                 $sub = '0000000000';
-                $dataChild = \App\Models\PurchaseRequestServiceChild::where('purchase_request_id',$row['HEADER_ID'])->get();
-                for ($k=0; $k < count($dataChild); $k++) {
+                $dataChild = \App\Models\RN\PurchaseRequestServiceChild::where('purchase_request_id',$row['HEADER_ID'])->get();
+                for ($k=0; $k < count($dataChild) ; $k++) {
                     $createLine = $k + 1;
                     $REQUISITION_ITEM_SERVICE_item = [
                         "PCKG_NO"            => $dataChild[$k]->package_no,//'000000000'.$createLine,//$row['package'],//'000000000'.$createLine,//$row['PACKAGE_NO'],
                         "LINE_NO"            => '000000000'.$createLine,
-                        "EXT_LINE"           => '',
+                        "EXT_LINE"           => '0000000000',
                         "OUTL_LEVEL"         => '0',
                         "OUTL_NO"            => '',
                         "OUTL_IND"           => '',
@@ -587,7 +597,7 @@ class SapHelper {
                         "SSC_ITEM"           => '',  
                         "EXT_SERV"           => '', 
                         "QUANTITY"           => $row['QUANTITY'], 
-                        "BASE_UOM"           => \App\Models\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1,//$row['UNIT'], 
+                        "BASE_UOM"           => \App\Models\RN\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1,//$row['UNIT'], 
                         "UOM_ISO"            => '', 
                         "OVF_TOL"            => '', 
                         "OVF_UNLIM"          => '', 
@@ -646,17 +656,18 @@ class SapHelper {
                     ];
                     
                     $params[0]['REQUISITION_SERVICES']['item'][$k] = $REQUISITION_ITEM_SERVICE_item;
+
+                    $REQUISISTION_ITEMS_SRV_ACCASS_VALUES_item = [
+                        "PCKG_NO"       => $dataChild[$k]->package_no,
+                        "LINE_NO"       => '000000000'.$createLine,//$row['SUBPACKAGE_NO'],
+                        "SERNO_LINE"    => '01',
+                        "PERCENTAGE"    => '100',
+                        "SERIAL_NO"     => '01',
+                        "QUANTITY"      => $row['QUANTITY'], 
+                        "NET_VALUE"     =>''
+                    ];
+                    $params[0]['REQUISITION_SRV_ACCASS_VALUES']['item'][$k] = $REQUISISTION_ITEMS_SRV_ACCASS_VALUES_item;
                 }
-                $REQUISISTION_ITEMS_SRV_ACCASS_VALUES_item = [
-                    "PCKG_NO"       => $row['SUBPACKAGE_NO'],
-                    "LINE_NO"       => $row['SUBPACKAGE_NO'],
-                    "SERNO_LINE"    => '01',
-                    "PERCENTAGE"    => '100',
-                    "SERIAL_NO"     => '01',
-                    "QUANTITY"      => $row['QUANTITY'], 
-                    "NET_VALUE"     =>''
-                ];
-                $params[0]['REQUISITION_SRV_ACCASS_VALUES']['item'][$i] = $REQUISISTION_ITEMS_SRV_ACCASS_VALUES_item;
 
 
                 $REQUISITION_ITEM_TEXT_item = [
@@ -701,19 +712,17 @@ class SapHelper {
                     "CONT_PERC"     => '',
                 ];
             } else if( $row['CATEGORY'] == PurchaseRequest::SERVICE ) {
-                //ga dipake
                 if( $row['LINE_NO'] == '0000000001' ) {
                     $package_no = $row['PACKAGE_NO'];
                 } else {
                     $package_no = $row['SUBPACKAGE_NO'];
                 }
-                
+
                 if( $i == 0) {
                     $package_no = '000000000';
                 } else {
                     $package_no = '0000000001';
                 }
-                // end ga dipake
 
                 $REQUISITION_ITEMS_item = [
                     'PREQ_NO'           => '',
@@ -732,7 +741,7 @@ class SapHelper {
                     'MAT_GRP'           => $row['MAT_GRP'],//'T12075',, 
                     'SUPPL_PLNT'        => '',
                     'QUANTITY'          => $row['QUANTITY'], // '1.000',
-                    'UNIT'              => \App\Models\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1, // 'LOT',
+                    'UNIT'              => \App\Models\RN\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1, // 'LOT',
                     'DEL_DATCAT'        => '',
                     'DELIV_DATE'        => $row['DELIV_DATE'],//'2020-06-23',
                     'REL_DATE'          => $row['REL_DATE'],//'2020-03-06',//
@@ -863,13 +872,13 @@ class SapHelper {
 
                 $sub = '0000000000';
                 $pak = '0000000000';
-                $dataChild = \App\Models\PurchaseRequestServiceChild::where('purchase_request_id',$row['HEADER_ID'])->get();
+                $dataChild = \App\Models\RN\PurchaseRequestServiceChild::where('purchase_request_id',$row['HEADER_ID'])->get();
                 for ($k=0; $k < count($dataChild); $k++) {
-                    $pak = '000000000'.($k+1);
+                    $pak ='000000000'.$k+1;
                     $REQUISITION_ITEM_SERVICE_item = [
                         "PCKG_NO"            => $dataChild[$k]->package_no,//$row['PACKAGE_NO'],
                         "LINE_NO"            => '000000000'.$pak,
-                        "EXT_LINE"           => '',
+                        "EXT_LINE"           => '0000000000',
                         "OUTL_LEVEL"         => '0',
                         "OUTL_NO"            => '',
                         "OUTL_IND"           => '',
@@ -880,7 +889,7 @@ class SapHelper {
                         "SSC_ITEM"           => '',  
                         "EXT_SERV"           => '', 
                         "QUANTITY"           => $row['QUANTITY'], 
-                        "BASE_UOM"           => \App\Models\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1, 
+                        "BASE_UOM"           => \App\Models\RN\UomConvert::where('uom_2',$row['UNIT'])->first()->uom_1, 
                         "UOM_ISO"            => '', 
                         "OVF_TOL"            => '', 
                         "OVF_UNLIM"          => '', 
@@ -938,17 +947,20 @@ class SapHelper {
                         "NET_VALUE"          => '', 
                     ];
                     $params[0]['REQUISITION_SERVICES']['item'][$k] = $REQUISITION_ITEM_SERVICE_item;
+                    
+                    $REQUISISTION_ITEMS_SRV_ACCASS_VALUES_item = [
+                        "PCKG_NO"       => $dataChild[$k]->package_no,
+                        "LINE_NO"       => '000000000'.$pak,
+                        "SERNO_LINE"    =>'01',
+                        "PERCENTAGE"    => '100',
+                        "SERIAL_NO"     => '01',
+                        "QUANTITY"      => $row['QUANTITY'], 
+                        "NET_VALUE"     =>''
+                    ];
+
+                    $params[0]['REQUISITION_SRV_ACCASS_VALUES']['item'][$k] = $REQUISISTION_ITEMS_SRV_ACCASS_VALUES_item;
                 }
 
-                $REQUISISTION_ITEMS_SRV_ACCASS_VALUES_item = [
-                    "PCKG_NO"       => $row['SUBPACKAGE_NO'],
-                    "LINE_NO"       => $row['SUBPACKAGE_NO'],
-                    "SERNO_LINE"    =>'01',
-                    "PERCENTAGE"    => '100',
-                    "SERIAL_NO"     => '01',
-                    "QUANTITY"      => $row['QUANTITY'], 
-                    "NET_VALUE"     =>''
-                ];
 
                 $REQUISITION_ITEM_TEXT_item = [
                     'PREQ_NO'       => '',
@@ -996,7 +1008,6 @@ class SapHelper {
             $params[0]['REQUISITION_ITEMS']['item'][$i] = $REQUISITION_ITEMS_item;
             $params[0]['REQUISITION_ITEM_TEXT']['item'][$i] = $REQUISITION_ITEM_TEXT_item;
             $params[0]['REQUISITION_ACCOUNT_ASSIGNMENT']['item'][$i] = $REQUISITION_ACCOUNT_ASSIGNMENT_item;
-            $params[0]['REQUISITION_SRV_ACCASS_VALUES']['item'][$i] = $REQUISISTION_ITEMS_SRV_ACCASS_VALUES_item;
             $params[0]['REQUISITION_SERVICES_TEXT']['item'][$i] = $REQUISITION_SERVICES_TEXT_item;
             $params[0]['REQUISITION_LIMITS']['item'][$i] = $REQUISITION_LIMITS_item;
 
@@ -1006,9 +1017,11 @@ class SapHelper {
         // dd($params);
         try {
             $result = $client->__soapCall("ZFM_WS_PR", $params, NULL, $header);
+            // dd($result);
             return $result;
         } catch (\Exception $e){
-            throw new \Exception("Soup request failed! Response: ".$client->__getLastResponse());
+            // echo $e;die;
+            throw new \Exception("Soap request failed! Response: ".$client->__getLastResponse());
         }
     }
 
@@ -1021,7 +1034,13 @@ class SapHelper {
      */
     public static function sendPoToSap($quotation, $quotationDetail, $quotationDeliveryDate)
     {
-        $wsdl = public_path() . "/xml/zbn_eproc_po.xml";
+        set_time_limit(0);
+        $soapFile = \sapHelp::getSoapXml('PURCHASE_ORDER');
+        if( $soapFile->is_active_env == \App\Models\BaseModel::Development ) {
+            $wsdl = public_path()."/xml/zbn_eproc_po.xml";
+        } else {
+            $wsdl = public_path() ."/xml/". $soapFile->xml_file;
+        }
         
         $username = "IT_02";
         $password = "ademsari";
@@ -1239,7 +1258,7 @@ class SapHelper {
                     'NET_PRICE' => $quotationDetail[$i]->price ?? '1000000',
                     'PRICE_UNIT' => '',
                     'GR_PR_TIME' => '',
-                    'TAX_CODE' => $quotationDetail[$i]->tax_code == 1 ? 'V1' : 'V0',
+                    'TAX_CODE' => $quotationDetail[$i]->tax_code,
                     'BON_GRP1' => '',
                     'QUAL_INSP' => '',
                     'INFO_UPD' => '',
@@ -1752,6 +1771,88 @@ class SapHelper {
                     'FINAL_REASON' => ''
                 ];
 
+                $POSERVICES = [
+                    "PCKG_NO" => '',//0 = 9X 1; CHILD = 2 DST 
+                    "LINE_NO" =>  '',//0 = 9X 1; CHILD = 2 DST
+                    "EXT_LINE" =>  "",//CHILD = 0 = 9X 1
+                    "OUTL_LEVEL" => "",
+                    "OUTL_NO" => "",    
+                    "OUTL_IND" => "",
+                    "SUBPCKG_NO" => '',// 0 = 9X 2;
+                    "SERVICE" => "", 
+                    "SERV_TYPE" =>"",    
+                    "EDITION" =>"",
+                    "SSC_ITEM" => "",
+                    "EXT_SERV" => "",
+                    "QUANTITY" => '',//DARI PR 
+                    "BASE_UOM" => '',//$quotationDetail[$i]->unit,     
+                    "UOM_ISO" => "",    
+                    "OVF_TOL" => "",
+                    "OVF_UNLIM" => "",    
+                    "PRICE_UNIT" => "",
+                    "GR_PRICE" => '',//NET PRICE 
+                    "FROM_LINE" => "",    
+                    "TO_LINE" => "",    
+                    "SHORT_TEXT" =>'',// DARI PR
+                    "DISTRIB" =>  "",    
+                    "PERS_NO" =>  "",
+                    "WAGETYPE" => "",    
+                    "PLN_PCKG" => "",
+                    "PLN_LINE" => "",
+                    "CON_PCKG" => "",
+                    "CON_LINE" => "",
+                    "TMP_PCKG" => "",
+                    "TMP_LINE" => "",
+                    "SSC_LIM" => "",    
+                    "LIMIT_LINE" => "",
+                    "TARGET_VAL" => "",
+                    "BASLINE_NO" => "",
+                    "BASIC_LINE" => "",    
+                    "ALTERNAT" => "",    
+                    "BIDDER" => "",    
+                    "SUPP_LINE" => "",    
+                    "OPEN_QTY" => "",    
+                    "INFORM" => "",    
+                    "BLANKET" => "",    
+                    "EVENTUAL" => "",    
+                    "TAX_CODE" => "",    
+                    "TAXJURCODE" => "",  
+                    "PRICE_CHG" => "",    
+                    "MATL_GROUP" => "",    
+                    "DATE" => "", 
+                    "BEGINTIME" => "",                        
+                    "ENDTIME" => "",                        
+                    "EXTPERS_NO" => "", 
+                    "FORMULA" => "",   
+                    "FORM_VAL1" => "",
+                    "FORM_VAL2" => "",
+                    "FORM_VAL3" => "",
+                    "FORM_VAL4" => "",
+                    "FORM_VAL5" => "",
+                    "USERF1_NUM" => "",
+                    "USERF2_NUM" => "",
+                    "USERF1_TXT" => "",    
+                    "USERF2_TXT" => "",
+                    "HI_LINE_NO" => "",
+                    "EXTREFKEY" => "",
+                    "DELETE_IND" => "",    
+                    "PER_SDATE" => "",
+                    "PER_EDATE" => "",
+                    "EXTERNAL_ITEM_ID" => "",
+                    "SERVICE_ITEM_KEY" => "",
+                    "NET_VALUE" =>"",
+                ];
+
+                $POSRVACCESSVALUES = [
+                    "PCKG_NO" => '',// 0 = 9X  2 DST 
+                    "LINE_NO" => '',//  0 = 9X  2 DST 
+                    "SERNO_LINE" => '',//01
+                    "PERCENTAGE" => "",// 100
+                    "SERIAL_NO" => "",//01
+                    "QUANTITY" => '',
+                    "NET_VALUE" => ""///>
+                ];
+
             } else if( $quotation->doc_type == 'Z104' && $quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::SERVICE) {
                 $POITEM = [
                     'PO_ITEM' => $quotationDetail[$i]->PO_ITEM,//LINE
@@ -1781,7 +1882,7 @@ class SapHelper {
                     'NET_PRICE' => $quotationDetail[$i]->price ?? '1000000',
                     'PRICE_UNIT' => '',
                     'GR_PR_TIME' => '',
-                    'TAX_CODE' => $quotationDetail[$i]->tax_code == 1 ? 'V1' : 'V0',
+                    'TAX_CODE' => $quotationDetail[$i]->tax_code,
                     'BON_GRP1' => '',
                     'QUAL_INSP' => '',
                     'INFO_UPD' => '',
@@ -2299,7 +2400,7 @@ class SapHelper {
                     $createLine = $k + 1;
                     $POSERVICES = [
                         "PCKG_NO" => $dataChild[$k]->package_no,//0 = 9X 1; CHILD = 2 DST 
-                        "LINE_NO" =>  '000000000'.$createLine,//0 = 9X 1; CHILD = 2 DST
+                        "LINE_NO" => $quotationDetail[$i]->line_no,// '000000000'.$createLine,//0 = 9X 1; CHILD = 2 DST
                         "EXT_LINE" =>  "",//CHILD = 0 = 9X 1
                         "OUTL_LEVEL" => "",
                         "OUTL_NO" => "",    
@@ -2369,17 +2470,29 @@ class SapHelper {
                         "NET_VALUE" =>"",
                     ];
                     $params[0]['POSERVICES']['item'][$k] = $POSERVICES;
+
+                    $params[0]['POSERVICES']['item'][$k] = $POSERVICES;
+                    $POSRVACCESSVALUES = [
+                        "PCKG_NO" => $dataChild[$k]->subpackage_no,// 0 = 9X  2 DST 
+                        "LINE_NO" => $quotationDetail[$i]->line_no,//'000000000'.$createLine,//$quotationDetail[$i]->subpackage_no,//  0 = 9X  2 DST 
+                        "SERNO_LINE" => '01',//01
+                        "PERCENTAGE" => "100",// 100
+                        "SERIAL_NO" => "01",//01
+                        "QUANTITY" => $quotationDetail[$i]->qty,
+                        "NET_VALUE" => ""///>
+                    ];
+                    $params[0]['POSRVACCESSVALUES']['item'][$k] = $POSRVACCESSVALUES;
                 }
 
-                $POSRVACCESSVALUES = [
-                    "PCKG_NO" => $quotationDetail[$i]->subpackage_no,// 0 = 9X  2 DST 
-                    "LINE_NO" => $quotationDetail[$i]->subpackage_no,//  0 = 9X  2 DST 
-                    "SERNO_LINE" => '01',//01
-                    "PERCENTAGE" => "100",// 100
-                    "SERIAL_NO" => "01",//01
-                    "QUANTITY" => $quotationDetail[$i]->qty,
-                    "NET_VALUE" => ""///>
-                ];
+                // $POSRVACCESSVALUES = [
+                //     "PCKG_NO" => $quotationDetail[$i]->subpackage_no,// 0 = 9X  2 DST 
+                //     "LINE_NO" => $quotationDetail[$i]->subpackage_no,//  0 = 9X  2 DST 
+                //     "SERNO_LINE" => '01',//01
+                //     "PERCENTAGE" => "100",// 100
+                //     "SERIAL_NO" => "01",//01
+                //     "QUANTITY" => $quotationDetail[$i]->qty,
+                //     "NET_VALUE" => ""///>
+                // ];
 
             } else if($quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::SERVICE) {
                 $POITEM = [
@@ -2410,7 +2523,7 @@ class SapHelper {
                     'NET_PRICE' => $quotationDetail[$i]->price ?? '1000000',
                     'PRICE_UNIT' => '',
                     'GR_PR_TIME' => '',
-                    'TAX_CODE' => $quotationDetail[$i]->tax_code == 1 ? 'V1' : 'V0',
+                    'TAX_CODE' => $quotationDetail[$i]->tax_code,
                     'BON_GRP1' => '',
                     'QUAL_INSP' => '',
                     'INFO_UPD' => '',
@@ -2925,10 +3038,10 @@ class SapHelper {
 
                 $dataChild = QuotationServiceChild::where('quotation_id', $quotation->id)->get();
                 for( $k = 0; $k < count($dataChild); $k++ ) {
-                    $createLine = $k + 1;
+                    $createLine = $k + 1;//
                     $POSERVICES = [
                         "PCKG_NO" => $dataChild[$k]->package_no,//0 = 9X 1; CHILD = 2 DST 
-                        "LINE_NO" =>  '000000000'.$createLine,//0 = 9X 1; CHILD = 2 DST
+                        "LINE_NO" =>  $quotationDetail[$i]->line_no,//'000000000'.$createLine,//0 = 9X 1; CHILD = 2 DST
                         "EXT_LINE" =>  "",//CHILD = 0 = 9X 1
                         "OUTL_LEVEL" => "",
                         "OUTL_NO" => "",    
@@ -2998,17 +3111,18 @@ class SapHelper {
                         "NET_VALUE" =>"",
                     ];
                     $params[0]['POSERVICES']['item'][$k] = $POSERVICES;
+                    $POSRVACCESSVALUES = [
+                        "PCKG_NO" => $dataChild[$k]->subpackage_no,// 0 = 9X  2 DST 
+                        "LINE_NO" => $quotationDetail[$i]->line_no,//'000000000'.$createLine,//$quotationDetail[$i]->subpackage_no,//  0 = 9X  2 DST 
+                        "SERNO_LINE" => '01',//01
+                        "PERCENTAGE" => "100",// 100
+                        "SERIAL_NO" => "01",//01
+                        "QUANTITY" => $quotationDetail[$i]->qty,
+                        "NET_VALUE" => ""///>
+                    ];
+                    $params[0]['POSRVACCESSVALUES']['item'][$k] = $POSRVACCESSVALUES;
                 }
 
-                $POSRVACCESSVALUES = [
-                    "PCKG_NO" => $quotationDetail[$i]->subpackage_no,// 0 = 9X  2 DST 
-                    "LINE_NO" => $quotationDetail[$i]->subpackage_no,//  0 = 9X  2 DST 
-                    "SERNO_LINE" => '01',//01
-                    "PERCENTAGE" => "100",// 100
-                    "SERIAL_NO" => "01",//01
-                    "QUANTITY" => $quotationDetail[$i]->qty,
-                    "NET_VALUE" => ""///>
-                ];
             }
 
             if( $quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::STANDART 
@@ -3018,6 +3132,9 @@ class SapHelper {
                 $params[0]['POITEMX']['item'][$i] = $POITEMX;
                 $params[0]['POSCHEDULE']['item'][$i] = $POSCHEDULE;
                 $params[0]['POSCHEDULEX']['item'][$i] = $POSCHEDULEX;
+                $params[0]['POACCOUNT']['item'][$i] = $POACCOUNT;
+                $params[0]['POACCOUNTX']['item'][$i] = $POACCOUNTX;
+                $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
             }  elseif(  $quotation->doc_type == 'Z104' && $quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::SERVICE)  {
                 $params[0]['POITEM']['item'][$i] = $POITEM;
                 $params[0]['POITEMX']['item'][$i] = $POITEMX;
@@ -3025,7 +3142,7 @@ class SapHelper {
                 $params[0]['POSCHEDULEX']['item'][$i] = $POSCHEDULEX;
                 $params[0]['POACCOUNT']['item'][$i] = $POACCOUNT;
                 $params[0]['POACCOUNTX']['item'][$i] = $POACCOUNTX;
-                $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
+                // $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
             } elseif( $quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::SERVICE ) {
                 $params[0]['POITEM']['item'][$i] = $POITEM;
                 $params[0]['POITEMX']['item'][$i] = $POITEMX;
@@ -3033,7 +3150,7 @@ class SapHelper {
                 $params[0]['POSCHEDULEX']['item'][$i] = $POSCHEDULEX;
                 $params[0]['POACCOUNT']['item'][$i] = $POACCOUNT;
                 $params[0]['POACCOUNTX']['item'][$i] = $POACCOUNTX;
-                $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
+                // $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
             }
         } 
         
@@ -3056,6 +3173,8 @@ class SapHelper {
 
         $params[0]['RETURN'] = $RETURN;
         // dd($params);
+        // echo "<pre>".print_r($params);die;
+        // echo "</pre>";
         $result = $client->__soapCall('ZFM_WS_PO', $params, NULL, $header);
         // dd($result);
         if( $result->EXPPURCHASEORDER) {
@@ -3076,7 +3195,7 @@ class SapHelper {
                 'status' => 'FAILED',
             ]); 
 
-            return $result->EXPPURCHASEORDER;
+            return false;
         }
     }
 
@@ -3089,7 +3208,12 @@ class SapHelper {
      */
     public static function sendPOchangeToSap($poNumber)
     {
-        $wsdl = public_path() . "/xml/zbn_eproc_pochange.xml";
+        $soapFile = \sapHelp::getSoapXml('PURCHASE_ORDER_CHANGE');
+        if( $soapFile->is_active_env == \App\Models\BaseModel::Development ) {
+            $wsdl = public_path()."/xml/zbn_eproc_pochange.xml";
+        } else {
+            $wsdl = public_path() ."/xml/". $soapFile->xml_file;
+        }
         
         $username = "IT_02";
         $password = "ademsari";
@@ -3118,7 +3242,11 @@ class SapHelper {
 
         //get data
         $poHeader = PurchaseOrder::where('PO_NUMBER',$poNumber)->first();
-        $poDetail = PurchaseOrdersDetail::where('purchase_order_id',$poHeader->id)->get();
+        $poDetail = PurchaseOrdersDetail::where('purchase_order_id',$poHeader->id)
+                    ->orderBy('PO_ITEM','asc')
+                    // ->where('is_gr',0) 
+                    ->get();
+        $poDelivery = PurchaseOrderDelivery::where('purchase_order_id',$poHeader->id)->get();
 
         $POHEADER = [
             'PO_NUMBER' => '',
@@ -3188,6 +3316,7 @@ class SapHelper {
             'EXT_SYS' => '',
             'EXT_REF' => ''
         ];
+        
         $POHEADERX = [
             'PO_NUMBER' => '',
             'COMP_CODE' => '',
@@ -3276,451 +3405,1836 @@ class SapHelper {
             if( $poDetail[$i]->delivery_complete == 1 ) {
                 $deliveryComplete = 'X';
             }
-            $POITEM = [
-                'PO_ITEM' => $poDetail[$i]->PO_ITEM,//LINE
-                'DELETE_IND' => $itemDelete,
-                'SHORT_TEXT' => '',
-                'MATERIAL' => '',
-                'MATERIAL_EXTERNAL' => '',
-                'MATERIAL_GUID' => '',
-                'MATERIAL_VERSION' => '',
-                'EMATERIAL' => '',
-                'EMATERIAL_EXTERNAL' => '',
-                'EMATERIAL_GUID' => '',
-                'EMATERIAL_VERSION' => '',
-                'PLANT' => '',
-                'STGE_LOC' => '',
-                'TRACKINGNO' => '',
-                'MATL_GROUP' => '',
-                'INFO_REC' => '',
-                'VEND_MAT' => '',
-                'QUANTITY' => $poDetail[$i]->qty,
-                'PO_UNIT' => '',
-                'PO_UNIT_ISO' => '',
-                'ORDERPR_UN' => '',
-                'ORDERPR_UN_ISO' => '',
-                'CONV_NUM1' => '',
-                'CONV_DEN1' => '',
-                'NET_PRICE' => $poDetail[$i]->price,
-                'PRICE_UNIT' => '',
-                'GR_PR_TIME' => '',
-                'TAX_CODE' => $poDetail[$i]->tax_code,
-                'BON_GRP1' => '',
-                'QUAL_INSP' => '',
-                'INFO_UPD' => '',
-                'PRNT_PRICE' => '',
-                'EST_PRICE' => '',
-                'REMINDER1' => '',
-                'REMINDER2' => '',
-                'REMINDER3' => '',
-                'OVER_DLV_TOL' => '',
-                'UNLIMITED_DLV' => '',
-                'UNDER_DLV_TOL' => '',
-                'VAL_TYPE' => '',
-                'NO_MORE_GR' => '',
-                'FINAL_INV' => '',
-                'ITEM_CAT' => '',
-                'ACCTASSCAT' => '',
-                'DISTRIB' => '',
-                'PART_INV' => '',
-                'GR_IND' => '',
-                'GR_NON_VAL' => '',
-                'IR_IND' => '',
-                'FREE_ITEM' => '',
-                'GR_BASEDIV' => '',
-                'ACKN_REQD' => '',
-                'ACKNOWL_NO' => '',
-                'AGREEMENT' => '',
-                'AGMT_ITEM' => '',
-                'SHIPPING' => '',
-                'CUSTOMER' => '',
-                'COND_GROUP' => '',
-                'NO_DISCT' => '',
-                'PLAN_DEL' => '',
-                'NET_WEIGHT' => '',
-                'WEIGHTUNIT' => '',
-                'WEIGHTUNIT_ISO' => '',
-                'TAXJURCODE' => '',
-                'CTRL_KEY' => '',
-                'CONF_CTRL' => '',
-                'REV_LEV' => '',
-                'FUND' => '',
-                'FUNDS_CTR' => '',
-                'CMMT_ITEM' => '',
-                'PRICEDATE' => '',
-                'PRICE_DATE' => '',
-                'GROSS_WT' => '',
-                'VOLUME' => '',
-                'VOLUMEUNIT' => '',
-                'VOLUMEUNIT_ISO' => '',
-                'INCOTERMS1' => '',
-                'INCOTERMS2' => '',
-                'PRE_VENDOR' => '',
-                'VEND_PART' => '',
-                'HL_ITEM' => '',
-                'GR_TO_DATE' => '',
-                'SUPP_VENDOR' => '',
-                'SC_VENDOR' => '',
-                'KANBAN_IND' => '',
-                'ERS' => '',
-                'R_PROMO' => '',
-                'POINTS' => '',
-                'POINT_UNIT' => '',
-                'POINT_UNIT_ISO' => '',
-                'SEASON' => '',
-                'SEASON_YR' => '',
-                'BON_GRP2' => '',
-                'BON_GRP3' => '',
-                'SETT_ITEM' => '',
-                'MINREMLIFE' => '',
-                'RFQ_NO' => '',
-                'RFQ_ITEM' => '',
-                'PREQ_NO' => '',
-                'PREQ_ITEM' => '',
-                'REF_DOC' => '',
-                'REF_ITEM' => '',
-                'SI_CAT' => '',
-                'RET_ITEM' => '',
-                'AT_RELEV' => '',
-                'ORDER_REASON' => '',
-                'BRAS_NBM' => '',
-                'MATL_USAGE' => '',
-                'MAT_ORIGIN' => '',
-                'IN_HOUSE' => '',
-                'INDUS3' => '',
-                'INF_INDEX' => '',
-                'UNTIL_DATE' => '',
-                'DELIV_COMPL' => '',
-                'PART_DELIV' => '',
-                'SHIP_BLOCKED' => '',
-                'PREQ_NAME' => '',
-                'PERIOD_IND_EXPIRATION_DATE' => '',
-                'INT_OBJ_NO' => '',
-                'PCKG_NO' => '',
-                'BATCH' => '',
-                'VENDRBATCH' => '',
-                'CALCTYPE' => '',
-                'GRANT_NBR' => '',
-                'CMMT_ITEM_LONG' => '',
-                'FUNC_AREA_LONG' => '',
-                'NO_ROUNDING' => '',
-                'PO_PRICE' => '',
-                'SUPPL_STLOC' => '',
-                'SRV_BASED_IV' => '',
-                'FUNDS_RES' => '',
-                'RES_ITEM' => '',
-                'ORIG_ACCEPT' => '',
-                'ALLOC_TBL' => '',
-                'ALLOC_TBL_ITEM' => '',
-                'SRC_STOCK_TYPE' => '',
-                'REASON_REJ' => '',
-                'CRM_SALES_ORDER_NO' => '',
-                'CRM_SALES_ORDER_ITEM_NO' => '',
-                'CRM_REF_SALES_ORDER_NO' => '',
-                'CRM_REF_SO_ITEM_NO' => '',
-                'PRIO_URGENCY' => '',
-                'PRIO_REQUIREMENT' => '',
-                'REASON_CODE' => '',
-                'FUND_LONG' => '',
-                'LONG_ITEM_NUMBER' => '',
-                'EXTERNAL_SORT_NUMBER' => '',
-                'EXTERNAL_HIERARCHY_TYPE' => '',
-                'RETENTION_PERCENTAGE' => '',
-                'DOWNPAY_TYPE' => '',
-                'DOWNPAY_AMOUNT' => '',
-                'DOWNPAY_PERCENT' => '',
-                'DOWNPAY_DUEDATE' => '',
-                'EXT_RFX_NUMBER' => '',
-                'EXT_RFX_ITEM' => '',
-                'EXT_RFX_SYSTEM' => '',
-                'SRM_CONTRACT_ID' => '',
-                'SRM_CONTRACT_ITM' => '',
-                'BUDGET_PERIOD' => '',
-                'BLOCK_REASON_ID' => '',
-                'BLOCK_REASON_TEXT' => '',
-                'SPE_CRM_FKREL' => '',
-                'DATE_QTY_FIXED' => '',
-                'GI_BASED_GR' => '',
-                'SHIPTYPE' => '',
-                'HANDOVERLOC' => '',
-                'TC_AUT_DET' => '',
-                'MANUAL_TC_REASON' => '',
-                'FISCAL_INCENTIVE' => '',
-                'FISCAL_INCENTIVE_ID' => '',
-                'TAX_SUBJECT_ST' => '',
-                'REQ_SEGMENT' => '',
-                'STK_SEGMENT' => '',
-                'SF_TXJCD' => '',
-                'INCOTERMS2L' => '',
-                'INCOTERMS3L' => '',
-                'MATERIAL_LONG' => '',
-                'EMATERIAL_LONG' => '',
-                'SERVICEPERFORMER' => '',
-                'PRODUCTTYPE' => '',
-                'STARTDATE' => '',
-                'ENDDATE' => '',
-                'REQ_SEG_LONG' => '',
-                'STK_SEG_LONG' => '',
-                'EXPECTED_VALUE' => '',
-                'LIMIT_AMOUNT' => '',
-                'EXT_REF' => '',
-            ];
+            if( $poDetail[$i]->item_category == \App\Models\PurchaseOrdersDetail::Material 
+                OR $poDetail[$i]->item_category == \App\Models\PurchaseOrdersDetail::MaterialText) {
+                $POITEM = [
+                    'PO_ITEM' => $poDetail[$i]->PO_ITEM,//LINE
+                    'DELETE_IND' => $itemDelete,
+                    'SHORT_TEXT' => '',
+                    'MATERIAL' => '',
+                    'MATERIAL_EXTERNAL' => '',
+                    'MATERIAL_GUID' => '',
+                    'MATERIAL_VERSION' => '',
+                    'EMATERIAL' => '',
+                    'EMATERIAL_EXTERNAL' => '',
+                    'EMATERIAL_GUID' => '',
+                    'EMATERIAL_VERSION' => '',
+                    'PLANT' => '',
+                    'STGE_LOC' => '',
+                    'TRACKINGNO' => '',
+                    'MATL_GROUP' => '',
+                    'INFO_REC' => '',
+                    'VEND_MAT' => '',
+                    'QUANTITY' => $poDetail[$i]->qty,
+                    'PO_UNIT' => '',
+                    'PO_UNIT_ISO' => '',
+                    'ORDERPR_UN' => '',
+                    'ORDERPR_UN_ISO' => '',
+                    'CONV_NUM1' => '',
+                    'CONV_DEN1' => '',
+                    'NET_PRICE' => $poDetail[$i]->price ?? '1000000',
+                    'PRICE_UNIT' => '',
+                    'GR_PR_TIME' => '',
+                    'TAX_CODE' => $poDetail[$i]->tax_code,
+                    'BON_GRP1' => '',
+                    'QUAL_INSP' => '',
+                    'INFO_UPD' => '',
+                    'PRNT_PRICE' => '',
+                    'EST_PRICE' => '',
+                    'REMINDER1' => '',
+                    'REMINDER2' => '',
+                    'REMINDER3' => '',
+                    'OVER_DLV_TOL' => '',
+                    'UNLIMITED_DLV' => '',
+                    'UNDER_DLV_TOL' => '',
+                    'VAL_TYPE' => '',
+                    'NO_MORE_GR' => $deliveryComplete,
+                    'FINAL_INV' => '',
+                    'ITEM_CAT' => '',
+                    'ACCTASSCAT' => '',
+                    'DISTRIB' => '',
+                    'PART_INV' => '',
+                    'GR_IND' => 'X',
+                    'GR_NON_VAL' => '',
+                    'IR_IND' => 'X',
+                    'FREE_ITEM' => '',
+                    'GR_BASEDIV' => 'X',
+                    'ACKN_REQD' => '',
+                    'ACKNOWL_NO' => '',
+                    'AGREEMENT' => '',
+                    'AGMT_ITEM' => '',
+                    'SHIPPING' => '',
+                    'CUSTOMER' => '',
+                    'COND_GROUP' => '',
+                    'NO_DISCT' => '',
+                    'PLAN_DEL' => '',
+                    'NET_WEIGHT' => '',
+                    'WEIGHTUNIT' => '',
+                    'WEIGHTUNIT_ISO' => '',
+                    'TAXJURCODE' => '',
+                    'CTRL_KEY' => '',
+                    'CONF_CTRL' => '',
+                    'REV_LEV' => '',
+                    'FUND' => '',
+                    'FUNDS_CTR' => '',
+                    'CMMT_ITEM' => '',
+                    'PRICEDATE' => '',
+                    'PRICE_DATE' => '',
+                    'GROSS_WT' => '',
+                    'VOLUME' => '',
+                    'VOLUMEUNIT' => '',
+                    'VOLUMEUNIT_ISO' => '',
+                    'INCOTERMS1' => '',
+                    'INCOTERMS2' => '',
+                    'PRE_VENDOR' => '',
+                    'VEND_PART' => '',
+                    'HL_ITEM' => '',
+                    'GR_TO_DATE' => '',
+                    'SUPP_VENDOR' => '',
+                    'SC_VENDOR' => '',
+                    'KANBAN_IND' => '',
+                    'ERS' => '',
+                    'R_PROMO' => '',
+                    'POINTS' => '',
+                    'POINT_UNIT' => '',
+                    'POINT_UNIT_ISO' => '',
+                    'SEASON' => '',
+                    'SEASON_YR' => '',
+                    'BON_GRP2' => '',
+                    'BON_GRP3' => '',
+                    'SETT_ITEM' => '',
+                    'MINREMLIFE' => '',
+                    'RFQ_NO' => '',
+                    'RFQ_ITEM' => '',
+                    'PREQ_NO' => (string) $poDetail[$i]->PR_NO,
+                    'PREQ_ITEM' => $poDetail[$i]->preq_item,
+                    'REF_DOC' => '',
+                    'REF_ITEM' => '',
+                    'SI_CAT' => '',
+                    'RET_ITEM' => '',
+                    'AT_RELEV' => '',
+                    'ORDER_REASON' => '',
+                    'BRAS_NBM' => '',
+                    'MATL_USAGE' => '',
+                    'MAT_ORIGIN' => '',
+                    'IN_HOUSE' => '',
+                    'INDUS3' => '',
+                    'INF_INDEX' => '',
+                    'UNTIL_DATE' => '',
+                    'DELIV_COMPL' => $deliveryComplete,
+                    'PART_DELIV' => '',
+                    'SHIP_BLOCKED' => '',
+                    'PREQ_NAME' =>  strtoupper(split_name($poDetail[$i]->preq_name)),
+                    'PERIOD_IND_EXPIRATION_DATE' => '',
+                    'INT_OBJ_NO' => '',
+                    'PCKG_NO' => $poDetail[$i]->package_no,
+                    'BATCH' => '',
+                    'VENDRBATCH' => '',
+                    'CALCTYPE' => '',
+                    'GRANT_NBR' => '',
+                    'CMMT_ITEM_LONG' => '',
+                    'FUNC_AREA_LONG' => '',
+                    'NO_ROUNDING' => '',
+                    'PO_PRICE' => '',
+                    'SUPPL_STLOC' => '',
+                    'SRV_BASED_IV' => '',
+                    'FUNDS_RES' => '',
+                    'RES_ITEM' => '',
+                    'ORIG_ACCEPT' => '',
+                    'ALLOC_TBL' => '',
+                    'ALLOC_TBL_ITEM' => '',
+                    'SRC_STOCK_TYPE' => '',
+                    'REASON_REJ' => '',
+                    'CRM_SALES_ORDER_NO' => '',
+                    'CRM_SALES_ORDER_ITEM_NO' => '',
+                    'CRM_REF_SALES_ORDER_NO' => '',
+                    'CRM_REF_SO_ITEM_NO' => '',
+                    'PRIO_URGENCY' => '',
+                    'PRIO_REQUIREMENT' => '',
+                    'REASON_CODE' => '',
+                    'FUND_LONG' => '',
+                    'LONG_ITEM_NUMBER' => '',
+                    'EXTERNAL_SORT_NUMBER' => '',
+                    'EXTERNAL_HIERARCHY_TYPE' => '',
+                    'RETENTION_PERCENTAGE' => '',
+                    'DOWNPAY_TYPE' => '',
+                    'DOWNPAY_AMOUNT' => '',
+                    'DOWNPAY_PERCENT' => '',
+                    'DOWNPAY_DUEDATE' => '',
+                    'EXT_RFX_NUMBER' => '',
+                    'EXT_RFX_ITEM' => '',
+                    'EXT_RFX_SYSTEM' => '',
+                    'SRM_CONTRACT_ID' => '',
+                    'SRM_CONTRACT_ITM' => '',
+                    'BUDGET_PERIOD' => '',
+                    'BLOCK_REASON_ID' => '',
+                    'BLOCK_REASON_TEXT' => '',
+                    'SPE_CRM_FKREL' => '',
+                    'DATE_QTY_FIXED' => '',
+                    'GI_BASED_GR' => '',
+                    'SHIPTYPE' => '',
+                    'HANDOVERLOC' => '',
+                    'TC_AUT_DET' => '',
+                    'MANUAL_TC_REASON' => '',
+                    'FISCAL_INCENTIVE' => '',
+                    'FISCAL_INCENTIVE_ID' => '',
+                    'TAX_SUBJECT_ST' => '',
+                    'REQ_SEGMENT' => '',
+                    'STK_SEGMENT' => '',
+                    'SF_TXJCD' => '',
+                    'INCOTERMS2L' => '',
+                    'INCOTERMS3L' => '',
+                    'MATERIAL_LONG' => '',
+                    'EMATERIAL_LONG' => '',
+                    'SERVICEPERFORMER' => '',
+                    'PRODUCTTYPE' => '',
+                    'STARTDATE' => '',
+                    'ENDDATE' => '',
+                    'REQ_SEG_LONG' => '',
+                    'STK_SEG_LONG' => '',
+                    'EXPECTED_VALUE' => '',
+                    'LIMIT_AMOUNT' => '',
+                    'EXT_REF' => '',
+                ];
 
-            $POITEMX = [
-                'PO_ITEM' => $poDetail[$i]->PO_ITEM,
-                'PO_ITEMX' => 'X',
-                'DELETE_IND' => $itemDelete,
-                'SHORT_TEXT' => '',
-                'MATERIAL' => '',
-                'MATERIAL_EXTERNAL' => '',
-                'MATERIAL_GUID' => '',
-                'MATERIAL_VERSION' => '',
-                'EMATERIAL' => '',
-                'EMATERIAL_EXTERNAL' => '',
-                'EMATERIAL_GUID' => '',
-                'EMATERIAL_VERSION' => '',
-                'PLANT' => '',
-                'STGE_LOC' => '',
-                'TRACKINGNO' => '',
-                'MATL_GROUP' => '',
-                'INFO_REC' => '',
-                'VEND_MAT' => '',
-                'QUANTITY' => 'X',
-                'PO_UNIT' => '',
-                'PO_UNIT_ISO' => '',
-                'ORDERPR_UN' => '',
-                'ORDERPR_UN_ISO' => '',
-                'CONV_NUM1' => '',
-                'CONV_DEN1' => '',
-                'NET_PRICE' => '',
-                'PRICE_UNIT' => '',
-                'GR_PR_TIME' => '',
-                'TAX_CODE' => '',
-                'BON_GRP1' => '',
-                'QUAL_INSP' => '',
-                'INFO_UPD' => '',
-                'PRNT_PRICE' => '',
-                'EST_PRICE' => '',
-                'REMINDER1' => '',
-                'REMINDER2' => '',
-                'REMINDER3' => '',
-                'OVER_DLV_TOL' => '',
-                'UNLIMITED_DLV' => '',
-                'UNDER_DLV_TOL' => '',
-                'VAL_TYPE' => '',
-                'NO_MORE_GR' => '',
-                'FINAL_INV' => '',
-                'ITEM_CAT' => '',
-                'ACCTASSCAT' => '',
-                'DISTRIB' => '',
-                'PART_INV' => '',
-                'GR_IND' => '',
-                'GR_NON_VAL' => '',
-                'IR_IND' => '',
-                'FREE_ITEM' => '',
-                'GR_BASEDIV' => '',
-                'ACKN_REQD' => '',
-                'ACKNOWL_NO' => '',
-                'AGREEMENT' => '',
-                'AGMT_ITEM' => '',
-                'SHIPPING' => '',
-                'CUSTOMER' => '',
-                'COND_GROUP' => '',
-                'NO_DISCT' => '',
-                'PLAN_DEL' => '',
-                'NET_WEIGHT' => '',
-                'WEIGHTUNIT' => '',
-                'WEIGHTUNIT_ISO' => '',
-                'TAXJURCODE' => '',
-                'CTRL_KEY' => '',
-                'CONF_CTRL' => '',
-                'REV_LEV' => '',
-                'FUND' => '',
-                'FUNDS_CTR' => '',
-                'CMMT_ITEM' => '',
-                'PRICEDATE' => '',
-                'PRICE_DATE' => '',
-                'GROSS_WT' => '',
-                'VOLUME' => '',
-                'VOLUMEUNIT' => '',
-                'VOLUMEUNIT_ISO' => '',
-                'INCOTERMS1' => '',
-                'INCOTERMS2' => '',
-                'PRE_VENDOR' => '',
-                'VEND_PART' => '',
-                'HL_ITEM' => '',
-                'GR_TO_DATE' => '',
-                'SUPP_VENDOR' => '',
-                'SC_VENDOR' => '',
-                'KANBAN_IND' => '',
-                'ERS' => '',
-                'R_PROMO' => '',
-                'POINTS' => '',
-                'POINT_UNIT' => '',
-                'POINT_UNIT_ISO' => '',
-                'SEASON' => '',
-                'SEASON_YR' => '',
-                'BON_GRP2' => '',
-                'BON_GRP3' => '',
-                'SETT_ITEM' => '',
-                'MINREMLIFE' => '',
-                'RFQ_NO' => '',
-                'RFQ_ITEM' => '',
-                'PREQ_NO' => '',
-                'PREQ_ITEM' => '',
-                'REF_DOC' => '',
-                'REF_ITEM' => '',
-                'SI_CAT' => '',
-                'RET_ITEM' => '',
-                'AT_RELEV' => '',
-                'ORDER_REASON' => '',
-                'BRAS_NBM' => '',
-                'MATL_USAGE' => '',
-                'MAT_ORIGIN' => '',
-                'IN_HOUSE' => '',
-                'INDUS3' => '',
-                'INF_INDEX' => '',
-                'UNTIL_DATE' => '',
-                'DELIV_COMPL' => '',
-                'PART_DELIV' => '',
-                'SHIP_BLOCKED' => '',
-                'PREQ_NAME' => '',
-                'PERIOD_IND_EXPIRATION_DATE' => '',
-                'INT_OBJ_NO' => '',
-                'PCKG_NO' => '',
-                'BATCH' => '',
-                'VENDRBATCH' => '',
-                'CALCTYPE' => '',
-                'NO_ROUNDING' => '',
-                'PO_PRICE' => '',
-                'SUPPL_STLOC' => '',
-                'SRV_BASED_IV' => '',
-                'FUNDS_RES' => '',
-                'RES_ITEM' => '',
-                'GRANT_NBR' => '',
-                'FUNC_AREA_LONG' => '',
-                'ORIG_ACCEPT' => '',
-                'ALLOC_TBL' => '',
-                'ALLOC_TBL_ITEM' => '',
-                'SRC_STOCK_TYPE' => '',
-                'REASON_REJ' => '',
-                'CRM_SALES_ORDER_NO' => '',
-                'CRM_SALES_ORDER_ITEM_NO' => '',
-                'CRM_REF_SALES_ORDER_NO' => '',
-                'CRM_REF_SO_ITEM_NO' => '',
-                'PRIO_URGENCY' => '',
-                'PRIO_REQUIREMENT' => '',
-                'REASON_CODE' => '',
-                'LONG_ITEM_NUMBER' => '',
-                'EXTERNAL_SORT_NUMBER' => '',
-                'EXTERNAL_HIERARCHY_TYPE' => '',
-                'RETENTION_PERCENTAGE' => '',
-                'DOWNPAY_TYPE' => '',
-                'DOWNPAY_AMOUNT' => '',
-                'DOWNPAY_PERCENT' => '',
-                'DOWNPAY_DUEDATE' => '',
-                'EXT_RFX_NUMBER' => '',
-                'EXT_RFX_ITEM' => '',
-                'EXT_RFX_SYSTEM' => '',
-                'SRM_CONTRACT_ID' => '',
-                'SRM_CONTRACT_ITM' => '',
-                'BUDGET_PERIOD' => '',
-                'BLOCK_REASON_ID' => '',
-                'BLOCK_REASON_TEXT' => '',
-                'SPE_CRM_FKREL' => '',
-                'DATE_QTY_FIXED' => '',
-                'GI_BASED_GR' => '',
-                'SHIPTYPE' => '',
-                'HANDOVERLOC' => '',
-                'TC_AUT_DET' => '',
-                'MANUAL_TC_REASON' => '',
-                'FISCAL_INCENTIVE' => '',
-                'FISCAL_INCENTIVE_ID' => '',
-                'TAX_SUBJECT_ST' => '',
-                'REQ_SEGMENT' => '',
-                'STK_SEGMENT' => '',
-                'SF_TXJCD' => '',
-                'INCOTERMS2L' => '',
-                'INCOTERMS3L' => '',
-                'MATERIAL_LONG' => '',
-                'EMATERIAL_LONG' => '',
-                'SERVICEPERFORMER' => '',
-                'PRODUCTTYPE' => '',
-                'STARTDATE' => '',
-                'ENDDATE' => '',
-                'REQ_SEG_LONG' => '',
-                'STK_SEG_LONG' => '',
-                'EXPECTED_VALUE' => '',
-                'LIMIT_AMOUNT' => '',
-                'EXT_REF' => '',
-            ];
-        
-            $POSCHEDULE = [
-                "PO_ITEM" => $poDetail[$i]->PO_ITEM, //line
-                "SCHED_LINE" => $poDetail[$i]->SCHED_LINE, // 0001 ++
-                "DEL_DATCAT_EXT" => "",
-                "DELIVERY_DATE" => $poDetail[$i]->delivery_date,//delivery date
-                "QUANTITY" =>  (string) $poDetail[$i]->qty,// qty
-                "DELIV_TIME" => "", 
-                "STAT_DATE" => "",
-                "PREQ_NO" =>  (string) $poDetail[$i]->PR_NO, // kedua no pr di insert
-                "PREQ_ITEM" => $poDetail[$i]->preq_item, // line 
-                "PO_DATE" => "",
-                "ROUTESCHED" => "",
-                "MS_DATE" => "",
-                "MS_TIME" => "",
-                "LOAD_DATE" => "",
-                "LOAD_TIME" => "",
-                "TP_DATE" => "",
-                "TP_TIME" => "",
-                "GI_DATE" => "",
-                "GI_TIME" => "",
-                "DELETE_IND" => "",
-                "REQ_CLOSED" => "",
-                "GR_END_DATE" => "",
-                "GR_END_TIME" => "",
-                "COM_QTY" => "",
-                "COM_DATE" => "",
-                "GEO_ROUTE" => "",
-                "HANDOVERDATE" => "",
-                "HANDOVERTIME" => "",
-            ];
+                $POITEMX = [
+                    'PO_ITEM' => $poDetail[$i]->PO_ITEM,
+                    'PO_ITEMX' => 'X',
+                    'DELETE_IND' => 'X',
+                    'SHORT_TEXT' => '',
+                    'MATERIAL' => '',
+                    'MATERIAL_EXTERNAL' => '',
+                    'MATERIAL_GUID' => '',
+                    'MATERIAL_VERSION' => '',
+                    'EMATERIAL' => '',
+                    'EMATERIAL_EXTERNAL' => '',
+                    'EMATERIAL_GUID' => '',
+                    'EMATERIAL_VERSION' => '',
+                    'PLANT' => '',
+                    'STGE_LOC' => '',
+                    'TRACKINGNO' => '',
+                    'MATL_GROUP' => '',
+                    'INFO_REC' => '',
+                    'VEND_MAT' => '',
+                    'QUANTITY' => '',
+                    'PO_UNIT' => '',
+                    'PO_UNIT_ISO' => '',
+                    'ORDERPR_UN' => '',
+                    'ORDERPR_UN_ISO' => '',
+                    'CONV_NUM1' => '',
+                    'CONV_DEN1' => '',
+                    'NET_PRICE' => 'X',
+                    'PRICE_UNIT' => '',
+                    'GR_PR_TIME' => '',
+                    'TAX_CODE' => 'X',
+                    'BON_GRP1' => '',
+                    'QUAL_INSP' => '',
+                    'INFO_UPD' => '',
+                    'PRNT_PRICE' => '',
+                    'EST_PRICE' => '',
+                    'REMINDER1' => '',
+                    'REMINDER2' => '',
+                    'REMINDER3' => '',
+                    'OVER_DLV_TOL' => '',
+                    'UNLIMITED_DLV' => '',
+                    'UNDER_DLV_TOL' => '',
+                    'VAL_TYPE' => '',
+                    'NO_MORE_GR' => 'X',
+                    'FINAL_INV' => '',
+                    'ITEM_CAT' => '',
+                    'ACCTASSCAT' => '',
+                    'DISTRIB' => '',
+                    'PART_INV' => '',
+                    'GR_IND' => 'X',
+                    'GR_NON_VAL' => '',
+                    'IR_IND' => 'X',
+                    'FREE_ITEM' => '',
+                    'GR_BASEDIV' => 'X',
+                    'ACKN_REQD' => '',
+                    'ACKNOWL_NO' => '',
+                    'AGREEMENT' => '',
+                    'AGMT_ITEM' => '',
+                    'SHIPPING' => '',
+                    'CUSTOMER' => '',
+                    'COND_GROUP' => '',
+                    'NO_DISCT' => '',
+                    'PLAN_DEL' => '',
+                    'NET_WEIGHT' => '',
+                    'WEIGHTUNIT' => '',
+                    'WEIGHTUNIT_ISO' => '',
+                    'TAXJURCODE' => '',
+                    'CTRL_KEY' => '',
+                    'CONF_CTRL' => '',
+                    'REV_LEV' => '',
+                    'FUND' => '',
+                    'FUNDS_CTR' => '',
+                    'CMMT_ITEM' => '',
+                    'PRICEDATE' => '',
+                    'PRICE_DATE' => '',
+                    'GROSS_WT' => '',
+                    'VOLUME' => '',
+                    'VOLUMEUNIT' => '',
+                    'VOLUMEUNIT_ISO' => '',
+                    'INCOTERMS1' => '',
+                    'INCOTERMS2' => '',
+                    'PRE_VENDOR' => '',
+                    'VEND_PART' => '',
+                    'HL_ITEM' => '',
+                    'GR_TO_DATE' => '',
+                    'SUPP_VENDOR' => '',
+                    'SC_VENDOR' => '',
+                    'KANBAN_IND' => '',
+                    'ERS' => '',
+                    'R_PROMO' => '',
+                    'POINTS' => '',
+                    'POINT_UNIT' => '',
+                    'POINT_UNIT_ISO' => '',
+                    'SEASON' => '',
+                    'SEASON_YR' => '',
+                    'BON_GRP2' => '',
+                    'BON_GRP3' => '',
+                    'SETT_ITEM' => '',
+                    'MINREMLIFE' => '',
+                    'RFQ_NO' => '',
+                    'RFQ_ITEM' => '',
+                    'PREQ_NO' => 'X',
+                    'PREQ_ITEM' => 'X',
+                    'REF_DOC' => '',
+                    'REF_ITEM' => '',
+                    'SI_CAT' => '',
+                    'RET_ITEM' => '',
+                    'AT_RELEV' => '',
+                    'ORDER_REASON' => '',
+                    'BRAS_NBM' => '',
+                    'MATL_USAGE' => '',
+                    'MAT_ORIGIN' => '',
+                    'IN_HOUSE' => '',
+                    'INDUS3' => '',
+                    'INF_INDEX' => '',
+                    'UNTIL_DATE' => '',
+                    'DELIV_COMPL' => 'X',
+                    'PART_DELIV' => '',
+                    'SHIP_BLOCKED' => '',
+                    'PREQ_NAME' => 'X',
+                    'PERIOD_IND_EXPIRATION_DATE' => '',
+                    'INT_OBJ_NO' => '',
+                    'PCKG_NO' => 'X',
+                    'BATCH' => '',
+                    'VENDRBATCH' => '',
+                    'CALCTYPE' => '',
+                    'NO_ROUNDING' => '',
+                    'PO_PRICE' => '',
+                    'SUPPL_STLOC' => '',
+                    'SRV_BASED_IV' => '',
+                    'FUNDS_RES' => '',
+                    'RES_ITEM' => '',
+                    'GRANT_NBR' => '',
+                    'FUNC_AREA_LONG' => '',
+                    'ORIG_ACCEPT' => '',
+                    'ALLOC_TBL' => '',
+                    'ALLOC_TBL_ITEM' => '',
+                    'SRC_STOCK_TYPE' => '',
+                    'REASON_REJ' => '',
+                    'CRM_SALES_ORDER_NO' => '',
+                    'CRM_SALES_ORDER_ITEM_NO' => '',
+                    'CRM_REF_SALES_ORDER_NO' => '',
+                    'CRM_REF_SO_ITEM_NO' => '',
+                    'PRIO_URGENCY' => '',
+                    'PRIO_REQUIREMENT' => '',
+                    'REASON_CODE' => '',
+                    'LONG_ITEM_NUMBER' => '',
+                    'EXTERNAL_SORT_NUMBER' => '',
+                    'EXTERNAL_HIERARCHY_TYPE' => '',
+                    'RETENTION_PERCENTAGE' => '',
+                    'DOWNPAY_TYPE' => '',
+                    'DOWNPAY_AMOUNT' => '',
+                    'DOWNPAY_PERCENT' => '',
+                    'DOWNPAY_DUEDATE' => '',
+                    'EXT_RFX_NUMBER' => '',
+                    'EXT_RFX_ITEM' => '',
+                    'EXT_RFX_SYSTEM' => '',
+                    'SRM_CONTRACT_ID' => '',
+                    'SRM_CONTRACT_ITM' => '',
+                    'BUDGET_PERIOD' => '',
+                    'BLOCK_REASON_ID' => '',
+                    'BLOCK_REASON_TEXT' => '',
+                    'SPE_CRM_FKREL' => '',
+                    'DATE_QTY_FIXED' => '',
+                    'GI_BASED_GR' => '',
+                    'SHIPTYPE' => '',
+                    'HANDOVERLOC' => '',
+                    'TC_AUT_DET' => '',
+                    'MANUAL_TC_REASON' => '',
+                    'FISCAL_INCENTIVE' => '',
+                    'FISCAL_INCENTIVE_ID' => '',
+                    'TAX_SUBJECT_ST' => '',
+                    'REQ_SEGMENT' => '',
+                    'STK_SEGMENT' => '',
+                    'SF_TXJCD' => '',
+                    'INCOTERMS2L' => '',
+                    'INCOTERMS3L' => '',
+                    'MATERIAL_LONG' => '',
+                    'EMATERIAL_LONG' => '',
+                    'SERVICEPERFORMER' => '',
+                    'PRODUCTTYPE' => '',
+                    'STARTDATE' => '',
+                    'ENDDATE' => '',
+                    'REQ_SEG_LONG' => '',
+                    'STK_SEG_LONG' => '',
+                    'EXPECTED_VALUE' => '',
+                    'LIMIT_AMOUNT' => '',
+                    'EXT_REF' => '',
+                ];
+            
+                $POSCHEDULE = [
+                    "PO_ITEM" => $poDetail[$i]->PO_ITEM, //line
+                    "SCHED_LINE" => '0001',//$poDetail[$i]->SCHED_LINE, // 0001 ++
+                    "DEL_DATCAT_EXT" => "",
+                    "DELIVERY_DATE" =>  date('Ymd',strtotime($poDelivery[$i]->delivery_date)),//delivery date
+                    "QUANTITY" =>  (string) $poDetail[$i]->qty,// qty
+                    "DELIV_TIME" => "", 
+                    "STAT_DATE" => "",
+                    "PREQ_NO" =>  (string) $poDetail[$i]->PR_NO, // kedua no pr di insert
+                    "PREQ_ITEM" => $poDetail[$i]->preq_item, // line 
+                    "PO_DATE" => "",
+                    "ROUTESCHED" => "",
+                    "MS_DATE" => "",
+                    "MS_TIME" => "",
+                    "LOAD_DATE" => "",
+                    "LOAD_TIME" => "",
+                    "TP_DATE" => "",
+                    "TP_TIME" => "",
+                    "GI_DATE" => "",
+                    "GI_TIME" => "",
+                    "DELETE_IND" => "",
+                    "REQ_CLOSED" => "",
+                    "GR_END_DATE" => "",
+                    "GR_END_TIME" => "",
+                    "COM_QTY" => "",
+                    "COM_DATE" => "",
+                    "GEO_ROUTE" => "",
+                    "HANDOVERDATE" => "",
+                    "HANDOVERTIME" => "",
+                ];
 
-            $POSCHEDULEX = [
-                "PO_ITEM" => $poDetail[$i]->PO_ITEM,
-                "SCHED_LINE" => $poDetail[$i]->SHED_LINE,
-                "PO_ITEMX" => "X",
-                "SCHED_LINEX" => "X",
-                "DEL_DATCAT_EXT" => "",
-                "DELIVERY_DATE" => "X",
-                "QUANTITY" => "X",
-                "DELIV_TIME" => "",
-                "STAT_DATE" => "",
-                "PREQ_NO" => "X",
-                "PREQ_ITEM" => "X",
-                "PO_DATE" => "",
-                "ROUTESCHED" => "",
-                "MS_DATE" => "",
-                "MS_TIME" => "",
-                "LOAD_DATE" => "",
-                "LOAD_TIME" => "",
-                "TP_DATE" => "",
-                "TP_TIME" => "",
-                "GI_DATE" => "",
-                "GI_TIME" => "",
-                "DELETE_IND" => "",
-                "REQ_CLOSED" => "",
-                "GR_END_DATE" => "",
-                "GR_END_TIME" => "",
-                "COM_QTY" => "",
-                "COM_DATE" => "",
-                "GEO_ROUTE" => "",
-                "HANDOVERDATE" => "",
-                "HANDOVERTIME" => "",
-            ];
+                $POSCHEDULEX = [
+                    "PO_ITEM" => $poDetail[$i]->PO_ITEM,
+                    "SCHED_LINE" => '0001',
+                    "PO_ITEMX" => "X",
+                    "SCHED_LINEX" => "X",
+                    "DEL_DATCAT_EXT" => "",
+                    "DELIVERY_DATE" => "X",
+                    "QUANTITY" => "X",
+                    "DELIV_TIME" => "",
+                    "STAT_DATE" => "",
+                    "PREQ_NO" => "X",
+                    "PREQ_ITEM" => "X",
+                    "PO_DATE" => "",
+                    "ROUTESCHED" => "",
+                    "MS_DATE" => "",
+                    "MS_TIME" => "",
+                    "LOAD_DATE" => "",
+                    "LOAD_TIME" => "",
+                    "TP_DATE" => "",
+                    "TP_TIME" => "",
+                    "GI_DATE" => "",
+                    "GI_TIME" => "",
+                    "DELETE_IND" => "",
+                    "REQ_CLOSED" => "",
+                    "GR_END_DATE" => "",
+                    "GR_END_TIME" => "",
+                    "COM_QTY" => "",
+                    "COM_DATE" => "",
+                    "GEO_ROUTE" => "",
+                    "HANDOVERDATE" => "",
+                    "HANDOVERTIME" => "",
+                ];
 
-            $params[0]['POITEM']['item'][$i] = $POITEM;
-            $params[0]['POITEMX']['item'][$i] = $POITEMX;
+                $POACCOUNT = [
+                    'PO_ITEM' => $poDetail[$i]->PO_ITEM,//00010
+                    'SERIAL_NO' => '01',//01
+                    'DELETE_IND' => '',
+                    'CREAT_DATE' => '',
+                    'QUANTITY' => '',
+                    'DISTR_PERC' => '',
+                    'NET_VALUE' => '',
+                    'GL_ACCOUNT' => $poDetail[$i]->gl_acct_code,// DARI PR 
+                    'BUS_AREA' => '',
+                    'COSTCENTER' => $poDetail[$i]->cost_center_code, //DARI PR
+                    'SD_DOC' => '',
+                    'ITM_NUMBER' => '' ,
+                    'SCHED_LINE' =>'' ,
+                    'ASSET_NO' => '',
+                    'SUB_NUMBER' => '',
+                    'ORDERID' => '',
+                    'GR_RCPT' => '',
+                    'UNLOAD_PT' => '',
+                    'CO_AREA' => '',
+                    'COSTOBJECT' => '',
+                    'PROFIT_CTR' => '',
+                    'WBS_ELEMENT' => '',
+                    'NETWORK' => '',
+                    'RL_EST_KEY' => '',
+                    'PART_ACCT' => '',
+                    'CMMT_ITEM' => '',
+                    'REC_IND' => '',
+                    'FUNDS_CTR' => '',
+                    'FUND' => '',
+                    'FUNC_AREA' => '',
+                    'REF_DATE' => '',
+                    'TAX_CODE' => '',
+                    'TAXJURCODE' => '',
+                    'NOND_ITAX' => '',
+                    'ACTTYPE' => '',
+                    'CO_BUSPROC' => '',
+                    'RES_DOC' => '',
+                    'RES_ITEM' => '',
+                    'ACTIVITY' => '',
+                    'GRANT_NBR' => '',
+                    'CMMT_ITEM_LONG' => '',
+                    'FUNC_AREA_LONG'=> '',
+                    'BUDGET_PERIOD' =>'' ,
+                    'FINAL_IND' => '',                    
+                    'FINAL_REASON' => ''
+                ];
+
+                $POACCOUNTX = [
+                    'PO_ITEM' => $poDetail[$i]->PO_ITEM,//00010
+                    'PO_ITEMX'  => 'X',
+                    'SERIAL_NO' => '',//01
+                    'SERIAL_NOX'    => 'X',
+                    'DELETE_IND' => '',
+                    'CREAT_DATE' => '',
+                    'QUANTITY' => '',
+                    'DISTR_PERC' => '',
+                    'NET_VALUE' => '',
+                    'GL_ACCOUNT' => 'X',// DARI PR 
+                    'BUS_AREA' => '',
+                    'COSTCENTER' => 'X', //DARI PR
+                    'SD_DOC' => '',
+                    'ITM_NUMBER' => '' ,
+                    'SCHED_LINE' =>'' ,
+                    'ASSET_NO' => '',
+                    'SUB_NUMBER' => '',
+                    'ORDERID' => '',
+                    'GR_RCPT' => '',
+                    'UNLOAD_PT' => '',
+                    'CO_AREA' => '',
+                    'COSTOBJECT' => '',
+                    'PROFIT_CTR' => '',
+                    'WBS_ELEMENT' => '',
+                    'NETWORK' => '',
+                    'RL_EST_KEY' => '',
+                    'PART_ACCT' => '',
+                    'CMMT_ITEM' => '',
+                    'REC_IND' => '',
+                    'FUNDS_CTR' => '',
+                    'FUND' => '',
+                    'FUNC_AREA' => '',
+                    'REF_DATE' => '',
+                    'TAX_CODE' => '',
+                    'TAXJURCODE' => '',
+                    'NOND_ITAX' => '',
+                    'ACTTYPE' => '',
+                    'CO_BUSPROC' => '',
+                    'RES_DOC' => '',
+                    'RES_ITEM' => '',
+                    'ACTIVITY' => '',
+                    'GRANT_NBR' => '',
+                    'CMMT_ITEM_LONG' => '',
+                    'FUNC_AREA_LONG'=> '',
+                    'BUDGET_PERIOD' =>'' ,
+                    'FINAL_IND' => '',                    
+                    'FINAL_REASON' => ''
+                ];
+
+            } elseif( $poHeader->doc_type == 'Z104' && $poDetail[$i]->item_category == \App\Models\PurchaseOrdersDetail::SERVICE) {
+                $POITEM = [
+                    'PO_ITEM' => $poDetail[$i]->PO_ITEM,//LINE
+                    'DELETE_IND' => $itemDelete,
+                    'SHORT_TEXT' => '',
+                    'MATERIAL' => '',
+                    'MATERIAL_EXTERNAL' => '',
+                    'MATERIAL_GUID' => '',
+                    'MATERIAL_VERSION' => '',
+                    'EMATERIAL' => '',
+                    'EMATERIAL_EXTERNAL' => '',
+                    'EMATERIAL_GUID' => '',
+                    'EMATERIAL_VERSION' => '',
+                    'PLANT' => '',
+                    'STGE_LOC' => '',
+                    'TRACKINGNO' => '',
+                    'MATL_GROUP' => '',
+                    'INFO_REC' => '',
+                    'VEND_MAT' => '',
+                    'QUANTITY' => $poDetail[$i]->qty,
+                    'PO_UNIT' => '',
+                    'PO_UNIT_ISO' => '',
+                    'ORDERPR_UN' => '',
+                    'ORDERPR_UN_ISO' => '',
+                    'CONV_NUM1' => '',
+                    'CONV_DEN1' => '',
+                    'NET_PRICE' => $poDetail[$i]->price ?? '1000000',
+                    'PRICE_UNIT' => '',
+                    'GR_PR_TIME' => '',
+                    'TAX_CODE' => $poDetail[$i]->tax_code,
+                    'BON_GRP1' => '',
+                    'QUAL_INSP' => '',
+                    'INFO_UPD' => '',
+                    'PRNT_PRICE' => '',
+                    'EST_PRICE' => '',
+                    'REMINDER1' => '',
+                    'REMINDER2' => '',
+                    'REMINDER3' => '',
+                    'OVER_DLV_TOL' => '',
+                    'UNLIMITED_DLV' => '',
+                    'UNDER_DLV_TOL' => '',
+                    'VAL_TYPE' => '',
+                    'NO_MORE_GR' => $deliveryComplete,
+                    'FINAL_INV' => '',
+                    'ITEM_CAT' => '9',
+                    'ACCTASSCAT' => 'K',
+                    'DISTRIB' => '',
+                    'PART_INV' => '',
+                    'GR_IND' => 'X',
+                    'GR_NON_VAL' => '',
+                    'IR_IND' => 'X',
+                    'FREE_ITEM' => '',
+                    'GR_BASEDIV' => 'X',
+                    'ACKN_REQD' => '',
+                    'ACKNOWL_NO' => '',
+                    'AGREEMENT' => '',
+                    'AGMT_ITEM' => '',
+                    'SHIPPING' => '',
+                    'CUSTOMER' => '',
+                    'COND_GROUP' => '',
+                    'NO_DISCT' => '',
+                    'PLAN_DEL' => '',
+                    'NET_WEIGHT' => '',
+                    'WEIGHTUNIT' => '',
+                    'WEIGHTUNIT_ISO' => '',
+                    'TAXJURCODE' => '',
+                    'CTRL_KEY' => '',
+                    'CONF_CTRL' => '',
+                    'REV_LEV' => '',
+                    'FUND' => '',
+                    'FUNDS_CTR' => '',
+                    'CMMT_ITEM' => '',
+                    'PRICEDATE' => '',
+                    'PRICE_DATE' => '',
+                    'GROSS_WT' => '',
+                    'VOLUME' => '',
+                    'VOLUMEUNIT' => '',
+                    'VOLUMEUNIT_ISO' => '',
+                    'INCOTERMS1' => '',
+                    'INCOTERMS2' => '',
+                    'PRE_VENDOR' => '',
+                    'VEND_PART' => '',
+                    'HL_ITEM' => '',
+                    'GR_TO_DATE' => '',
+                    'SUPP_VENDOR' => '',
+                    'SC_VENDOR' => '',
+                    'KANBAN_IND' => '',
+                    'ERS' => '',
+                    'R_PROMO' => '',
+                    'POINTS' => '',
+                    'POINT_UNIT' => '',
+                    'POINT_UNIT_ISO' => '',
+                    'SEASON' => '',
+                    'SEASON_YR' => '',
+                    'BON_GRP2' => '',
+                    'BON_GRP3' => '',
+                    'SETT_ITEM' => '',
+                    'MINREMLIFE' => '',
+                    'RFQ_NO' => '',
+                    'RFQ_ITEM' => '',
+                    'PREQ_NO' => (string) $poDetail[$i]->PR_NO,
+                    'PREQ_ITEM' => $poDetail[$i]->preq_item,
+                    'REF_DOC' => '',
+                    'REF_ITEM' => '',
+                    'SI_CAT' => '',
+                    'RET_ITEM' => '',
+                    'AT_RELEV' => '',
+                    'ORDER_REASON' => '',
+                    'BRAS_NBM' => '',
+                    'MATL_USAGE' => '',
+                    'MAT_ORIGIN' => '',
+                    'IN_HOUSE' => '',
+                    'INDUS3' => '',
+                    'INF_INDEX' => '',
+                    'UNTIL_DATE' => '',
+                    'DELIV_COMPL' => $deliveryComplete,
+                    'PART_DELIV' => '',
+                    'SHIP_BLOCKED' => '',
+                    'PREQ_NAME' =>  strtoupper(split_name($poDetail[$i]->preq_name)),
+                    'PERIOD_IND_EXPIRATION_DATE' => '',
+                    'INT_OBJ_NO' => '',
+                    'PCKG_NO' => $poDetail[$i]->package_no,
+                    'BATCH' => '',
+                    'VENDRBATCH' => '',
+                    'CALCTYPE' => '',
+                    'GRANT_NBR' => '',
+                    'CMMT_ITEM_LONG' => '',
+                    'FUNC_AREA_LONG' => '',
+                    'NO_ROUNDING' => '',
+                    'PO_PRICE' => '',
+                    'SUPPL_STLOC' => '',
+                    'SRV_BASED_IV' => '',
+                    'FUNDS_RES' => '',
+                    'RES_ITEM' => '',
+                    'ORIG_ACCEPT' => '',
+                    'ALLOC_TBL' => '',
+                    'ALLOC_TBL_ITEM' => '',
+                    'SRC_STOCK_TYPE' => '',
+                    'REASON_REJ' => '',
+                    'CRM_SALES_ORDER_NO' => '',
+                    'CRM_SALES_ORDER_ITEM_NO' => '',
+                    'CRM_REF_SALES_ORDER_NO' => '',
+                    'CRM_REF_SO_ITEM_NO' => '',
+                    'PRIO_URGENCY' => '',
+                    'PRIO_REQUIREMENT' => '',
+                    'REASON_CODE' => '',
+                    'FUND_LONG' => '',
+                    'LONG_ITEM_NUMBER' => '',
+                    'EXTERNAL_SORT_NUMBER' => '',
+                    'EXTERNAL_HIERARCHY_TYPE' => '',
+                    'RETENTION_PERCENTAGE' => '',
+                    'DOWNPAY_TYPE' => '',
+                    'DOWNPAY_AMOUNT' => '',
+                    'DOWNPAY_PERCENT' => '',
+                    'DOWNPAY_DUEDATE' => '',
+                    'EXT_RFX_NUMBER' => '',
+                    'EXT_RFX_ITEM' => '',
+                    'EXT_RFX_SYSTEM' => '',
+                    'SRM_CONTRACT_ID' => '',
+                    'SRM_CONTRACT_ITM' => '',
+                    'BUDGET_PERIOD' => '',
+                    'BLOCK_REASON_ID' => '',
+                    'BLOCK_REASON_TEXT' => '',
+                    'SPE_CRM_FKREL' => '',
+                    'DATE_QTY_FIXED' => '',
+                    'GI_BASED_GR' => '',
+                    'SHIPTYPE' => '',
+                    'HANDOVERLOC' => '',
+                    'TC_AUT_DET' => '',
+                    'MANUAL_TC_REASON' => '',
+                    'FISCAL_INCENTIVE' => '',
+                    'FISCAL_INCENTIVE_ID' => '',
+                    'TAX_SUBJECT_ST' => '',
+                    'REQ_SEGMENT' => '',
+                    'STK_SEGMENT' => '',
+                    'SF_TXJCD' => '',
+                    'INCOTERMS2L' => '',
+                    'INCOTERMS3L' => '',
+                    'MATERIAL_LONG' => '',
+                    'EMATERIAL_LONG' => '',
+                    'SERVICEPERFORMER' => '',
+                    'PRODUCTTYPE' => '',
+                    'STARTDATE' => '',
+                    'ENDDATE' => '',
+                    'REQ_SEG_LONG' => '',
+                    'STK_SEG_LONG' => '',
+                    'EXPECTED_VALUE' => '',
+                    'LIMIT_AMOUNT' => '',
+                    'EXT_REF' => '',
+                ];
+
+                $POITEMX = [
+                    'PO_ITEM' => $poDetail[$i]->PO_ITEM,
+                    'PO_ITEMX' => 'X',
+                    'DELETE_IND' => $itemDelete,
+                    'SHORT_TEXT' => '',
+                    'MATERIAL' => '',
+                    'MATERIAL_EXTERNAL' => '',
+                    'MATERIAL_GUID' => '',
+                    'MATERIAL_VERSION' => '',
+                    'EMATERIAL' => '',
+                    'EMATERIAL_EXTERNAL' => '',
+                    'EMATERIAL_GUID' => '',
+                    'EMATERIAL_VERSION' => '',
+                    'PLANT' => '',
+                    'STGE_LOC' => '',
+                    'TRACKINGNO' => '',
+                    'MATL_GROUP' => '',
+                    'INFO_REC' => '',
+                    'VEND_MAT' => '',
+                    'QUANTITY' => '',
+                    'PO_UNIT' => '',
+                    'PO_UNIT_ISO' => '',
+                    'ORDERPR_UN' => '',
+                    'ORDERPR_UN_ISO' => '',
+                    'CONV_NUM1' => '',
+                    'CONV_DEN1' => '',
+                    'NET_PRICE' => 'X',
+                    'PRICE_UNIT' => '',
+                    'GR_PR_TIME' => '',
+                    'TAX_CODE' => 'X',
+                    'BON_GRP1' => '',
+                    'QUAL_INSP' => '',
+                    'INFO_UPD' => '',
+                    'PRNT_PRICE' => '',
+                    'EST_PRICE' => '',
+                    'REMINDER1' => '',
+                    'REMINDER2' => '',
+                    'REMINDER3' => '',
+                    'OVER_DLV_TOL' => '',
+                    'UNLIMITED_DLV' => '',
+                    'UNDER_DLV_TOL' => '',
+                    'VAL_TYPE' => '',
+                    'NO_MORE_GR' => $deliveryComplete,
+                    'FINAL_INV' => '',
+                    'ITEM_CAT' => 'X',
+                    'ACCTASSCAT' => 'X',
+                    'DISTRIB' => '',
+                    'PART_INV' => '',
+                    'GR_IND' => 'X',
+                    'GR_NON_VAL' => '',
+                    'IR_IND' => 'X',
+                    'FREE_ITEM' => '',
+                    'GR_BASEDIV' => 'X',
+                    'ACKN_REQD' => '',
+                    'ACKNOWL_NO' => '',
+                    'AGREEMENT' => '',
+                    'AGMT_ITEM' => '',
+                    'SHIPPING' => '',
+                    'CUSTOMER' => '',
+                    'COND_GROUP' => '',
+                    'NO_DISCT' => '',
+                    'PLAN_DEL' => '',
+                    'NET_WEIGHT' => '',
+                    'WEIGHTUNIT' => '',
+                    'WEIGHTUNIT_ISO' => '',
+                    'TAXJURCODE' => '',
+                    'CTRL_KEY' => '',
+                    'CONF_CTRL' => '',
+                    'REV_LEV' => '',
+                    'FUND' => '',
+                    'FUNDS_CTR' => '',
+                    'CMMT_ITEM' => '',
+                    'PRICEDATE' => '',
+                    'PRICE_DATE' => '',
+                    'GROSS_WT' => '',
+                    'VOLUME' => '',
+                    'VOLUMEUNIT' => '',
+                    'VOLUMEUNIT_ISO' => '',
+                    'INCOTERMS1' => '',
+                    'INCOTERMS2' => '',
+                    'PRE_VENDOR' => '',
+                    'VEND_PART' => '',
+                    'HL_ITEM' => '',
+                    'GR_TO_DATE' => '',
+                    'SUPP_VENDOR' => '',
+                    'SC_VENDOR' => '',
+                    'KANBAN_IND' => '',
+                    'ERS' => '',
+                    'R_PROMO' => '',
+                    'POINTS' => '',
+                    'POINT_UNIT' => '',
+                    'POINT_UNIT_ISO' => '',
+                    'SEASON' => '',
+                    'SEASON_YR' => '',
+                    'BON_GRP2' => '',
+                    'BON_GRP3' => '',
+                    'SETT_ITEM' => '',
+                    'MINREMLIFE' => '',
+                    'RFQ_NO' => '',
+                    'RFQ_ITEM' => '',
+                    'PREQ_NO' => 'X',
+                    'PREQ_ITEM' => 'X',
+                    'REF_DOC' => '',
+                    'REF_ITEM' => '',
+                    'SI_CAT' => '',
+                    'RET_ITEM' => '',
+                    'AT_RELEV' => '',
+                    'ORDER_REASON' => '',
+                    'BRAS_NBM' => '',
+                    'MATL_USAGE' => '',
+                    'MAT_ORIGIN' => '',
+                    'IN_HOUSE' => '',
+                    'INDUS3' => '',
+                    'INF_INDEX' => '',
+                    'UNTIL_DATE' => '',
+                    'DELIV_COMPL' => $deliveryComplete,
+                    'PART_DELIV' => '',
+                    'SHIP_BLOCKED' => '',
+                    'PREQ_NAME' => 'X',
+                    'PERIOD_IND_EXPIRATION_DATE' => '',
+                    'INT_OBJ_NO' => '',
+                    'PCKG_NO' => 'X',
+                    'BATCH' => '',
+                    'VENDRBATCH' => '',
+                    'CALCTYPE' => '',
+                    'NO_ROUNDING' => '',
+                    'PO_PRICE' => '',
+                    'SUPPL_STLOC' => '',
+                    'SRV_BASED_IV' => '',
+                    'FUNDS_RES' => '',
+                    'RES_ITEM' => '',
+                    'GRANT_NBR' => '',
+                    'FUNC_AREA_LONG' => '',
+                    'ORIG_ACCEPT' => '',
+                    'ALLOC_TBL' => '',
+                    'ALLOC_TBL_ITEM' => '',
+                    'SRC_STOCK_TYPE' => '',
+                    'REASON_REJ' => '',
+                    'CRM_SALES_ORDER_NO' => '',
+                    'CRM_SALES_ORDER_ITEM_NO' => '',
+                    'CRM_REF_SALES_ORDER_NO' => '',
+                    'CRM_REF_SO_ITEM_NO' => '',
+                    'PRIO_URGENCY' => '',
+                    'PRIO_REQUIREMENT' => '',
+                    'REASON_CODE' => '',
+                    'LONG_ITEM_NUMBER' => '',
+                    'EXTERNAL_SORT_NUMBER' => '',
+                    'EXTERNAL_HIERARCHY_TYPE' => '',
+                    'RETENTION_PERCENTAGE' => '',
+                    'DOWNPAY_TYPE' => '',
+                    'DOWNPAY_AMOUNT' => '',
+                    'DOWNPAY_PERCENT' => '',
+                    'DOWNPAY_DUEDATE' => '',
+                    'EXT_RFX_NUMBER' => '',
+                    'EXT_RFX_ITEM' => '',
+                    'EXT_RFX_SYSTEM' => '',
+                    'SRM_CONTRACT_ID' => '',
+                    'SRM_CONTRACT_ITM' => '',
+                    'BUDGET_PERIOD' => '',
+                    'BLOCK_REASON_ID' => '',
+                    'BLOCK_REASON_TEXT' => '',
+                    'SPE_CRM_FKREL' => '',
+                    'DATE_QTY_FIXED' => '',
+                    'GI_BASED_GR' => '',
+                    'SHIPTYPE' => '',
+                    'HANDOVERLOC' => '',
+                    'TC_AUT_DET' => '',
+                    'MANUAL_TC_REASON' => '',
+                    'FISCAL_INCENTIVE' => '',
+                    'FISCAL_INCENTIVE_ID' => '',
+                    'TAX_SUBJECT_ST' => '',
+                    'REQ_SEGMENT' => '',
+                    'STK_SEGMENT' => '',
+                    'SF_TXJCD' => '',
+                    'INCOTERMS2L' => '',
+                    'INCOTERMS3L' => '',
+                    'MATERIAL_LONG' => '',
+                    'EMATERIAL_LONG' => '',
+                    'SERVICEPERFORMER' => '',
+                    'PRODUCTTYPE' => '',
+                    'STARTDATE' => '',
+                    'ENDDATE' => '',
+                    'REQ_SEG_LONG' => '',
+                    'STK_SEG_LONG' => '',
+                    'EXPECTED_VALUE' => '',
+                    'LIMIT_AMOUNT' => '',
+                    'EXT_REF' => '',
+                ];
+
+                $POSCHEDULE = [
+                    "PO_ITEM" => $poDetail[$i]->PO_ITEM, //line
+                    "SCHED_LINE" => '0001',//$quotationDeliveryDate[$i]->SCHED_LINE, // 0001 ++
+                    "DEL_DATCAT_EXT" => "",
+                    "DELIVERY_DATE" =>  date('Ymd',strtotime($poDelivery[$i]->DELIVERY_DATE)),//delivery date
+                    "QUANTITY" =>  (string) $poDelivery[$i]->QUANTITY,// qty
+                    "DELIV_TIME" => "", 
+                    "STAT_DATE" => "",
+                    "PREQ_NO" =>  (string) $poDetail[$i]->PR_NO, // kedua no pr di insert
+                    "PREQ_ITEM" => $poDelivery[$i]->PREQ_ITEM, // line 
+                    "PO_DATE" => "",
+                    "ROUTESCHED" => "",
+                    "MS_DATE" => "",
+                    "MS_TIME" => "",
+                    "LOAD_DATE" => "",
+                    "LOAD_TIME" => "",
+                    "TP_DATE" => "",
+                    "TP_TIME" => "",
+                    "GI_DATE" => "",
+                    "GI_TIME" => "",
+                    "DELETE_IND" => "",
+                    "REQ_CLOSED" => "",
+                    "GR_END_DATE" => "",
+                    "GR_END_TIME" => "",
+                    "COM_QTY" => "",
+                    "COM_DATE" => "",
+                    "GEO_ROUTE" => "",
+                    "HANDOVERDATE" => "",
+                    "HANDOVERTIME" => "",
+                ];
+
+                $POSCHEDULEX = [
+                    "PO_ITEM" => $poDetail[$i]->PO_ITEM,
+                    "SCHED_LINE" => '0001',//$quotationDeliveryDate[$i]->SCHED_LINE,
+                    "PO_ITEMX" => "X",
+                    "SCHED_LINEX" => "X",
+                    "DEL_DATCAT_EXT" => "",
+                    "DELIVERY_DATE" => "X",
+                    "QUANTITY" => "X",
+                    "DELIV_TIME" => "",
+                    "STAT_DATE" => "",
+                    "PREQ_NO" => "X",
+                    "PREQ_ITEM" => "X",
+                    "PO_DATE" => "",
+                    "ROUTESCHED" => "",
+                    "MS_DATE" => "",
+                    "MS_TIME" => "",
+                    "LOAD_DATE" => "",
+                    "LOAD_TIME" => "",
+                    "TP_DATE" => "",
+                    "TP_TIME" => "",
+                    "GI_DATE" => "",
+                    "GI_TIME" => "",
+                    "DELETE_IND" => "",
+                    "REQ_CLOSED" => "",
+                    "GR_END_DATE" => "",
+                    "GR_END_TIME" => "",
+                    "COM_QTY" => "",
+                    "COM_DATE" => "",
+                    "GEO_ROUTE" => "",
+                    "HANDOVERDATE" => "",
+                    "HANDOVERTIME" => "",
+                ];
+
+                $POACCOUNT = [
+                    'PO_ITEM' => $poDetail[$i]->PO_ITEM,//00010
+                    'SERIAL_NO' => '01',//01
+                    'DELETE_IND' => '',
+                    'CREAT_DATE' => '',
+                    'QUANTITY' => '',
+                    'DISTR_PERC' => '',
+                    'NET_VALUE' => '',
+                    'GL_ACCOUNT' =>  $poDetail[$i]->gl_acct_code,// DARI PR 
+                    'BUS_AREA' => '',
+                    'COSTCENTER' =>  $poDetail[$i]->cost_center_code, //DARI PR
+                    'SD_DOC' => '',
+                    'ITM_NUMBER' => '' ,
+                    'SCHED_LINE' =>'' ,
+                    'ASSET_NO' => '',
+                    'SUB_NUMBER' => '',
+                    'ORDERID' => '',
+                    'GR_RCPT' => '',
+                    'UNLOAD_PT' => '',
+                    'CO_AREA' => '',
+                    'COSTOBJECT' => '',
+                    'PROFIT_CTR' => '',
+                    'WBS_ELEMENT' => '',
+                    'NETWORK' => '',
+                    'RL_EST_KEY' => '',
+                    'PART_ACCT' => '',
+                    'CMMT_ITEM' => '',
+                    'REC_IND' => '',
+                    'FUNDS_CTR' => '',
+                    'FUND' => '',
+                    'FUNC_AREA' => '',
+                    'REF_DATE' => '',
+                    'TAX_CODE' => '',
+                    'TAXJURCODE' => '',
+                    'NOND_ITAX' => '',
+                    'ACTTYPE' => '',
+                    'CO_BUSPROC' => '',
+                    'RES_DOC' => '',
+                    'RES_ITEM' => '',
+                    'ACTIVITY' => '',
+                    'GRANT_NBR' => '',
+                    'CMMT_ITEM_LONG' => '',
+                    'FUNC_AREA_LONG'=> '',
+                    'BUDGET_PERIOD' =>'' ,
+                    'FINAL_IND' => '',                    
+                    'FINAL_REASON' => ''
+                ];
+
+                $POACCOUNTX = [
+                    'PO_ITEM' => $quotationDetail[$i]->PO_ITEM,//00010
+                    'PO_ITEMX'  => 'X',
+                    'SERIAL_NO' => '01',//01
+                    'SERIAL_NOX'    => 'X',
+                    'DELETE_IND' => '',
+                    'CREAT_DATE' => '',
+                    'QUANTITY' => '',
+                    'DISTR_PERC' => '',
+                    'NET_VALUE' => '',
+                    'GL_ACCOUNT' =>'X',// DARI PR 
+                    'BUS_AREA' => '',
+                    'COSTCENTER' => 'X', //DARI PR
+                    'SD_DOC' => '',
+                    'ITM_NUMBER' => '' ,
+                    'SCHED_LINE' =>'' ,
+                    'ASSET_NO' => '',
+                    'SUB_NUMBER' => '',
+                    'ORDERID' => '',
+                    'GR_RCPT' => '',
+                    'UNLOAD_PT' => '',
+                    'CO_AREA' => '',
+                    'COSTOBJECT' => '',
+                    'PROFIT_CTR' => '',
+                    'WBS_ELEMENT' => '',
+                    'NETWORK' => '',
+                    'RL_EST_KEY' => '',
+                    'PART_ACCT' => '',
+                    'CMMT_ITEM' => '',
+                    'REC_IND' => '',
+                    'FUNDS_CTR' => '',
+                    'FUND' => '',
+                    'FUNC_AREA' => '',
+                    'REF_DATE' => '',
+                    'TAX_CODE' => '',
+                    'TAXJURCODE' => '',
+                    'NOND_ITAX' => '',
+                    'ACTTYPE' => '',
+                    'CO_BUSPROC' => '',
+                    'RES_DOC' => '',
+                    'RES_ITEM' => '',
+                    'ACTIVITY' => '',
+                    'GRANT_NBR' => '',
+                    'CMMT_ITEM_LONG' => '',
+                    'FUNC_AREA_LONG'=> '',
+                    'BUDGET_PERIOD' =>'' ,
+                    'FINAL_IND' => '',                    
+                    'FINAL_REASON' => ''
+                ];
+                
+                $dataChild = PurchaseOrderServiceChild::where('purchase_order_id', $poHeader->id)->get();
+                for( $k = 0; $k < count($dataChild); $k++ ) {
+                    $createLine = $k + 1;
+                    $POSERVICES = [
+                        "PCKG_NO" => $dataChild[$k]->package_no,//0 = 9X 1; CHILD = 2 DST 
+                        "LINE_NO" =>  '000000000'.$createLine,//0 = 9X 1; CHILD = 2 DST
+                        "EXT_LINE" =>  "",//CHILD = 0 = 9X 1
+                        "OUTL_LEVEL" => "",
+                        "OUTL_NO" => "",    
+                        "OUTL_IND" => "",
+                        "SUBPCKG_NO" => $dataChild[$k]->subpackage_no,// 0 = 9X 2;
+                        "SERVICE" => "", 
+                        "SERV_TYPE" =>"",    
+                        "EDITION" =>"",
+                        "SSC_ITEM" => "",
+                        "EXT_SERV" => "",
+                        "QUANTITY" => $poDetail[$i]->qty,//DARI PR 
+                        "BASE_UOM" => \App\Models\UomConvert::where('uom_2',$poDetail[$i]->unit)->first()->uom_1,//$quotationDetail[$i]->unit,     
+                        "UOM_ISO" => "",    
+                        "OVF_TOL" => "",
+                        "OVF_UNLIM" => "",    
+                        "PRICE_UNIT" => "",
+                        "GR_PRICE" =>  $poDetail[$i]->price,//NET PRICE 
+                        "FROM_LINE" => "",    
+                        "TO_LINE" => "",    
+                        "SHORT_TEXT" => $dataChild[$k]->short_text,// DARI PR
+                        "DISTRIB" =>  "",    
+                        "PERS_NO" =>  "",
+                        "WAGETYPE" => "",    
+                        "PLN_PCKG" => "",
+                        "PLN_LINE" => "",
+                        "CON_PCKG" => "",
+                        "CON_LINE" => "",
+                        "TMP_PCKG" => "",
+                        "TMP_LINE" => "",
+                        "SSC_LIM" => "",    
+                        "LIMIT_LINE" => "",
+                        "TARGET_VAL" => "",
+                        "BASLINE_NO" => "",
+                        "BASIC_LINE" => "",    
+                        "ALTERNAT" => "",    
+                        "BIDDER" => "",    
+                        "SUPP_LINE" => "",    
+                        "OPEN_QTY" => "",    
+                        "INFORM" => "",    
+                        "BLANKET" => "",    
+                        "EVENTUAL" => "",    
+                        "TAX_CODE" => "",    
+                        "TAXJURCODE" => "",  
+                        "PRICE_CHG" => "",    
+                        "MATL_GROUP" => "",    
+                        "DATE" => "", 
+                        "BEGINTIME" => "",                        
+                        "ENDTIME" => "",                        
+                        "EXTPERS_NO" => "", 
+                        "FORMULA" => "",   
+                        "FORM_VAL1" => "",
+                        "FORM_VAL2" => "",
+                        "FORM_VAL3" => "",
+                        "FORM_VAL4" => "",
+                        "FORM_VAL5" => "",
+                        "USERF1_NUM" => "",
+                        "USERF2_NUM" => "",
+                        "USERF1_TXT" => "",    
+                        "USERF2_TXT" => "",
+                        "HI_LINE_NO" => "",
+                        "EXTREFKEY" => "",
+                        "DELETE_IND" => "",    
+                        "PER_SDATE" => "",
+                        "PER_EDATE" => "",
+                        "EXTERNAL_ITEM_ID" => "",
+                        "SERVICE_ITEM_KEY" => "",
+                        "NET_VALUE" =>"",
+                    ];
+                    $params[0]['POSERVICES']['item'][$k] = $POSERVICES;
+                }
+
+                $POSRVACCESSVALUES = [
+                    "PCKG_NO" => $poDetail[$i]->subpackage_no,// 0 = 9X  2 DST 
+                    "LINE_NO" => $poDetail[$i]->subpackage_no,//  0 = 9X  2 DST 
+                    "SERNO_LINE" => '01',//01
+                    "PERCENTAGE" => "100",// 100
+                    "SERIAL_NO" => "01",//01
+                    "QUANTITY" => $poDetail[$i]->qty,
+                    "NET_VALUE" => ""///>
+                ];
+
+            } else if($poDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::SERVICE) {
+                $POITEM = [
+                    'PO_ITEM' => $poDetail[$i]->PO_ITEM,//LINE
+                    'DELETE_IND' => $itemDelete,
+                    'SHORT_TEXT' => '',
+                    'MATERIAL' => '',
+                    'MATERIAL_EXTERNAL' => '',
+                    'MATERIAL_GUID' => '',
+                    'MATERIAL_VERSION' => '',
+                    'EMATERIAL' => '',
+                    'EMATERIAL_EXTERNAL' => '',
+                    'EMATERIAL_GUID' => '',
+                    'EMATERIAL_VERSION' => '',
+                    'PLANT' => '',
+                    'STGE_LOC' => '',
+                    'TRACKINGNO' => '',
+                    'MATL_GROUP' => '',
+                    'INFO_REC' => '',
+                    'VEND_MAT' => '',
+                    'QUANTITY' => $poDetail[$i]->qty,
+                    'PO_UNIT' => '',
+                    'PO_UNIT_ISO' => '',
+                    'ORDERPR_UN' => '',
+                    'ORDERPR_UN_ISO' => '',
+                    'CONV_NUM1' => '',
+                    'CONV_DEN1' => '',
+                    'NET_PRICE' => $poDetail[$i]->price ?? '1000000',
+                    'PRICE_UNIT' => '',
+                    'GR_PR_TIME' => '',
+                    'TAX_CODE' => $poDetail[$i]->tax_code,
+                    'BON_GRP1' => '',
+                    'QUAL_INSP' => '',
+                    'INFO_UPD' => '',
+                    'PRNT_PRICE' => '',
+                    'EST_PRICE' => '',
+                    'REMINDER1' => '',
+                    'REMINDER2' => '',
+                    'REMINDER3' => '',
+                    'OVER_DLV_TOL' => '',
+                    'UNLIMITED_DLV' => '',
+                    'UNDER_DLV_TOL' => '',
+                    'VAL_TYPE' => '',
+                    'NO_MORE_GR' => $deliveryComplete,
+                    'FINAL_INV' => '',
+                    'ITEM_CAT' => '9',
+                    'ACCTASSCAT' => 'K',
+                    'DISTRIB' => '',
+                    'PART_INV' => '',
+                    'GR_IND' => 'X',
+                    'GR_NON_VAL' => '',
+                    'IR_IND' => 'X',
+                    'FREE_ITEM' => '',
+                    'GR_BASEDIV' => 'X',
+                    'ACKN_REQD' => '',
+                    'ACKNOWL_NO' => '',
+                    'AGREEMENT' => '',
+                    'AGMT_ITEM' => '',
+                    'SHIPPING' => '',
+                    'CUSTOMER' => '',
+                    'COND_GROUP' => '',
+                    'NO_DISCT' => '',
+                    'PLAN_DEL' => '',
+                    'NET_WEIGHT' => '',
+                    'WEIGHTUNIT' => '',
+                    'WEIGHTUNIT_ISO' => '',
+                    'TAXJURCODE' => '',
+                    'CTRL_KEY' => '',
+                    'CONF_CTRL' => '',
+                    'REV_LEV' => '',
+                    'FUND' => '',
+                    'FUNDS_CTR' => '',
+                    'CMMT_ITEM' => '',
+                    'PRICEDATE' => '',
+                    'PRICE_DATE' => '',
+                    'GROSS_WT' => '',
+                    'VOLUME' => '',
+                    'VOLUMEUNIT' => '',
+                    'VOLUMEUNIT_ISO' => '',
+                    'INCOTERMS1' => '',
+                    'INCOTERMS2' => '',
+                    'PRE_VENDOR' => '',
+                    'VEND_PART' => '',
+                    'HL_ITEM' => '',
+                    'GR_TO_DATE' => '',
+                    'SUPP_VENDOR' => '',
+                    'SC_VENDOR' => '',
+                    'KANBAN_IND' => '',
+                    'ERS' => '',
+                    'R_PROMO' => '',
+                    'POINTS' => '',
+                    'POINT_UNIT' => '',
+                    'POINT_UNIT_ISO' => '',
+                    'SEASON' => '',
+                    'SEASON_YR' => '',
+                    'BON_GRP2' => '',
+                    'BON_GRP3' => '',
+                    'SETT_ITEM' => '',
+                    'MINREMLIFE' => '',
+                    'RFQ_NO' => '',
+                    'RFQ_ITEM' => '',
+                    'PREQ_NO' => (string) $poDetail[$i]->PR_NO,
+                    'PREQ_ITEM' => $poDetail[$i]->preq_item,
+                    'REF_DOC' => '',
+                    'REF_ITEM' => '',
+                    'SI_CAT' => '',
+                    'RET_ITEM' => '',
+                    'AT_RELEV' => '',
+                    'ORDER_REASON' => '',
+                    'BRAS_NBM' => '',
+                    'MATL_USAGE' => '',
+                    'MAT_ORIGIN' => '',
+                    'IN_HOUSE' => '',
+                    'INDUS3' => '',
+                    'INF_INDEX' => '',
+                    'UNTIL_DATE' => '',
+                    'DELIV_COMPL' => $deliveryComplete,
+                    'PART_DELIV' => '',
+                    'SHIP_BLOCKED' => '',
+                    'PREQ_NAME' =>  strtoupper(split_name($poDetail[$i]->preq_name)),
+                    'PERIOD_IND_EXPIRATION_DATE' => '',
+                    'INT_OBJ_NO' => '',
+                    'PCKG_NO' => $poDetail[$i]->package_no,
+                    'BATCH' => '',
+                    'VENDRBATCH' => '',
+                    'CALCTYPE' => '',
+                    'GRANT_NBR' => '',
+                    'CMMT_ITEM_LONG' => '',
+                    'FUNC_AREA_LONG' => '',
+                    'NO_ROUNDING' => '',
+                    'PO_PRICE' => '',
+                    'SUPPL_STLOC' => '',
+                    'SRV_BASED_IV' => '',
+                    'FUNDS_RES' => '',
+                    'RES_ITEM' => '',
+                    'ORIG_ACCEPT' => '',
+                    'ALLOC_TBL' => '',
+                    'ALLOC_TBL_ITEM' => '',
+                    'SRC_STOCK_TYPE' => '',
+                    'REASON_REJ' => '',
+                    'CRM_SALES_ORDER_NO' => '',
+                    'CRM_SALES_ORDER_ITEM_NO' => '',
+                    'CRM_REF_SALES_ORDER_NO' => '',
+                    'CRM_REF_SO_ITEM_NO' => '',
+                    'PRIO_URGENCY' => '',
+                    'PRIO_REQUIREMENT' => '',
+                    'REASON_CODE' => '',
+                    'FUND_LONG' => '',
+                    'LONG_ITEM_NUMBER' => '',
+                    'EXTERNAL_SORT_NUMBER' => '',
+                    'EXTERNAL_HIERARCHY_TYPE' => '',
+                    'RETENTION_PERCENTAGE' => '',
+                    'DOWNPAY_TYPE' => '',
+                    'DOWNPAY_AMOUNT' => '',
+                    'DOWNPAY_PERCENT' => '',
+                    'DOWNPAY_DUEDATE' => '',
+                    'EXT_RFX_NUMBER' => '',
+                    'EXT_RFX_ITEM' => '',
+                    'EXT_RFX_SYSTEM' => '',
+                    'SRM_CONTRACT_ID' => '',
+                    'SRM_CONTRACT_ITM' => '',
+                    'BUDGET_PERIOD' => '',
+                    'BLOCK_REASON_ID' => '',
+                    'BLOCK_REASON_TEXT' => '',
+                    'SPE_CRM_FKREL' => '',
+                    'DATE_QTY_FIXED' => '',
+                    'GI_BASED_GR' => '',
+                    'SHIPTYPE' => '',
+                    'HANDOVERLOC' => '',
+                    'TC_AUT_DET' => '',
+                    'MANUAL_TC_REASON' => '',
+                    'FISCAL_INCENTIVE' => '',
+                    'FISCAL_INCENTIVE_ID' => '',
+                    'TAX_SUBJECT_ST' => '',
+                    'REQ_SEGMENT' => '',
+                    'STK_SEGMENT' => '',
+                    'SF_TXJCD' => '',
+                    'INCOTERMS2L' => '',
+                    'INCOTERMS3L' => '',
+                    'MATERIAL_LONG' => '',
+                    'EMATERIAL_LONG' => '',
+                    'SERVICEPERFORMER' => '',
+                    'PRODUCTTYPE' => '',
+                    'STARTDATE' => '',
+                    'ENDDATE' => '',
+                    'REQ_SEG_LONG' => '',
+                    'STK_SEG_LONG' => '',
+                    'EXPECTED_VALUE' => '',
+                    'LIMIT_AMOUNT' => '',
+                    'EXT_REF' => '',
+                ];
+
+                $POITEMX = [
+                    'PO_ITEM' => $poDetail[$i]->PO_ITEM,
+                    'PO_ITEMX' => 'X',
+                    'DELETE_IND' => $itemDelete,
+                    'SHORT_TEXT' => '',
+                    'MATERIAL' => '',
+                    'MATERIAL_EXTERNAL' => '',
+                    'MATERIAL_GUID' => '',
+                    'MATERIAL_VERSION' => '',
+                    'EMATERIAL' => '',
+                    'EMATERIAL_EXTERNAL' => '',
+                    'EMATERIAL_GUID' => '',
+                    'EMATERIAL_VERSION' => '',
+                    'PLANT' => '',
+                    'STGE_LOC' => '',
+                    'TRACKINGNO' => '',
+                    'MATL_GROUP' => '',
+                    'INFO_REC' => '',
+                    'VEND_MAT' => '',
+                    'QUANTITY' => '',
+                    'PO_UNIT' => '',
+                    'PO_UNIT_ISO' => '',
+                    'ORDERPR_UN' => '',
+                    'ORDERPR_UN_ISO' => '',
+                    'CONV_NUM1' => '',
+                    'CONV_DEN1' => '',
+                    'NET_PRICE' => 'X',
+                    'PRICE_UNIT' => '',
+                    'GR_PR_TIME' => '',
+                    'TAX_CODE' => 'X',
+                    'BON_GRP1' => '',
+                    'QUAL_INSP' => '',
+                    'INFO_UPD' => '',
+                    'PRNT_PRICE' => '',
+                    'EST_PRICE' => '',
+                    'REMINDER1' => '',
+                    'REMINDER2' => '',
+                    'REMINDER3' => '',
+                    'OVER_DLV_TOL' => '',
+                    'UNLIMITED_DLV' => '',
+                    'UNDER_DLV_TOL' => '',
+                    'VAL_TYPE' => '',
+                    'NO_MORE_GR' => $deliveryComplete,
+                    'FINAL_INV' => '',
+                    'ITEM_CAT' => 'X',
+                    'ACCTASSCAT' => 'X',
+                    'DISTRIB' => '',
+                    'PART_INV' => '',
+                    'GR_IND' => 'X',
+                    'GR_NON_VAL' => '',
+                    'IR_IND' => 'X',
+                    'FREE_ITEM' => '',
+                    'GR_BASEDIV' => 'X',
+                    'ACKN_REQD' => '',
+                    'ACKNOWL_NO' => '',
+                    'AGREEMENT' => '',
+                    'AGMT_ITEM' => '',
+                    'SHIPPING' => '',
+                    'CUSTOMER' => '',
+                    'COND_GROUP' => '',
+                    'NO_DISCT' => '',
+                    'PLAN_DEL' => '',
+                    'NET_WEIGHT' => '',
+                    'WEIGHTUNIT' => '',
+                    'WEIGHTUNIT_ISO' => '',
+                    'TAXJURCODE' => '',
+                    'CTRL_KEY' => '',
+                    'CONF_CTRL' => '',
+                    'REV_LEV' => '',
+                    'FUND' => '',
+                    'FUNDS_CTR' => '',
+                    'CMMT_ITEM' => '',
+                    'PRICEDATE' => '',
+                    'PRICE_DATE' => '',
+                    'GROSS_WT' => '',
+                    'VOLUME' => '',
+                    'VOLUMEUNIT' => '',
+                    'VOLUMEUNIT_ISO' => '',
+                    'INCOTERMS1' => '',
+                    'INCOTERMS2' => '',
+                    'PRE_VENDOR' => '',
+                    'VEND_PART' => '',
+                    'HL_ITEM' => '',
+                    'GR_TO_DATE' => '',
+                    'SUPP_VENDOR' => '',
+                    'SC_VENDOR' => '',
+                    'KANBAN_IND' => '',
+                    'ERS' => '',
+                    'R_PROMO' => '',
+                    'POINTS' => '',
+                    'POINT_UNIT' => '',
+                    'POINT_UNIT_ISO' => '',
+                    'SEASON' => '',
+                    'SEASON_YR' => '',
+                    'BON_GRP2' => '',
+                    'BON_GRP3' => '',
+                    'SETT_ITEM' => '',
+                    'MINREMLIFE' => '',
+                    'RFQ_NO' => '',
+                    'RFQ_ITEM' => '',
+                    'PREQ_NO' => 'X',
+                    'PREQ_ITEM' => 'X',
+                    'REF_DOC' => '',
+                    'REF_ITEM' => '',
+                    'SI_CAT' => '',
+                    'RET_ITEM' => '',
+                    'AT_RELEV' => '',
+                    'ORDER_REASON' => '',
+                    'BRAS_NBM' => '',
+                    'MATL_USAGE' => '',
+                    'MAT_ORIGIN' => '',
+                    'IN_HOUSE' => '',
+                    'INDUS3' => '',
+                    'INF_INDEX' => '',
+                    'UNTIL_DATE' => '',
+                    'DELIV_COMPL' => $deliveryComplete,
+                    'PART_DELIV' => '',
+                    'SHIP_BLOCKED' => '',
+                    'PREQ_NAME' => 'X',
+                    'PERIOD_IND_EXPIRATION_DATE' => '',
+                    'INT_OBJ_NO' => '',
+                    'PCKG_NO' => 'X',
+                    'BATCH' => '',
+                    'VENDRBATCH' => '',
+                    'CALCTYPE' => '',
+                    'NO_ROUNDING' => '',
+                    'PO_PRICE' => '',
+                    'SUPPL_STLOC' => '',
+                    'SRV_BASED_IV' => '',
+                    'FUNDS_RES' => '',
+                    'RES_ITEM' => '',
+                    'GRANT_NBR' => '',
+                    'FUNC_AREA_LONG' => '',
+                    'ORIG_ACCEPT' => '',
+                    'ALLOC_TBL' => '',
+                    'ALLOC_TBL_ITEM' => '',
+                    'SRC_STOCK_TYPE' => '',
+                    'REASON_REJ' => '',
+                    'CRM_SALES_ORDER_NO' => '',
+                    'CRM_SALES_ORDER_ITEM_NO' => '',
+                    'CRM_REF_SALES_ORDER_NO' => '',
+                    'CRM_REF_SO_ITEM_NO' => '',
+                    'PRIO_URGENCY' => '',
+                    'PRIO_REQUIREMENT' => '',
+                    'REASON_CODE' => '',
+                    'LONG_ITEM_NUMBER' => '',
+                    'EXTERNAL_SORT_NUMBER' => '',
+                    'EXTERNAL_HIERARCHY_TYPE' => '',
+                    'RETENTION_PERCENTAGE' => '',
+                    'DOWNPAY_TYPE' => '',
+                    'DOWNPAY_AMOUNT' => '',
+                    'DOWNPAY_PERCENT' => '',
+                    'DOWNPAY_DUEDATE' => '',
+                    'EXT_RFX_NUMBER' => '',
+                    'EXT_RFX_ITEM' => '',
+                    'EXT_RFX_SYSTEM' => '',
+                    'SRM_CONTRACT_ID' => '',
+                    'SRM_CONTRACT_ITM' => '',
+                    'BUDGET_PERIOD' => '',
+                    'BLOCK_REASON_ID' => '',
+                    'BLOCK_REASON_TEXT' => '',
+                    'SPE_CRM_FKREL' => '',
+                    'DATE_QTY_FIXED' => '',
+                    'GI_BASED_GR' => '',
+                    'SHIPTYPE' => '',
+                    'HANDOVERLOC' => '',
+                    'TC_AUT_DET' => '',
+                    'MANUAL_TC_REASON' => '',
+                    'FISCAL_INCENTIVE' => '',
+                    'FISCAL_INCENTIVE_ID' => '',
+                    'TAX_SUBJECT_ST' => '',
+                    'REQ_SEGMENT' => '',
+                    'STK_SEGMENT' => '',
+                    'SF_TXJCD' => '',
+                    'INCOTERMS2L' => '',
+                    'INCOTERMS3L' => '',
+                    'MATERIAL_LONG' => '',
+                    'EMATERIAL_LONG' => '',
+                    'SERVICEPERFORMER' => '',
+                    'PRODUCTTYPE' => '',
+                    'STARTDATE' => '',
+                    'ENDDATE' => '',
+                    'REQ_SEG_LONG' => '',
+                    'STK_SEG_LONG' => '',
+                    'EXPECTED_VALUE' => '',
+                    'LIMIT_AMOUNT' => '',
+                    'EXT_REF' => '',
+                ];
+
+                $POSCHEDULE = [
+                    "PO_ITEM" => $poDetail[$i]->PO_ITEM, //line
+                    "SCHED_LINE" => '0001',//$quotationDeliveryDate[$i]->SCHED_LINE, // 0001 ++
+                    "DEL_DATCAT_EXT" => "",
+                    "DELIVERY_DATE" => date('Ymd',strtotime($poDelivery[$i]->delivery_date)),//delivery date
+                    "QUANTITY" =>  (string) $poDelivery[$i]->QUANTITY,// qty
+                    "DELIV_TIME" => "", 
+                    "STAT_DATE" => "",
+                    "PREQ_NO" =>  (string) $poDetail[$i]->PR_NO, // kedua no pr di insert
+                    "PREQ_ITEM" => $poDelivery[$i]->preq_item, // line 
+                    "PO_DATE" => "",
+                    "ROUTESCHED" => "",
+                    "MS_DATE" => "",
+                    "MS_TIME" => "",
+                    "LOAD_DATE" => "",
+                    "LOAD_TIME" => "",
+                    "TP_DATE" => "",
+                    "TP_TIME" => "",
+                    "GI_DATE" => "",
+                    "GI_TIME" => "",
+                    "DELETE_IND" => "",
+                    "REQ_CLOSED" => "",
+                    "GR_END_DATE" => "",
+                    "GR_END_TIME" => "",
+                    "COM_QTY" => "",
+                    "COM_DATE" => "",
+                    "GEO_ROUTE" => "",
+                    "HANDOVERDATE" => "",
+                    "HANDOVERTIME" => "",
+                ];
+
+                $POSCHEDULEX = [
+                    "PO_ITEM" => $poDetail[$i]->PO_ITEM,
+                    "SCHED_LINE" => '0001',//$quotationDeliveryDate[$i]->SCHED_LINE,
+                    "PO_ITEMX" => "X",
+                    "SCHED_LINEX" => "X",
+                    "DEL_DATCAT_EXT" => "",
+                    "DELIVERY_DATE" => "X",
+                    "QUANTITY" => "X",
+                    "DELIV_TIME" => "",
+                    "STAT_DATE" => "",
+                    "PREQ_NO" => "X",
+                    "PREQ_ITEM" => "X",
+                    "PO_DATE" => "",
+                    "ROUTESCHED" => "",
+                    "MS_DATE" => "",
+                    "MS_TIME" => "",
+                    "LOAD_DATE" => "",
+                    "LOAD_TIME" => "",
+                    "TP_DATE" => "",
+                    "TP_TIME" => "",
+                    "GI_DATE" => "",
+                    "GI_TIME" => "",
+                    "DELETE_IND" => "",
+                    "REQ_CLOSED" => "",
+                    "GR_END_DATE" => "",
+                    "GR_END_TIME" => "",
+                    "COM_QTY" => "",
+                    "COM_DATE" => "",
+                    "GEO_ROUTE" => "",
+                    "HANDOVERDATE" => "",
+                    "HANDOVERTIME" => "",
+                ];
+
+                $POACCOUNT = [
+                    'PO_ITEM' => $poDetail[$i]->PO_ITEM,//00010
+                    'SERIAL_NO' => '01',//01
+                    'DELETE_IND' => '',
+                    'CREAT_DATE' => '',
+                    'QUANTITY' => '',
+                    'DISTR_PERC' => '',
+                    'NET_VALUE' => '',
+                    'GL_ACCOUNT' => $poDetail[$i]->gl_acct_code,// DARI PR 
+                    'BUS_AREA' => '',
+                    'COSTCENTER' => $poDetail[$i]->cost_center_code, //DARI PR
+                    'SD_DOC' => '',
+                    'ITM_NUMBER' => '' ,
+                    'SCHED_LINE' =>'' ,
+                    'ASSET_NO' => '',
+                    'SUB_NUMBER' => '',
+                    'ORDERID' => '',
+                    'GR_RCPT' => '',
+                    'UNLOAD_PT' => '',
+                    'CO_AREA' => '',
+                    'COSTOBJECT' => '',
+                    'PROFIT_CTR' => '',
+                    'WBS_ELEMENT' => '',
+                    'NETWORK' => '',
+                    'RL_EST_KEY' => '',
+                    'PART_ACCT' => '',
+                    'CMMT_ITEM' => '',
+                    'REC_IND' => '',
+                    'FUNDS_CTR' => '',
+                    'FUND' => '',
+                    'FUNC_AREA' => '',
+                    'REF_DATE' => '',
+                    'TAX_CODE' => '',
+                    'TAXJURCODE' => '',
+                    'NOND_ITAX' => '',
+                    'ACTTYPE' => '',
+                    'CO_BUSPROC' => '',
+                    'RES_DOC' => '',
+                    'RES_ITEM' => '',
+                    'ACTIVITY' => '',
+                    'GRANT_NBR' => '',
+                    'CMMT_ITEM_LONG' => '',
+                    'FUNC_AREA_LONG'=> '',
+                    'BUDGET_PERIOD' =>'' ,
+                    'FINAL_IND' => '',                    
+                    'FINAL_REASON' => ''
+                ];
+
+                $POACCOUNTX = [
+                    'PO_ITEM' => $poDetail[$i]->PO_ITEM,//00010
+                    'PO_ITEMX'  => 'X',
+                    'SERIAL_NO' => '',//01
+                    'SERIAL_NOX'    => 'X',
+                    'DELETE_IND' => '',
+                    'CREAT_DATE' => '',
+                    'QUANTITY' => '',
+                    'DISTR_PERC' => '',
+                    'NET_VALUE' => '',
+                    'GL_ACCOUNT' => 'X',// DARI PR 
+                    'BUS_AREA' => '',
+                    'COSTCENTER' => 'X', //DARI PR
+                    'SD_DOC' => '',
+                    'ITM_NUMBER' => '' ,
+                    'SCHED_LINE' =>'' ,
+                    'ASSET_NO' => '',
+                    'SUB_NUMBER' => '',
+                    'ORDERID' => '',
+                    'GR_RCPT' => '',
+                    'UNLOAD_PT' => '',
+                    'CO_AREA' => '',
+                    'COSTOBJECT' => '',
+                    'PROFIT_CTR' => '',
+                    'WBS_ELEMENT' => '',
+                    'NETWORK' => '',
+                    'RL_EST_KEY' => '',
+                    'PART_ACCT' => '',
+                    'CMMT_ITEM' => '',
+                    'REC_IND' => '',
+                    'FUNDS_CTR' => '',
+                    'FUND' => '',
+                    'FUNC_AREA' => '',
+                    'REF_DATE' => '',
+                    'TAX_CODE' => '',
+                    'TAXJURCODE' => '',
+                    'NOND_ITAX' => '',
+                    'ACTTYPE' => '',
+                    'CO_BUSPROC' => '',
+                    'RES_DOC' => '',
+                    'RES_ITEM' => '',
+                    'ACTIVITY' => '',
+                    'GRANT_NBR' => '',
+                    'CMMT_ITEM_LONG' => '',
+                    'FUNC_AREA_LONG'=> '',
+                    'BUDGET_PERIOD' =>'' ,
+                    'FINAL_IND' => '',                    
+                    'FINAL_REASON' => ''
+                ];
+
+                $dataChild = \App\Models\PurchaseOrderServiceChild::where('purchase_order_id', $poHeader->id)->get();
+                for( $k = 0; $k < count($dataChild); $k++ ) {
+                    $createLine = $k + 1;
+                    $POSERVICES = [
+                        "PCKG_NO" => $dataChild[$k]->package_no,//0 = 9X 1; CHILD = 2 DST 
+                        "LINE_NO" =>  '000000000'.$createLine,//0 = 9X 1; CHILD = 2 DST
+                        "EXT_LINE" =>  '000000000'.$createLine,//CHILD = 0 = 9X 1
+                        "OUTL_LEVEL" => "",
+                        "OUTL_NO" => "",    
+                        "OUTL_IND" => "",
+                        "SUBPCKG_NO" => $dataChild[$k]->subpackage_no,// 0 = 9X 2;
+                        "SERVICE" => "", 
+                        "SERV_TYPE" =>"",    
+                        "EDITION" =>"",
+                        "SSC_ITEM" => "",
+                        "EXT_SERV" => "",
+                        "QUANTITY" => $poDetail[$i]->qty,//DARI PR 
+                        "BASE_UOM" =>  \App\Models\UomConvert::where('uom_2',$poDetail[$i]->unit)->first()->uom_1,//$poDetail[$i]->unit,     
+                        "UOM_ISO" => "",    
+                        "OVF_TOL" => "",
+                        "OVF_UNLIM" => "",    
+                        "PRICE_UNIT" => "",
+                        "GR_PRICE" =>  $poDetail[$i]->price,//NET PRICE 
+                        "FROM_LINE" => "",    
+                        "TO_LINE" => "",    
+                        "SHORT_TEXT" => $dataChild[$k]->short_text,// DARI PR
+                        "DISTRIB" =>  "",    
+                        "PERS_NO" =>  "",
+                        "WAGETYPE" => "",    
+                        "PLN_PCKG" => "",
+                        "PLN_LINE" => "",
+                        "CON_PCKG" => "",
+                        "CON_LINE" => "",
+                        "TMP_PCKG" => "",
+                        "TMP_LINE" => "",
+                        "SSC_LIM" => "",    
+                        "LIMIT_LINE" => "",
+                        "TARGET_VAL" => "",
+                        "BASLINE_NO" => "",
+                        "BASIC_LINE" => "",    
+                        "ALTERNAT" => "",    
+                        "BIDDER" => "",    
+                        "SUPP_LINE" => "",    
+                        "OPEN_QTY" => "",    
+                        "INFORM" => "",    
+                        "BLANKET" => "",    
+                        "EVENTUAL" => "",    
+                        "TAX_CODE" => "",    
+                        "TAXJURCODE" => "",  
+                        "PRICE_CHG" => "",    
+                        "MATL_GROUP" => "",    
+                        "DATE" => "", 
+                        "BEGINTIME" => "",                        
+                        "ENDTIME" => "",                        
+                        "EXTPERS_NO" => "", 
+                        "FORMULA" => "",   
+                        "FORM_VAL1" => "",
+                        "FORM_VAL2" => "",
+                        "FORM_VAL3" => "",
+                        "FORM_VAL4" => "",
+                        "FORM_VAL5" => "",
+                        "USERF1_NUM" => "",
+                        "USERF2_NUM" => "",
+                        "USERF1_TXT" => "",    
+                        "USERF2_TXT" => "",
+                        "HI_LINE_NO" => "",
+                        "EXTREFKEY" => "",
+                        "DELETE_IND" => "",    
+                        "PER_SDATE" => "",
+                        "PER_EDATE" => "",
+                        "EXTERNAL_ITEM_ID" => "",
+                        "SERVICE_ITEM_KEY" => "",
+                        "NET_VALUE" =>"",
+                    ];
+                    $params[0]['POSERVICES']['item'][$k] = $POSERVICES;
+                }
+
+                $POSRVACCESSVALUES = [
+                    "PCKG_NO" => $poDetail[$i]->subpackage_no,// 0 = 9X  2 DST 
+                    "LINE_NO" => $poDetail[$i]->subpackage_no,//  0 = 9X  2 DST 
+                    "SERNO_LINE" => '01',//01
+                    "PERCENTAGE" => "100",// 100
+                    "SERIAL_NO" => "01",//01
+                    "QUANTITY" => $poDetail[$i]->qty,
+                    "NET_VALUE" => ""///>
+                ];
+            }
+
+            if( $poDetail[$i]->item_category == \App\Models\PurchaseOrdersDetail::Material 
+                OR $poDetail[$i]->item_category == \App\Models\PurchaseOrdersDetail::MaterialText) {
+
+                $params[0]['POITEM']['item'][$i] = $POITEM;
+                $params[0]['POITEMX']['item'][$i] = $POITEMX;
+                $params[0]['POSCHEDULE']['item'][$i] = $POSCHEDULE;
+                $params[0]['POSCHEDULEX']['item'][$i] = $POSCHEDULEX;
+                // $params[0]['POACCOUNT']['item'][$i] = $POACCOUNT;
+                // $params[0]['POACCOUNTX']['item'][$i] = $POACCOUNTX;
+                // $params[0]['POSERVICES']['item'][$i] = $POSERVICES;
+                // $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
+            }  elseif(  $poHeader->doc_type == 'Z104' && $poDetail[$i]->item_category == \App\Models\PurchaseOrdersDetail::SERVICE)  {
+                $params[0]['POITEM']['item'][$i] = $POITEM;
+                $params[0]['POITEMX']['item'][$i] = $POITEMX;
+                $params[0]['POSCHEDULE']['item'][$i] = $POSCHEDULE;
+                $params[0]['POSCHEDULEX']['item'][$i] = $POSCHEDULEX;
+                $params[0]['POACCOUNT']['item'][$i] = $POACCOUNT;
+                $params[0]['POACCOUNTX']['item'][$i] = $POACCOUNTX;
+                $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
+            } elseif( $poDetail[$i]->item_category == \App\Models\PurchaseOrdersDetail::SERVICE ) {
+                $params[0]['POITEM']['item'][$i] = $POITEM;
+                $params[0]['POITEMX']['item'][$i] = $POITEMX;
+                $params[0]['POSCHEDULE']['item'][$i] = $POSCHEDULE;
+                $params[0]['POSCHEDULEX']['item'][$i] = $POSCHEDULEX;
+                $params[0]['POACCOUNT']['item'][$i] = $POACCOUNT;
+                $params[0]['POACCOUNTX']['item'][$i] = $POACCOUNTX;
+                $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
+            }
         
         }
         $params[0]['PURCHASEORDER'] = $poHeader->PO_NUMBER;
@@ -3742,8 +5256,10 @@ class SapHelper {
             "SYSTEM" => "0"
         ];
         $params[0]['RETURN'] = $RETURN;
+        // dd($params);
       
         $result = $client->__soapCall('ZFM_WS_POCHANGE', $params, NULL, $header);
+        // dd($result);
         return $result;
     }
 
@@ -3760,6 +5276,13 @@ class SapHelper {
         $docType = $purchaseOrder->doc_type;
 
         $wsdl = public_path() . "/xml/zbn_wms_do.xml";
+        $soapFile = \sapHelp::getSoapXml('BILLING');
+        if( $soapFile->is_active_env == \App\Models\BaseModel::Development ) {
+            $wsdl = public_path()."/xml/zbn_wms_do.xml";
+        } else {
+            $wsdl = public_path() ."/xml/". $soapFile->xml_file;
+        }
+        
         
         $username = "IT_02";
         $password = "ademsari";
@@ -3798,13 +5321,13 @@ class SapHelper {
             'INVOICE_IND' => 'X',
             'DOC_TYPE' => 'RE',
             'DOC_DATE' => $billing->tgl_invoice,
-            'PSTNG_DATE' => date('Y-06-d'),
-            'REF_DOC_NO' => $billing->invoice_no,
+            'PSTNG_DATE' => date('Y-m-d'),
+            'REF_DOC_NO' => $billing->no_invoice,
             'COMP_CODE' => $compCode,
             'DIFF_INV' => '',
             'CURRENCY' => $billing->currency,
             'CURRENCY_ISO' => '',
-            'EXCH_RATE' =>'',// $billing->exchange_rate,
+            'EXCH_RATE' =>$billing->exchange_rate,// $billing->exchange_rate,
             'EXCH_RATE_V' => '',
             'GROSS_AMOUNT' => $billing->nominal_inv_after_ppn,
             'CALC_TAX_IND' => $billing->ppn == 'V1' ? 'X' : '',
@@ -3870,6 +5393,11 @@ class SapHelper {
             $i = $key + 1;
             $invDocItem = ('0000'.(0+($i*10)));
             // like 1 0 9x = sheetno di isi
+            $sheetNo = '';
+            if( $rows->item_category == \App\Models\PurchaseOrdersDetail::SERVICE ) {
+                $sheetNo = $rows->reference_document;
+            }
+
             $ITEMDATA = [
                 'INVOICE_DOC_ITEM' => $invDocItem,//$invDocItem,//'000010',20
                 'PO_NUMBER' => $rows->po_no,//'3010002673',
@@ -3890,7 +5418,7 @@ class SapHelper {
                 'COND_TYPE' => '',
                 'COND_ST_NO' => '',
                 'COND_COUNT' => '',
-                'SHEET_NO' => '',//ketika po service $rows->reference_document
+                'SHEET_NO' => $sheetNo,//ketika po service $rows->reference_document
                 'ITEM_TEXT' => '',
                 'FINAL_INV' => '',
                 'SHEET_ITEM' => '',
@@ -3907,10 +5435,10 @@ class SapHelper {
                 'COND_COUNT_LONG' => '',
                 'DEL_CREATE_DATE' => '',
             ];
-            $params[0]['ITEMDATA'][$key] = $ITEMDATA;
+            $params[0]['ITEMDATA']['item'][$key] = $ITEMDATA;
         }
 
-        if( $billing->calculate_tax == 0 ) {
+        if( $billing->calculate_tax == \App\Models\Vendor\Billing::NoCalculate ) {
             $TAXDATA = [
                 'TAX_CODE' => $billing->ppn,
                 'TAX_AMOUNT' => $billing->tax_amount,
@@ -3920,7 +5448,7 @@ class SapHelper {
                 'TAXJURCODE_DEEP'=>'',
                 'ITEMNO_TAX' => '',
                 'TAX_AMOUNT_LOCAL' => '',
-                'TAX_BASE_AMOUNT_LOCAL '=>'',
+                'TAX_BASE_AMOUNT_LOCAL '=>'', 
             ];
             
         }
@@ -3928,11 +5456,11 @@ class SapHelper {
         if( $billing->tipe_pph != '' ) {
             $taxType = \App\Models\MasterPph::getPphById($billing->tipe_pph);
             $WITHTAXDATA = [
-                'SPLIT_KEY' => '00001',//klo tipe pa 0,1
+                'SPLIT_KEY' => '000001',//klo tipe pa 0,1
                 'WI_TAX_TYPE' => $taxType->withholding_tax_type,//dari master pph
                 'WI_TAX_CODE' => $taxType->withholding_tax_code,//dari master pph
                 'WI_TAX_BASE' => $billing->base_pph,//
-                'WI_TAX_AMT' => $billing->nominal_pph,
+                'WI_TAX_AMT' => $billing->jumlah_pph,
                 'WI_TAX_WITHHELD_AMT' => ''
             ];
         }
@@ -3956,24 +5484,28 @@ class SapHelper {
 
         $params[0]['HEADERDATA'] = $HEADER;
         $params[0]['TAXDATA'] = $TAXDATA;
-        $params[0]['WITHTAXDATA'] = $WITHTAXDATA;
+        $params[0]['WITHTAXDATA']['item'] = $WITHTAXDATA;
         $params[0]['RETURN'] = $RETURN;
+        // dd($params);
         $result = $client->__soapCall('ZFM_WS_MIRO', $params, null, $header);
         if( $result->INVOICEDOCNUMBER != '' ) {
-            $billing->document_no = $result->INVOICEDOCNUMBER;
-            $billing->fiscal_year = $result->FISCALYEAR;
-            $billing->status      = \App\Models\Vendor\Billing::ApprovedSpv;
+            $billing->document_no       = $result->INVOICEDOCNUMBER;
+            $billing->fiscal_year       = $result->FISCALYEAR;
+            $billing->status            = \App\Models\Vendor\Billing::Submitted;
+            $billing->submitted_date    =  date('Y-m-d H:i:s');
+            $billing->posting_date      =  date('Y-m-d');
             $billing->update();
-            return true;
+            return 'YES';
         } else {
             \App\Models\employeeApps\SapLogSoap::create([
                 'log_type' => 'BILLING',
-                'log_type_id' => $quotation->id,
+                'log_type_id' => $billing->id,
                 'log_params_employee' => \json_encode($params),
                 'log_response_sap' => \json_encode($result),
                 'status' => 'FAILED',
             ]); 
-            return false;
+            dd($result);
+            return 'NO';
         }
     }
 }

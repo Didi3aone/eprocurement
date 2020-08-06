@@ -54,26 +54,50 @@
                             <tr>
                                 <th>Material</th>
                                 <th>Unit</th>
-                                <th>Qty Old</th>
-                                <th>Qty New</th>
-                                <th>Price Old</th>
-                                <th>Price New</th>
+                                <th>Qty</th>
+                                <th>Price</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($purchaseOrder->orderDetail as $key => $value)
                             <tr>
                                 <td>{{ $value->material_id." - ".$value->description }}</td>
-                                <td>{{ $value->unit }}</td>
-                                <td>{{ $value->getChangeDetail['qty_old'] }}</td>
-                                <td>{{ $value->getChangeDetail['qty_change'] }}</td>
-                                <td>{{ $value->getChangeDetail['price_old'] }}</td>
-                                <td>{{ $value->getChangeDetail['price_change'] }}</td>
+                                <td>{{ \App\Models\UomConvert::where('uom_1', $value->unit)->first()->uom_2 }}</td>
+                                <td>{{ $value->qty }}</td>
+                                <td>{{ $value->price }}</td>
                             </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
+
+                {{-- <div class="card-body">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Material</th>
+                                <th>Unit</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead> 
+                        <tbody>
+                            @foreach($history->detail as $key => $value)
+                            @php
+                                dd($value);
+                            @endphp
+                            <tr>
+                                <td>{{ \App\Models\PurchaseOrdersDetail::where('id',$value->po_detail_id)->material_id ??  
+                                    \App\Models\PurchaseOrdersDetail::where('id',$value->po_detail_id)->short_text }}</td>
+                                <td>{{ $value->unit }}</td>
+                                <td>{{ $value->qty }}</td>
+                                <td>{{ $value->price }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div> --}}
+
                 <div class="card-body">
                     <div class="row" style="margin-top: 20px">
                         <div class="col-lg-12">

@@ -147,14 +147,7 @@
     $("#danger-alert").fadeTo(2000, 500).slideUp(500, function(){
         $("#danger-alert").slideUp(500);
     });
-
-    // $('#datatables-run').DataTable({
-    //     dom: 'Bfrtip',
-    //     buttons: [
-    //         'copy', 'csv', 'excel', 'pdf', 'print'
-    //     ]
-    // });
-
+    
     $('#datatables-run').DataTable({
         dom: 'Bfrtip',
         // order: [[0, 'desc']],
@@ -184,23 +177,23 @@
                 render: function(data) {
                     console.log(data)
                     let html = ''
-                    const show_url = '{{ url('admin/material/') }}' + data.id
-                    const edit_url = '{{ url('admin/material/') }}' + data.id + '/edit'
+                    const show_url = '{{ url('admin/material/') }}' +'/'+data.id
+                    const edit_url = '{{ url('admin/material/') }}' +'/'+data.id + '/edit'
 
                     @can('material_show')
-                    html = `<a class="btn btn-xs btn-primary" href="${show_url}">
+                    html += `<a class="btn btn-xs btn-primary" href="${show_url}">
                             {{ trans('global.view') }}
                         </a>`
                     @endcan
 
                     @can('material_edit')
-                    html = `<a class="btn btn-xs btn-info" href="${edit_url}">
+                    html += `<a class="btn btn-xs btn-info" href="${edit_url}">
                             {{ trans('global.edit') }}
                         </a>`
                     @endcan
 
                     @can('material_delete')
-                    html = `<button class="btn btn-xs btn-danger" onclick="deleteConfirmation(${data.id})">Delete</button>`
+                    html += `<button class="btn btn-xs btn-danger" onclick="deleteConfirmation(${data.id})">Delete</button>`
                     @endcan
 
                     return html
@@ -219,11 +212,12 @@
             cancelButtonText: "No, cancel!",
             reverseButtons: !0
         }).then(function (e) {
-            if (e.value === true) {
+            console.log(e)
+            if (e == true) {
                 var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
                 $.ajax({
                     type: 'POST',
-                    url: "{{ url('admin.material.destroy') }}"+id ,
+                    url: "{{ url('/admin/material/destroy/')"+id ,
                     data: {_token: CSRF_TOKEN},
                     dataType: 'JSON',
                     success: function (results) {

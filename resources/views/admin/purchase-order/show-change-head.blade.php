@@ -48,7 +48,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="card-body">
+                {{-- <div class="card-body">
                     <table class="table table-bordered table-striped">
                         <thead>
                             <tr>
@@ -64,16 +64,16 @@
                             @foreach($purchaseOrder->orderDetail as $key => $value)
                             <tr>
                                 <td>{{ $value->material_id." - ".$value->description }}</td>
-                                <td>{{ $value->unit }}</td>
-                                <td>{{ $value->getChangeDetail['qty_old'] }}</td>
-                                <td>{{ $value->getChangeDetail['qty_change'] }}</td>
-                                <td>{{ $value->getChangeDetail['price_old'] }}</td>
-                                <td>{{ $value->getChangeDetail['price_change'] }}</td>
+                                <td>{{ \App\Models\UomConvert::where('uom_1', $value->unit)->first()->uom_2 }}</td>
+                                <td>{{ $value->qty_old }}</td>
+                                <td>{{ $value->qty }}</td>
+                                <td>{{ $value->original_price }}</td>
+                                <td>{{ $value->price }}</td>
                             </tr>
                             @endforeach
                         </tbody>
                     </table>
-                </div>
+                </div> --}}
                 <div class="card-body">
                     <div class="row" style="margin-top: 20px">
                         <div class="col-lg-12">
