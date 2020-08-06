@@ -21,6 +21,7 @@ class VendorTaxNumbersExport implements FromCollection, WithHeadings, WithTitle
                     'vendor_tax_numbers.tax_numbers'
                 )
                 ->join('vendors', 'vendors.id', 'vendor_tax_numbers.vendor_id')
+                ->where('vendors.is_export', 0)
                 ->get();
         return $data;
     }

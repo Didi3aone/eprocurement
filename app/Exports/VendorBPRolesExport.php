@@ -20,6 +20,7 @@ class VendorBPRolesExport implements FromCollection, WithHeadings, WithTitle
                     'vendor_bp_roles.bp_role'
                 )
                 ->join('vendors', 'vendors.id', 'vendor_bp_roles.vendor_id')
+                ->where('vendors.is_export', 0)
                 ->get();
         return $data;
     }

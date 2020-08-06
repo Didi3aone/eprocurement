@@ -193,7 +193,8 @@ class LoginController extends Controller
         $post['city'] = $city;
         $post['postal_code'] = $postalCode;
         $post['country'] = $country;
-        $post['company_web'] = $company_web;
+        if ($company_web)
+            $post['company_web'] = $company_web;
         $post['street'] = $street;
         $post['street_2'] = $street_2;
         $post['street_3'] = $street_3;

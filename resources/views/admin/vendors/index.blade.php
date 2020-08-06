@@ -42,6 +42,9 @@
                                     Status
                                 </th>
                                 <th>
+                                    Vendor Code
+                                </th>
+                                <th>
                                     {{ trans('cruds.vendors.fields.name') }}
                                 </th>
                                 <th>
@@ -73,6 +76,7 @@
                                     <td style="display: none;">{{ $vendor->status_ }}</td>
                                     <td>{{ $vendor->id }}</td>
                                     <td>{!! $vendor->status_str !!}</td>
+                                    <td>{{ $vendor->code }}</td>
                                     <td>{{ $vendor->name }}</td>
                                     <td>{{ $vendor->email }}</td>
                                     <td>{{ $vendor->vendor_bp_group_code }}</td>

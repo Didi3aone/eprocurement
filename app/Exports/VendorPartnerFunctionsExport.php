@@ -21,6 +21,7 @@ class VendorPartnerFunctionsExport implements FromCollection, WithHeadings, With
                     'vendor_partner_functions.partner_functions'
                 )
                 ->join('vendors', 'vendors.id', 'vendor_partner_functions.vendor_id')
+                ->where('vendors.is_export', 0)
                 ->get();
         return $data;
     }

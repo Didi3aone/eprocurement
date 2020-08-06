@@ -21,6 +21,7 @@ class VendorIdentificationNumbersExport implements FromCollection, WithHeadings,
                     'vendor_identification_numbers.identification_numbers'
                 )
                 ->join('vendors', 'vendors.id', 'vendor_identification_numbers.vendor_id')
+                ->where('vendors.is_export', 0)
                 ->get();
         return $data;
     }
