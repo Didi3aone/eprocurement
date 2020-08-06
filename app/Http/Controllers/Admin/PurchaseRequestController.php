@@ -62,6 +62,7 @@ class PurchaseRequestController extends Controller
             'purchase_requests.id as uuid'
         )
             ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
+            ->whereNotNull('purchase_requests.PR_NO')
             ->where('purchase_requests_details.qty', '>', 0)
             ->where('purchase_requests_details.is_validate', PurchaseRequestsDetail::YesValidate)
             ->whereIn('purchase_requests_details.purchasing_group_code', $userMapping)
