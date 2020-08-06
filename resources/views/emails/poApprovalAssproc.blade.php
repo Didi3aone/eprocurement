@@ -25,8 +25,8 @@
 			<p style="font-size: 13px;">
                 No Doc  : {{  $quotation->po_no }} <br>
                 Terms of payment : {{  $quotation->getTerm['own_explanation'] ?? ''}} <br>
-				Terms of payment Desc : {{ $quotation->notes ?? '' }}
-				Supplier : {{ $quotation->getVendor['name'] ?? ''}}
+				Terms of payment Desc : {{ $quotation->notes ?? '' }} <br>
+				Supplier : {{ $quotation->getVendor['name'] ?? ''}} <br>
 			</p>
 
 			<div style="border-top: 1px dashed #ddd; border-bottom:1px dashed #ddd">
@@ -55,7 +55,7 @@
 						</th>
                         <th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
                             <div>
-								Price 	
+								Currency 	
 							</div>
 						</th>
 						<th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
@@ -66,7 +66,13 @@
 					</tr>
 					</thead>
 					<tbody>
+					@php
+						$totals = 0;
+					@endphp
 					@foreach($quotation->detail as $key => $value)
+					@php
+						$totals += \removeComma($value->price) * $value->qty;
+					@endphp
 					<tr>
 						<td style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
                             <div>
@@ -95,12 +101,23 @@
 						</td>
                         <td style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
                             <div>
-								{{ \toDecimal($value->price) }} 	
+								{{ toDecimal(\removeComma($value->price) * $value->qty) }} 	
 							</div>
 						</td>
 					</tr>
 					@endforeach
 					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="5" style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+							</td>
+							<td style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+								<div>
+									<b>{{ \toDecimal($totals) }}</b>
+								</div>
+							</td>
+						</tr>
+					</tfoot>
 				</table>
 			</div>
             <p style="font-size: 13px;">
