@@ -22,6 +22,7 @@ class VendorPurchasingOrganizationExport implements FromCollection, WithHeadings
                     'vendor_purchasing_organization.term_of_payment_key',
                 )
                 ->join('vendors', 'vendors.id', 'vendor_purchasing_organization.vendor_id')
+                ->where('vendors.is_export', 0)
                 ->get();
         return $data;
     }

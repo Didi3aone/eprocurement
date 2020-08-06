@@ -110,11 +110,10 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-xs-12">
-                                    <input class="form-control" type="text" name="company_web" required placeholder="Company Web">
+                                    <input class="form-control" type="text" name="company_web" placeholder="Company Web">
                                 </div>
                             </div>
                         </div>
-                        
                         <div class="col-lg-6">
                             <!-- <div class="form-group">
                                 <div class="col-xs-12">
@@ -224,7 +223,6 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </form>
             </div>

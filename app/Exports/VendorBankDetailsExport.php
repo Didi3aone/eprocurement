@@ -25,6 +25,7 @@ class VendorBankDetailsExport implements FromCollection, WithHeadings, WithTitle
                     'vendor_bank_details.account_holder_name'
                 )
                 ->join('vendors', 'vendors.id', 'vendor_bank_details.vendor_id')
+                ->where('vendors.is_export', 0)
                 ->get();
         return $data;
     }

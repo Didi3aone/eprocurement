@@ -73,7 +73,20 @@ class VendorController extends Controller
 
     public function download()
     {
-        return (new VendorExport())->download('Data-Vendor-'.date('YmdHis').'.xlsx');
+        try {
+            \DB::beginTransaction();
+
+            $export = (new VendorExport())->download('Data-Vendor-'.date('YmdHis').'.xlsx');
+
+            UserVendors::where('is_export', 0)->update(['is_export' => 1]);
+
+            \DB::commit();
+            return $export;
+        } catch (Exception $e) {
+            \DB::rollback();
+            \Log::error($e->getMessage());
+            return redirect()->route('admin.vendors')->with('error', 'Sorry! Something is wrong with this process!');
+        }
     }
 
     public function import(Request $request)
@@ -466,7 +479,15 @@ class VendorController extends Controller
         $vendors = UserVendors::findOrFail($id);
         $terms_of_payment = MasterVendorTermsOfPayment::get();
 
-        return view('admin.vendors.edit', compact('vendors','terms_of_payment'));
+        $vendor_title = MasterVendorTitle::get();
+        $vendor_bank_keys = MasterVendorBankKeys::get();
+        $vendor_bank_country = MasterVendorBankCountry::get();
+        $vendor_bp_group = MasterVendorBPGroup::get();
+        $vendor_account_gl = MasterVendorAccountGL::get();
+        $vendor_planning_group = MasterVendorPlanningGroup::get();
+        $vendor_country = MasterVendorCountry::get();
+
+        return view('admin.vendors.edit', compact('vendors','terms_of_payment','vendor_title', 'vendor_bank_keys', 'vendor_bank_country', 'vendor_bp_group', 'vendor_account_gl', 'vendor_planning_group', 'vendor_country'));
     }
 
     /**

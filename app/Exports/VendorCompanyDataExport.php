@@ -23,6 +23,7 @@ class VendorCompanyDataExport implements FromCollection, WithHeadings, WithTitle
                     'vendor_company_data.payment_terms'
                 )
                 ->join('vendors', 'vendors.id', 'vendor_company_data.vendor_id')
+                ->where('vendors.is_export', 0)
                 ->get();
         return $data;
     }

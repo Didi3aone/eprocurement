@@ -49,6 +49,7 @@ class VendorGeneralDataExport implements FromCollection, WithHeadings, WithTitle
                 )
                 ->join('master_vendor_title', 'master_vendor_title.id', 'vendors.vendor_title_id')
                 ->join('master_vendor_bp_group', 'master_vendor_bp_group.id', 'vendors.vendor_bp_group_id')
+                ->where('vendors.is_export', 0)
                 ->get();
         return $data;
         // return UserVendors::get();
