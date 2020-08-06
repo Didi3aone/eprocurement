@@ -149,13 +149,13 @@
                                             <input type="hidden" name="category[]" value="{{ $value->category }}">
                                             <input type="hidden" class="qty" name="qty[]" value="{{ empty($value->qty) ? 0 : $value->qty }}">
                                             <input type="hidden" class="acp_id" name="acp_id[]" id="acp_id" value="0">
-                                            <td>{!! $value->material_id .'<br>'.$value->description !!}</td>
+                                            <td>{!! $value->material_id .'<br>'.$value->short_text !!}</td>
                                             <td>{{ $value->unit }}</td>
                                             <td>{{ empty($value->qty) ? 0 : $value->qty }}</td>
                                             <td>
                                                 @php
                                                     if( $value->material_id == '' ) {
-                                                        $paramM = $value->description;
+                                                        $paramM = $value->short_text;
                                                     } else {
                                                         $paramM = $value->material_id;
                                                     }
