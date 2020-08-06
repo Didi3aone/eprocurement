@@ -133,6 +133,7 @@
                     <thead>
                         <tr>
                             <th style="width: 20%">Material</th>
+                            <th style="width: 20%">Notes</th>
                             <th style="width: 5%">Unit</th>
                             <th style="width: 10%">Qty</th>
                             <th style="width: 20%">History PO</th>
@@ -172,7 +173,7 @@
                                 <input type="hidden" name="material_group[]" value="{{ $value->material_group }}">
                                 <input type="hidden" name="preq_item[]" value="{{ $value->preq_item }}">
                                 <input type="hidden" name="PR_NO[]" value="{{ $value->PR_NO }}">
-                                <input type="hidden" name="notes_detail[]" value="{{ $value->notes }}">
+                                {{-- <input type="hidden" name="notes_detail[]" value="{{ $value->notes }}"> --}}
                                 <input type="hidden" name="category[]" value="{{ $value->category }}">
                                 <input type="hidden" class="form-control material_id" name="material_id[]"  id="material_id" readonly value="{{ $value->material_id }}">
                                 <input type="hidden" name="description[]" value="{{ $value->description }}">
@@ -187,6 +188,7 @@
                                         }
                                     @endphp
                                 </td>
+                                <td><textarea name="notes_detail[]" cols="40" maxlength="130"> {{ $value->notes }}</textarea></td>
                                 <td>{{ $value->unit }}</td>
                                 <td>{{ empty($value->qty) ? 0 : $value->qty }}</td>
                                 <td>
