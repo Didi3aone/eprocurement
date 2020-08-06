@@ -475,8 +475,35 @@ class VendorController extends Controller
     {
         abort_if(Gate::denies('vendor_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        // $vendors = Vendor::findOrFail($id);
-        $vendors = UserVendors::findOrFail($id);
+        $vendors = UserVendors::find($id);
+        if ($vendors) {
+            $vendor_tax = VendorTaxNumbers::where('vendor_id', $vendors->id)->first();
+            if ($vendor_tax) $vendors->tax_numbers = $vendor_tax->tax_numbers;
+            $email_is_active = false;
+            $vendor_email = VendorEmail::where('vendor_id', $vendors->id)->get();
+            foreach ($vendor_email as $row) {
+                if ($row->is_default==1) $email_is_active = true;
+                if ($row->email==$vendors->email) {
+                    $row->is_default = 1;
+                    $email_is_active = true;
+                }
+            }
+            if (!$email_is_active) {
+                $vendor_email_['id'] = null;
+                $vendor_email_['vendor_id'] = $vendors->id;
+                $vendor_email_['email'] = $vendors->email;
+                $vendor_email_['is_default'] = 1;
+                $vendor_email[] = (object) $vendor_email_;
+            }
+            for ($i=count($vendor_email); $i < 10; $i++) { 
+                $vendor_email_['id'] = null;
+                $vendor_email_['vendor_id'] = $vendors->id;
+                $vendor_email_['email'] = '';
+                $vendor_email_['is_default'] = 0;
+                $vendor_email[] = (object) $vendor_email_;
+            }
+            $vendors->vendor_email = $vendor_email;
+        }
         $terms_of_payment = MasterVendorTermsOfPayment::get();
 
         $vendor_title = MasterVendorTitle::get();
@@ -499,8 +526,43 @@ class VendorController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // $req = $request->all();
+        // echo json_encode($req); die();
         $status = $request->input('status');
         $terms_of_payment_id = $request->input('terms_of_payment_id');
+
+        $name = $request->input('name');
+        $vendor_title_id = $request->input('vendor_title_id');
+        $vendor_bp_group_id = $request->input('vendor_bp_group_id');
+        $specialize = $request->input('specialize');
+        $company_name = $request->input('company_name');
+        $street = $request->input('street');
+        $street_2 = $request->input('street_2');
+        $street_3 = $request->input('street_3');
+        $street_4 = $request->input('street_4');
+        $street_5 = $request->input('street_5');
+        $postal_code = $request->input('postal_code');
+        $city = $request->input('city');
+        $country = $request->input('country');
+        $company_web = $request->input('company_web');
+        $office_telephone = $request->input('office_telephone');
+        $telephone_2 = $request->input('telephone_2');
+        $telephone_3 = $request->input('telephone_3');
+        $office_fax = $request->input('office_fax');
+        $fax_2 = $request->input('fax_2');
+        $tax_numbers = $request->input('tax_numbers');
+        $different_city = $request->input('different_city') ?? "-";
+
+        $vendor_email_id = $request->input('vendor_email_id');
+        $email = $request->input('email');
+        $is_default = $request->input('is_default');
+        $index = 0;
+        foreach ($is_default as $i => $row) {
+            if ($row=='1') $index = $i;
+        }
+        $email_default = $email[$index];
+        // echo json_encode($email_default); die();
+
         $terms_of_payment = MasterVendorTermsOfPayment::findOrFail($terms_of_payment_id);
         $user_vendors = UserVendors::findOrFail($id);
 
@@ -508,20 +570,61 @@ class VendorController extends Controller
             \DB::beginTransaction();
 
             $do_update = true;
-            $do_update = $do_update && UserVendors::where('id', $id)
-                                        ->update([
-                                            'terms_of_payment_key_id' => null, //$terms_of_payment_id,
-                                            'payment_terms' => $terms_of_payment->code,
-                                            'status' => $status
-                                        ]);
-            $do_update = $do_update && VendorCompanyData::where('vendor_id', $id)
-                                        ->update([
-                                            'payment_terms' => $terms_of_payment->code
-                                        ]);
-            $do_update = $do_update && VendorPurchasingOrganization::where('vendor_id', $id)
-                                        ->update([
-                                            'term_of_payment_key' => $terms_of_payment->code
-                                        ]);
+
+            $post_update = [];
+            $post_update['terms_of_payment_key_id'] = null; //$terms_of_payment_id,
+            $post_update['payment_terms'] = $terms_of_payment->code;
+            $post_update['status'] = $status;
+            $post_update['vendor_title_id'] = $vendor_title_id;
+            $post_update['vendor_bp_group_id'] = $vendor_bp_group_id;
+            $post_update['specialize'] = $specialize;
+            $post_update['company_name'] = $company_name;
+            $post_update['different_city'] = $different_city;
+            $post_update['city'] = $city;
+            $post_update['postal_code'] = $postal_code;
+            $post_update['country'] = $country;
+            if ($company_web)
+                $post_update['company_web'] = $company_web;
+            $post_update['street'] = $street;
+            $post_update['street_2'] = $street_2;
+            $post_update['street_3'] = $street_3;
+            $post_update['street_4'] = $street_4;
+            $post_update['street_5'] = $street_5;
+            $post_update['office_telephone'] = $office_telephone;
+            $post_update['telephone_2'] = $telephone_2;
+            $post_update['telephone_3'] = $telephone_3; 
+            $post_update['office_fax'] = $office_fax;
+            $post_update['fax_2'] = $fax_2;
+            $post_update['name'] = $name;
+            $post_update['email'] = $email_default;
+            // echo json_encode($post_update); die();
+            $do_update = $do_update && UserVendors::where('id', $id)->update($post_update);
+
+            $post_update = [];
+            $post_update['tax_numbers'] = $tax_numbers;
+            $do_update = $do_update && VendorTaxNumbers::where('vendor_id', $id)->update($post_update);
+
+            $post_update = [];
+            $post_update['payment_terms'] = $terms_of_payment->code;
+            $do_update = $do_update && VendorCompanyData::where('vendor_id', $id)->update($post_update);
+
+            $post_update = [];
+            $post_update['term_of_payment_key'] = $terms_of_payment->code;
+            $do_update = $do_update && VendorPurchasingOrganization::where('vendor_id', $id)->update($post_update);
+
+            for ($i=0; $i < count($email); $i++) { 
+                $post = [];
+                $post['vendor_id'] = $id;
+                $post['email'] = $email[$i];
+                $post['is_default'] = $is_default[$i] ?? 0;
+                if ($vendor_email_id[$i]) {
+                    $do_update = $do_update && VendorEmail::where('id', $vendor_email_id[$i])->update($post);
+                } else {
+                    if ($email[$i])
+                        $do_update = $do_update && VendorEmail::create($post);
+                }
+            }
+
             if (!$do_update) throw new Exception('Invalid request');
             
             \DB::commit();
