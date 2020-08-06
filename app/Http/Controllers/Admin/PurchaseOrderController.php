@@ -61,9 +61,8 @@ class PurchaseOrderController extends Controller
                     'master_acps.acp_no',
                     'vendors.name as vendor'
                 );
-
         if( \Auth::user()->roles[0]->title == 'staff-accounting'
-            || \Auth::user()->roles[0]->title ==' Admin' ) {
+            || \Auth::user()->roles[0]->title == 'Admin' ) {
                 $cache = "";
                 $po = $po;
             } else {

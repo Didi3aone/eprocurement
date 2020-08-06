@@ -48,8 +48,15 @@ class QuotationDirectController extends Controller
                         'vendors.name'
                     )
                     ->groupBy('quotation.id','vendors.name')
-                    ->orderBy('id', 'desc')
-                    ->get();
+                    ->orderBy('id', 'desc');
+                    
+        if( \Auth::user()->roles[0]->title == 'Admin' ) {
+            $quotation = $quotation;
+        } else {
+            $quotation = $quotation->where('created_by', \Auth::user()->nik);
+        }
+
+        $quotation = $quotation->get();
 
         return view('admin.quotation.direct.index', compact('quotation'));
     }
