@@ -24,23 +24,23 @@
                         <table class="table table-bordered">
                             <tr>
                                 <th>{{ trans('cruds.billing.fields.file_invoice') }}</th>
-                                <td><a href="{{ asset('file/uploads/'.$billing->file_invoice) }}">{{ $billing->file_invoice }}</a></td>
+                                <td><a target="_blank" href="{{ asset('files/uploads/'.$billing->file_invoice) }}">{{ $billing->file_invoice }}</a></td>
                             </tr>
                             <tr>
                                 <th>File PO</th>
-                                <td><a href="{{ asset('file/uploads/'.$billing->po) }}">{{ $billing->po  }}</a> </td>
+                                <td><a target="_blank" href="{{ asset('files/uploads/'.$billing->po) }}">{{ $billing->po  }}</a> </td>
                             </tr>
                             <tr>
                                 <th>{{ trans('cruds.billing.fields.file_faktur') }}</th>
-                                <td><a href="{{ asset('file/uploads/'.$billing->file_faktur ) }}">{{ $billing->file_faktur }}</a></td>
+                                <td><a target="_blank" href="{{ asset('files/uploads/'.$billing->file_faktur ) }}">{{ $billing->file_faktur }}</a></td>
                             </tr>
                             <tr>
                                 <th>{{ trans('cruds.billing.fields.file_skp') }}</th>
-                                <td><a href="{{ asset('file/uploads/'.$billing->surat_ket_bebas_pajak) }}">{{ $billing->surat_ket_bebas_pajak }}</a></td>
+                                <td><a target="_blank" href="{{ asset('files/uploads/'.$billing->surat_ket_bebas_pajak) }}">{{ $billing->surat_ket_bebas_pajak }}</a></td>
                             </tr>
                             <tr>
                                 <th>No Surat jalan</th>
-                                <td><a href="{{ asset('file/uploads/'.$billing->no_surat_jalan) }}">{{ $billing->no_surat_jalan }}</a></td>
+                                <td><a target="_blank" href="{{ asset('files/uploads/'.$billing->no_surat_jalan) }}">{{ $billing->no_surat_jalan }}</a></td>
                             </tr>
                         </table>
                     </div>
