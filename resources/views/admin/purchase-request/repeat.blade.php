@@ -352,14 +352,15 @@
         getCurrency(oriCurrency)
 
         if( price ) {
+            console.log('PRICE' + price * 100)
             let FixedPrice = 0
             if( oriCurrency == 'IDR' ) {
                 FixedPrice = price * 100
             } else {
                 FixedPrice = price 
             }
-            net.val(formatNumber(FixedPrice))
-            ori.val(formatNumber(FixedPrice))
+            net.val(formatNumber(Math.round(FixedPrice)))
+            ori.val(formatNumber(price))
         } else {
             net.val(0)
             ori.val(0)
