@@ -23,6 +23,7 @@ use App\Models\Vendor\VendorPartnerFunctions;
 use App\Models\Vendor\VendorBankDetails;
 use App\Models\Vendor\VendorTaxNumbers;
 use App\Models\Vendor\VendorIdentificationNumbers;
+use App\Models\Vendor\VendorEmail;
 use App\Models\Vendor\MasterVendorCountry;
 
 use Exception;
@@ -144,6 +145,7 @@ class LoginController extends Controller
             $this->insert_vendor_bank_details($request, $user_vendor->id, $is_local);
             $this->insert_vendor_tax_number($request, $user_vendor->id);
             $this->insert_vendor_identification_numbers($user_vendor->id, $is_local);
+            $this->insert_vendor_email($user_vendor->id, $is_local);
 
             \DB::commit();
             return redirect()->route('vendor.login')->with('success', 'Register success');
@@ -208,7 +210,7 @@ class LoginController extends Controller
         $post['fax_2'] = $fax_2;
         $post['name'] = $name;
         $post['email'] = $email;
-        $post['email_2'] = $email_2;
+        // $post['email_2'] = $email_2;
         $post['password'] = bcrypt($password);
         $post['status'] = $status;
         $do_insert = UserVendors::create($post);
@@ -356,6 +358,28 @@ class LoginController extends Controller
             $do_insert = VendorIdentificationNumbers::create($post);
             if (!$do_insert) throw new Exception('Failed at insert_vendor_identification_numbers');
         }
+
+        return true;
+    }
+
+    private function insert_vendor_email($request, $vendor_id)
+    {
+        $email = $request->input('email');
+        $email_2 = $request->input('email_2');
+
+        $post = [];
+        $post['vendor_id'] = $vendor_id;
+        $post['email'] = $email;
+        $post['is_default'] = 1;
+        $do_insert = VendorEmail::create($post);
+        if (!$do_insert) throw new Exception('Failed at insert_vendor_email');
+
+        $post = [];
+        $post['vendor_id'] = $vendor_id;
+        $post['email'] = $email_2;
+        $post['is_default'] = 0;
+        $do_insert = VendorEmail::create($post);
+        if (!$do_insert) throw new Exception('Failed at insert_vendor_email');
 
         return true;
     }
