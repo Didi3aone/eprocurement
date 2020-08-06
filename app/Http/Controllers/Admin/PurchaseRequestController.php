@@ -262,7 +262,8 @@ class PurchaseRequestController extends Controller
                 'purchase_requests.request_no as pr_no',
                 'purchase_requests.PR_NO',
                 'purchase_requests.doc_type',
-                'purchase_requests.request_date as request_date'
+                'purchase_requests.request_date as request_date',
+                'purchase_requests.upload_file',
             )
                 ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
                 ->where('purchase_requests_details.id', $id)
@@ -712,7 +713,9 @@ class PurchaseRequestController extends Controller
     public function confirmation(Request $request)
     {
         $data = $request->all();
+        // dd($data);
         // dd($data['plant_code'][0]);
+        // dd($data);
         $docType = DocumentType::where('code', $request->input('doc_type'))->first();
         $paymentTerm = PaymentTerm::where('payment_terms', $request->input('payment_term'))->first();
         $max = Quotation::select(\DB::raw('count(id) as id'))->first()->id;

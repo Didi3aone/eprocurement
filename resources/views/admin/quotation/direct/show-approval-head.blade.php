@@ -85,13 +85,21 @@
                     </thead>
                     <tbody>
                         @foreach($quotation->detail as $key => $value)
+                            @php
+                                $getQtyAcp = \App\Models\AcpTableMaterial::where('master_acp_id', $value->acp_id)
+                                    ->where('material_id', $value->material)
+                                    ->first();
+
+                                $perQty = ($value->qty/$getQtyAcp->qty);
+                                $totalPrices = (\removeComma($value->price) * $perQty);
+                            @endphp
                             <tr>
                                 <td>{{ $value->material." - ".$value->short_text }}</td>
                                 <td>{{ \App\Models\UomConvert::where('uom_1', $value->unit)->first()->uom_2 ?? $value->unit }}</td>
                                 <td>{{ $value->qty }}</td>
                                 <td>{{ $quotation->currency }}</td>
                                 <td>{{ \toDecimal($value->price) }}</td>
-                                <td>{{ toDecimal(\removeComma($value->price) * $value->qty) }}</td>
+                                <td>{{ \toDecimal($totalPrices) }}</td>
                             </tr>
                         @endforeach
                     </tbody>

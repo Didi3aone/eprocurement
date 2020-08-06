@@ -69,6 +69,7 @@ class AcpTableMaterial extends Model
                 'master_acps.acp_no',
                 'master_acps.id as acp_id',
                 'master_acp_materials.currency',
+                'master_acp_materials.qty'
             )
             ->where('master_acp_materials.material_id','=',$material_id)
             ->where('master_acps.end_date','>=',date('Y-m-d'))
@@ -78,10 +79,19 @@ class AcpTableMaterial extends Model
                 'vendors.code',
                 'master_acps.acp_no',
                 'master_acps.id',
-                'master_acp_materials.currency'
+                'master_acp_materials.currency',
+                'master_acp_materials.qty',
             )
             // ->distinct()
             ->get();
+    }
+
+    public static function getQtyAcp($material_id, $acp_id)
+    {
+        // dd($acp_id);
+        return AcpTableMaterial::where('material_id', (string)$material_id)
+            ->where('master_acp_id', (int) $acp_id)
+            ->first();
     }
 
     public function acp ()

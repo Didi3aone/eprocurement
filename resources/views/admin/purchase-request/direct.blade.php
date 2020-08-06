@@ -150,13 +150,13 @@
                                             <input type="hidden" class="qty" name="qty[]" value="{{ empty($value->qty) ? 0 : $value->qty }}">
                                             <input type="hidden" class="acp_id" name="acp_id[]" id="acp_id" value="0">
                                             <td>{!! $value->material_id .'<br>'.$value->short_text !!}</td>
-                                            <td>{{  \App\Models\UomConvert::where('uom_1',$value->unit)->first()->uom_2 }}</td>
+                                            <td>{{  $value->unit }}</td>
                                             <td>{{ empty($value->qty) ? 0 : $value->qty }}</td>
                                             <td>
                                                 @php
                                                     if( $value->material_id == '' ) {
                                                         $paramM = $value->short_text;
-                                                    } else {
+                                                     } else {
                                                         $paramM = $value->material_id;
                                                     }
                                                 @endphp
@@ -167,6 +167,7 @@
                                                         data-code="{{ $valus->code }}" 
                                                         data-currency="{{ $valus->currency }}"  
                                                         data-material="{{ $valus->material_id }}" 
+                                                        data-qty="{{ $valus->qty }}"
                                                         data-acp="{{ $valus->acp_id }}">
                                                         {{ $valus->acp_no ." - ". $valus->name }}
                                                     </option>
@@ -330,6 +331,7 @@
         const code = row.find('.rfq option:selected').data('code')
         const acp_id = row.find('.rfq option:selected').data('acp')
         const ori_curr = row.find('.rfq option:selected').data('currency')
+        const qtys = row.find('.rfq option:selected').data('qty')
         const materials = row.find('.rfq option:selected').data('material')
 
         row.find(".acp_id").val(acp_id)
