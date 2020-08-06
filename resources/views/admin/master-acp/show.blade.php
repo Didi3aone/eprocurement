@@ -132,7 +132,7 @@
                                 <td>
                                     @if($value->status == 0) 
                                         Waiting Approval 
-                                    @elseif($value->status == 2) 
+                                    @elseif($value->status == 1) 
                                         Approved 
                                     @elseif($value->status == 3)
                                         Rejected 
