@@ -623,6 +623,13 @@ class QuotationDirectController extends Controller
                 }
             }
 
+            $getQtyAcp = \App\Models\AcpTableMaterial::where('master_acp_id', $detail['acp_id'])
+                        ->where('material_id', $detail['material_id'])
+                        ->first();
+
+            $perQty = ($detail['qty']/$getQtyAcp->qty);
+            $totalPrices = (\removeComma($detail['price']) * $perQty);
+
             $quotationDetail = new QuotationDetail;
             $quotationDetail->quotation_order_id        = $id;
             $quotationDetail->qty                       = $detail['qty'];
@@ -651,6 +658,7 @@ class QuotationDirectController extends Controller
             $quotationDetail->PREQ_ITEM                 = $detail['preq_item'];
             $quotationDetail->PR_NO                     = $detail['PR_NO'];
             $quotationDetail->PO_ITEM                   = $poItem;
+            $quotationDetail->total_price               = $totalPrices;
             $quotationDetail->purchasing_document       = $detail['rfq'];
             $quotationDetail->acp_id                    = $detail['acp_id'];
             $quotationDetail->delivery_date             = $detail['delivery_date'];

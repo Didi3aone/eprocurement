@@ -255,6 +255,15 @@ libxml_use_internal_errors(true);
                 @endphp
                 @foreach($data['id'] as $key => $value)
                     @php
+                        $materialId = $data['material_id'][$key];
+                        if( $materialId == '' ) {
+                            $materialId = $data['short_text'][$key];
+                        }
+
+                        $qtyAcp = \App\Models\AcpTableMaterial::getQtyAcp($materialId, $data['acp_id']);
+                        $perQty = ($data['qty'][$key]/$qtyAcp->qty);
+                        $totalPrice = (\removeComma($data['price'][$key]) * $perQty);
+
                         $material = \App\Models\PurchaseRequestsDetail::where('material_id', $data['material_id'][$key])->first();
                         $tax = 0;
                         if( isset($data['tax_code'])) {
@@ -278,14 +287,14 @@ libxml_use_internal_errors(true);
                     </td>
                     <td>{{ $data['material_id'][$key] ?? '' }}</td>
                     <td>{{ $value['short_text'][$key] ?? '' }}</td>
-                    <td>{{ $data['notes'] }}</td>
+                    <td>{{ $value['description'][$key] ?? '' }}</td>
                     <td style="text-align: center">{{ date('d.m.Y',strtotime($data['delivery_date'][$key])) }}</td>
                     <td>{{ $data['qty'][$key]." ".\App\Models\UomConvert::where('uom_1', $data['unit'][$key])->first()->uom_2}}</td>
                     <td>{{ $data['PR_NO'][$key] }}</td>
                     {{-- <td>{{ \toDecimal(\removeComma($data['price'][$key])) }}</td>
                     <td>{{ \toDecimal(\removeComma($data['price'][$key])) }}</td> --}}
                     <td style="text-align: right">{{ \toDecimal(\removeComma($data['price'][$key])) }}</td>
-                    <td style="text-align: right">{{ \toDecimal(\removeComma($data['price'][$key]) * $data['qty'][$key] ) }}</td>
+                    <td style="text-align: right">{{ \toDecimal($totalPrice) }}</td>
                 </tr>
                 @endforeach
             </tbody>
