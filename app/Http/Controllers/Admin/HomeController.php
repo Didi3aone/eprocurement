@@ -14,9 +14,17 @@ class HomeController
                     // ->groupBy('purchase_requests.id')
                     // ->distinct()
                     ->count();
+        if( \Auth::user()->roles[0]->title == 'Admin' ) {
+            $poTotal = \App\Models\PurchaseOrder::count();
+        } else {
+            $poTotal = \App\Models\PurchaseOrder::where('created_by',\Auth::user()->user_id)->count();
+        }
 
-        $poTotal = \App\Models\PurchaseOrder::where('created_by',\Auth::user()->user_id)->count();
-                    // dd($prTotal);
-        return view('home',\compact('prTotal','poTotal'));
+        if( \Auth::user()->roles[0]->title == 'Admin' ) {
+            $acpTotal = \App\Models\AcpTable::count();
+        } else {
+            $acpTotal = \App\Models\AcpTable::where('created_by',\Auth::user()->user_id)->count();
+        }
+        return view('home',\compact('prTotal','poTotal','acpTotal'));
     }
 }
