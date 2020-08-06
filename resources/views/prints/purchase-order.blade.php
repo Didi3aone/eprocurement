@@ -1,3 +1,6 @@
+<?php
+libxml_use_internal_errors(true);
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -155,7 +158,7 @@
         <div class="header row">
             <div class="left">
                 <div class="row">
-                    <div style="width: 20%;">
+                    <div style="width: 25%;">
                         <img src="{{ $print ? asset('index.jpg') : public_path('index.jpg') }}" style="position:absolute; top: -4px;" height="70">
                     </div>
                     <div style="width: 74%;">
@@ -181,15 +184,24 @@
                         </p>
                     </div>
                 </div>
-                <div class="row" style="margin-top: 9px;">
-                    <div>
-                        <p>To:</p>
+                <div class="row" style="margin-top: 2px;">
+                    <div style="width: 25%;" align="center">
+                        <p>To :</p>
                     </div>
                     <div>
-                        <p style="font-size: 11px;">
+                        {{-- <p style="font-size: 11px;">
                             {{ trim($vendor->name) }} <br>
                             {{ trim($vendor->street) }} <br/>
                             Telp. {{ trim($vendor->office_telephone) }} <br/>
+                        </p> --}}
+                        <p>
+                        {{ trim($vendor->name) }} 
+                        </p>
+                        <p class="to-top">
+                        {{ trim($vendor->street) }} 
+                        </p>
+                        <p class="to-top">
+                        Telp. {{ trim($vendor->office_telephone) }} 
                         </p>
                     </div>
                 </div>
@@ -200,18 +212,24 @@
                 </h6>
             </div>
             <div class="right">
-                <p>
-                    PO NO &nbsp;&nbsp;&nbsp;: {{ '0000' }}<br>
-                    Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ date('d.m.Y') }} <br>
-                    Revisi &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ '0000' }} <br>
-                </p>
+                <p style="margin-bottom: 6px">    PO NO &nbsp;&nbsp;&nbsp;&nbsp;: {{ '0000' }}</p>
+                <p style="margin-bottom: 6px">    Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ date('d.m.Y') }} </p>
+                <p style="margin-bottom: 6px">    Revisi &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ '0000' }} </p>
                 <p></p>
                 <br>
                 <p class="to-top">
                     Shipped To: <br>
-                    {{ $ship->name }} <br>
-                    <span class="to-top">{{ $ship->alamat }}</span> <br>
                 </p>
+                    {{-- {{dd($ship)}} --}}
+                    {{-- <p> {{ $ship->name }} <p>
+                    <p> {{ $ship->alamat }} </p> <br> --}}
+                    <p class="to-top">
+                    {{ $ship->name }}
+                    </p>
+                    <p class="to-top">
+                    {{ $ship->alamat }}
+                    </p> 
+                {{-- </p> --}}
             </div>
         </div>
         <!-- End Header -->
@@ -240,32 +258,34 @@
                         $material = \App\Models\PurchaseRequestsDetail::where('material_id', $data['material_id'][$key])->first();
                         $tax = 0;
                         if( isset($data['tax_code'])) {
-                            $tax = (\removeComma($data['price'][$key]) * 10/100);
+                            $tax = ((\removeComma($data['price'][$key]) * $data['qty'][$key]) * 10/100);
                         }
 
                         $totalTax += $tax;
 
                         $totalRows = count($data['id']);
-                        $total += \removeComma($data['price'][$key]);
+                        $total += \removeComma($data['price'][$key]) * $data['qty'][$key] ;
 
                         $cols = "";
                         if( $totalRows == $key+1 ){
                             $cols = "10";
                         }
-                        $size = $key+1===count($data['id']) ? (700-($key*30)).'px' : 'auto';
+                        $size = $key+1===count($data['id']) ? (650-($key*30)).'px' : 'auto';
                     @endphp
                 <tr>
                     <td>
                         <div style="display:block; height: {{ $size }}; min-height: {{ $size }};">{{ $key + 1 }}</div>
                     </td>
                     <td>{{ $data['material_id'][$key] ?? '' }}</td>
-                    <td>{{ $value['short_text'] ?? '' }}</td>
+                    <td>{{ $value['short_text'][$key] ?? '' }}</td>
                     <td>{{ $data['notes'] }}</td>
-                    <td>{{ date('d.m.Y',strtotime($data['delivery_date'][$key])) }}</td>
+                    <td style="text-align: center">{{ date('d.m.Y',strtotime($data['delivery_date'][$key])) }}</td>
                     <td>{{ $data['qty'][$key]." ".\App\Models\UomConvert::where('uom_1', $data['unit'][$key])->first()->uom_2}}</td>
                     <td>{{ $data['PR_NO'][$key] }}</td>
-                    <td>{{ \toDecimal(\removeComma($data['price'][$key])) }}</td>
-                    <td>{{ \toDecimal(\removeComma($data['price'][$key])) }}</td>
+                    {{-- <td>{{ \toDecimal(\removeComma($data['price'][$key])) }}</td>
+                    <td>{{ \toDecimal(\removeComma($data['price'][$key])) }}</td> --}}
+                    <td style="text-align: right">{{ \toDecimal(\removeComma($data['price'][$key])) }}</td>
+                    <td style="text-align: right">{{ \toDecimal(\removeComma($data['price'][$key]) * $data['qty'][$key] ) }}</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -278,21 +298,21 @@
                         <p>
                             Amount <br>
                             <br>
-                            {{ ucfirst(Terbilang::make($grandTotal)) }}
+                            {{ ucfirst(Terbilang::make($grandTotal)) }} Rupiah
                             <br>
                             <br>
                         </p>
                     </td>
                     <td colspan="3">Total</td>
-                    <td colspan="1">{{ \toDecimal($total) }}</td>
+                    <td colspan="1" style="text-align: right">{{ \toDecimal($total) }}</td>
                 </tr>
                 <tr>
                     <td colspan="3">Tax</td>
-                    <td colspan="1">{{ \toDecimal($totalTax) }}</td>
+                    <td colspan="1" style="text-align: right">{{ \toDecimal($totalTax) }}</td>
                 </tr>
                 <tr>
                     <td colspan="3">Grand Total</td>
-                    <td colspan="1">{{ \toDecimal($grandTotal) }}</td>
+                    <td colspan="1" style="text-align: right">{{ \toDecimal($grandTotal) }}</td>
                 </tr>
                 <tr>
                     <td colspan="5">
@@ -324,12 +344,10 @@
                         <br>
                     </td>
                     <td colspan="4">
-                        <p>
-                            Notes : <br>
-                                1. Invoicing will be done on Tuesday 09.00am - 5.00pm <br>
-                                2. Delivery not on schedule, will be refused <br>
-                                3. Please bring along print out purchase order when invoicing <br>
-                        </p>
+                        <p style="margin-bottom: 6px"> Notes : </p>
+                        <p style="margin-bottom: 6px">        1. Invoicing will be done on Tuesday 09.00am - 5.00pm </p>
+                        <p style="margin-bottom: 6px">        2. Delivery not on schedule, will be refused </p>
+                        <p style="margin-bottom: 6px">        3. Please bring along print out purchase order when invoicing  </p>
                     </td>
                 </tr>
             </tfoot>
