@@ -102,10 +102,10 @@
                                         <td>{{ \toDecimal($row->price) }}</td>
                                 </tr>
                                 @endforeach
-                                <tr>
-                                    <td colspan=7></td>
-                                    <td colspan={{ $rowSpan + $rowSpan }}>
-                                        <b style="color:black;font-size:17px;">{{ \toDecimal($totalPrice) }}</b>
+                                <tr style="text-align:right;">
+                                    <td colspan=7 style="text-align:right;"></td>
+                                    <td style="text-align:right;">
+                                        <b style="color:black;font-size:17px;text-align:center;">{{ \toDecimal($totalPrice) }}</b>
                                     </td>
                                 </tr>
                             @endforeach

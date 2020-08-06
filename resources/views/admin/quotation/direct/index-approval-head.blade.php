@@ -1,11 +1,14 @@
 @extends('layouts.admin')
 @section('content')
+<style>
+
+</style>
 <div class="row page-titles">
     <div class="col-md-5 col-8 align-self-center">
-        <h3 class="text-themecolor">Master</h3>
+        <h3 class="text-themecolor">PO</h3>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="javascript:void(0)">Quotation</a></li>
-            <li class="breadcrumb-item active">Index</li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">PO in process</a></li>
+            <li class="breadcrumb-item active">List</li>
         </ol>
     </div>
 </div>
@@ -27,39 +30,125 @@
                                 <thead>
                                     <tr>
                                         <th>&nbsp;</th>
-                                        <th>{{ trans('cruds.quotation.fields.id') }}</th>
                                         <th>PO Eprocurement</th>
-                                        <th>Vendor</th>
-                                        <th>Date</th>
+                                        {{-- <th>Vendor</th> --}}
+                                        <th>Created at</th>
+                                        <th>Po Item</th>
+                                        <th>Material</th>
+                                        <th>Short Text</th>
+                                        <th>Qty</th>
+                                        <th>Material Group</th>
+                                        <th>Storage Location</th>
+                                        <th>Purchasing Group</th>
+                                        <th>Plant</th>
+                                        <th>Preq No</th>
+                                        <th>Preq Item</th>
+                                        <th>Preq Name</th>
+                                        <th>Delivery Date</th>
+                                        <th>Rfq/Acp No</th>
+                                        <th>Tax Code</th>
+                                        <th>Currency</th>
+                                        <th>Price</th>
                                         <th>&nbsp;</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($quotation as $key => $val)
-                                        <tr data-entry-id="{{ $val->id }}">
+                                        @php
+                                            $detail = \App\Models\Vendor\QuotationDetail::getDetailPo($val['id']);
+                                            $sumTotal = 0;
+                                        @endphp
+                                        <tr>
                                             <td>
-                                                <input type="checkbox" name="id[]" id="check_{{ $val->id }}" class="check_po" value="{{ $val->id }}" _valold="{{ $val->id }}">
-                                                <label for="check_{{ $val->id }}">&nbsp;</label>
+                                                <input type="checkbox" name="id[]" id="check_{{ $val['id'] }}" class="check_po" value="{{ $val['id'] }}" _valold="{{ $val['id'] }}">
+                                                <label for="check_{{ $val['id'] }}">&nbsp;</label>
                                             </td>
-                                            <td>{{ $val->id ?? '' }}</td>
-                                            <td>{{ $val->po_no ?? '' }}</td>
-                                            <td>{{ $val->name }}</td>
+                                            <td>{{ $val['po_no']." - ". $val['name'] }}</td>
+                                            @foreach($detail as $key => $value)
+                                                @php
+                                                    $sumTotal += $value->price;
+                                                @endphp
+                                                @if( $key > 0)
+                                                    @php
+                                                        $cols = count($detail) +  1;
+                                                    @endphp
+                                                @else 
+                                                    @php
+                                                        $cols = 1;
+                                                    @endphp
+                                                @endif
+                                                {{-- <td colspan="{{ $cols }}">{{ $val['name'] }}</td> --}}
+                                                <td colspan="{{ $cols }}" style="text-align:right;">
+                                                    {{ \Carbon\Carbon::parse($value->created_at)->format('d-m-Y') }}
+                                                </td>
+                                                <td>{{ $value->PO_ITEM }}</td>
+                                                <td>{{ $value->material ?? '-' }}</td>
+                                                <td>{{ $value->short_text ?? '' }}</td>
+                                                <td>{{ $value->qty ?? '' }}</td>
+                                                <td>{{ $value->material_group ?? '' }}</td>
+                                                <td>{{ $value->storage_location ?? '' }}</td>
+                                                <td>{{ $value->purchasing_group_code ?? '' }}</td>
+                                                <td>{{ $value->plant_code ?? '' }}</td>
+                                                <td>{{ $value->PR_NO ?? '' }}</td>
+                                                <td>{{ $value->PREQ_ITEM ?? '' }}</td>
+                                                <td>{{ $value->preq_name ?? '' }}</td>
+                                                <td>{{ $value->delivery_date ?? '' }}</td>
+                                                <td>{{ $value->purchasing_document ?? '' }}</td>
+                                                <td>{{ $value->tax_code ?? '' }}</td>
+                                                <td>{{ $value->currency ?? '' }}</td>
+                                                <td>{{ \toDecimal($value->price) ?? '' }}</td>
+                                                <td>
+                                                    <a class="btn btn-primary btn-xs" href="{{ route('admin.quotation-direct-show-approval-head', $value->quotation_order_id) }}">
+                                                        <i class="fa fa-eye"></i> {{ trans('global.view') }}
+                                                    </a>
+                                                    <a class="btn btn-warning btn-xs" href="{{ route('admin.master-acp-show',$value->acp_id) }}" target="_blank">
+                                                        <i class="fa fa-eye"></i> Show ACP
+                                                    </a>
+                                                </td>
+                                                {{-- </tr> --}}
+                                        {{-- <tr>
                                             <td>
-                                                {{ \Carbon\Carbon::parse($val->created_at)->format('d-m-Y') }}
+                                                <input type="checkbox" name="id[]" id="check_{{ $value->id }}" class="check_po" value="{{ $value->id'] }}" _valold="{{ $val['id'] }}">
+                                                <label for="check_{{ $val['id'] }}">&nbsp;</label>
                                             </td>
+                                            <td>{{ $val['id'] ?? '' }}</td>
+                                            <td>{{ $val['po_no'] ?? '' }}</td>
+                                            <td>{{ $val['name'] }}</td>
                                             <td>
-                                                <a class="btn btn-primary btn-xs" href="{{ route('admin.quotation-direct-show-approval-head', $val->id) }}">
+                                                {{ \Carbon\Carbon::parse($val['created_at'])->format('d-m-Y') }}
+                                            </td>
+                                            <td>{{ $val['PO_ITEM'] }}</td>
+                                            <td>{{ $val['material'] ?? '-' }}</td>
+                                            <td>{{ $val['short_text'] ?? '' }}</td>
+                                            <td>{{ $val['material_group'] ?? '' }}</td>
+                                            <td>{{ $val['storage_location'] ?? '' }}</td>
+                                            <td>{{ $val['purchasing_group_code'] ?? '' }}</td>
+                                            <td>{{ $val['plant_code'] ?? '' }}</td>
+                                            <td>{{ $val['PR_NO'] ?? '' }}</td>
+                                            <td>{{ $val['PREQ_ITEM'] ?? '' }}</td>
+                                            <td>{{ $val['delivery_date'] ?? '' }}</td>
+                                            <td>{{ $val['purchasing_document'] ?? '' }}</td>
+                                            <td>{{ $val['tax_code'] ?? '' }}</td>
+                                            <td>
+                                                <a class="btn btn-primary btn-xs" href="{{ route('admin.quotation-direct-show-approval-head', $val['id']) }}">
                                                     <i class="fa fa-eye"></i> {{ trans('global.view') }}
                                                 </a>
-                                                <a class="btn btn-warning btn-xs" href="{{ route('admin.master-acp-show',$val->acp_id) }}" target="_blank">
+                                                <a class="btn btn-warning btn-xs" href="{{ route('admin.master-acp-show',$val['acp_id']) }}" target="_blank">
                                                     <i class="fa fa-eye"></i> Show ACP
                                                 </a>
-                                            </td>
+                                            </td> --}}
+                                        </tr>
+                                            @endforeach
+                                        <tr>
+                                            <td colspan=18></td>
+                                            <td>{{ \toDecimal($sumTotal) }}</td>
+                                            <td></td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
+                        {{ $quotation->links() }}
                     </div>
                 </div>
             </div>
@@ -90,12 +179,29 @@
 @section('scripts')
 @parent
 <script>
-$('#datatables-run').DataTable({
-    dom: 'Bfrtip',
-    order: [[0, 'desc']],
-    buttons: [
-        'copy', 'csv', 'excel', 'pdf', 'print'
-    ]
+function myFunction() {
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[0];
+        if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+        } else {
+            tr[i].style.display = "none";
+        }
+        }       
+    }
+}
+$('#datatables-runq').DataTable({
+    "pageLength": 100,
+    "scrollY":        "200px",
+    "scrollCollapse": true,
+    "paging":         false
 });
 
 $(document).on('click', '#open_modal', function (e) {
