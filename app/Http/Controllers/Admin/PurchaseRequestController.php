@@ -713,6 +713,7 @@ class PurchaseRequestController extends Controller
     {
         $data = $request->all();
         // dd($data['plant_code'][0]);
+        // dd($data);
         $docType = DocumentType::where('code', $request->input('doc_type'))->first();
         $paymentTerm = PaymentTerm::where('payment_terms', $request->input('payment_term'))->first();
         $max = Quotation::select(\DB::raw('count(id) as id'))->first()->id;
