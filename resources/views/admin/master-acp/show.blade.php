@@ -103,7 +103,7 @@
                                 </tr>
                                 @endforeach
                                 <tr>
-                                    <td colspan={{ $rowSpan + 2 }}></td>
+                                    <td colspan=7></td>
                                     <td colspan={{ $rowSpan + $rowSpan }}>
                                         <b style="color:black;font-size:17px;">{{ \toDecimal($totalPrice) }}</b>
                                     </td>
