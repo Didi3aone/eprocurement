@@ -874,7 +874,7 @@ class SapHelper {
                 $pak = '0000000000';
                 $dataChild = \App\Models\RN\PurchaseRequestServiceChild::where('purchase_request_id',$row['HEADER_ID'])->get();
                 for ($k=0; $k < count($dataChild); $k++) {
-                    $pak ='000000000'.$k+1;
+                    $pak = '000000000'.($k+1);
                     $REQUISITION_ITEM_SERVICE_item = [
                         "PCKG_NO"            => $dataChild[$k]->package_no,//$row['PACKAGE_NO'],
                         "LINE_NO"            => '000000000'.$pak,
