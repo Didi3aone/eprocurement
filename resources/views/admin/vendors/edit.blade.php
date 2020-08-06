@@ -271,6 +271,8 @@
         </div>
     </div>
 </div>
+@endsection
+@section('scripts')
 <script>
     let acc = document.getElementsByClassName("accordion")
     let i
