@@ -133,7 +133,7 @@
                     <thead>
                         <tr>
                             <th style="width: 20%">Material</th>
-                            <th style="width: 20%">Notes</th>
+                            <th style="width: 20%">Spesification</th>
                             <th style="width: 5%">Unit</th>
                             <th style="width: 10%">Qty</th>
                             <th style="width: 20%">History PO</th>
@@ -180,6 +180,7 @@
                                 <input type="hidden" name="delivery_date[]" value="{{ $value->delivery_date }}">
                                 <input type="hidden" class="" name="unit[]" readonly value="{{ $value->unit }}">
                                 <input type="hidden" class="qty" name="qty[]" readonly value="{{ empty($value->qty) ? 0 : $value->qty }}">
+                                <input type="hidden" class="acp_id" name="acp_id[]" id="acp_id" value="X">
                                 <td>{!! $value->material_id .'<br>'.$value->description !!}
                                     @php
                                         $materialId = $value->description;
@@ -427,7 +428,7 @@
             success: function (data) {
                 $vendor_id.empty();
                 for (var i = 0; i < data.length; i++) {
-                    $vendor_id.append('<option value=' + data[i].code + ' data-payment='+data[i].payment_terms+'>'+data[i].code+' - '+ data[i].name +' </option>');
+                    $vendor_id.append('<option value=' + data[i].code + ' data-payment='+data[i].payment_terms+'>'+data[i].code+' - '+ data[i].company_name +' </option>');
                 }
 
                 $vendor_id.change();

@@ -103,6 +103,7 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 30%;padding-right:15px;">Material</th>
+                                        <th style="width: 30%;padding-right:15px;">Spesification</th>
                                         <th style="width: 10%;padding-right:15px;">Unit</th>
                                         <th style="width: 10%;">Qty</th>
                                         <th style="width: 40%;padding-right:180px;">RFQ</th>
@@ -145,11 +146,12 @@
                                             <input type="hidden" name="description[]" value="{{ $value->description }}">
                                             <input type="hidden" name="delivery_date[]" value="{{ $value->delivery_date }}">
                                             <input type="hidden" name="unit[]" value="{{ $value->unit }}">
-                                            <input type="hidden" name="notes_detail[]" value="{{ $value->notes }}">
+                                            {{-- <input type="hidden" name="notes_detail[]" value="{{ $value->notes }}"> --}}
                                             <input type="hidden" name="category[]" value="{{ $value->category }}">
                                             <input type="hidden" class="qty" name="qty[]" value="{{ empty($value->qty) ? 0 : $value->qty }}">
                                             <input type="hidden" class="acp_id" name="acp_id[]" id="acp_id" value="0">
                                             <td>{!! $value->material_id .'<br>'.$value->short_text !!}</td>
+                                            <td><textarea name="notes_detail[]" cols="40" maxlength="130"> {{ $value->notes }}</textarea></td>
                                             <td>{{  $value->unit }}</td>
                                             <td>{{ empty($value->qty) ? 0 : $value->qty }}</td>
                                             <td>
@@ -367,7 +369,7 @@
             success: function (data) {
                 $vendor_id.empty();
                 for (var i = 0; i < data.length; i++) {
-                    $vendor_id.append('<option value=' + data[i].code + ' data-payment='+data[i].payment_terms+'>'+data[i].code+' - '+ data[i].name +' </option>');
+                    $vendor_id.append('<option value=' + data[i].code + ' data-payment='+data[i].payment_terms+'>'+data[i].code+' - '+ data[i].company_name +' </option>');
                 }
 
                 $vendor_id.change();
