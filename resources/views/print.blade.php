@@ -348,8 +348,7 @@
                     <td>{!! \wordwrap($value->short_text,20,'<br>') !!}</td>
                     <td>{!! $value->notes == "PR MRP" ? "" :  \wordwrap($value->notes,20,'<br>') !!}</td>
                     <td style="text-align:center;">{{ date('d.m.Y',strtotime($value->delivery_date)) }}</td>
-                    <td style="text-align:right;">{{ $value->qty." ".
-                    \App\Models\UomConvert::where('uom_1',$value->unit)->first()->uom_2 }}</td>
+                    <td style="text-align:right;">{{ $value->qty." ".$value->unit }}</td>
                     <td style="text-align:right;">{{ $value->PR_NO }}</td>
                     <td style="text-align:right;">{{ \toDecimal($value->price) }}</td>
                     <td style="text-align:right;">{{ \toDecimal($totalPrice) }}</td>
