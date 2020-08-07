@@ -244,6 +244,14 @@ libxml_use_internal_errors(true);
                         </p>
                         <p class="to-top">
                         {{ trim($vendor->street) }} 
+                        {{-- {{ trim($vendor->street_2) }} 
+                        {{ trim($vendor->street_3) }}  --}}
+                        </p>
+                        <p class="to-top">
+                        {{ trim($vendor->street_2) }}
+                        </p>
+                        <p class="to-top">
+                        {{ trim($vendor->street_3) }} 
                         </p>
                         <p class="to-top">
                         Telp. {{ trim($vendor->office_telephone) }} 
@@ -332,7 +340,7 @@ libxml_use_internal_errors(true);
                         if( $totalRows == $key+1 ){
                             $cols = "10";
                         }
-                        $size = $key+1===count($data['id']) ? (650-($key*30)).'px' : 'auto';
+                        $size = $key+1===count($data['id']) ? (600-($key*30)).'px' : 'auto';
                     @endphp
                 <tr>
                     <td>
@@ -345,7 +353,7 @@ libxml_use_internal_errors(true);
                     <td>
                         {!! \wordwrap($data['notes_detail'][$key],20,'<br>') !!}
                     </td>
-                    <td style="text-align: center">{{ date('d.m.Y',strtotime($data['delivery_date'][$key])) }}</td>
+                    <td style="text-align: center">{{ date('d.m.Y',strtotime($data['delivery_date_new'][$key])) }}</td>
                     <td style="text-align: center">{{ $data['qty'][$key]." ".\App\Models\UomConvert::where('uom_1', $data['unit'][$key])->first()->uom_2}}</td>
                     <td>{{ $data['PR_NO'][$key] }}</td>
                     {{-- <td>{{ \toDecimal(\removeComma($data['price'][$key])) }}</td>

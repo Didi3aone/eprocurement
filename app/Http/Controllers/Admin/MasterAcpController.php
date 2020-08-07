@@ -345,18 +345,21 @@ class MasterAcpController extends Controller
                         $isPlant = true;
                     }
                     \saveApprovals($assProc, $acp->id, 'STAFF', 'ACP', $isPlant,false);
-                } elseif ($price > 25000000 && $price <= 100000000) {
+                    // staff eproc
+                } elseif ($price >= 100000000) {
                     $isPlant = false;
                     if (1 == $request->get('is_project')) {
                         $isPlant = true;
                     }
                     \saveApprovals($assProc, $acp->id, 'CFO', 'ACP', $isPlant, $isCmo);
+                    //CFO
                 } elseif ($price > 250000000) {
                     $isPlant = false;
                     if (1 == $request->get('is_project')) {
                         $isPlant = true;
                     }
                     \saveApprovals($assProc, $acp->id, 'COO', 'ACP', $isPlant, $isCmo);
+                    //COO
                 }
             } 
 
@@ -365,7 +368,7 @@ class MasterAcpController extends Controller
             return redirect()->route('admin.master-acp.index')->with('status', trans('cruds.master-acp.alert_success_insert'));
         } catch (Exception $e) {
             \DB::rollBack();
-            dd($e);
+            // dd($e);
         }
     }
 

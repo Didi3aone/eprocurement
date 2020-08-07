@@ -86,8 +86,12 @@
                     <tbody>
                         @foreach($quotation->detail as $key => $value)
                             @php
+                                $materialId = $value->material;
+                                if( $value->material == '' ) {
+                                    $materialId = $value->short_text;
+                                }
                                 $getQtyAcp = \App\Models\AcpTableMaterial::where('master_acp_id', $value->acp_id)
-                                    ->where('material_id', $value->material)
+                                    ->where('material_id', $materialId)
                                     ->first();
 
                                 $perQty = ($value->qty/$getQtyAcp->qty);
