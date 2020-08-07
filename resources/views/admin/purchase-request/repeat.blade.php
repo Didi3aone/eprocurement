@@ -363,7 +363,7 @@
                 FixedPrice = price 
             }
             net.val(formatNumber(Math.round(FixedPrice)))
-            ori.val(formatNumber(price))
+            ori.val(formatNumber(Math.round(FixedPrice)))
         } else {
             net.val(0)
             ori.val(0)
