@@ -152,7 +152,8 @@
                 return mb_strimwidth($string, 0, $length, "-");
             }
         }
-         if (!function_exists('nl2p'))  
+        
+        if (!function_exists('nl2p'))  
         { 
             function nl2p($string, $line_breaks = true, $xml = true) {
 
