@@ -112,7 +112,7 @@ libxml_use_internal_errors(true);
         }
         table tbody tr td {
             border-right: 1px solid #000;
-            overflow:hidden;
+            /* overflow:hidden; */
             margin-top:1.5px;
         }   
         table tbody tr:last-child td {
@@ -162,26 +162,71 @@ libxml_use_internal_errors(true);
                         <img src="{{ $print ? asset('index.jpg') : public_path('index.jpg') }}" style="position:absolute; top: -4px;" height="70">
                     </div>
                     <div style="width: 74%;">
-                        <p class="to-top">
                         @if($data['plant_code'][0] == '1101')
-                        PT. Herlina Indah <br>
+                            <p class="to-top">
+                                PT. Herlina Indah <br>
+                            </p>
+                            <p class="to-top">
+                                Jl. Rawa Sumur II Blok DD.16 
+                            </p>
+                            <p class="to-top">
+                                Pulo Gadung Industri Estate,
+                            </p> 
+                            <p class="to-top">
+                                Jakarta
+                            </p>
+                            <p class="to-top">
+                                13930 
+                            </p>
                         @elseif($data['plant_code'][0] == '2101')
-                        PT. Marketama Indah 
-                        @elseif($data['plant_code'][0] == '1201' OR $data['plant_code'][0] == '1201')
-                        PT. Sari Enesis Indah 
+                            <p class="to-top">
+                                PT. Marketama Indah 
+                            </p>
+                            <p class="to-top">
+                                Jl. Rawa Sumur II Blok DD.16 
+                            </p>
+                            <p class="to-top">
+                                Pulo Gadung Industri Estate,
+                            </p> 
+                            <p class="to-top">
+                                Jakarta
+                            </p>
+                            <p class="to-top">
+                                13930 
+                            </p>
+                        @elseif($data['plant_code'][0] == '1201')
+                            <p class="to-top">
+                                PT. Sari Enesis Indah Cikarang
+                            </p>
+                            <p class="to-top">
+                                Jl. Kruing I Blok L5 No. 5, 
+                            </p>
+                            <p class="to-top">
+                                Delta Silicon Industrial Estate,
+                            </p> 
+                            <p class="to-top">
+                                Cikarang Bekasi
+                            </p>
+                            <p class="to-top">
+                                17550 
+                            </p>
+                        @elseif($data['plant_code'][0] == '1202')
+                            <p class="to-top">
+                                PT. Sari Enesis Indah Ciawi
+                            </p>
+                            <p class="to-top">
+                                Jl. Veteran II RT 004/ RW 006  
+                            </p>
+                            <p class="to-top">
+                                Kel.Teluk Pinang,
+                            </p> 
+                            <p class="to-top">
+                                Kec. Ciawi Kab. Bogor
+                            </p>
+                            <p class="to-top">
+                                16720 
+                            </p>
                         @endif
-                        </p>
-                        <p class="to-top">
-                        Jl. Rawa Sumur II Blok DD.16 
-                        </p>
-                        <p class="to-top">
-                        Pulo Gadung Industri Estate,
-                        </p> 
-                        <p class="to-top">Jakarta
-                        </p>
-                        <p class="to-top">
-                        13930 
-                        </p>
                     </div>
                 </div>
                 <div class="row" style="margin-top: 2px;">
@@ -199,6 +244,14 @@ libxml_use_internal_errors(true);
                         </p>
                         <p class="to-top">
                         {{ trim($vendor->street) }} 
+                        {{-- {{ trim($vendor->street_2) }} 
+                        {{ trim($vendor->street_3) }}  --}}
+                        </p>
+                        <p class="to-top">
+                        {{ trim($vendor->street_2) }}
+                        </p>
+                        <p class="to-top">
+                        {{ trim($vendor->street_3) }} 
                         </p>
                         <p class="to-top">
                         Telp. {{ trim($vendor->office_telephone) }} 
@@ -234,18 +287,18 @@ libxml_use_internal_errors(true);
         </div>
         <!-- End Header -->
         <!-- Table Start -->
-        <table class="table">
+        <table class="table" >
             <thead>
                 <tr>
-                    <th>No</th>
-                    <th>Item Code </th>
-                    <th>Description </th>
-                    <th>Spesification </th>
-                    <th>Delivery Deadline </th>
-                    <th>Qty Units </th>
-                    <th>PR Ref </th>
-                    <th>Price ({{ $data['currency'] }})</th>
-                    <th>Total Price ({{ $data['currency'] }})</th>
+                    <th width=''>No</th>
+                    <th width=''>Item Code </th>
+                    <th width=''>Description </th>
+                    <th width=''>Spesification </th>
+                    <th width=''>Delivery Deadline </th>
+                    <th width=''>Qty Units </th>
+                    <th width=''>PR Ref </th>
+                    <th width=''>Price ({{ $data['currency'] }})</th>
+                    <th width=''>Total Price ({{ $data['currency'] }})</th>
                 </tr>
             </thead>
             <tbody>
@@ -253,16 +306,24 @@ libxml_use_internal_errors(true);
                     $total = 0;
                     $totalTax = 0;
                 @endphp
+                {{-- {{ dd($data) }} --}}
                 @foreach($data['id'] as $key => $value)
                     @php
                         $materialId = $data['material_id'][$key];
                         if( $materialId == '' ) {
                             $materialId = $data['short_text'][$key];
                         }
+                        // dd($data['acp_id'][$key]);
 
-                        $qtyAcp = \App\Models\AcpTableMaterial::getQtyAcp($materialId, $data['acp_id'][$key]);
-                        $perQty = ($data['qty'][$key]/$qtyAcp->qty);
-                        $totalPrice = (\removeComma($data['price'][$key]) * $perQty);
+                        if ($data['acp_id'][$key] = 'X') {
+                            $perQty = ($data['qty'][$key]/1);
+                            $totalPrice = (\removeComma($data['price'][$key]) * $perQty);
+                        }else {
+                            $qtyAcp = \App\Models\AcpTableMaterial::getQtyAcp($materialId, $data['acp_id'][$key]);
+                            $perQty = ($data['qty'][$key]/$qtyAcp->qty);
+                            $totalPrice = (\removeComma($data['price'][$key]) * $perQty);
+                        }
+
 
                         $material = \App\Models\PurchaseRequestsDetail::where('material_id', $data['material_id'][$key])->first();
                         $tax = 0;
@@ -279,17 +340,21 @@ libxml_use_internal_errors(true);
                         if( $totalRows == $key+1 ){
                             $cols = "10";
                         }
-                        $size = $key+1===count($data['id']) ? (650-($key*30)).'px' : 'auto';
+                        $size = $key+1===count($data['id']) ? (600-($key*30)).'px' : 'auto';
                     @endphp
                 <tr>
                     <td>
                         <div style="display:block; height: {{ $size }}; min-height: {{ $size }};">{{ $key + 1 }}</div>
                     </td>
                     <td>{{ $data['material_id'][$key] ?? '' }}</td>
-                    <td>{{ $value['short_text'][$key] ?? '' }}</td>
-                    <td>{{ $value['description'][$key] ?? '' }}</td>
-                    <td style="text-align: center">{{ date('d.m.Y',strtotime($data['delivery_date'][$key])) }}</td>
-                    <td>{{ $data['qty'][$key]." ".\App\Models\UomConvert::where('uom_1', $data['unit'][$key])->first()->uom_2}}</td>
+                    <td style="word-wrap: break-word; overflow:hidden; " width="150px">
+                        {!! \wordwrap($data['short_text'][$key],20,'<br>') !!}
+                    </td>
+                    <td>
+                        {!! \wordwrap($data['notes_detail'][$key],20,'<br>') !!}
+                    </td>
+                    <td style="text-align: center">{{ date('d.m.Y',strtotime($data['delivery_date_new'][$key])) }}</td>
+                    <td style="text-align: center">{{ $data['qty'][$key]." ".\App\Models\UomConvert::where('uom_1', $data['unit'][$key])->first()->uom_2}}</td>
                     <td>{{ $data['PR_NO'][$key] }}</td>
                     {{-- <td>{{ \toDecimal(\removeComma($data['price'][$key])) }}</td>
                     <td>{{ \toDecimal(\removeComma($data['price'][$key])) }}</td> --}}
@@ -312,15 +377,15 @@ libxml_use_internal_errors(true);
                             <br>
                         </p>
                     </td>
-                    <td colspan="3">Total</td>
+                    <td colspan="3">Total ({{ $data['currency'] }})</td>
                     <td colspan="1" style="text-align: right">{{ \toDecimal($total) }}</td>
                 </tr>
                 <tr>
-                    <td colspan="3">Tax</td>
+                    <td colspan="3">Tax ({{ $data['currency'] }})</td>
                     <td colspan="1" style="text-align: right">{{ \toDecimal($totalTax) }}</td>
                 </tr>
                 <tr>
-                    <td colspan="3">Grand Total</td>
+                    <td colspan="3">Grand Total ({{ $data['currency'] }})</td>
                     <td colspan="1" style="text-align: right">{{ \toDecimal($grandTotal) }}</td>
                 </tr>
                 <tr>

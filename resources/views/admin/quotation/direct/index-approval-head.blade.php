@@ -31,7 +31,6 @@
                                     <tr>
                                         <th>&nbsp;</th>
                                         <th>PO Eprocurement</th>
-                                        {{-- <th>Vendor</th> --}}
                                         <th>Created at</th>
                                         <th>Po Item</th>
                                         <th>Material</th>
@@ -41,43 +40,52 @@
                                         <th>Storage Location</th>
                                         <th>Purchasing Group</th>
                                         <th>Plant</th>
-                                        <th>Preq No</th>
-                                        <th>Preq Item</th>
-                                        <th>Preq Name</th>
+                                        <th>PR No</th>
+                                        <th>PR Item</th>
+                                        <th>Requisioner</th>
                                         <th>Delivery Date</th>
                                         <th>Rfq/Acp No</th>
                                         <th>Tax Code</th>
                                         <th>Currency</th>
                                         <th>Price</th>
+                                        <th>Total</th>
                                         <th>&nbsp;</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @php
+                                        $i = 0;
+                                    @endphp
                                     @foreach($quotation as $key => $val)
-                                        @php
-                                            $detail = \App\Models\Vendor\QuotationDetail::getDetailPo($val['id']);
-                                            $sumTotal = 0;
-                                        @endphp
                                         <tr>
                                             <td>
-                                                <input type="checkbox" name="id[]" id="check_{{ $val['id'] }}" class="check_po" value="{{ $val['id'] }}" _valold="{{ $val['id'] }}">
-                                                <label for="check_{{ $val['id'] }}">&nbsp;</label>
+                                                <input type="checkbox" name="id[]" id="check_{{ $key ?? '' }}" class="check_po" value="{{ $key ?? '' }}" _valold="{{ $key ?? '' }}">
+                                                <label for="check_{{ $key ?? '' }}">&nbsp;</label>
                                             </td>
-                                            <td>{{ $val['po_no']." - ". $val['name'] }}</td>
-                                            @foreach($detail as $key => $value)
+                                            <td>{{ $key }}</td>
+                                            @php
+                                                $sumTotal = 0;
+                                            @endphp
+                                            @foreach($val as $key => $value)
                                                 @php
-                                                    $sumTotal += $value->price;
+                                                    $qtyAcp   = \App\Models\AcpTableMaterial::getQtyAcp($value->material, $value->acp_id);
+                                                    if( null != $qtyAcp ) {
+                                                        $perQty     = ($value->qty/$qtyAcp->qty);
+                                                        $totalPrice = (\removeComma($value->price) * $perQty);
+                                                    } else {
+                                                        $totalPrice = ($value->price * $value->qty);
+                                                    }
+                                                    $sumTotal += $totalPrice;
                                                 @endphp
-                                                @if( $key > 0)
+                                                @if($key > 0)
                                                     @php
-                                                        $cols = count($detail) +  1;
+                                                        $cols = 3;
                                                     @endphp
                                                 @else 
                                                     @php
-                                                        $cols = 1;
+                                                        $cols = "";
                                                     @endphp
-                                                @endif
-                                                {{-- <td colspan="{{ $cols }}">{{ $val['name'] }}</td> --}}
+                                                @endif 
                                                 <td colspan="{{ $cols }}" style="text-align:right;">
                                                     {{ \Carbon\Carbon::parse($value->created_at)->format('d-m-Y') }}
                                                 </td>
@@ -97,60 +105,32 @@
                                                 <td>{{ $value->tax_code ?? '' }}</td>
                                                 <td>{{ $value->currency ?? '' }}</td>
                                                 <td>{{ \toDecimal($value->price) ?? '' }}</td>
+                                                <td>{{ \toDecimal($totalPrice) }}</td>
                                                 <td>
-                                                    <a class="btn btn-primary btn-xs" href="{{ route('admin.quotation-direct-show-approval-head', $value->quotation_order_id) }}">
+                                                    <a class="btn btn-primary btn-xs" href="{{ route('admin.quotation-direct-show-approval-head', $value->id) }}">
                                                         <i class="fa fa-eye"></i> {{ trans('global.view') }}
                                                     </a>
                                                     <a class="btn btn-warning btn-xs" href="{{ route('admin.master-acp-show',$value->acp_id) }}" target="_blank">
                                                         <i class="fa fa-eye"></i> Show ACP
                                                     </a>
                                                 </td>
-                                                {{-- </tr> --}}
-                                        {{-- <tr>
-                                            <td>
-                                                <input type="checkbox" name="id[]" id="check_{{ $value->id }}" class="check_po" value="{{ $value->id'] }}" _valold="{{ $val['id'] }}">
-                                                <label for="check_{{ $val['id'] }}">&nbsp;</label>
-                                            </td>
-                                            <td>{{ $val['id'] ?? '' }}</td>
-                                            <td>{{ $val['po_no'] ?? '' }}</td>
-                                            <td>{{ $val['name'] }}</td>
-                                            <td>
-                                                {{ \Carbon\Carbon::parse($val['created_at'])->format('d-m-Y') }}
-                                            </td>
-                                            <td>{{ $val['PO_ITEM'] }}</td>
-                                            <td>{{ $val['material'] ?? '-' }}</td>
-                                            <td>{{ $val['short_text'] ?? '' }}</td>
-                                            <td>{{ $val['material_group'] ?? '' }}</td>
-                                            <td>{{ $val['storage_location'] ?? '' }}</td>
-                                            <td>{{ $val['purchasing_group_code'] ?? '' }}</td>
-                                            <td>{{ $val['plant_code'] ?? '' }}</td>
-                                            <td>{{ $val['PR_NO'] ?? '' }}</td>
-                                            <td>{{ $val['PREQ_ITEM'] ?? '' }}</td>
-                                            <td>{{ $val['delivery_date'] ?? '' }}</td>
-                                            <td>{{ $val['purchasing_document'] ?? '' }}</td>
-                                            <td>{{ $val['tax_code'] ?? '' }}</td>
-                                            <td>
-                                                <a class="btn btn-primary btn-xs" href="{{ route('admin.quotation-direct-show-approval-head', $val['id']) }}">
-                                                    <i class="fa fa-eye"></i> {{ trans('global.view') }}
-                                                </a>
-                                                <a class="btn btn-warning btn-xs" href="{{ route('admin.master-acp-show',$val['acp_id']) }}" target="_blank">
-                                                    <i class="fa fa-eye"></i> Show ACP
-                                                </a>
-                                            </td> --}}
-                                        </tr>
-                                            @endforeach
+                                            </tr>
+                                        @endforeach
                                         <tr>
-                                            <td colspan=18></td>
-                                            <td>{{ \toDecimal($sumTotal) }}</td>
+                                            <td colspan=19></td>
+                                            <td style="font-size:18px;"><b>{{ \toDecimal($sumTotal) }}</b></td>
                                             <td></td>
                                         </tr>
+                                        @php
+                                            $i++;
+                                        @endphp
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
-                        {{ $quotation->links() }}
                     </div>
                 </div>
+                {{-- {{ $quotation->links() }} --}}
             </div>
         </div>
     </div>
@@ -179,57 +159,32 @@
 @section('scripts')
 @parent
 <script>
-function myFunction() {
-    var input, filter, table, tr, td, i, txtValue;
-    input = document.getElementById("myInput");
-    filter = input.value.toUpperCase();
-    table = document.getElementById("myTable");
-    tr = table.getElementsByTagName("tr");
-    for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[0];
-        if (td) {
-        txtValue = td.textContent || td.innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            tr[i].style.display = "";
-        } else {
-            tr[i].style.display = "none";
-        }
-        }       
-    }
-}
-$('#datatables-runq').DataTable({
-    "pageLength": 100,
-    "scrollY":        "200px",
-    "scrollCollapse": true,
-    "paging":         false
-});
+    $(document).on('click', '#open_modal', function (e) {
+        e.preventDefault()
 
-$(document).on('click', '#open_modal', function (e) {
-    e.preventDefault()
+        const id = $(this).data('id')
+        const check_po = $('.check_po:checked')
 
-    const id = $(this).data('id')
-    const check_po = $('.check_po:checked')
-
-    let ids = []
-    
-    for (let i = 0; i < check_po.length; i++) {
-        let id = check_po[i].value
-        ids.push(id)
-    }
-
-    ids = btoa(ids) 
-
-    $('.approval_po_repeat').attr('href', '#')
-
-    if (check_po.length > 0) {
-        $('#modal_approval_po').modal('show')
-        $('.approval_po_repeat').attr('href', '{{ url("admin/quotation/direct/approve/head/") }}/' + ids)
-    } else {
-        alert('Please check your PO!')
-        $('#modal_approval_po').modal('hide')
+        let ids = []
         
-        return false
-    }
-})
+        for (let i = 0; i < check_po.length; i++) {
+            let id = check_po[i].value
+            ids.push(id)
+        }
+
+        ids = btoa(ids) 
+
+        $('.approval_po_repeat').attr('href', '#')
+
+        if (check_po.length > 0) {
+            $('#modal_approval_po').modal('show')
+            $('.approval_po_repeat').attr('href', '{{ url("admin/quotation/direct/approve/head/") }}/' + ids)
+        } else {
+            alert('Please check your PO!')
+            $('#modal_approval_po').modal('hide')
+            
+            return false
+        }
+    })
 </script>
 @endsection

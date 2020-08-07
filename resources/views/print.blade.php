@@ -152,21 +152,24 @@
                 return mb_strimwidth($string, 0, $length, "-");
             }
         }
+        
+        if (!function_exists('nl2p'))  
+        { 
+            function nl2p($string, $line_breaks = true, $xml = true) {
 
-        function nl2p($string, $line_breaks = true, $xml = true) {
+            $string = str_replace(array('<p>', '</p>', '<br>', '<br />'), '', $string);
 
-        $string = str_replace(array('<p>', '</p>', '<br>', '<br />'), '', $string);
+            // It is conceivable that people might still want single line-breaks
+            // without breaking into a new paragraph.
+            if ($line_breaks == true)
+                return '<p>'.preg_replace(array("/([\n]{2,})/i", "/([^>])\n([^<])/i"), array("</p>\n<p>", '$1<br'.($xml == true ? ' /' : '').'>$2'), trim($string)).'</p>';
+            else 
+                return '<p>'.preg_replace(
+                array("/([\n]{2,})/i", "/([\r\n]{3,})/i","/([^>])\n([^<])/i"),
+                array("</p>\n<p>", "</p>\n<p>", '$1<br'.($xml == true ? ' /' : '').'>$2'),
 
-        // It is conceivable that people might still want single line-breaks
-        // without breaking into a new paragraph.
-        if ($line_breaks == true)
-            return '<p>'.preg_replace(array("/([\n]{2,})/i", "/([^>])\n([^<])/i"), array("</p>\n<p>", '$1<br'.($xml == true ? ' /' : '').'>$2'), trim($string)).'</p>';
-        else 
-            return '<p>'.preg_replace(
-            array("/([\n]{2,})/i", "/([\r\n]{3,})/i","/([^>])\n([^<])/i"),
-            array("</p>\n<p>", "</p>\n<p>", '$1<br'.($xml == true ? ' /' : '').'>$2'),
-
-            trim($string)).'</p>'; 
+                trim($string)).'</p>'; 
+            }
         }
 
     @endphp
@@ -175,34 +178,79 @@
         <div class="header row">
             <div class="left">
                 <div class="row">
-                    <div style="width: 20%;">
+                    <div style="width: 25%;">
                         <img src="{{ $print ? asset('index.jpg') : public_path('index.jpg') }}" style="position:absolute; top: -4px;" height="70">
                     </div>
                     <div style="width: 74%;">
-                        <p class="to-top">
                         @if($po->orderDetail[0]['plant_code'] == '1101')
-                        PT. Herlina Indah <br>
+                            <p class="to-top">
+                                PT. Herlina Indah <br>
+                            </p>
+                            <p class="to-top">
+                                Jl. Rawa Sumur II Blok DD.16 
+                            </p>
+                            <p class="to-top">
+                                Pulo Gadung Industri Estate,
+                            </p> 
+                            <p class="to-top">
+                                Jakarta
+                            </p>
+                            <p class="to-top">
+                                13930 
+                            </p>
                         @elseif($po->orderDetail[0]['plant_code'] == '2101')
-                        PT. Marketama Indah 
-                        @elseif($po->orderDetail[0]['plant_code'] == '1201' OR $po->orderDetail[0]['plant_code'] == '1201')
-                        PT. Sari Enesis Indah 
+                            <p class="to-top">
+                                PT. Marketama Indah 
+                            </p>
+                            <p class="to-top">
+                                Jl. Rawa Sumur II Blok DD.16 
+                            </p>
+                            <p class="to-top">
+                                Pulo Gadung Industri Estate,
+                            </p> 
+                            <p class="to-top">
+                                Jakarta
+                            </p>
+                            <p class="to-top">
+                                13930 
+                            </p>
+                        @elseif($po->orderDetail[0]['plant_code'] == '1201')
+                            <p class="to-top">
+                                PT. Sari Enesis Indah Cikarang
+                            </p>
+                            <p class="to-top">
+                                Jl. Kruing I Blok L5 No. 5, 
+                            </p>
+                            <p class="to-top">
+                                Delta Silicon Industrial Estate,
+                            </p> 
+                            <p class="to-top">
+                                Cikarang Bekasi
+                            </p>
+                            <p class="to-top">
+                                17550 
+                            </p>
+                        @elseif($po->orderDetail[0]['plant_code'] == '1202')
+                            <p class="to-top">
+                                PT. Sari Enesis Indah Ciawi
+                            </p>
+                            <p class="to-top">
+                                Jl. Veteran II RT 004/ RW 006  
+                            </p>
+                            <p class="to-top">
+                                Kel.Teluk Pinang,
+                            </p> 
+                            <p class="to-top">
+                                Kec. Ciawi Kab. Bogor
+                            </p>
+                            <p class="to-top">
+                                16720 
+                            </p>
                         @endif
-                        </p>
-                        <p class="to-top">
-                        Jl. Rawa Sumur II Blok DD.16 
-                        </p>
-                        <p class="to-top">
-                        Pulo Gadung Industri Estate,
-                        </p> 
-                        <p class="to-top">Jakarta
-                        </p>
-                        <p class="to-top">
-                        13930 
-                        </p>
                     </div>
                 </div>
-                <div class="row" style="top: -4px;">
-                    <div>
+                <div class="row" style="top: 2px;">
+                    {{-- <div>
                         <p class="to-top">To:</p>
                     </div>
                     <div>
@@ -215,6 +263,33 @@
                         <p class="to-top">
                             Telp. {{ trim($po->vendors['office_telephone']) }}
                         </p>
+                    </div> --}}
+                    <div style="width: 25%;" align="center">
+                        <p>To :</p>
+                    </div>
+                    <div>
+                        {{-- <p style="font-size: 11px;">
+                            {{ trim($vendor->name) }} <br>
+                            {{ trim($vendor->street) }} <br/>
+                            Telp. {{ trim($vendor->office_telephone) }} <br/>
+                        </p> --}}
+                        <p>
+                        {{ trim($po->vendors['name']) }}
+                        </p>
+                        <p class="to-top">
+                         {{ trim($po->vendors['street']) }}
+                        {{-- {{ trim($vendor->street_2) }} 
+                        {{ trim($vendor->street_3) }}  --}}
+                        </p>
+                        <p class="to-top">
+                        {{ trim($po->vendors['street_2']) }}
+                        </p>
+                        <p class="to-top">
+                        {{ trim($po->vendors['street_3']) }}
+                        </p>
+                        <p class="to-top">
+                        Telp. {{ trim($po->vendors['office_telephone']) }}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -224,11 +299,9 @@
                 </h6>
             </div>
             <div class="right">
-                <p>
-                    PO NO &nbsp;&nbsp;&nbsp;: {{ $po->PO_NUMBER }}<br>
-                    Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ date('d.m.Y') }} <br>
-                    Revisi &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ '0000' }} <br>
-                </p>
+                <p style="margin-bottom: 6px">    PO NO &nbsp;&nbsp;&nbsp;&nbsp;: {{ '0000' }}</p>
+                <p style="margin-bottom: 6px">    Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ date('d.m.Y') }} </p>
+                <p style="margin-bottom: 6px">    Revisi &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ '0000' }} </p>
                 <p></p>
                 <br>
                 <p>
@@ -293,7 +366,7 @@
                         if( $totalRows == $key+1 ){
                             $cols = "10";
                         }
-                        $size = $key+1===count($po->orderDetail) ? (680-($key*37)).'px' : 'auto';
+                        $size = $key+1===count($po->orderDetail) ? (600-($key*37)).'px' : 'auto';
                     @endphp
                 <tr>
                     <td>
@@ -302,9 +375,8 @@
                     <td style="text-align:center;">{{ $value->material_id ?? '' }}</td>
                     <td>{!! \wordwrap($value->short_text,20,'<br>') !!}</td>
                     <td>{!! $value->notes == "PR MRP" ? "" :  \wordwrap($value->notes,20,'<br>') !!}</td>
-                    <td style="text-align:center;">{{ date('d.m.Y',strtotime($value->delivery_date)) }}</td>
-                    <td style="text-align:right;">{{ $value->qty." ".
-                    \App\Models\UomConvert::where('uom_1',$value->unit)->first()->uom_2 }}</td>
+                    <td style="text-align:center;">{{ date('d.m.Y',strtotime($value->delivery_date_new)) }}</td>
+                    <td style="text-align:center;">{{ $value->qty." ".$value->unit }}</td>
                     <td style="text-align:right;">{{ $value->PR_NO }}</td>
                     <td style="text-align:right;">{{ \toDecimal($value->price) }}</td>
                     <td style="text-align:right;">{{ \toDecimal($totalPrice) }}</td>
@@ -331,15 +403,15 @@
                         </p>
                     </td>
                     <td colspan="3">Total ({{ $po->currency }})</td>
-                    <td colspan="1">{{ \toDecimal($total) }}</td>
+                    <td colspan="1" style="text-align: right">{{ \toDecimal($total) }}</td>
                 </tr>
                 <tr>
                     <td colspan="3">Tax ({{ $po->currency }})</td>
-                    <td colspan="1">{{ \toDecimal($totalTax) }}</td>
+                    <td colspan="1" style="text-align: right">{{ \toDecimal($totalTax) }}</td>
                 </tr>
                 <tr>
                     <td colspan="3">Grand Total ({{ $po->currency }})</td>
-                    <td colspan="1">{{ \toDecimal($grandTotal) }}</td>
+                    <td colspan="1" style="text-align: right">{{ \toDecimal($grandTotal) }}</td>
                 </tr>
                 <tr>
                     <td colspan="5">
@@ -371,12 +443,10 @@
                         <br>
                     </td>
                     <td colspan="4">
-                        <p>
-                            Notes : <br>
-                                1. Invoicing will be done on Tuesday 09.00am - 5.00pm <br>
-                                2. Delivery not on schedule, will be refused <br>
-                                3. Please bring along print out purchase order when invoicing <br>
-                        </p>
+                        <p style="margin-bottom: 6px"> Notes : </p>
+                        <p style="margin-bottom: 6px">        1. Invoicing will be done on Tuesday 09.00am - 5.00pm </p>
+                        <p style="margin-bottom: 6px">        2. Delivery not on schedule, will be refused </p>
+                        <p style="margin-bottom: 6px">        3. Please bring along print out purchase order when invoicing  </p>
                     </td>
                 </tr>
             </tfoot>

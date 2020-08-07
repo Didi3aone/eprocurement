@@ -87,7 +87,7 @@
                                     $totalPrice = 0;
                                 @endphp
                                 <tr>
-                                    <td rowspan={{ $rowSpan }}>{{ $rows->vendor['name'] }}</td>
+                                    <td rowspan={{ $rowSpan }}>{{ $rows->vendor['company_name'] }}</td>
                                     <td rowspan={{ $rowSpan }}>{!! $winner !!}</td>
                                     @foreach (\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id) as $key => $row)
                                         @php
