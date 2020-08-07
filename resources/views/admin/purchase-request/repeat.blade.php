@@ -180,7 +180,7 @@
                                 <input type="hidden" name="delivery_date[]" value="{{ $value->delivery_date }}">
                                 <input type="hidden" class="" name="unit[]" readonly value="{{ $value->unit }}">
                                 <input type="hidden" class="qty" name="qty[]" readonly value="{{ empty($value->qty) ? 0 : $value->qty }}">
-                                <input type="hidden" class="acp_id" name="acp_id[]" id="acp_id" value="X">
+                                <input type="hidden" class="acp_id" name="acp_id[]" id="acp_id" value="0">
                                 <td>{!! $value->material_id .'<br>'.$value->description !!}
                                     @php
                                         $materialId = $value->description;
