@@ -384,35 +384,6 @@ class LoginController extends Controller
         return true;
     }
 
-    // not used
-    public function register_old (Request $request)
-    {
-        $model = new Vendor;
-        $model->name = $request->input('name');
-        $model->email = $request->input('email');
-        $model->password = bcrypt($request->input('password'));
-        $model->company_type = 1;
-        $model->company_from = 1;
-        $model->npwp = $request->input('npwp');
-        $model->country_id = 1;
-        $model->province_id = 1;
-        $model->regencies_id = 1;
-        $model->district_id = 1;
-        $model->address = $request->input('address');
-        $model->specialize = $request->input('specialize');
-        $model->company_name = $request->input('company_name');
-        $model->zip_code = $request->input('zip_code');
-        $model->code_area = $request->input('code_area');
-        $model->pkp = $request->input('pkp');
-        $model->office_phone = $request->input('office_phone');
-        $model->office_fax = $request->input('office_fax');
-        $model->phone = $request->input('phone');
-        $model->status = 0;
-        $model->save();
-
-        return redirect()->route('vendor.login');
-    }
-
     public function setPassword ($code)
     {
         $model = Vendor::where('code', $code)->first();
