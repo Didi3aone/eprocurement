@@ -1007,7 +1007,16 @@ class VendorController extends Controller
     {
         abort_if(Gate::denies('vendor_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $delete = Vendor::where('id', $id)->delete();
+        $delete = UserVendors::where('id', $id)->delete();
+        $delete = $delete && VendorBPRoles::where('vendor_id', $id)->delete();
+        $delete = $delete && VendorCompanyData::where('vendor_id', $id)->delete();
+        $delete = $delete && VendorWithholdingTaxType::where('vendor_id', $id)->delete();
+        $delete = $delete && VendorPurchasingOrganization::where('vendor_id', $id)->delete();
+        $delete = $delete && VendorPartnerFunctions::where('vendor_id', $id)->delete();
+        $delete = $delete && VendorBankDetails::where('vendor_id', $id)->delete();
+        $delete = $delete && VendorTaxNumbers::where('vendor_id', $id)->delete();
+        $delete = $delete && VendorIdentificationNumbers::where('vendor_id', $id)->delete();
+        $delete = $delete && VendorEmail::where('vendor_id', $id)->delete();
 
         // check data deleted or not
         if ($delete == 1) {
