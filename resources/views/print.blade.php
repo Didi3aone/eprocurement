@@ -152,21 +152,23 @@
                 return mb_strimwidth($string, 0, $length, "-");
             }
         }
+         if (!function_exists('nl2p'))  
+        { 
+            function nl2p($string, $line_breaks = true, $xml = true) {
 
-        function nl2p($string, $line_breaks = true, $xml = true) {
+            $string = str_replace(array('<p>', '</p>', '<br>', '<br />'), '', $string);
 
-        $string = str_replace(array('<p>', '</p>', '<br>', '<br />'), '', $string);
+            // It is conceivable that people might still want single line-breaks
+            // without breaking into a new paragraph.
+            if ($line_breaks == true)
+                return '<p>'.preg_replace(array("/([\n]{2,})/i", "/([^>])\n([^<])/i"), array("</p>\n<p>", '$1<br'.($xml == true ? ' /' : '').'>$2'), trim($string)).'</p>';
+            else 
+                return '<p>'.preg_replace(
+                array("/([\n]{2,})/i", "/([\r\n]{3,})/i","/([^>])\n([^<])/i"),
+                array("</p>\n<p>", "</p>\n<p>", '$1<br'.($xml == true ? ' /' : '').'>$2'),
 
-        // It is conceivable that people might still want single line-breaks
-        // without breaking into a new paragraph.
-        if ($line_breaks == true)
-            return '<p>'.preg_replace(array("/([\n]{2,})/i", "/([^>])\n([^<])/i"), array("</p>\n<p>", '$1<br'.($xml == true ? ' /' : '').'>$2'), trim($string)).'</p>';
-        else 
-            return '<p>'.preg_replace(
-            array("/([\n]{2,})/i", "/([\r\n]{3,})/i","/([^>])\n([^<])/i"),
-            array("</p>\n<p>", "</p>\n<p>", '$1<br'.($xml == true ? ' /' : '').'>$2'),
-
-            trim($string)).'</p>'; 
+                trim($string)).'</p>'; 
+            }
         }
 
     @endphp
@@ -175,7 +177,7 @@
         <div class="header row">
             <div class="left">
                 <div class="row">
-                    <div style="width: 20%;">
+                    <div style="width: 25%;">
                         <img src="{{ $print ? asset('index.jpg') : public_path('index.jpg') }}" style="position:absolute; top: -4px;" height="70">
                     </div>
                     <div style="width: 74%;">
@@ -246,8 +248,8 @@
                         @endif
                     </div>
                 </div>
-                <div class="row" style="top: -4px;">
-                    <div>
+                <div class="row" style="top: 2px;">
+                    {{-- <div>
                         <p class="to-top">To:</p>
                     </div>
                     <div>
@@ -260,6 +262,33 @@
                         <p class="to-top">
                             Telp. {{ trim($po->vendors['office_telephone']) }}
                         </p>
+                    </div> --}}
+                    <div style="width: 25%;" align="center">
+                        <p>To :</p>
+                    </div>
+                    <div>
+                        {{-- <p style="font-size: 11px;">
+                            {{ trim($vendor->name) }} <br>
+                            {{ trim($vendor->street) }} <br/>
+                            Telp. {{ trim($vendor->office_telephone) }} <br/>
+                        </p> --}}
+                        <p>
+                        {{ trim($po->vendors['name']) }}
+                        </p>
+                        <p class="to-top">
+                         {{ trim($po->vendors['street']) }}
+                        {{-- {{ trim($vendor->street_2) }} 
+                        {{ trim($vendor->street_3) }}  --}}
+                        </p>
+                        <p class="to-top">
+                        {{ trim($po->vendors['street_2']) }}
+                        </p>
+                        <p class="to-top">
+                        {{ trim($po->vendors['street_3']) }}
+                        </p>
+                        <p class="to-top">
+                        Telp. {{ trim($po->vendors['office_telephone']) }}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -269,11 +298,9 @@
                 </h6>
             </div>
             <div class="right">
-                <p>
-                    PO NO &nbsp;&nbsp;&nbsp;: {{ $po->PO_NUMBER }}<br>
-                    Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ date('d.m.Y') }} <br>
-                    Revisi &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ '0000' }} <br>
-                </p>
+                <p style="margin-bottom: 6px">    PO NO &nbsp;&nbsp;&nbsp;&nbsp;: {{ '0000' }}</p>
+                <p style="margin-bottom: 6px">    Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ date('d.m.Y') }} </p>
+                <p style="margin-bottom: 6px">    Revisi &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ '0000' }} </p>
                 <p></p>
                 <br>
                 <p>
@@ -338,7 +365,7 @@
                         if( $totalRows == $key+1 ){
                             $cols = "10";
                         }
-                        $size = $key+1===count($po->orderDetail) ? (680-($key*37)).'px' : 'auto';
+                        $size = $key+1===count($po->orderDetail) ? (600-($key*37)).'px' : 'auto';
                     @endphp
                 <tr>
                     <td>
@@ -347,8 +374,8 @@
                     <td style="text-align:center;">{{ $value->material_id ?? '' }}</td>
                     <td>{!! \wordwrap($value->short_text,20,'<br>') !!}</td>
                     <td>{!! $value->notes == "PR MRP" ? "" :  \wordwrap($value->notes,20,'<br>') !!}</td>
-                    <td style="text-align:center;">{{ date('d.m.Y',strtotime($value->delivery_date)) }}</td>
-                    <td style="text-align:right;">{{ $value->qty." ".$value->unit }}</td>
+                    <td style="text-align:center;">{{ date('d.m.Y',strtotime($value->delivery_date_new)) }}</td>
+                    <td style="text-align:center;">{{ $value->qty." ".$value->unit }}</td>
                     <td style="text-align:right;">{{ $value->PR_NO }}</td>
                     <td style="text-align:right;">{{ \toDecimal($value->price) }}</td>
                     <td style="text-align:right;">{{ \toDecimal($totalPrice) }}</td>
@@ -375,15 +402,15 @@
                         </p>
                     </td>
                     <td colspan="3">Total ({{ $po->currency }})</td>
-                    <td colspan="1">{{ \toDecimal($total) }}</td>
+                    <td colspan="1" style="text-align: right">{{ \toDecimal($total) }}</td>
                 </tr>
                 <tr>
                     <td colspan="3">Tax ({{ $po->currency }})</td>
-                    <td colspan="1">{{ \toDecimal($totalTax) }}</td>
+                    <td colspan="1" style="text-align: right">{{ \toDecimal($totalTax) }}</td>
                 </tr>
                 <tr>
                     <td colspan="3">Grand Total ({{ $po->currency }})</td>
-                    <td colspan="1">{{ \toDecimal($grandTotal) }}</td>
+                    <td colspan="1" style="text-align: right">{{ \toDecimal($grandTotal) }}</td>
                 </tr>
                 <tr>
                     <td colspan="5">
@@ -415,12 +442,10 @@
                         <br>
                     </td>
                     <td colspan="4">
-                        <p>
-                            Notes : <br>
-                                1. Invoicing will be done on Tuesday 09.00am - 5.00pm <br>
-                                2. Delivery not on schedule, will be refused <br>
-                                3. Please bring along print out purchase order when invoicing <br>
-                        </p>
+                        <p style="margin-bottom: 6px"> Notes : </p>
+                        <p style="margin-bottom: 6px">        1. Invoicing will be done on Tuesday 09.00am - 5.00pm </p>
+                        <p style="margin-bottom: 6px">        2. Delivery not on schedule, will be refused </p>
+                        <p style="margin-bottom: 6px">        3. Please bring along print out purchase order when invoicing  </p>
                     </td>
                 </tr>
             </tfoot>
