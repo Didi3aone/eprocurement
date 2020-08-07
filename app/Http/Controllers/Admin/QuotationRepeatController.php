@@ -10,6 +10,7 @@ use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrdersDetail;
 use App\Models\PurchaseRequestHistory;
 use Gate, Artisan, Exception;
+use Symfony\Component\HttpFoundation\Response;
 use App\Models\Vendor\Quotation;
 use App\Models\Vendor\QuotationDetail;
 use App\Models\Vendor\QuotationServiceChild;
@@ -65,6 +66,8 @@ class QuotationRepeatController extends Controller
      */
     public function approvalListAss()
     {
+        abort_if(Gate::denies('approval_po_repeat_assproc'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        
         $userMapping = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first();
 
         $userMapping = explode(',', $userMapping->purchasing_group_code);
@@ -93,6 +96,8 @@ class QuotationRepeatController extends Controller
      */
     public function approvalListHead()
     {
+        abort_if(Gate::denies('approval_po_repeat_prochead'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         $quotation = QuotationDetail::join('quotation','quotation.id','=','quotation_details.quotation_order_id')
                     ->leftJoin('vendors','vendors.code','=','quotation.vendor_id')
                     ->where('quotation.status',Quotation::QuotationRepeat)
@@ -638,7 +643,7 @@ class QuotationRepeatController extends Controller
             $quotationDetail->PREQ_ITEM                 = $detail['preq_item'];
             $quotationDetail->PR_NO                     = $detail['PR_NO'];
             $quotationDetail->PO_ITEM                   = $poItem;
-            $quotationDetail->total_price               = 0;
+            $quotationDetail->total_price               = (\removeComma($detail['price']) * $detail['qty']);
             $quotationDetail->purchasing_document       = $detail['rfq'];
             $quotationDetail->acp_id                    = $detail['acp_id'];
             $quotationDetail->delivery_date             = $detail['delivery_date'];

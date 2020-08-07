@@ -71,6 +71,8 @@ class QuotationDirectController extends Controller
      */
     public function approvalListAss()
     {
+        abort_if(Gate::denies('approval_po_direct_assproc'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         $userMapping = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first();
 
         $userMapping = explode(',', $userMapping->purchasing_group_code);
@@ -100,6 +102,8 @@ class QuotationDirectController extends Controller
      */
     public function approvalListHead()
     {
+        abort_if(Gate::denies('approval_po_direct_prochead'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         $data = QuotationDetail::join('quotation','quotation.id','=','quotation_details.quotation_order_id')
                     ->leftJoin('vendors','vendors.code','=','quotation.vendor_id')
                     ->where('quotation.status',Quotation::QuotationDirect)
@@ -132,16 +136,12 @@ class QuotationDirectController extends Controller
                         'quotation_details.PREQ_ITEM',
                         'quotation_details.acp_id',
                     )
-                    // ->groupBy('quotation.id','vendors.name')
                     ->orderBy('id', 'desc')
                     ->get();
-                    // ->toArray()
         $quotation = [];
         foreach( $data as $key => $rows ) {
             $quotation[$rows->po_no][] = $rows;
         }
-        // $quotation = \group_by('po_no', $quotation);//group by po no
-        // dd($quotation);
 
         return view('admin.quotation.direct.index-approval-head', compact('quotation'));
     }
@@ -400,8 +400,8 @@ class QuotationDirectController extends Controller
                                     ->orderBy('PREQ_ITEM','asc')
                                     ->get();
 
-                // $sendSap = \sapHelp::sendPoToSap($quotation, $quotationDetail,$quotationDeliveryDate);
-                $sendSap = true;
+                $sendSap = \sapHelp::sendPoToSap($quotation, $quotationDetail,$quotationDeliveryDate);
+                // $sendSap = true;
                 if( $sendSap ) {
                     $this->_clone_purchase_orders($quotation, $quotationDetail, $sendSap);
                     $quotation->approval_status     = Quotation::ApprovalHead;
@@ -668,17 +668,15 @@ class QuotationDirectController extends Controller
                 $materialIds = $detail['short_text'];
             }
 
-            $materialIds = $detail['material_id'];
-            if( $detail['material_id'] == '') {
-                $materialIds = $detail['short_text'];
-            }
-
             $getQtyAcp = \App\Models\AcpTableMaterial::where('master_acp_id', $detail['acp_id'])
                         ->where('material_id', $materialIds)
                         ->first();
 
-            $perQty = ($detail['qty']/$getQtyAcp->qty);
-            $totalPrices = (\removeComma($detail['price']) * $perQty);
+            $totalPrices = 0;
+            if( null != $getQtyAcp ) {
+                $perQty = ($detail['qty']/$getQtyAcp->qty);
+                $totalPrices = (\removeComma($detail['price']) * $perQty);
+            }
 
             $quotationDetail = new QuotationDetail;
             $quotationDetail->quotation_order_id        = $id;
