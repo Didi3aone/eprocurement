@@ -234,6 +234,65 @@
                             </div>
                         </div>
                         <div class="col-md-12">
+                            <button type="button" class="show_modal btn btn-success" data-id="{{ $vendors->id }}" data-toggle="modal" data-target="#modal_add_bank">
+                                Add Bank Details
+                            </button>
+                            <br/><br/>
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Bank Countries
+                                        </th>
+                                        <th>
+                                            Bank Keys
+                                        </th>
+                                        <th>
+                                            Bank Account No
+                                        </th>
+                                        <th>
+                                            Bank Account Holder Name
+                                        </th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($vendors->vendor_bank as $i => $value)
+                                    <tr>
+                                        <td>
+                                            <input type="hidden" name="vendor_bank_id[]" value="{{ $value->id }}">
+                                            <select class="form-control" name="bank_country_key[]" required>
+                                                <option value="" selected="" disabled="">Select Bank Country</option>
+                                                @foreach($vendor_bank_country as $row)
+                                                <option value="{{ $row->code }}" {{ $value->bank_country_key==$row->code?'selected=""':'' }}>{{ $row->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control" name="bank_keys[]" required>
+                                                <option value="" selected="" disabled="">Select Bank</option>
+                                                @foreach($vendor_bank_keys as $row)
+                                                <option value="{{ $row->id }}" {{ $value->bank_keys==str_replace(' ', '',  $row->key)?'selected=""':'' }}>{{ $row->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="text" name="bank_account_no[]" value="{{ $value->account_no }}" required>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="text" name="bank_account_holder_name[]" value="{{ $value->account_holder_name }}" required>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="show_modal btn btn-sm btn-danger" data-bank_id="{{ $value->id }}" data-toggle="modal" data-target="#modal_delete_bank">
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-12">
                             <div class="form-group">
                                 <div class="col-xs-12">
                                     <label style="font-weight: bold;">Terms of payment</label>
@@ -271,6 +330,78 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="modal_add_bank" tabindex="-1" role="dialog" aria-labelledby="modalAddBankDetails" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAddBankDetails">Bank Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('admin.vendors.add-bank') }}" method="post" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body">
+                    <input type="hidden" name="vendor_id" id="vendor_id" value="">
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <select class="form-control" name="bank_country_id" required>
+                                <option value="" selected="" disabled="">Select Bank Country</option>
+                                @foreach($vendor_bank_country as $row)
+                                <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <select class="form-control" name="bank_keys_id" required>
+                                <option value="" selected="" disabled="">Select Bank</option>
+                                @foreach($vendor_bank_keys as $row)
+                                <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <div class="col-xs-12">
+                            <input class="form-control" type="text" name="bank_account_no" required placeholder="Bank Account No">
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <div class="col-xs-12">
+                            <input class="form-control" type="text" name="bank_account_holder_name" required placeholder="Bank Account Holder Name">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal_delete_bank" tabindex="-1" role="dialog" aria-labelledby="modalDeleteBankDetails" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalDeleteBankDetails">Are you sure delete this?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('admin.vendors.delete-bank') }}" method="post" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" name="vendor_bank_id" id="vendor_bank_id" value="">
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                    <button type="submit" class="btn btn-danger">Yes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 @section('scripts')
 <script>
@@ -287,5 +418,14 @@
               panel.style.display = "block"
         })
     }
+    $('.show_modal').on('click', function (e) {
+        e.preventDefault()
+
+        const id = $(this).data('id')
+        $('#vendor_id').val(id)
+
+        const bank_id = $(this).data('bank_id')
+        $('#vendor_bank_id').val(bank_id)
+    })
 </script>
 @endsection
