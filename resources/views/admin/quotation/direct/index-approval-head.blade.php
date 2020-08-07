@@ -31,7 +31,6 @@
                                     <tr>
                                         <th>&nbsp;</th>
                                         <th>PO Eprocurement</th>
-                                        {{-- <th>Vendor</th> --}}
                                         <th>Created at</th>
                                         <th>Po Item</th>
                                         <th>Material</th>
@@ -70,7 +69,7 @@
                                                 @endphp
                                                 @if( $key > 0)
                                                     @php
-                                                        $cols = count($detail) +  1;
+                                                        $cols = 3;
                                                     @endphp
                                                 @else 
                                                     @php
@@ -105,45 +104,6 @@
                                                         <i class="fa fa-eye"></i> Show ACP
                                                     </a>
                                                 </td>
-                                                {{-- </tr> --}}
-                                        {{-- <tr>
-                                            <td>
-                                                <input type="checkbox" name="id[]" id="check_{{ $value->id }}" class="check_po" value="{{ $value->id'] }}" _valold="{{ $val['id'] }}">
-                                                <label for="check_{{ $val['id'] }}">&nbsp;</label>
-                                            </td>
-                                            <td>{{ $val['id'] ?? '' }}</td>
-                                            <td>{{ $val['po_no'] ?? '' }}</td>
-                                            <td>{{ $val['name'] }}</td>
-                                            <td>
-                                                {{ \Carbon\Carbon::parse($val['created_at'])->format('d-m-Y') }}
-                                            </td>
-                                            <td>{{ $val['PO_ITEM'] }}</td>
-                                            <td>{{ $val['material'] ?? '-' }}</td>
-                                            <td>{{ $val['short_text'] ?? '' }}</td>
-                                            <td>{{ $val['material_group'] ?? '' }}</td>
-                                            <td>{{ $val['storage_location'] ?? '' }}</td>
-                                            <td>{{ $val['purchasing_group_code'] ?? '' }}</td>
-                                            <td>{{ $val['plant_code'] ?? '' }}</td>
-                                            <td>{{ $val['PR_NO'] ?? '' }}</td>
-                                            <td>{{ $val['PREQ_ITEM'] ?? '' }}</td>
-                                            <td>{{ $val['delivery_date'] ?? '' }}</td>
-                                            <td>{{ $val['purchasing_document'] ?? '' }}</td>
-                                            <td>{{ $val['tax_code'] ?? '' }}</td>
-                                            <td>
-                                                <a class="btn btn-primary btn-xs" href="{{ route('admin.quotation-direct-show-approval-head', $val->id ) }}">
-                                                    <i class="fa fa-eye"></i> {{ trans('global.view') }}
-                                                </a>
-                                                {{-- <a class="btn btn-warning btn-xs" href="{{ route('admin.master-acp-show',$val->acp_id ?? 0) }}" target="_blank">
-                                                    <i class="fa fa-eye"></i> Show ACP
-                                                </a> --}}
-                                            </td>
-                                                <a class="btn btn-primary btn-xs" href="{{ route('admin.quotation-direct-show-approval-head', $val['id']) }}">
-                                                    <i class="fa fa-eye"></i> {{ trans('global.view') }}
-                                                </a>
-                                                <a class="btn btn-warning btn-xs" href="{{ route('admin.master-acp-show',$val['acp_id']) }}" target="_blank">
-                                                    <i class="fa fa-eye"></i> Show ACP
-                                                </a>
-                                            </td> --}}
                                         </tr>
                                             @endforeach
                                         <tr>
@@ -155,7 +115,6 @@
                                 </tbody>
                             </table>
                         </div>
-                        {{ $quotation->links() }}
                     </div>
                 </div>
             </div>
