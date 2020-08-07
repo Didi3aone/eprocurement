@@ -35,6 +35,7 @@ class QuotationRepeatController extends Controller
                     ->join('vendors','vendors.code','=','quotation.vendor_id')
                     ->where('quotation.status',Quotation::QuotationRepeat)
                     ->where('quotation.approval_status',Quotation::Waiting)
+                    ->orWhere('quotation.approval_status', Quotation::ApprovalAss)
                     ->whereIn('quotation_details.purchasing_group_code', $userMapping)
                     ->select(
                         'quotation.id',
@@ -68,7 +69,7 @@ class QuotationRepeatController extends Controller
 
         $userMapping = explode(',', $userMapping->purchasing_group_code);
         $quotation = QuotationDetail::join('quotation','quotation.id','=','quotation_details.quotation_order_id')
-                    ->join('vendors','vendors.code','=','quotation.vendor_id')
+                    ->leftJoin('vendors','vendors.code','=','quotation.vendor_id')
                     ->where('quotation.status',Quotation::QuotationRepeat)
                     ->where('quotation.approval_status',Quotation::Waiting)
                     ->whereIn('quotation_details.purchasing_group_code', $userMapping)
@@ -93,7 +94,7 @@ class QuotationRepeatController extends Controller
     public function approvalListHead()
     {
         $quotation = QuotationDetail::join('quotation','quotation.id','=','quotation_details.quotation_order_id')
-                    ->join('vendors','vendors.code','=','quotation.vendor_id')
+                    ->leftJoin('vendors','vendors.code','=','quotation.vendor_id')
                     ->where('quotation.status',Quotation::QuotationRepeat)
                     ->where('quotation.approval_status',Quotation::ApprovalAss)
                     ->select(
@@ -415,7 +416,7 @@ class QuotationRepeatController extends Controller
      */
     public function repeatRejectedHead(Request $request)
     {
-        $quotation = Quotation::find($id);
+        $quotation = Quotation::find($request->id);
         $quotation->approval_status     = Quotation::Rejected;
         $quotation->approved_head       = \Auth::user()->user_id;
         $quotation->reason_reject       = $request->reason;
@@ -637,7 +638,7 @@ class QuotationRepeatController extends Controller
             $quotationDetail->PREQ_ITEM                 = $detail['preq_item'];
             $quotationDetail->PR_NO                     = $detail['PR_NO'];
             $quotationDetail->PO_ITEM                   = $poItem;
-            $quotationDetail->total_price               = $totalPrices;
+            $quotationDetail->total_price               = 0;
             $quotationDetail->purchasing_document       = $detail['rfq'];
             $quotationDetail->acp_id                    = $detail['acp_id'];
             $quotationDetail->delivery_date             = $detail['delivery_date'];

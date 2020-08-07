@@ -93,6 +93,13 @@ class PurchaseRequestController extends Controller
                     15 => 'purchasing_group_code',
                     18 => 'request_no',
                     18 => 'pr_no',
+                    19 => 'delivery_date',
+                    10 => 'storage_location',
+                    12 => 'qty_order',
+                    11 => 'qty',
+                    16 => 'preq_name',
+                    14 => 'material_group'
+
                 ];
                 $totalData = $materials->count();
 

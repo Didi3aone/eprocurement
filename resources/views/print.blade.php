@@ -181,26 +181,71 @@
                         <img src="{{ $print ? asset('index.jpg') : public_path('index.jpg') }}" style="position:absolute; top: -4px;" height="70">
                     </div>
                     <div style="width: 74%;">
-                        <p class="to-top">
                         @if($po->orderDetail[0]['plant_code'] == '1101')
-                        PT. Herlina Indah <br>
+                            <p class="to-top">
+                                PT. Herlina Indah <br>
+                            </p>
+                            <p class="to-top">
+                                Jl. Rawa Sumur II Blok DD.16 
+                            </p>
+                            <p class="to-top">
+                                Pulo Gadung Industri Estate,
+                            </p> 
+                            <p class="to-top">
+                                Jakarta
+                            </p>
+                            <p class="to-top">
+                                13930 
+                            </p>
                         @elseif($po->orderDetail[0]['plant_code'] == '2101')
-                        PT. Marketama Indah 
-                        @elseif($po->orderDetail[0]['plant_code'] == '1201' OR $po->orderDetail[0]['plant_code'] == '1201')
-                        PT. Sari Enesis Indah 
+                            <p class="to-top">
+                                PT. Marketama Indah 
+                            </p>
+                            <p class="to-top">
+                                Jl. Rawa Sumur II Blok DD.16 
+                            </p>
+                            <p class="to-top">
+                                Pulo Gadung Industri Estate,
+                            </p> 
+                            <p class="to-top">
+                                Jakarta
+                            </p>
+                            <p class="to-top">
+                                13930 
+                            </p>
+                        @elseif($po->orderDetail[0]['plant_code'] == '1201')
+                            <p class="to-top">
+                                PT. Sari Enesis Indah Cikarang
+                            </p>
+                            <p class="to-top">
+                                Jl. Kruing I Blok L5 No. 5, 
+                            </p>
+                            <p class="to-top">
+                                Delta Silicon Industrial Estate,
+                            </p> 
+                            <p class="to-top">
+                                Cikarang Bekasi
+                            </p>
+                            <p class="to-top">
+                                17550 
+                            </p>
+                        @elseif($po->orderDetail[0]['plant_code'] == '1202')
+                            <p class="to-top">
+                                PT. Sari Enesis Indah Ciawi
+                            </p>
+                            <p class="to-top">
+                                Jl. Veteran II RT 004/ RW 006  
+                            </p>
+                            <p class="to-top">
+                                Kel.Teluk Pinang,
+                            </p> 
+                            <p class="to-top">
+                                Kec. Ciawi Kab. Bogor
+                            </p>
+                            <p class="to-top">
+                                16720 
+                            </p>
                         @endif
-                        </p>
-                        <p class="to-top">
-                        Jl. Rawa Sumur II Blok DD.16 
-                        </p>
-                        <p class="to-top">
-                        Pulo Gadung Industri Estate,
-                        </p> 
-                        <p class="to-top">Jakarta
-                        </p>
-                        <p class="to-top">
-                        13930 
-                        </p>
                     </div>
                 </div>
                 <div class="row" style="top: -4px;">
@@ -305,8 +350,7 @@
                     <td>{!! \wordwrap($value->short_text,20,'<br>') !!}</td>
                     <td>{!! $value->notes == "PR MRP" ? "" :  \wordwrap($value->notes,20,'<br>') !!}</td>
                     <td style="text-align:center;">{{ date('d.m.Y',strtotime($value->delivery_date)) }}</td>
-                    <td style="text-align:right;">{{ $value->qty." ".
-                    \App\Models\UomConvert::where('uom_1',$value->unit)->first()->uom_2 }}</td>
+                    <td style="text-align:right;">{{ $value->qty." ".$value->unit }}</td>
                     <td style="text-align:right;">{{ $value->PR_NO }}</td>
                     <td style="text-align:right;">{{ \toDecimal($value->price) }}</td>
                     <td style="text-align:right;">{{ \toDecimal($totalPrice) }}</td>

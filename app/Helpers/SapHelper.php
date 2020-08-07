@@ -1091,7 +1091,7 @@ class SapHelper {
             'DSCNT3_TO' => '',
             'DSCT_PCT1' => '',
             'DSCT_PCT2' => '',
-            'PURCH_ORG' => '',
+            'PURCH_ORG' => '0000',
             'PUR_GROUP' => '',
             'CURRENCY' => $quotation->currency ?? 'IDR',
             'CURRENCY_ISO' => '',
@@ -1160,7 +1160,7 @@ class SapHelper {
             'DSCNT3_TO' => '',
             'DSCT_PCT1' => '',
             'DSCT_PCT2' => '',
-            'PURCH_ORG' => '',
+            'PURCH_ORG' => 'X',
             'PUR_GROUP' => '',
             'CURRENCY' => 'X',
             'CURRENCY_ISO' => '',
@@ -1615,7 +1615,7 @@ class SapHelper {
                     "PO_ITEM" => $quotationDetail[$i]->PO_ITEM, //line
                     "SCHED_LINE" => '0001',//$quotationDeliveryDate[$i]->SCHED_LINE, // 0001 ++
                     "DEL_DATCAT_EXT" => "",
-                    "DELIVERY_DATE" => $quotationDeliveryDate[$i]->DELIVERY_DATE,//delivery date
+                    "DELIVERY_DATE" => date('Ymd',strtotime($quotationDeliveryDate[$i]->DELIVERY_DATE)),//delivery date
                     "QUANTITY" =>  (string) $quotationDeliveryDate[$i]->QUANTITY,// qty
                     "DELIV_TIME" => "", 
                     "STAT_DATE" => "",
@@ -1726,8 +1726,8 @@ class SapHelper {
                 $POACCOUNTX = [
                     'PO_ITEM' => $quotationDetail[$i]->PO_ITEM,//00010
                     'PO_ITEMX'  => 'X',
-                    'SERIAL_NO' => '',//01
-                    'SERIAL_NOX'    => '',
+                    'SERIAL_NO' => '01',//01
+                    'SERIAL_NOX'    => 'X',
                     'DELETE_IND' => '',
                     'CREAT_DATE' => '',
                     'QUANTITY' => '',

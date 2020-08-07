@@ -41,6 +41,7 @@ class QuotationDirectController extends Controller
                     ->join('vendors','vendors.code','=','quotation.vendor_id')
                     ->where('quotation.status',Quotation::QuotationDirect)
                     ->where('quotation.approval_status',Quotation::Waiting)
+                    ->orWhere('quotation.approval_status', Quotation::ApprovalAss)
                     ->whereIn('quotation_details.purchasing_group_code', $userMapping)
                     ->select(
                         'quotation.id',
@@ -99,10 +100,11 @@ class QuotationDirectController extends Controller
      */
     public function approvalListHead()
     {
-        $data = QuotationDetail::join('quotation','quotation.id','=','quotation_details.quotation_order_id')
-                    ->join('vendors','vendors.code','=','quotation.vendor_id')
+        $quotation = QuotationDetail::join('quotation','quotation.id','=','quotation_details.quotation_order_id')
+                    ->leftJoin('vendors','vendors.code','=','quotation.vendor_id')
                     ->where('quotation.status',Quotation::QuotationDirect)
                     ->where('quotation.approval_status',Quotation::ApprovalAss)
+                    ->where('quotation.approved_head','PROCUREMENT01')
                     ->select(
                         'quotation.id',
                         'quotation.po_no',
@@ -386,7 +388,7 @@ class QuotationDirectController extends Controller
         try {
             $ids = base64_decode($ids);
             $ids = explode(',', $ids);
-
+            
             foreach( $ids as $id ) {
                 $quotation = Quotation::where('po_no',$id)->first();
 
@@ -454,7 +456,8 @@ class QuotationDirectController extends Controller
      */
     public function directRejectedHead(Request $request)
     {
-        $quotation = Quotation::find($id);
+        // dd($request);
+        $quotation = Quotation::find($request->id);
         $quotation->approval_status     = Quotation::Rejected;
         $quotation->approved_head       = \Auth::user()->user_id;
         $quotation->reason_reject       = $request->reason;
@@ -658,6 +661,11 @@ class QuotationDirectController extends Controller
                     $child->subpackage_no           = $subpackgparent;
                     $child->short_text              = $detail['short_text'];
                 }
+            } 
+
+            $materialIds = $detail['material_id'];
+            if( $detail['material_id'] == '') {
+                $materialIds = $detail['short_text'];
             }
 
             $materialIds = $detail['material_id'];
