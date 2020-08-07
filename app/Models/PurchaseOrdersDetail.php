@@ -54,7 +54,8 @@ class PurchaseOrdersDetail extends Model
         'SCHED_LINE',
         'request_detail_id',
         'qty_billing',
-        'rfq_number'
+        'rfq_number',
+        'total_price'
     ];
 
     public const SERVICE = 9;

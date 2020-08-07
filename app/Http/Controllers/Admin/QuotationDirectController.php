@@ -660,8 +660,13 @@ class QuotationDirectController extends Controller
                 }
             }
 
+            $materialIds = $detail['material_id'];
+            if( $detail['material_id'] == '') {
+                $materialIds = $detail['short_text'];
+            }
+
             $getQtyAcp = \App\Models\AcpTableMaterial::where('master_acp_id', $detail['acp_id'])
-                        ->where('material_id', $detail['material_id'])
+                        ->where('material_id', $materialIds)
                         ->first();
 
             $perQty = ($detail['qty']/$getQtyAcp->qty);
