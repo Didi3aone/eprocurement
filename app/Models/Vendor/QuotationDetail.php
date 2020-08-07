@@ -48,4 +48,9 @@ class QuotationDetail extends Model
             ->selectRaw('count(*) as count')
             ->groupBy('quotation_order_id');
     }
+
+    public static function getDetailPo($id)
+    {
+        return QuotationDetail::where('quotation_order_id', $id)->get();
+    }
 }

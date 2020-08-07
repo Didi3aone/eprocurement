@@ -109,11 +109,40 @@ class QuotationDirectController extends Controller
                         'quotation.id',
                         'quotation.po_no',
                         'quotation.approval_status',
-                        'vendors.name'
+                        'quotation.created_at',
+                        'vendors.name',
+                        'quotation_details.id as detailId',
+                        'quotation_details.short_text',
+                        'quotation_details.material',
+                        'quotation_details.purchasing_group_code',
+                        'quotation_details.plant_code',
+                        'quotation_details.price',
+                        'quotation_details.orginal_price',
+                        'quotation_details.total_price',
+                        'quotation_details.currency',
+                        'quotation_details.tax_code',
+                        'quotation_details.PO_ITEM',
+                        'quotation_details.delivery_date',
+                        'quotation_details.PR_NO',
+                        'quotation_details.purchasing_document',
+                        'quotation_details.storage_location',
+                        'quotation_details.preq_name',
+                        'quotation_details.material_group',
+                        'quotation_details.PREQ_ITEM',
+                        'quotation_details.acp_id',
                     )
-                    ->groupBy('quotation.id','vendors.name')
+                    // ->groupBy('quotation.id','vendors.name')
                     ->orderBy('id', 'desc')
-                    ->get();
+                    ->latest()
+                    ->paginate(50);
+                    // ->get()
+                    // ->toArray()
+        // $quotation = [];
+        // foreach( $data as $key => $rows ) {
+        //     $quotation[$rows['po_no']][] = $rows;
+        // }
+        // dd($quotation);
+        // $data = \group_by('po_no', $quotation);//group by po no
 
         return view('admin.quotation.direct.index-approval-head', compact('quotation'));
     }

@@ -14,6 +14,8 @@ use App\Models\PurchaseRequestDetail;
 use App\Models\Materials;
 use App\Models\RequestNotesDetail;
 use App\Models\RequestNotes;
+use App\Models\TempPurchaseRequest;
+use App\Models\MasterMaterial;
 use App\Models\PurchaseRequestServiceChild;
 
 /**
@@ -5506,6 +5508,183 @@ class SapHelper {
             ]); 
             dd($result);
             return 'NO';
+        }
+    }
+
+    public static function getPrMrp()
+    {
+        ini_set('memory_limit', '20000M');
+        //ini_set('memory_limit', '-1');
+        set_time_limit(0);
+        $wsdl = public_path() . "/xml/zbn_eproc_prmrp.xml";
+
+        $username = "IT_02";
+        $password = "ademsari";
+        $client = new \SoapClient($wsdl, array(
+                'login' => 'IT_02',
+                'password' => 'ademsari',
+                'trace' => true
+            )
+        );
+
+        $params = [];
+        $params[0]['BANFN'] = '';
+        $auth = Self::Authentication($username, $password);
+        $header = new \SoapHeader("http://0003427388-one-off.sap.com/YGYHI4A8Y_", "Authentication", $auth, false);
+        $client->__setSoapHeaders($header);
+        
+        $params[0]['BSART'] = 'Z104';
+        $params[0]['ITAB']  = [];
+        $params[0]['OPEN']  = 'X';
+        
+        try {
+            $result = $client->__soapCall("ZFM_WS_POMRP", $params, NULL, $header);
+            $array = (object) $result;
+            foreach( $result->ITAB as $rows ) {
+                for ($i = 0; $i <= count($rows); $i++) {
+                    sleep(0);
+                    $prNo = $rows[$i]->BANFN;
+                    $delivDate   = str_replace('/','-',$rows[$i]->LFDAT);
+                    $releaseDate = str_replace('/','-',$rows[$i]->FRGDT);
+
+                    $materials = Materials::where('code',str_replace('00000000000','',$rows[$i]->MATNR))->first();
+                    $tempPurchaseRequest                          = new TempPurchaseRequest;
+                    $tempPurchaseRequest->PR_NO                   = $rows[$i]->BANFN;
+                    $tempPurchaseRequest->description             = $materials->description ?? $rows[$i]->TXZ01;
+                    $tempPurchaseRequest->category                = $rows[$i]->PSTYP;
+                    $tempPurchaseRequest->doc_type                = $rows[$i]->BSART;
+                    $tempPurchaseRequest->qty                     = $rows[$i]->MENGE;
+                    $tempPurchaseRequest->unit                    = $rows[$i]->MEINS;
+                    $tempPurchaseRequest->notes                   = 'PR MRP';
+                    $tempPurchaseRequest->material_id             = str_replace('00000000000','',$rows[$i]->MATNR);
+                    // $tempPurchaseRequest->gl_acct_code            = '';
+                    $tempPurchaseRequest->request_no              = $rows[$i]->BEDNR;
+                    $tempPurchaseRequest->plant_code              = $rows[$i]->WERKS;
+                    $tempPurchaseRequest->purchasing_group_code   = $rows[$i]->EKGRP;
+                    $tempPurchaseRequest->preq_name               = $rows[$i]->ERNAM;
+                    $tempPurchaseRequest->storage_location        = $rows[$i]->LGORT;
+                    $tempPurchaseRequest->material_group          = $rows[$i]->MATKL;
+                    // $tempPurchaseRequest->cost_center_code        = '';
+                    $tempPurchaseRequest->profit_center_code      = $materials->profit_center_code ?? 00;
+                    $tempPurchaseRequest->delivery_date           = \toDateDb($delivDate);
+                    $tempPurchaseRequest->release_date            = \toDateDb($releaseDate);
+                    $tempPurchaseRequest->account_assignment      = $rows[$i]->KNTTP;
+                    $tempPurchaseRequest->text_id                 = 'PR';
+                    $tempPurchaseRequest->text_form               = 'EN';
+                    $tempPurchaseRequest->text_line               = $rows[$i]->TXZ01;
+                    $tempPurchaseRequest->short_text              = $rows[$i]->TXZ01;
+                    $tempPurchaseRequest->preq_item               = $rows[$i]->BNFPO;
+
+                    $tempPurchaseRequest->save();
+                    echo "PR No ".$prNo." berhasil disimpan didatabase \n";
+                }
+            }
+
+            //clone MRP
+            \sapHelp::cloneMrp();
+            
+        } catch (\Exception $e){
+            echo $e;
+            // \DB::table('logs')->insert([
+            //     'log_type' => 'Cron Get PR MRP',
+            //     'id1' => 9999,
+            //     'desc1' => 'Get PR MRP',
+            //     'desc2' => 'Failed',
+            //     'desc3' => '',
+            //     'created_at' => \Carbon\Carbon::now(),
+            //     'updated_at' => \Carbon\Carbon::now(),
+            //     'created_by' => 9999
+            // ]);
+            // echo "Soap request gagal! Response : ".$client->__getLastResponse();
+        }
+    }
+
+    public static function cloneMrp()
+    {
+        ini_set('memory_limit', '20000M');
+        //ini_set('memory_limit', '-1');
+        set_time_limit(0);
+   
+        $getPrMRP = TempPurchaseRequest::where('is_clone',0)->get();
+        if( empty($getPrMRP) ) {
+            echo "..... No data found ......\n";
+        } else {
+            // $this->output->progressStart(count($getPrMRP));
+            foreach( $getPrMRP as $rows ) {
+                sleep(0);
+                // $this->output->progressAdvance();
+                $checkPrInsert = PurchaseRequest::where('PR_NO',$rows->PR_NO)->first();
+                if( $checkPrInsert != null ) {
+                    echo "PR NO ".$rows->PR_NO." already exist in database \n";
+                } else  {
+                    $purchaseRequest = new PurchaseRequest;
+                    $purchaseRequest->request_no            = \generatePrNo();
+                    $purchaseRequest->request_date          = \Carbon\Carbon::now()->format('Y-m-d');
+                    $purchaseRequest->notes                 = "PR MRP FROM SAP";
+                    $purchaseRequest->total                 = 0;
+                    $purchaseRequest->doc_type              = $rows->doc_type;
+                    $purchaseRequest->upload_file           = "NO_FILE";
+                    $purchaseRequest->spv_id                = 9999;
+                    $purchaseRequest->PR_NO                 = $rows->PR_NO;
+                    $purchaseRequest->is_send_sap           = 'YES';
+                    $purchaseRequest->status                = PurchaseRequest::Success;
+                    $purchaseRequest->status_approval       = PurchaseRequest::ApprovedDept;
+                    $purchaseRequest->is_validate           = PurchaseRequest::YesValidate;
+                    $purchaseRequest->plant_code            = $rows->plant_code;
+                    $purchaseRequest->save();
+                    $getDetail = TempPurchaseRequest::where('PR_NO', $rows->PR_NO)->get()->toArray();
+                    
+                    for ($i=0; $i < count($getDetail); $i ++) { 
+                        if( $rows->PR_NO == $getDetail[$i]['PR_NO'] ) { 
+                            $materials = Materials::where('code',$rows[$i]['material_id'])->first();
+                            $purchaseRequestDetail                          = new PurchaseRequestDetail;
+                            $purchaseRequestDetail->request_id              = $purchaseRequest->id;
+                            $purchaseRequestDetail->description             = $getDetail[$i]['description'] ??  $getDetail[$i]['short_text'];
+                            $purchaseRequestDetail->category                = $getDetail[$i]['category'] ?? '';
+                            $purchaseRequestDetail->qty                     = $getDetail[$i]['qty'] ?? '';
+                            $purchaseRequestDetail->unit                    = $getDetail[$i]['unit'] ?? '';
+                            $purchaseRequestDetail->notes                   = 'PR MRP';
+                            $purchaseRequestDetail->price                   = 1;
+                            $purchaseRequestDetail->material_id             = $getDetail[$i]['material_id'] ?? '';
+                            $purchaseRequestDetail->gl_acct_code            = '';
+                            $purchaseRequestDetail->request_no              = $getDetail[$i]['request_no'] ?? '';
+                            $purchaseRequestDetail->plant_code              = $getDetail[$i]['plant_code'] ?? '';
+                            $purchaseRequestDetail->purchasing_group_code   = $getDetail[$i]['purchasing_group_code'] ?? '';
+                            $purchaseRequestDetail->preq_name               = $getDetail[$i]['preq_name'] ?? '';
+                            $purchaseRequestDetail->storage_location        = $getDetail[$i]['storage_location'] ?? '';
+                            $purchaseRequestDetail->material_group          = $getDetail[$i]['material_group'] ?? '';
+                            $purchaseRequestDetail->cost_center_code        = '';
+                            $purchaseRequestDetail->profit_center_code      = $materials->profit_center_code ?? 00;
+                            $purchaseRequestDetail->delivery_date           = $getDetail[$i]['delivery_date'] ?? '';
+                            $purchaseRequestDetail->release_date            = $getDetail[$i]['release_date'] ?? '';
+                            $purchaseRequestDetail->account_assignment      = $getDetail[$i]['account_assignment'] ? $getDetail[$i]['account_assignment'] : "H";
+                            $purchaseRequestDetail->delivery_date_category  = 'D';
+                            $purchaseRequestDetail->text_id                 = 'PR';
+                            $purchaseRequestDetail->text_form               = 'EN';
+                            $purchaseRequestDetail->text_line               = $getDetail[$i]['text_line'] ?? '';
+                            $purchaseRequestDetail->short_text              = $getDetail[$i]['short_text'] ?? '';
+                            $purchaseRequestDetail->gr_ind                  = 1;
+                            $purchaseRequestDetail->ir_ind                  = 1;
+                            $purchaseRequestDetail->is_validate             = PurchaseRequest::YesValidate;
+                            $purchaseRequestDetail->co_area                 = 'EGCA';
+                            $purchaseRequestDetail->type_approval           = 888;
+                            $purchaseRequestDetail->status_approval         = 704;
+                            $purchaseRequestDetail->is_material             = 0;
+                            $purchaseRequestDetail->preq_item               = $getDetail[$i]['preq_item'] ?? '';
+                            $purchaseRequestDetail->package_no              = '000000000';
+                            $purchaseRequestDetail->subpackage_no           = '000000000';
+                            $purchaseRequestDetail->line_no                 = '000000000';
+        
+                            $purchaseRequestDetail->save();
+                        }
+                    }
+                    
+                    echo "PR No ".$rows->PR_NO." berhasil disimpan didatabase \n";
+                }
+                $temp = TempPurchaseRequest::find($rows->id);
+                $temp->is_clone = 1;
+                $temp->update();
+            }
         }
     }
 }

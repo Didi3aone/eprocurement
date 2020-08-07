@@ -12,6 +12,7 @@ class VendorEmail extends Model
 
     protected $fillable = [
         'vendor_id',
-        'email'
+        'email',
+        'is_default'
     ];
 }
