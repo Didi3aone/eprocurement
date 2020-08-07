@@ -100,7 +100,7 @@ class QuotationDirectController extends Controller
      */
     public function approvalListHead()
     {
-        $quotation = QuotationDetail::join('quotation','quotation.id','=','quotation_details.quotation_order_id')
+        $data = QuotationDetail::join('quotation','quotation.id','=','quotation_details.quotation_order_id')
                     ->leftJoin('vendors','vendors.code','=','quotation.vendor_id')
                     ->where('quotation.status',Quotation::QuotationDirect)
                     ->where('quotation.approval_status',Quotation::ApprovalAss)
