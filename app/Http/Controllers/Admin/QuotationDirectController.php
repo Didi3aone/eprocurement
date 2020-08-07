@@ -39,11 +39,13 @@ class QuotationDirectController extends Controller
         $userMapping = explode(',', $userMapping->purchasing_group_code);
         $quotation = QuotationDetail::join('quotation','quotation.id','=','quotation_details.quotation_order_id')
                     ->join('vendors','vendors.code','=','quotation.vendor_id')
-                    ->where('quotation.status',2)
+                    ->where('quotation.status',Quotation::QuotationDirect)
+                    ->where('quotation.approval_status',Quotation::Waiting)
                     ->whereIn('quotation_details.purchasing_group_code', $userMapping)
                     ->select(
                         'quotation.id',
                         'quotation.po_no',
+                        'quotation.vendor_id',
                         'quotation.approval_status',
                         'vendors.name'
                     )
@@ -97,20 +99,47 @@ class QuotationDirectController extends Controller
      */
     public function approvalListHead()
     {
-        $quotation = QuotationDetail::join('quotation','quotation.id','=','quotation_details.quotation_order_id')
+        $data = QuotationDetail::join('quotation','quotation.id','=','quotation_details.quotation_order_id')
                     ->join('vendors','vendors.code','=','quotation.vendor_id')
                     ->where('quotation.status',Quotation::QuotationDirect)
                     ->where('quotation.approval_status',Quotation::ApprovalAss)
                     ->select(
                         'quotation.id',
-                        'quotation.acp_id',
                         'quotation.po_no',
                         'quotation.approval_status',
-                        'vendors.name'
+                        'quotation.created_at',
+                        'vendors.name',
+                        'quotation_details.id as detailId',
+                        'quotation_details.short_text',
+                        'quotation_details.material',
+                        'quotation_details.purchasing_group_code',
+                        'quotation_details.plant_code',
+                        'quotation_details.price',
+                        'quotation_details.orginal_price',
+                        'quotation_details.total_price',
+                        'quotation_details.currency',
+                        'quotation_details.tax_code',
+                        'quotation_details.qty',
+                        'quotation_details.PO_ITEM',
+                        'quotation_details.delivery_date',
+                        'quotation_details.PR_NO',
+                        'quotation_details.purchasing_document',
+                        'quotation_details.storage_location',
+                        'quotation_details.preq_name',
+                        'quotation_details.material_group',
+                        'quotation_details.PREQ_ITEM',
+                        'quotation_details.acp_id',
                     )
-                    ->groupBy('quotation.id','vendors.name')
+                    // ->groupBy('quotation.id','vendors.name')
                     ->orderBy('id', 'desc')
                     ->get();
+                    // ->toArray()
+        $quotation = [];
+        foreach( $data as $key => $rows ) {
+            $quotation[$rows->po_no][] = $rows;
+        }
+        // $quotation = \group_by('po_no', $quotation);//group by po no
+        // dd($quotation);
 
         return view('admin.quotation.direct.index-approval-head', compact('quotation'));
     }
@@ -359,12 +388,12 @@ class QuotationDirectController extends Controller
             $ids = explode(',', $ids);
 
             foreach( $ids as $id ) {
-                $quotation = Quotation::find($id);
+                $quotation = Quotation::where('po_no',$id)->first();
 
-                $quotationDetail = QuotationDetail::where('quotation_order_id', $id)
+                $quotationDetail = QuotationDetail::where('quotation_order_id', $quotation->id)
                                 ->orderBy('PO_ITEM','asc')
                                 ->get();
-                $quotationDeliveryDate = QuotationDelivery::where('quotation_id', $id)
+                $quotationDeliveryDate = QuotationDelivery::where('quotation_id', $quotation->id)
                                     ->orderBy('SCHED_LINE','asc')
                                     ->orderBy('PREQ_ITEM','asc')
                                     ->get();
@@ -377,6 +406,7 @@ class QuotationDirectController extends Controller
                     $quotation->approved_head       = \Auth::user()->user_id;
                     $quotation->approved_date_head  = date('Y-m-d');
                     $quotation->save();
+                    // dd($quotation);
                 } else {
                     return redirect()->route('admin.quotation-direct-approval-head')->with('error', 'Internal server error');
                 }
@@ -630,8 +660,13 @@ class QuotationDirectController extends Controller
                 }
             }
 
+            $materialIds = $detail['material_id'];
+            if( $detail['material_id'] == '') {
+                $materialIds = $detail['short_text'];
+            }
+
             $getQtyAcp = \App\Models\AcpTableMaterial::where('master_acp_id', $detail['acp_id'])
-                        ->where('material_id', $detail['material_id'])
+                        ->where('material_id', $materialIds)
                         ->first();
 
             $perQty = ($detail['qty']/$getQtyAcp->qty);
