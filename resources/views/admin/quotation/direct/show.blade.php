@@ -94,8 +94,11 @@
                                     ->where('material_id', $materialId)
                                     ->first();
 
-                                $perQty = ($value->qty/$getQtyAcp->qty);
-                                $totalPrices = (\removeComma($value->price) * $perQty);
+                                $totalPrices = (\removeComma($value->price) * $value->qty);
+                                if( null != $getQtyAcp ) {
+                                    $perQty = ($value->qty/$getQtyAcp->qty);
+                                    $totalPrices = (\removeComma($value->price) * $perQty);
+                                }
                             @endphp
                             <tr>
                                 <td>{{ $value->material." - ".$value->short_text }}</td>
