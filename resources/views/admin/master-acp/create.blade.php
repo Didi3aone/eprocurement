@@ -187,8 +187,8 @@
             swal('Oops','Choose the winner of one vendor','error')
             return false;
         }
-        $("#save").attr('disabled', 'disabled');
-        $('#save').text('Please wait ...')
+        $("#saves").attr('disabled', 'disabled');
+        $('#saves').text('Please wait ...')
         return true;
     });
 
@@ -221,6 +221,9 @@
                 </td>
                 <td class="qty">
                     <input type="text" name="qty_${vendor}[]" class="form-control" required/>
+                </td>
+                <td class="qty_pr">
+                    <input type="text" name="qty_pr_${vendor}[]" class="form-control" required/>
                 </td>
                 <td>
                     <button 
@@ -274,10 +277,11 @@
                         <table class="table table-striped" style="overflow-x:auto">
                             <thead>
                                 <tr>
-                                    <th style="width: 30%">Material Code</th>
+                                    <th style="width: 30%;padding-right:18px;">Material Code</th>
                                     <th style="width: 20%">Currency</th>
-                                    <th style="width: 25%">Price</th>
-                                    <th style="width: 20%">Per</th>
+                                    <th style="width: 20%;padding-right:18px;">Price</th>
+                                    <th style="width: 20%;padding-right:18px;">Per</th>
+                                    <th style="width: 20%;padding-right:18px;">Qty PR</th>
                                     <th class="text-right" style="width: 10%">&nbsp;</th>
                                 </tr>
                             </thead>
@@ -314,6 +318,7 @@
                 $(`.material-${targetClass} tbody .choose-currency`).attr('name', `currency_${targetClass}[]`)
                 $(`.material-${targetClass} tbody .prices`).attr('name', `price_${targetClass}[]`)
                 $(`.material-${targetClass} tbody .qty input`).attr('name', `qty_${targetClass}[]`)
+                $(`.material-${targetClass} tbody .qty_pr input`).attr('name', `qty_pr_${targetClass}[]`)
             }
         }
         $("#vendors .select2").select2()

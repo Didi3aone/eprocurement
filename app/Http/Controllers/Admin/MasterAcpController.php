@@ -252,9 +252,11 @@ class MasterAcpController extends Controller
                     $temp['material']               = $row;
                     $temp['price']                  = $request['price_'.$value][$i];
                     $temp['qty']                    = $request['qty_'.$value][$i];
+                    $temp['qty_pr']                 = $request['qty_pr_'.$value][$i];
                     $temp['currency']               = $request['currency_'.$value][$i];
                     $temp['file_attachment']        = $filename;
                     $result[] = $temp;
+                    // dd($result);
                 }
             }
 
@@ -264,7 +266,7 @@ class MasterAcpController extends Controller
             foreach ($result as $key => $val) {
                 $i = $key + 1;
                 $poItem = (0+($i*10));
-                
+                // dd($val);
                 //get material cmo
                 $isCmo = false;
                 $cMo = \App\Models\MasterMaterial::getMaterialCmo($val['material']);
@@ -305,6 +307,8 @@ class MasterAcpController extends Controller
                 $material->material_id              = $val['material'];
                 $material->price                    = str_replace(',','',$val['price']);
                 $material->qty                      = $val['qty'];
+                $material->qty_pr                   = $val['qty_pr'];
+                $material->total_price              = str_replace(',','',$val['price']);
                 $material->currency                 = $val['currency'] ?? 'IDR';
                 $material->file_attachment          = $val['file_attachment'];
                 $material->purchasing_group_code    = $cMo->purchasing_group_code;
@@ -358,14 +362,14 @@ class MasterAcpController extends Controller
             }
 
             if ($isAcp) {
-                if ($price <= 25000000) {
+                if ($price <= 25000000 && $price < 100000000 ) {
                     $isPlant = false;
                     if (1 == $request->get('is_project')) {
                         $isPlant = true;
                     }
                     \saveApprovals($assProc, $acp->id, 'STAFF', 'ACP', $isPlant,false);
                     // staff eproc
-                } elseif ($price >= 100000000) {
+                } elseif ($price >= 100000000 && $price < 250000000 ) {
                     $isPlant = false;
                     if (1 == $request->get('is_project')) {
                         $isPlant = true;

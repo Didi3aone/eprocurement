@@ -14,7 +14,9 @@ class AlterMasterAcpMaterialsV2 extends Migration
     public function up()
     {
         Schema::table('master_acp_materials', function (Blueprint $table) {
-            $table->string('unit')->nullable();
+            // $table->string('unit')->nullable();
+            $table->decimal('qty_pr',16,2)->default('0.00');
+            $table->decimal('total_price',16,2)->default('0.00');
             // $table->string('purchasing_group_code')->nullable();
         });
     }
