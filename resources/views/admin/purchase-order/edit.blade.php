@@ -113,7 +113,7 @@
                                         @endif
                                         <input type="hidden" class="id" name="idDetail[]" id="id" value="{{ $value->id }}">
                                         <input type="hidden" class="id" name="idPrDetail[]" id="idPrDetail" value="">
-                                       <td>{{ $value->material_id." - ". $value->description }}</td>
+                                       <td>{{ $value->material_id." - ". $value->short_text }}</td>
                                        <td>{{ $value->unit }}</td>
                                        <td><input type="text" class="qty" name="qty[]" id="qty" {{ $readonly }} value="{{ $value->qty }}"></td>
                                        <td><input type="text" class="price" name="price[]" id="price" {{ $readonly }} value="{{ $value->price }}"</td>
