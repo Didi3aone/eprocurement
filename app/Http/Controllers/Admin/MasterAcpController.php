@@ -299,7 +299,7 @@ class MasterAcpController extends Controller
                          }
                 }
 
-                $totalPrice = ($val['qty']/$val['qty_per']) * \removeComma($val['price']);
+                $totalPrice = ($val['qty']/$val['qty_pr']) * \removeComma($val['price']);
 
                 $assProc = \App\Models\UserMap::getAssProc($cMo->purchasing_group_code)->user_id;
                 $material = new AcpTableMaterial();
