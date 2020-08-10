@@ -625,6 +625,9 @@ class QuotationDirectController extends Controller
             $totalPrice +=  \removeComma($detail['price']);
             $schedLine  = sprintf('%05d', (1+$i));
             $poItem     =  ('000'.(10+($i*10)));
+            if( $poItem > '00090' ) {
+                $poItem = substr($poItem,1);
+            }
             
             //khusus service 
             //insert anak2ny
@@ -646,7 +649,7 @@ class QuotationDirectController extends Controller
                     $ke3 =  $i+1;
                     $packageParent                  .= ($i + $ke3);
                     $child->quotation_id            = $id;
-                    $child->preq_item               = ('000'.(10+($i*10)));
+                    $child->preq_item               = $detail['preq_item'];
                     $child->po_item                 = $poItem;
                     $child->package_no              = $packageParent;
                     $child->subpackage_no           = $subpackgparent;
@@ -655,7 +658,7 @@ class QuotationDirectController extends Controller
                     //anak ganjil
                     $packageParent                  .= ($i + 2);
                     $child->quotation_id            = $id;
-                    $child->preq_item               = ('000'.(10+($i*10)));
+                    $child->preq_item               = $detail['preq_item'];
                     $child->po_item                 = $poItem;
                     $child->package_no              = $packageParent;
                     $child->subpackage_no           = $subpackgparent;
@@ -729,7 +732,7 @@ class QuotationDirectController extends Controller
 
                 //anak genap
                 $childs->quotation_id    = $id;
-                $childs->preq_item       = ('000'.(10+($i*10)));
+                $childs->preq_item       = $detail['preq_item'];
                 $childs->po_item         = $poItem;
                 $childs->package_no      = $subpackgparent;
                 $childs->subpackage_no   = '000000000';
@@ -737,7 +740,7 @@ class QuotationDirectController extends Controller
                 $childs->save();
 
                 $childs->quotation_id    = $id;
-                $childs->preq_item       = ('000'.(10+($i*10)));
+                $childs->preq_item       = $detail['preq_item'];
                 $childs->po_item         = $poItem;
                 $childs->package_no      = $subpackgparent;
                 $childs->subpackage_no   = '000000000';
