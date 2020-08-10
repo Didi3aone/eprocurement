@@ -43,9 +43,11 @@ class AcpTableMaterial extends Model
                     else mm.uom_code
                     end as uom_code,
                     mam.qty,
+                    mam.qty_pr,
                     mam.currency,
                     mam.price,
-                    mam.id
+                    mam.id,
+                    mam.total_price
                 ")
             )->from('master_acp_materials','mam')
             ->distinct()
