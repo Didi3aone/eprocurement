@@ -30,7 +30,7 @@
                                 </tr>
                                 <tr>
                                     <th>Vendor</th>
-                                    <td>{{ $quotation->getVendor['name'] }}</td>
+                                    <td>{{ $quotation->getVendor['company_name'] }}</td>
                                 </tr>
                                 <tr>
                                     <th>Document Type</th>
@@ -103,7 +103,7 @@
                                 <td>{{ $value->qty }}</td>
                                 <td>{{ $quotation->currency }}</td>
                                 <td>{{ \toDecimal($value->price) }}</td>
-                                <td>{{ \toDecimal($totalPrices) }}</td>
+                                <td style="text-align:right;">{{ \toDecimal($totalPrices) }}</td>
                             </tr>
                         @endforeach
                     </tbody>

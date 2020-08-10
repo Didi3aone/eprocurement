@@ -43,9 +43,9 @@ class QuotationRepeatController extends Controller
                         'quotation.po_no',
                         'quotation.vendor_id',
                         'quotation.approval_status',
-                        'vendors.name'
+                        'vendors.company_name'
                     )
-                    ->groupBy('quotation.id','vendors.name')
+                    ->groupBy('quotation.id','vendors.company_name')
                     ->orderBy('id', 'desc');
                     
         if( \Auth::user()->roles[0]->title == 'Admin' ) {
@@ -80,9 +80,9 @@ class QuotationRepeatController extends Controller
                         'quotation.id',
                         'quotation.po_no',
                         'quotation.approval_status',
-                        'vendors.name'
+                        'vendors.company_name',
                     )
-                    ->groupBy('quotation.id','vendors.name')
+                    ->groupBy('quotation.id','vendors.company_name')
                     ->orderBy('id', 'desc')
                     ->get();
 
