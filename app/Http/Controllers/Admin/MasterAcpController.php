@@ -384,7 +384,8 @@ class MasterAcpController extends Controller
                     \saveApprovals($assProc, $acp->id, 'COO', 'ACP', $isPlant, $isCmo);
                     //COO
                 } else {
-                    dd($price);
+                    //cadangan klo gagal approve staff aja
+                    \saveApprovals($assProc, $acp->id, 'STAFF', 'ACP', false,false);
                 }
             } 
 
