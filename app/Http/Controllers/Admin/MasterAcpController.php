@@ -362,7 +362,7 @@ class MasterAcpController extends Controller
             }
 
             if ($isAcp) {
-                if ($price <= 25000000 && $price < 100000000 ) {
+                if ($price < 100000000 ) {
                     $isPlant = false;
                     if (1 == $request->get('is_project')) {
                         $isPlant = true;
@@ -383,6 +383,8 @@ class MasterAcpController extends Controller
                     }
                     \saveApprovals($assProc, $acp->id, 'COO', 'ACP', $isPlant, $isCmo);
                     //COO
+                } else {
+                    dd($price);
                 }
             } 
 
