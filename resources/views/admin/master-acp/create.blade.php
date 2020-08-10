@@ -421,7 +421,8 @@
                     return {
                         q: params.term, // search term
                         page: params.page,
-                        fromPr : $("input[name='is_from_pr']:checked").val()
+                        fromPr : $("input[name='is_from_pr']:checked").val(),
+                        isProject : $("input[name='is_project']:checked").val(),
                     };
                 },
                 processResults: function (response) {

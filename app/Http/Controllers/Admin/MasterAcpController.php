@@ -65,9 +65,15 @@ class MasterAcpController extends Controller
                                 short_text as description"
                             )
                         )
+                        ->join('purchase_requests','purchase_requests.id','=','purchase_requests_details.request_id')
                         ->where('qty', '>', '0.00')
-                        ->whereIn('purchasing_group_code', $userMapping)
-                        ->groupBy('material_id', 'short_text')
+                        ->whereIn('purchasing_group_code', $userMapping);
+
+                if( 1 == $request->get('isProject') ) {
+                    $model = $model->where('purchase_requests.is_project',1);
+                }
+
+                $model = $model->groupBy('material_id', 'short_text')
                         ->orderBy('short_text', 'asc')
                         ->limit(700)
                         ->get();
@@ -81,9 +87,15 @@ class MasterAcpController extends Controller
                                 short_text as description"
                             )
                         )
+                        ->join('purchase_requests','purchase_requests.id','=','purchase_requests_details.request_id')
                         ->where('qty', '>', 0)
-                        ->whereIn('purchasing_group_code', $userMapping)
-                        ->groupBy('material_id', 'short_text')
+                        ->whereIn('purchasing_group_code', $userMapping);
+                       
+                if( 1 == $request->get('isProject') ) {
+                    $model = $model->where('purchase_requests.is_project',1);
+                }
+
+                $model = $model->groupBy('material_id', 'short_text')
                         ->orderBy('short_text', 'asc')
                         ->limit(700)
                         ->get();
@@ -252,46 +264,53 @@ class MasterAcpController extends Controller
             foreach ($result as $key => $val) {
                 $i = $key + 1;
                 $poItem = (0+($i*10));
-                $material = new AcpTableMaterial();
-                $material->master_acp_id        = $acp->id;
-                $material->master_acp_vendor_id = $val['vendor'];
-                $material->material_id          = $val['material'];
-                $material->price                = str_replace(',','',$val['price']);
-                $material->qty                  = $val['qty'];
-                $material->currency             = $val['currency'] ?? 'IDR';
-                $material->file_attachment      = $val['file_attachment'];
-                $material->save();
-
+                
                 //get material cmo
                 $isCmo = false;
                 $cMo = \App\Models\MasterMaterial::getMaterialCmo($val['material']);
                 if( $cMo != null ) {
+                    $units = $cMo->uom_code;
                     if( $cMo->purchasing_group_code == 'S03' ||
-                        $cMo->purchasing_group_code == 'H09' ||
-                        $cMo->purchasing_group_code == 'M09' ||
-                        $cMo->purchasing_group_code == 'W03' ||
-                        $cMo->purchasing_group_code == 'S09' ||
-                        $cMo->purchasing_group_code == 'W09' ||
-                        $cMo->purchasing_group_code == 'M03' ) {
-                        $isCmo = true;
-                    }
-                } else {
+                         $cMo->purchasing_group_code == 'H09' ||
+                         $cMo->purchasing_group_code == 'M09' ||
+                         $cMo->purchasing_group_code == 'W03' ||
+                         $cMo->purchasing_group_code == 'S09' ||
+                         $cMo->purchasing_group_code == 'W09' ||
+                         $cMo->purchasing_group_code == 'M03' ) {
+                         $isCmo = true;
+                     }
+                 } else {
                     $cMo = \App\Models\PurchaseRequestsDetail::where('description',$val['material'])
                             ->orWhere('material_id', $val['material'])
                             ->orWhere('short_text', $val['material'])
                             ->first();
-                            // dd($cMo);
-                    if( $cMo->purchasing_group_code == 'S03' ||
-                        $cMo->purchasing_group_code == 'H09' ||
-                        $cMo->purchasing_group_code == 'M09' ||
-                        $cMo->purchasing_group_code == 'W03' ||
-                        $cMo->purchasing_group_code == 'S09' ||
-                        $cMo->purchasing_group_code == 'W09' ||
-                        $cMo->purchasing_group_code == 'M03' ) {
-                            $isCmo = true;
-                        }
+                    $units = $cMo->unit;
+                             // dd($cMo);
+                     if( $cMo->purchasing_group_code == 'S03' ||
+                         $cMo->purchasing_group_code == 'H09' ||
+                         $cMo->purchasing_group_code == 'M09' ||
+                         $cMo->purchasing_group_code == 'W03' ||
+                         $cMo->purchasing_group_code == 'S09' ||
+                         $cMo->purchasing_group_code == 'W09' ||
+                         $cMo->purchasing_group_code == 'M03' ) {
+                             $isCmo = true;
+                         }
                 }
+
+
                 $assProc = \App\Models\UserMap::getAssProc($cMo->purchasing_group_code)->user_id;
+                $material = new AcpTableMaterial();
+                $material->master_acp_id            = $acp->id;
+                $material->master_acp_vendor_id     = $val['vendor'];
+                $material->material_id              = $val['material'];
+                $material->price                    = str_replace(',','',$val['price']);
+                $material->qty                      = $val['qty'];
+                $material->currency                 = $val['currency'] ?? 'IDR';
+                $material->file_attachment          = $val['file_attachment'];
+                $material->purchasing_group_code    = $cMo->purchasing_group_code;
+                $material->unit                     = $units;
+                $material->save();
+
                 // if( $assProc == null ) {
                 //     // \Session::flash('error','or this k no approval was found '.$cMo->purchasing_group_code)
                 //     return redirect()->route('admin.master-acp.index');
