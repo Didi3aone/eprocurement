@@ -103,7 +103,7 @@
                                         <td>{{ $row->uom_code }}</td>
                                         <td>{{ $row->qty }}</td>
                                         <td>{{ $row->currency }}</td>
-                                        <td>{{ \toDecimal($row->price) }}</td>
+                                        <td style="text-align:right;">{{ \toDecimal($row->price) }}</td>
                                 </tr>
                                 @endforeach
                                 <tr>

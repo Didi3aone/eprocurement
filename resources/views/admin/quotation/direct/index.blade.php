@@ -31,7 +31,7 @@
                                         <tr data-entry-id="{{ $val->id }}">
                                             <td>{{ $val->id ?? '' }}</td>
                                             <td>{{ $val->po_no ?? '' }}</td>
-                                            <td>{{ $val->vendor_id." - ".$val->name }}</td>
+                                            <td>{{ $val->vendor_id." - ".$val->company_name }}</td>
                                             <td>{{ \App\Models\Vendor\Quotation::TypeStatusApproval[$val->approval_status] }}</td>
                                             <td>
                                                 <a class="btn btn-primary btn-xs" href="{{ route('admin.quotation-direct.show', $val->id) }}">

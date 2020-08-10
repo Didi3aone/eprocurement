@@ -78,6 +78,7 @@
                             </thead>
                             <tbody>
                             @foreach($acp->detail as $rows)
+                            {{-- {{dd($rows)}} --}}
                                 @php
                                     $winner = '<span class="badge badge-danger">Lose</span>';
                                     if( $rows->is_winner == \App\Models\AcpTableDetail::Winner ) {
@@ -101,12 +102,12 @@
                                         <td>{{ $row->uom_code }}</td>
                                         <td>{{ $row->qty }}</td>
                                         <td>{{ $row->currency }}</td>
-                                        <td>{{ \toDecimal($row->price) }}</td>
+                                        <td style="text-align:right;">{{ \toDecimal($row->price) }}</td>
                                 </tr>
                                 @endforeach
                                 <tr>
                                     <td colspan=7></td>
-                                    <td colspan={{ $rowSpan + $rowSpan }}>
+                                    <td colspan={{ $rowSpan + $rowSpan }} style="text-align:right;"> 
                                         <b style="color:black;font-size:17px;">{{ \toDecimal($totalPrice) }}</b>
                                     </td>
                                 </tr>

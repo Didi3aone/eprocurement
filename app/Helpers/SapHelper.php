@@ -1038,11 +1038,13 @@ class SapHelper {
     {
         set_time_limit(0);
         $soapFile = \sapHelp::getSoapXml('PURCHASE_ORDER');
-        if( $soapFile->is_active_env == \App\Models\BaseModel::Development ) {
-            $wsdl = public_path()."/xml/zbn_eproc_po.xml";
-        } else {
-            $wsdl = public_path() ."/xml/". $soapFile->xml_file;
-        }
+        // if( $soapFile->is_active_env == \App\Models\BaseModel::Development ) {
+        //     $wsdl = public_path()."/xml/zbn_eproc_po.xml";
+        // } else {
+        //     $wsdl = public_path() ."/xml/". $soapFile->xml_file;
+        // }
+        $wsdl = public_path()."/xml/zbn_eproc_po_prod.xml";
+        // dd($wsdl);
         
         $username = "IT_02";
         $password = "ademsari";
@@ -1620,7 +1622,7 @@ class SapHelper {
                     "DELIV_TIME" => "", 
                     "STAT_DATE" => "",
                     "PREQ_NO" =>  (string) $quotationDetail[$i]->PR_NO, // kedua no pr di insert
-                    "PREQ_ITEM" => $quotationDeliveryDate[$i]->PREQ_ITEM, // line 
+                    "PREQ_ITEM" => $quotationDetail[$i]->PREQ_ITEM, // line 
                     "PO_DATE" => "",
                     "ROUTESCHED" => "",
                     "MS_DATE" => "",
@@ -2244,7 +2246,7 @@ class SapHelper {
                     "DELIV_TIME" => "", 
                     "STAT_DATE" => "",
                     "PREQ_NO" =>  (string) $quotationDetail[$i]->PR_NO, // kedua no pr di insert
-                    "PREQ_ITEM" => $quotationDeliveryDate[$i]->PREQ_ITEM, // line 
+                    "PREQ_ITEM" => $quotationDetail[$i]->PREQ_ITEM, // line 
                     "PO_DATE" => "",
                     "ROUTESCHED" => "",
                     "MS_DATE" => "",
@@ -2400,6 +2402,15 @@ class SapHelper {
                 $dataChild = QuotationServiceChild::where('quotation_id', $quotation->id)->get();
                 for( $k = 0; $k < count($dataChild); $k++ ) {
                     $createLine = $k + 1;
+                    $uomCode1 = \App\Models\UomConvert::where('uom_1',$quotationDetail[$i]->unit)->first();
+                    $uomCode2 = \App\Models\UomConvert::where('uom_2',$quotationDetail[$i]->unit)->first();
+                    if( null != $uomCode1 ) {
+                        $unit = $uomCode1->uom_2;
+                    } else if( null != $uomCode2 ) {
+                        $unit = $uomCode2->uom_1;
+                    } else {
+                        $unit = $quotationDetail[$i]->unit;
+                    }
                     $POSERVICES = [
                         "PCKG_NO" => $dataChild[$k]->package_no,//0 = 9X 1; CHILD = 2 DST 
                         "LINE_NO" => $quotationDetail[$i]->line_no,// '000000000'.$createLine,//0 = 9X 1; CHILD = 2 DST
@@ -2414,7 +2425,7 @@ class SapHelper {
                         "SSC_ITEM" => "",
                         "EXT_SERV" => "",
                         "QUANTITY" => $quotationDetail[$i]->qty,//DARI PR 
-                        "BASE_UOM" => \App\Models\UomConvert::where('uom_2',$quotationDetail[$i]->unit)->first()->uom_1,//$quotationDetail[$i]->unit,     
+                        "BASE_UOM" => $unit,//\App\Models\UomConvert::where('uom_2',$quotationDetail[$i]->unit)->first()->uom_1,//$quotationDetail[$i]->unit,     
                         "UOM_ISO" => "",    
                         "OVF_TOL" => "",
                         "OVF_UNLIM" => "",    
@@ -2885,7 +2896,7 @@ class SapHelper {
                     "DELIV_TIME" => "", 
                     "STAT_DATE" => "",
                     "PREQ_NO" =>  (string) $quotationDetail[$i]->PR_NO, // kedua no pr di insert
-                    "PREQ_ITEM" => $quotationDeliveryDate[$i]->PREQ_ITEM, // line 
+                    "PREQ_ITEM" => $quotationDetail[$i]->PREQ_ITEM, // line 
                     "PO_DATE" => "",
                     "ROUTESCHED" => "",
                     "MS_DATE" => "",
@@ -3041,6 +3052,15 @@ class SapHelper {
                 $dataChild = QuotationServiceChild::where('quotation_id', $quotation->id)->get();
                 for( $k = 0; $k < count($dataChild); $k++ ) {
                     $createLine = $k + 1;//
+                    $uomCode1 = \App\Models\UomConvert::where('uom_1',$quotationDetail[$i]->unit)->first();
+                    $uomCode2 = \App\Models\UomConvert::where('uom_2',$quotationDetail[$i]->unit)->first();
+                    if( null != $uomCode1 ) {
+                        $unit = $uomCode1->uom_2;
+                    } else if( null != $uomCode2 ) {
+                        $unit = $uomCode2->uom_1;
+                    } else {
+                        $unit = $quotationDetail[$i]->unit;
+                    }
                     $POSERVICES = [
                         "PCKG_NO" => $dataChild[$k]->package_no,//0 = 9X 1; CHILD = 2 DST 
                         "LINE_NO" =>  $quotationDetail[$i]->line_no,//'000000000'.$createLine,//0 = 9X 1; CHILD = 2 DST
@@ -3055,7 +3075,7 @@ class SapHelper {
                         "SSC_ITEM" => "",
                         "EXT_SERV" => "",
                         "QUANTITY" => $quotationDetail[$i]->qty,//DARI PR 
-                        "BASE_UOM" =>  \App\Models\UomConvert::where('uom_2',$quotationDetail[$i]->unit)->first()->uom_1,//$quotationDetail[$i]->unit,     
+                        "BASE_UOM" => $unit,// \App\Models\UomConvert::where('uom_2',$quotationDetail[$i]->unit)->first()->uom_1,//$quotationDetail[$i]->unit,     
                         "UOM_ISO" => "",    
                         "OVF_TOL" => "",
                         "OVF_UNLIM" => "",    
@@ -3174,12 +3194,15 @@ class SapHelper {
         ];
 
         $params[0]['RETURN'] = $RETURN;
-        // dd($params);
+        // dd($params[0]['POITEM']);
         // echo "<pre>".print_r($params);die;
         // echo "</pre>";
         $result = $client->__soapCall('ZFM_WS_PO', $params, NULL, $header);
-        // dd($result);
+        // dd($result->RETURN);
+        // dd($result->POSCHEDULE);
+        // echo "<pre>".print_r($params);die;"</pre>";
         if( $result->EXPPURCHASEORDER) {
+            //dd($result);
             \App\Models\employeeApps\SapLogSoap::create([
                 'log_type' => 'PURCHASE ORDER',
                 'log_type_id' => $quotation->id,
@@ -3189,6 +3212,7 @@ class SapHelper {
             ]); 
             return $result->EXPPURCHASEORDER;
         } else {
+           // dd($result->RETURN);
             \App\Models\employeeApps\SapLogSoap::create([
                 'log_type' => 'PURCHASE ORDER',
                 'log_type_id' => $quotation->id,

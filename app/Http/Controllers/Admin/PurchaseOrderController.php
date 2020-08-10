@@ -35,6 +35,7 @@ class PurchaseOrderController extends Controller
                 ->leftJoin('master_acps', 'master_acps.id', '=', 'purchase_orders_details.acp_id')
                 ->leftJoin('vendors', 'vendors.code', '=', 'purchase_orders.vendor_id')
                 ->where('purchase_orders.status_approval', PurchaseOrder::Approved)
+                ->where('is_active',PurchaseOrdersDetail::Active)
                 ->select(
                     'purchase_orders_details.purchasing_document',
                     'purchase_orders_details.PO_ITEM',
@@ -452,58 +453,60 @@ class PurchaseOrderController extends Controller
         $noLine         = '';
         $sched          = '';
         $totalPrice     = 0;
-        foreach ($request->idDetail as $key => $rows) {
-            $totalPrice += $request->price[$key];
-            $poDetail    = PurchaseOrdersDetail::find($rows);
+        if( $request->has('idDetail') ) {
+            foreach ($request->idDetail as $key => $rows) {
+                $totalPrice += $request->price[$key];
+                $poDetail    = PurchaseOrdersDetail::find($rows);
 
-            if ($poDetail->qty != $request->qty[$key]) {
-                $prDetail               = PurchaseRequestsDetail::find($poDetail->request_detail_id);
-                $prDetail->qty         += $poDetail->qty;//balikin dlu stockny
-                $prDetail->qty_order    = 0;
-                $prDetail->update();
+                if ($poDetail->qty != $request->qty[$key]) {
+                    $prDetail               = PurchaseRequestsDetail::find($poDetail->request_detail_id);
+                    $prDetail->qty         += $poDetail->qty;//balikin dlu stockny
+                    $prDetail->qty_order    = 0;
+                    $prDetail->update();
 
-                $prDetail->qty      -= $request->qty[$key];//trus dikurangin lagi
-                $prDetail->qty_order = $request->qty[$key];
-                $prDetail->save();
+                    $prDetail->qty      -= $request->qty[$key];//trus dikurangin lagi
+                    $prDetail->qty_order = $request->qty[$key];
+                    $prDetail->save();
+                }
+
+                //init variable
+                $taxCode                                = $request->tax_code[$key] ?? "";
+                $deliveryDate                           = $request->delivery_date[$key] ?? $poDetail->delivery_date;
+                $deliveryComplete                       = $request->delivery_complete[$key] ?? "";
+                $price                                  = $request->price[$key] ?? "";
+                $qty                                    = $request->qty[$key] ?? "";
+
+                //save to log history
+                $poChangeDetail                         = new PurchaseOrderChangeHistoryDetail();
+                $poChangeDetail->qty_old                = $poDetail->qty;
+                $poChangeDetail->qty_change             = $qty;
+                $poChangeDetail->po_detail_id           = $poDetail->id;
+                $poChangeDetail->po_history_id          = $poChangeHeader->id;
+                $poChangeDetail->price_old              = $poDetail->price;
+                $poChangeDetail->delivery_date_old      = $poDetail->delivery_date;
+                $poChangeDetail->delivery_date_change   = $request->delivery_date[$key] ?? $poDetail->delivery_date;
+                $poChangeDetail->price_change           = $price;
+
+                $poChangeDetail->save();
+
+                // update po detail
+                $poDetail->qty_old              = $poDetail->qty;
+                $poDetail->delivery_date_old    = $poDetail->delivery_date;//yg old2 di update
+                $poDetail->qty                  = $qty;
+                $poDetail->price                = $price;// ini harusanya yg baru
+                $poDetail->delivery_date        = $request->delivery_date[$key] ?? $poDetail->delivery_date;
+                $poDetail->delivery_complete    = $deliveryComplete;
+                $poDetail->tax_code             = 1 == $taxCode ? "V1" : "V0";
+
+                $poDetail->update();
+
+                \App\Models\PurchaseOrderDelivery::where('purchase_order_id', $id)
+                    ->where('po_item', $poDetail->PO_ITEM)
+                    ->update([
+                        'delivery_date' => $request->delivery_date[$key] ?? $poDetail->delivery_date,
+                        'qty'           => $qty,
+                    ]);
             }
-
-            //init variable
-            $taxCode                                = $request->tax_code[$key] ?? "";
-            $deliveryDate                           = $request->delivery_date[$key] ?? $poDetail->delivery_date;
-            $deliveryComplete                       = $request->delivery_complete[$key] ?? "";
-            $price                                  = $request->price[$key] ?? "";
-            $qty                                    = $request->qty[$key] ?? "";
-
-            //save to log history
-            $poChangeDetail                         = new PurchaseOrderChangeHistoryDetail();
-            $poChangeDetail->qty_old                = $poDetail->qty;
-            $poChangeDetail->qty_change             = $qty;
-            $poChangeDetail->po_detail_id           = $poDetail->id;
-            $poChangeDetail->po_history_id          = $poChangeHeader->id;
-            $poChangeDetail->price_old              = $poDetail->price;
-            $poChangeDetail->delivery_date_old      = $poDetail->delivery_date;
-            $poChangeDetail->delivery_date_change   = $request->delivery_date[$key] ?? $poDetail->delivery_date;
-            $poChangeDetail->price_change           = $price;
-
-            $poChangeDetail->save();
-
-            // update po detail
-            $poDetail->qty_old              = $poDetail->qty;
-            $poDetail->delivery_date_old    = $poDetail->delivery_date;//yg old2 di update
-            $poDetail->qty                  = $qty;
-            $poDetail->price                = $price;// ini harusanya yg baru
-            $poDetail->delivery_date        = $request->delivery_date[$key] ?? $poDetail->delivery_date;
-            $poDetail->delivery_complete    = $deliveryComplete;
-            $poDetail->tax_code             = 1 == $taxCode ? "V1" : "V0";
-
-            $poDetail->update();
-
-            \App\Models\PurchaseOrderDelivery::where('purchase_order_id', $id)
-                ->where('po_item', $poDetail->PO_ITEM)
-                ->update([
-                    'delivery_date' => $request->delivery_date[$key] ?? $poDetail->delivery_date,
-                    'qty'           => $qty,
-                ]);
         }
         // dd($totalPrice);
         if ($purchaseOrder->total_price < $totalPrice) {
@@ -625,7 +628,6 @@ class PurchaseOrderController extends Controller
      */
     public function destroyItem(Request $request)
     {
-        // abort_if(Gate::denies('purchase_order_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         if (isset($request->id)) {
             $checkGr = \App\Models\PurchaseOrdersDetail::find($request->id);
@@ -638,6 +640,10 @@ class PurchaseOrderController extends Controller
                 $delete->is_active = 0; //not active
                 $delete->update();
 
+                $prDetail               = PurchaseRequestsDetail::find($delete->request_detail_id);
+                $prDetail->qty         += $delete->qty;//balikin dlu stockny
+                $prDetail->qty_order   -= $delete->qty;
+                $prDetail->update();
                 $success = true;
                 $message = '';
             }
@@ -664,6 +670,11 @@ class PurchaseOrderController extends Controller
             $delete = PurchaseOrdersDetail::findOrFail($request->id);
             $delete->is_active = 1; //active
             $delete->update();
+
+            $prDetail               = PurchaseRequestsDetail::find($delete->request_detail_id);
+            $prDetail->qty         -= $delete->qty;//balikin dlu stockny
+            $prDetail->qty_order    += $delete->qty;
+            $prDetail->update();
 
             $success = true;
             $message = '';
