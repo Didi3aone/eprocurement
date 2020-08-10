@@ -299,7 +299,7 @@ class MasterAcpController extends Controller
                          }
                 }
 
-                $totalPrice = ($val['qty']/$val['qty_pr']) * \removeComma($val['price']);
+                $totalPrice = \removeComma($val['price'])/$val['qty'] * $val['qty'];
 
                 $assProc = \App\Models\UserMap::getAssProc($cMo->purchasing_group_code)->user_id;
                 $material = new AcpTableMaterial();
@@ -321,7 +321,7 @@ class MasterAcpController extends Controller
                 //     return redirect()->route('admin.master-acp.index');
                 // }
                 if (1 == $val['winner']) {
-                    $price += \removeComma($val['price']);//$val['price'];
+                    $price += $totalPrice;//$val['price'];
                     $isAcp = true;
                     // insert to rfq detail
                     $rfqDetail = new MasterRfqDetail();
