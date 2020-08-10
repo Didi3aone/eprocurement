@@ -28,7 +28,7 @@
                                 {{ trans('cruds.vendors.fields.name') }}
                             </th>
                             <td>
-                                {{ $vendors->name }}
+                                {{ $vendors->company_name }}
                             </td>
                         </tr>
                     </tbody>

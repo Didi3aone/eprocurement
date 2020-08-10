@@ -78,6 +78,7 @@
                             </thead>
                             <tbody>
                             @foreach($acp->detail as $rows)
+                            {{-- {{dd($rows)}} --}}
                                 @php
                                     $winner = '<span class="badge badge-danger">Lose</span>';
                                     if( $rows->is_winner == \App\Models\AcpTableDetail::Winner ) {
