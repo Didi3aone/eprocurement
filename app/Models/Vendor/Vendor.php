@@ -45,6 +45,7 @@ class Vendor extends Authenticatable
         'status',
         'company_web',
         'remember_token',
+        'is_export'
     ];
 
     public function getPaymentTerms($vendorCode)

@@ -31,6 +31,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('vendors/migrate_bank', 'VendorController@migrate_bank')->name('vendors.migrate_bank');
     Route::post('vendors/set-password', 'VendorController@setPassword')->name('vendors.set-password');
     Route::get('get-vendors', 'VendorController@getVendor')->name('get-vendors');
+    Route::post('vendors/add-bank', 'VendorController@addBank')->name('vendors.add-bank');
+    Route::post('vendors/delete-bank', 'VendorController@deleteBank')->name('vendors.delete-bank');
     Route::resource('vendors', 'VendorController');
 
     // GLs

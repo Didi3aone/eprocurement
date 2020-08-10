@@ -477,7 +477,7 @@ class VendorController extends Controller
             $this->_insert_vendor_bank_details($request, $user_vendor->id, $is_local);
             $this->_insert_vendor_tax_number($request, $user_vendor->id);
             $this->_insert_vendor_identification_numbers($user_vendor->id, $is_local);
-            $this->_insert_vendor_email($user_vendor->id, $is_local);
+            $this->_insert_vendor_email($request, $user_vendor->id, $is_local);
 
             \DB::commit();
             return redirect()->route('admin.vendors.index')->with('success', 'cruds.vendors.alert_success_insert');
@@ -522,6 +522,8 @@ class VendorController extends Controller
         $email_default = $email[$index];
         $password = $request->input('password');
         $status = $request->input('status');
+        $terms_of_payment_id = $request->input('terms_of_payment_id');
+        $terms_of_payment = MasterVendorTermsOfPayment::findOrFail($terms_of_payment_id);
 
         $post = [];
         $post['code'] = $vendor_code_;
@@ -550,6 +552,7 @@ class VendorController extends Controller
         $post['email'] = $email_default;
         $post['password'] = bcrypt($password);
         $post['status'] = $status;
+        $post['payment_terms'] = $terms_of_payment->code;
         $do_insert = UserVendors::create($post);
         if (!$do_insert) throw new Exception('Failed at insert_user_vendor');
 
@@ -731,6 +734,59 @@ class VendorController extends Controller
             return redirect()->route('admin.vendors.index')->with('error', 'Password confirmation doesnot match');
     }
 
+    public function addBank (Request $request)
+    {
+        $vendor_id = $request->input('vendor_id');
+        $bank_country_id = $request->input('bank_country_id');
+        $bank_keys_id = $request->input('bank_keys_id');
+        $bank_account_no = $request->input('bank_account_no');
+        $bank_account_holder_name = $request->input('bank_account_holder_name');
+
+        $bank_country_code = 'ID';
+        $bank_country = MasterVendorBankCountry::find($bank_country_id);
+        if ($bank_country) {
+            $bank_country_code = $bank_country->code;
+        }
+
+        $bank_keys_ = 0;
+        $bank_details = '';
+        $bank_keys = MasterVendorBankKeys::find($bank_keys_id);
+        if ($bank_keys) {
+            $bank_keys_ = $bank_keys->key;
+            $bank_details = $bank_keys->name;
+        }
+
+        $post = [];
+        $post['vendor_id'] = $vendor_id;
+        $post['bank_country_key'] = $bank_country_code;
+        $post['bank_keys'] = $bank_keys_;
+        $post['account_no'] = $bank_account_no;
+        $post['bank_details'] = $bank_details;
+        $post['account_holder_name'] = $bank_account_holder_name;
+        $do_insert = VendorBankDetails::create($post);
+        if ($do_insert) {
+            return redirect('admin/vendors/'.$vendor_id.'/edit')->with('success', 'Bank Details has been added');
+        } else {
+            return redirect('admin/vendors/'.$vendor_id.'/edit')->with('error', 'Bank Details failed added');
+        }
+    }
+
+    public function deleteBank(Request $request)
+    {
+        $vendor_bank_id = $request->input('vendor_bank_id');
+        $vendor_bank = VendorBankDetails::find($vendor_bank_id);
+        if (!$vendor_bank)
+            return redirect()->back();
+
+        $do_delete = VendorBankDetails::where('id', $vendor_bank_id)->delete();
+
+        if ($do_insert) {
+            return redirect('admin/vendors/'.$vendor_bank->vendor_id.'/edit')->with('success', 'Bank Details has been added');
+        } else {
+            return redirect('admin/vendors/'.$vendor_bank->vendor_id.'/edit')->with('error', 'Bank Details failed added');
+        }
+    }
+
     /**
      * Display the specified resource.
      *
@@ -787,6 +843,8 @@ class VendorController extends Controller
                 $vendor_email[] = (object) $vendor_email_;
             }
             $vendors->vendor_email = $vendor_email;
+            $vendor_bank = VendorBankDetails::where('vendor_id', $vendors->id)->get();
+            $vendors->vendor_bank = $vendor_bank;
         }
         $terms_of_payment = MasterVendorTermsOfPayment::get();
 
@@ -847,6 +905,12 @@ class VendorController extends Controller
         $terms_of_payment = MasterVendorTermsOfPayment::findOrFail($terms_of_payment_id);
         $user_vendors = UserVendors::findOrFail($id);
 
+        $vendor_bank_id = $request->input('vendor_bank_id');
+        $bank_country_key = $request->input('bank_country_key');
+        $bank_keys = $request->input('bank_keys');
+        $bank_account_no = $request->input('bank_account_no');
+        $bank_account_holder_name = $request->input('bank_account_holder_name');
+
         try {
             \DB::beginTransaction();
 
@@ -905,6 +969,24 @@ class VendorController extends Controller
                 }
             }
 
+            for ($i=0; $i < count($vendor_bank_id); $i++) { 
+                $bank_keys_ = 0;
+                $bank_details = '';
+                $vendor_bank_keys = MasterVendorBankKeys::find($bank_keys[$i]);
+                if ($vendor_bank_keys) {
+                    $bank_keys_ = $vendor_bank_keys->key;
+                    $bank_details = $vendor_bank_keys->name;
+                }
+
+                $post = [];
+                $post['bank_country_key'] = $bank_country_key[$i];
+                $post['bank_keys'] = $bank_keys_;
+                $post['account_no'] = $bank_account_no[$i];
+                $post['bank_details'] = $bank_details;
+                $post['account_holder_name'] = $bank_account_holder_name[$i];
+                $do_update = $do_update && VendorBankDetails::where('id', $vendor_bank_id[$i])->update($post);
+            }
+
             if (!$do_update) throw new Exception('Invalid request');
             
             \DB::commit();
@@ -925,7 +1007,16 @@ class VendorController extends Controller
     {
         abort_if(Gate::denies('vendor_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $delete = Vendor::where('id', $id)->delete();
+        $delete = UserVendors::where('id', $id)->delete();
+        $delete = $delete && VendorBPRoles::where('vendor_id', $id)->delete();
+        $delete = $delete && VendorCompanyData::where('vendor_id', $id)->delete();
+        $delete = $delete && VendorWithholdingTaxType::where('vendor_id', $id)->delete();
+        $delete = $delete && VendorPurchasingOrganization::where('vendor_id', $id)->delete();
+        $delete = $delete && VendorPartnerFunctions::where('vendor_id', $id)->delete();
+        $delete = $delete && VendorBankDetails::where('vendor_id', $id)->delete();
+        $delete = $delete && VendorTaxNumbers::where('vendor_id', $id)->delete();
+        $delete = $delete && VendorIdentificationNumbers::where('vendor_id', $id)->delete();
+        $delete = $delete && VendorEmail::where('vendor_id', $id)->delete();
 
         // check data deleted or not
         if ($delete == 1) {
