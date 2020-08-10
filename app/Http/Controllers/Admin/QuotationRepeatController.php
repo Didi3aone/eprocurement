@@ -613,8 +613,15 @@ class QuotationRepeatController extends Controller
                     $child->short_text              = $detail['short_text'];
                 }
             }
-
+            
+            //rumus 
+            // qty order/per * price
             $totalPrices = (\removeComma($detail['price']) * $detail['qty']);
+            $getRfq= \App\Models\RfqDetail::where('rfq_number',$rfqs->rfq_number )->first();
+            if( null != $getRfq ) {
+                $totalPrices = ($detail['qty']/$getRfq->per_unit) * ($detail['price']);
+            }
+
             $quotationDetail = new QuotationDetail;
             $quotationDetail->quotation_order_id        = $id;
             $quotationDetail->qty                       = $detail['qty'];
@@ -643,7 +650,7 @@ class QuotationRepeatController extends Controller
             $quotationDetail->PREQ_ITEM                 = $detail['preq_item'];
             $quotationDetail->PR_NO                     = $detail['PR_NO'];
             $quotationDetail->PO_ITEM                   = $poItem;
-            $quotationDetail->total_price               = (\removeComma($detail['price']) * $detail['qty']);
+            $quotationDetail->total_price               = $totalPrices;
             $quotationDetail->purchasing_document       = $detail['rfq'];
             $quotationDetail->acp_id                    = $detail['acp_id'];
             $quotationDetail->delivery_date             = $detail['delivery_date'];
