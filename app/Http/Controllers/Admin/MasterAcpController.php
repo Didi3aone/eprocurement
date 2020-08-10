@@ -299,16 +299,17 @@ class MasterAcpController extends Controller
                          }
                 }
 
+                $totalPrice = ($val['qty']/$val['qty_per']) * \removeComma($val['price']);
 
                 $assProc = \App\Models\UserMap::getAssProc($cMo->purchasing_group_code)->user_id;
                 $material = new AcpTableMaterial();
                 $material->master_acp_id            = $acp->id;
                 $material->master_acp_vendor_id     = $val['vendor'];
                 $material->material_id              = $val['material'];
-                $material->price                    = str_replace(',','',$val['price']);
+                $material->price                    = \removeComma($val['price']);
                 $material->qty                      = $val['qty'];
                 $material->qty_pr                   = $val['qty_pr'];
-                $material->total_price              = str_replace(',','',$val['price']);
+                $material->total_price              = $totalPrice;
                 $material->currency                 = $val['currency'] ?? 'IDR';
                 $material->file_attachment          = $val['file_attachment'];
                 $material->purchasing_group_code    = $cMo->purchasing_group_code;
@@ -320,13 +321,13 @@ class MasterAcpController extends Controller
                 //     return redirect()->route('admin.master-acp.index');
                 // }
                 if (1 == $val['winner']) {
-                    $price += str_replace(',','',$val['price']);//$val['price'];
+                    $price += \removeComma($val['price']);//$val['price'];
                     $isAcp = true;
                     // insert to rfq detail
                     $rfqDetail = new MasterRfqDetail();
                     $rfqDetail->purchasing_document = $val['purchasing_document'];
                     $rfqDetail->material            = $val['material'];
-                    $rfqDetail->net_order_price     = str_replace(',','',$val['price']);
+                    $rfqDetail->net_order_price     = \removeComma($val['price']);
                     $rfqDetail->save();
 
                     $materialName = \App\Models\MasterMaterial::getMaterialName($val['material']);
@@ -343,19 +344,22 @@ class MasterAcpController extends Controller
                         $unit           = $materialName->uom_code ?? '';
                         $storage        = $materialName->storage_location_code ?? '';
                     }
-                    // dd($val['rfq_number']);
+
                     $rfqDetailNew = new RfqDetail;
                     $rfqDetailNew->material_id                  = $val['material'] ?? '';
                     $rfqDetailNew->short_text                   = $desc;
                     $rfqDetailNew->plant_code                   = $request->get('plant_id');
                     $rfqDetailNew->storage_location_code        = $storage;
-                    $rfqDetailNew->qty                          = $val['qty'];
+                    $rfqDetailNew->qty                          = $val['qty_pr'];
+                    $rfqDetailNew->per_unit                     = $val['qty'];
+                    $rfqDetailNew->total_price                  = $totalPrice;
                     $rfqDetailNew->unit                         = $unit;
                     $rfqDetailNew->rfq_number                   = $val['rfq_number'];
                     $rfqDetailNew->po_item                      = $poItem;
-                    $rfqDetailNew->net_price                    = str_replace(',','',$val['price']);
+                    $rfqDetailNew->net_price                    = \removeComma($val['price']);
                     $rfqDetailNew->is_from_po                   = 2;
                     $rfqDetailNew->po_number                    = 0;
+                    $rfqDetailNew->purchasing_group_code        = $cMo->purchasing_group_code;
                     $rfqDetailNew->vendor_id                    = $val['vendor'];
                     $rfqDetailNew->save();
                 }
