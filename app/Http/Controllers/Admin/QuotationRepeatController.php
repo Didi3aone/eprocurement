@@ -616,10 +616,11 @@ class QuotationRepeatController extends Controller
             
             //rumus 
             // qty order/per * price
+            //$totalPrice = \removeComma($val['price'])/$val['qty'] * $val['qty_pr'];
             $totalPrices = (\removeComma($detail['price']) * $detail['qty']);
             $getRfq= \App\Models\RfqDetail::where('rfq_number',$rfqs->rfq_number )->first();
             if( null != $getRfq ) {
-                $totalPrices = ($detail['qty']/$getRfq->per_unit) * ($detail['price']);
+                $totalPrices = ($detail['price']/$getRfq->per_unit) * $detail['price'];
             }
 
             $quotationDetail = new QuotationDetail;
