@@ -44,10 +44,12 @@ class AcpTableMaterial extends Model
                     end as uom_code,
                     mam.qty,
                     mam.currency,
-                    mam.price
+                    mam.price,
+                    mam.id
                 ")
             )->from('master_acp_materials','mam')
             ->distinct()
+            ->orderBy('mam.id', 'ASC')
             ->get();
     }
 
