@@ -30,7 +30,7 @@
                                 </tr>
                                 <tr>
                                     <th>Vendor</th>
-                                    <td>{{ $quotation->getVendor['name'] }}</td>
+                                    <td>{{ $quotation->getVendor['company_name'] }}</td>
                                 </tr>
                                 <tr>
                                     <th>Document Type</th>
@@ -94,8 +94,11 @@
                                     ->where('material_id', $materialId)
                                     ->first();
 
-                                $perQty = ($value->qty/$getQtyAcp->qty);
-                                $totalPrices = (\removeComma($value->price) * $perQty);
+                                $totalPrices = (\removeComma($value->price) * $value->qty);
+                                if( null != $getQtyAcp ) {
+                                    $perQty = ($value->qty/$getQtyAcp->qty);
+                                    $totalPrices = (\removeComma($value->price) * $perQty);
+                                }
                             @endphp
                             <tr>
                                 <td>{{ $value->material." - ".$value->short_text }}</td>
@@ -103,7 +106,7 @@
                                 <td>{{ $value->qty }}</td>
                                 <td>{{ $quotation->currency }}</td>
                                 <td>{{ \toDecimal($value->price) }}</td>
-                                <td>{{ \toDecimal($totalPrices) }}</td>
+                                <td style="text-align:right;">{{ \toDecimal($totalPrices) }}</td>
                             </tr>
                         @endforeach
                     </tbody>

@@ -30,7 +30,7 @@
                                 </tr>
                                 <tr>
                                     <th>Vendor</th>
-                                    <td>{{ $quotation->getVendor['name'] }}</td>
+                                    <td>{{ $quotation->getVendor['company_name'] }}</td>
                                 </tr>
                                 <tr>
                                     <th>Document Type</th>

@@ -234,6 +234,8 @@
         processing: true,
         serverSide: true,
         pageLength: 50,
+        scrollY         : "800px",
+        scrollCollapse  : true,
         ajax: "/admin/purchase-request",
         "createdRow": function( row, data, dataIndex ) {
             var tp1 = $('#hidden_input').html()

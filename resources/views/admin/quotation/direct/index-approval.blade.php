@@ -43,7 +43,7 @@
                                             </td>
                                             <td>{{ $val->id ?? '' }}</td>
                                             <td>{{ $val->po_no ?? '' }}</td>
-                                            <td>{{ $val->name }}</td>
+                                            <td>{{ $val->company_name }}</td>
                                             <td>
                                                 {{ \Carbon\Carbon::parse($val->created_at)->format('d-m-Y') }}
                                             </td>

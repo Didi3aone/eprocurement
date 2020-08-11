@@ -70,8 +70,10 @@
                                     <th style="text-align:center;">Description</th>
                                     <th style="text-align:center;">Unit</th>
                                     <th style="text-align:center;">Per</th>
+                                    <th style="text-align:center;">Qty Pr</th>
                                     <th style="text-align:center;">Currency</th>
                                     <th style="text-align:center;">Price</th>
+                                    <th style="text-align:center;">Total Price</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -89,21 +91,22 @@
                                     <td rowspan={{ $rowSpan }}>{!! $winner !!}</td>
                                     @foreach (\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id) as $key => $row)
                                         @php
-                                            $total = (\removeComma($row->price) * $row->qty);
-                                            $totalPrice += ($total);
+                                            //$total = (\removeComma($row->price) * $row->qty);
+                                            $totalPrice += ($row->total_price);
                                             $data = count(\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id));
-                                           // dd($data);
                                         @endphp
                                         <td>{{ $row->material_id ?? $row->material_id }}</td>
                                         <td>{{ \App\Models\MasterMaterial::getMaterialName($row->material_id)->description ?? $row->material_id  }}</td>
                                         <td>{{ $row->uom_code }}</td>
                                         <td>{{ $row->qty }}</td>
+                                        <td>{{ toDecimal($row->qty_pr) }}</td>
                                         <td>{{ $row->currency }}</td>
-                                        <td>{{ \toDecimal($row->price) }}</td>
+                                        <td style="text-align:right;">{{ \toDecimal($row->price) }}</td>
+                                        <td style="text-align:right;">{{ \toDecimal($row->total_price) }}</td>
                                 </tr>
                                 @endforeach
                                 <tr style="text-align:right;">
-                                    <td colspan=7 style="text-align:right;"></td>
+                                    <td colspan=9 style="text-align:right;"></td>
                                     <td style="text-align:right;">
                                         <b style="color:black;font-size:17px;text-align:center;">{{ \toDecimal($totalPrice) }}</b>
                                     </td>

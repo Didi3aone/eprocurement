@@ -134,6 +134,16 @@
 								Per 	
 							</div>
 						</th>
+						<th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+                            <div>
+								Qty PR 	
+							</div>
+						</th>
+						<th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+                            <div>
+								Total Price 	
+							</div>
+						</th>
 					</tr>
 					</thead>
 					<tbody>
@@ -157,6 +167,8 @@
 									<td>{{ $row->uom_code }}</td>
 									<td>{{ \toDecimal($row->price) }}</td>
 									<td>{{ $row->qty }}</td>
+									<td>{{ \toDecimal($row->qty_pr) }}</td>
+									<td>{{ \toDecimal($row->total_price) }}</td>
 								</tr>
 							@endforeach
 						@endforeach

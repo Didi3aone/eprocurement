@@ -65,9 +65,15 @@ class MasterAcpController extends Controller
                                 short_text as description"
                             )
                         )
+                        ->join('purchase_requests','purchase_requests.id','=','purchase_requests_details.request_id')
                         ->where('qty', '>', '0.00')
-                        ->whereIn('purchasing_group_code', $userMapping)
-                        ->groupBy('material_id', 'short_text')
+                        ->whereIn('purchasing_group_code', $userMapping);
+
+                if( 1 == $request->get('isProject') ) {
+                    $model = $model->where('purchase_requests.is_project',1);
+                }
+
+                $model = $model->groupBy('material_id', 'short_text')
                         ->orderBy('short_text', 'asc')
                         ->limit(700)
                         ->get();
@@ -81,9 +87,15 @@ class MasterAcpController extends Controller
                                 short_text as description"
                             )
                         )
+                        ->join('purchase_requests','purchase_requests.id','=','purchase_requests_details.request_id')
                         ->where('qty', '>', 0)
-                        ->whereIn('purchasing_group_code', $userMapping)
-                        ->groupBy('material_id', 'short_text')
+                        ->whereIn('purchasing_group_code', $userMapping);
+                       
+                if( 1 == $request->get('isProject') ) {
+                    $model = $model->where('purchase_requests.is_project',1);
+                }
+
+                $model = $model->groupBy('material_id', 'short_text')
                         ->orderBy('short_text', 'asc')
                         ->limit(700)
                         ->get();
@@ -240,9 +252,11 @@ class MasterAcpController extends Controller
                     $temp['material']               = $row;
                     $temp['price']                  = $request['price_'.$value][$i];
                     $temp['qty']                    = $request['qty_'.$value][$i];
+                    $temp['qty_pr']                 = $request['qty_pr_'.$value][$i];
                     $temp['currency']               = $request['currency_'.$value][$i];
                     $temp['file_attachment']        = $filename;
                     $result[] = $temp;
+                    // dd($result);
                 }
             }
 
@@ -252,58 +266,68 @@ class MasterAcpController extends Controller
             foreach ($result as $key => $val) {
                 $i = $key + 1;
                 $poItem = (0+($i*10));
-                $material = new AcpTableMaterial();
-                $material->master_acp_id        = $acp->id;
-                $material->master_acp_vendor_id = $val['vendor'];
-                $material->material_id          = $val['material'];
-                $material->price                = str_replace(',','',$val['price']);
-                $material->qty                  = $val['qty'];
-                $material->currency             = $val['currency'] ?? 'IDR';
-                $material->file_attachment      = $val['file_attachment'];
-                $material->save();
-
+                // dd($val);
                 //get material cmo
                 $isCmo = false;
                 $cMo = \App\Models\MasterMaterial::getMaterialCmo($val['material']);
                 if( $cMo != null ) {
+                    $units = $cMo->uom_code;
                     if( $cMo->purchasing_group_code == 'S03' ||
-                        $cMo->purchasing_group_code == 'H09' ||
-                        $cMo->purchasing_group_code == 'M09' ||
-                        $cMo->purchasing_group_code == 'W03' ||
-                        $cMo->purchasing_group_code == 'S09' ||
-                        $cMo->purchasing_group_code == 'W09' ||
-                        $cMo->purchasing_group_code == 'M03' ) {
-                        $isCmo = true;
-                    }
-                } else {
+                         $cMo->purchasing_group_code == 'H09' ||
+                         $cMo->purchasing_group_code == 'M09' ||
+                         $cMo->purchasing_group_code == 'W03' ||
+                         $cMo->purchasing_group_code == 'S09' ||
+                         $cMo->purchasing_group_code == 'W09' ||
+                         $cMo->purchasing_group_code == 'M03' ) {
+                         $isCmo = true;
+                     }
+                 } else {
                     $cMo = \App\Models\PurchaseRequestsDetail::where('description',$val['material'])
                             ->orWhere('material_id', $val['material'])
                             ->orWhere('short_text', $val['material'])
                             ->first();
-                            // dd($cMo);
-                    if( $cMo->purchasing_group_code == 'S03' ||
-                        $cMo->purchasing_group_code == 'H09' ||
-                        $cMo->purchasing_group_code == 'M09' ||
-                        $cMo->purchasing_group_code == 'W03' ||
-                        $cMo->purchasing_group_code == 'S09' ||
-                        $cMo->purchasing_group_code == 'W09' ||
-                        $cMo->purchasing_group_code == 'M03' ) {
-                            $isCmo = true;
-                        }
+                    $units = $cMo->unit;
+                             // dd($cMo);
+                     if( $cMo->purchasing_group_code == 'S03' ||
+                         $cMo->purchasing_group_code == 'H09' ||
+                         $cMo->purchasing_group_code == 'M09' ||
+                         $cMo->purchasing_group_code == 'W03' ||
+                         $cMo->purchasing_group_code == 'S09' ||
+                         $cMo->purchasing_group_code == 'W09' ||
+                         $cMo->purchasing_group_code == 'M03' ) {
+                             $isCmo = true;
+                         }
                 }
+
+                $totalPrice = \removeComma($val['price'])/$val['qty'] * $val['qty_pr'];
+
                 $assProc = \App\Models\UserMap::getAssProc($cMo->purchasing_group_code)->user_id;
+                $material = new AcpTableMaterial();
+                $material->master_acp_id            = $acp->id;
+                $material->master_acp_vendor_id     = $val['vendor'];
+                $material->material_id              = $val['material'];
+                $material->price                    = \removeComma($val['price']);
+                $material->qty                      = $val['qty'];
+                $material->qty_pr                   = $val['qty_pr'];
+                $material->total_price              = $totalPrice;
+                $material->currency                 = $val['currency'] ?? 'IDR';
+                $material->file_attachment          = $val['file_attachment'];
+                $material->purchasing_group_code    = $cMo->purchasing_group_code;
+                $material->unit                     = $units;
+                $material->save();
+
                 // if( $assProc == null ) {
                 //     // \Session::flash('error','or this k no approval was found '.$cMo->purchasing_group_code)
                 //     return redirect()->route('admin.master-acp.index');
                 // }
                 if (1 == $val['winner']) {
-                    $price += str_replace(',','',$val['price']);//$val['price'];
+                    $price += $totalPrice;//$val['price'];
                     $isAcp = true;
                     // insert to rfq detail
                     $rfqDetail = new MasterRfqDetail();
                     $rfqDetail->purchasing_document = $val['purchasing_document'];
                     $rfqDetail->material            = $val['material'];
-                    $rfqDetail->net_order_price     = str_replace(',','',$val['price']);
+                    $rfqDetail->net_order_price     = \removeComma($val['price']);
                     $rfqDetail->save();
 
                     $materialName = \App\Models\MasterMaterial::getMaterialName($val['material']);
@@ -320,33 +344,36 @@ class MasterAcpController extends Controller
                         $unit           = $materialName->uom_code ?? '';
                         $storage        = $materialName->storage_location_code ?? '';
                     }
-                    // dd($val['rfq_number']);
+
                     $rfqDetailNew = new RfqDetail;
                     $rfqDetailNew->material_id                  = $val['material'] ?? '';
                     $rfqDetailNew->short_text                   = $desc;
                     $rfqDetailNew->plant_code                   = $request->get('plant_id');
                     $rfqDetailNew->storage_location_code        = $storage;
-                    $rfqDetailNew->qty                          = $val['qty'];
+                    $rfqDetailNew->qty                          = $val['qty_pr'];
+                    $rfqDetailNew->per_unit                     = $val['qty'];
+                    $rfqDetailNew->total_price                  = $totalPrice;
                     $rfqDetailNew->unit                         = $unit;
                     $rfqDetailNew->rfq_number                   = $val['rfq_number'];
                     $rfqDetailNew->po_item                      = $poItem;
-                    $rfqDetailNew->net_price                    = str_replace(',','',$val['price']);
+                    $rfqDetailNew->net_price                    = \removeComma($val['price']);
                     $rfqDetailNew->is_from_po                   = 2;
                     $rfqDetailNew->po_number                    = 0;
+                    $rfqDetailNew->purchasing_group_code        = $cMo->purchasing_group_code;
                     $rfqDetailNew->vendor_id                    = $val['vendor'];
                     $rfqDetailNew->save();
                 }
             }
 
             if ($isAcp) {
-                if ($price <= 25000000) {
+                if ($price < 100000000 ) {
                     $isPlant = false;
                     if (1 == $request->get('is_project')) {
                         $isPlant = true;
                     }
                     \saveApprovals($assProc, $acp->id, 'STAFF', 'ACP', $isPlant,false);
                     // staff eproc
-                } elseif ($price >= 100000000) {
+                } elseif ($price >= 100000000 && $price < 250000000 ) {
                     $isPlant = false;
                     if (1 == $request->get('is_project')) {
                         $isPlant = true;
@@ -360,6 +387,9 @@ class MasterAcpController extends Controller
                     }
                     \saveApprovals($assProc, $acp->id, 'COO', 'ACP', $isPlant, $isCmo);
                     //COO
+                } else {
+                    //cadangan klo gagal approve staff aja
+                    \saveApprovals($assProc, $acp->id, 'STAFF', 'ACP', false,false);
                 }
             } 
 

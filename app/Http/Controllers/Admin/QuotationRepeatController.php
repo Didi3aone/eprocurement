@@ -43,9 +43,9 @@ class QuotationRepeatController extends Controller
                         'quotation.po_no',
                         'quotation.vendor_id',
                         'quotation.approval_status',
-                        'vendors.name'
+                        'vendors.company_name'
                     )
-                    ->groupBy('quotation.id','vendors.name')
+                    ->groupBy('quotation.id','vendors.company_name')
                     ->orderBy('id', 'desc');
                     
         if( \Auth::user()->roles[0]->title == 'Admin' ) {
@@ -80,9 +80,9 @@ class QuotationRepeatController extends Controller
                         'quotation.id',
                         'quotation.po_no',
                         'quotation.approval_status',
-                        'vendors.name'
+                        'vendors.company_name',
                     )
-                    ->groupBy('quotation.id','vendors.name')
+                    ->groupBy('quotation.id','vendors.company_name')
                     ->orderBy('id', 'desc')
                     ->get();
 
@@ -576,6 +576,10 @@ class QuotationRepeatController extends Controller
             $totalPrice += \removeComma($detail['price']);
             $schedLine  = sprintf('%05d', (1+$i));
             $poItem     =  ('000'.(10+($i*10)));
+
+            if( $poItem > '00090' ) {
+                $poItem = substr($poItem,1);
+            }
             
             //khusus service 
             //insert anak2ny
@@ -597,7 +601,7 @@ class QuotationRepeatController extends Controller
                     $ke3 =  $i+1;
                     $packageParent                  .= ($i + $ke3);
                     $child->quotation_id            = $id;
-                    $child->preq_item               = ('000'.(10+($i*10)));
+                    $child->preq_item               = $detail['preq_item'];
                     $child->po_item                 = $poItem;
                     $child->package_no              = $packageParent;
                     $child->subpackage_no           = $subpackgparent;
@@ -606,15 +610,24 @@ class QuotationRepeatController extends Controller
                     //anak ganjil
                     $packageParent                  .= ($i + 2);
                     $child->quotation_id            = $id;
-                    $child->preq_item               = ('000'.(10+($i*10)));
+                    $child->preq_item               = $detail['preq_item'];
                     $child->po_item                 = $poItem;
                     $child->package_no              = $packageParent;
                     $child->subpackage_no           = $subpackgparent;
                     $child->short_text              = $detail['short_text'];
                 }
             }
-
+            
+            //rumus 
+            // qty order/per * price
+            //$totalPrice = \removeComma($val['price'])/$val['qty'] * $val['qty_pr'];
             $totalPrices = (\removeComma($detail['price']) * $detail['qty']);
+            $getRfq= \App\Models\RfqDetail::where('rfq_number',$detail['rfq'] )->first();
+            // dd($detail['price']/$getRfq->per_unit);
+            if( null != $getRfq ) {
+                $totalPrices = (\removeComma($detail['price'])/$getRfq->per_unit) * $detail['qty'];
+            }
+
             $quotationDetail = new QuotationDetail;
             $quotationDetail->quotation_order_id        = $id;
             $quotationDetail->qty                       = $detail['qty'];
@@ -643,7 +656,7 @@ class QuotationRepeatController extends Controller
             $quotationDetail->PREQ_ITEM                 = $detail['preq_item'];
             $quotationDetail->PR_NO                     = $detail['PR_NO'];
             $quotationDetail->PO_ITEM                   = $poItem;
-            $quotationDetail->total_price               = (\removeComma($detail['price']) * $detail['qty']);
+            $quotationDetail->total_price               = $totalPrices;
             $quotationDetail->purchasing_document       = $detail['rfq'];
             $quotationDetail->acp_id                    = $detail['acp_id'];
             $quotationDetail->delivery_date             = $detail['delivery_date'];
@@ -667,7 +680,7 @@ class QuotationRepeatController extends Controller
 
                 //anak genap
                 $childs->quotation_id    = $id;
-                $childs->preq_item       = ('000'.(10+($i*10)));
+                $childs->preq_item       = $detail['preq_item'];
                 $childs->po_item         = $poItem;
                 $childs->package_no      = $subpackgparent;
                 $childs->subpackage_no   = '000000000';
@@ -675,7 +688,7 @@ class QuotationRepeatController extends Controller
                 $childs->save();
 
                 $childs->quotation_id    = $id;
-                $childs->preq_item       = ('000'.(10+($i*10)));
+                $childs->preq_item       = $detail['preq_item'];
                 $childs->po_item         = $poItem;
                 $childs->package_no      = $subpackgparent;
                 $childs->subpackage_no   = '000000000';
