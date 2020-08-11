@@ -265,7 +265,7 @@ libxml_use_internal_errors(true);
                 </h6>
             </div>
             <div class="right">
-                <p style="margin-bottom: 6px">    PO NO &nbsp;&nbsp;&nbsp;&nbsp;: {{ '0000' }}</p>
+                <p style="margin-bottom: 6px">    PO NO &nbsp;&nbsp;&nbsp;&nbsp;: {{ $data['PO_NUMBER'] }}</p>
                 <p style="margin-bottom: 6px">    Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ date('d.m.Y') }} </p>
                 <p style="margin-bottom: 6px">    Revisi &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ '0000' }} </p>
                 <p></p>
