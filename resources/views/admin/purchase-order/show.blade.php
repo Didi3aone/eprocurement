@@ -63,7 +63,7 @@
                         @foreach($purchaseOrder->orderDetail as $key => $value)
                         <tr>
                             <td>{{ $value->material_id." - ".$value->short_text }}</td>
-                            <td>{{ \App\Models\UomConvert::where('uom_1', $value->unit)->first()->uom_2 }}</td>
+                            <td>{{ \getUomCode($value->unit) }}</td>
                             <td>{{ $value->qty }}</td>
                             <td>{{ $value->price }}</td>
                         </tr>
