@@ -265,7 +265,7 @@ libxml_use_internal_errors(true);
                 </h6>
             </div>
             <div class="right">
-                <p style="margin-bottom: 6px">    PO NO &nbsp;&nbsp;&nbsp;&nbsp;: {{ $data['PO_NUMBER'] }}</p>
+                <p style="margin-bottom: 6px">    PO NO &nbsp;&nbsp;&nbsp;&nbsp;: {{ '000000' }}</p>
                 <p style="margin-bottom: 6px">    Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ date('d.m.Y') }} </p>
                 <p style="margin-bottom: 6px">    Revisi &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ '0000' }} </p>
                 <p></p>
@@ -313,26 +313,25 @@ libxml_use_internal_errors(true);
                         if( $materialId == '' ) {
                             $materialId = $data['short_text'][$key];
                         }
-                        // dd($data['acp_id'][$key]);
+                        
+                        $tax = 0;
 
-                        if ($data['acp_id'][$key] = 'X') {
-                            $perQty = ($data['qty'][$key]/1);
-                            $totalPrice = (\removeComma($data['price'][$key]) * $perQty);
-                        }else {
+                        if ($data['acp_id'][$key] == '0') {
+                            $getRfq= \App\Models\RfqDetail::where('rfq_number',$data['rfq'][$key] )->first();
+                            $totalPrice = (\removeComma($data['price'][$key])/$getRfq->per_unit) * ($data['qty'][$key]);
+                            if( isset($data['tax_code'])) {
+                                $tax = ($totalPrice) * 10/100;
+                            }
+                        } else {
                             $qtyAcp = \App\Models\AcpTableMaterial::getQtyAcp($materialId, $data['acp_id'][$key]);
                             $perQty = ($data['qty'][$key]/$qtyAcp->qty);
                             $totalPrice = (\removeComma($data['price'][$key]) * $perQty);
+                            if( isset($data['tax_code'])) {
+                                $tax = ($totalPrice) * 10/100;
+                            }
                         }
-
-
-                        $material = \App\Models\PurchaseRequestsDetail::where('material_id', $data['material_id'][$key])->first();
-                        $tax = 0;
-                        if( isset($data['tax_code'])) {
-                            $tax = ((\removeComma($data['price'][$key]) * $data['qty'][$key]) * 10/100);
-                        }
-
                         $totalTax += $tax;
-
+                        $material = \App\Models\PurchaseRequestsDetail::where('material_id', $data['material_id'][$key])->first();
                         $totalRows = count($data['id']);
                         $total += \removeComma($data['price'][$key]) * $data['qty'][$key] ;
 
@@ -365,7 +364,7 @@ libxml_use_internal_errors(true);
             </tbody>
             <tfoot>
                 @php
-                    $grandTotal = ($total + $totalTax);
+                    $grandTotal = ($totalPrice + $totalTax);
                 @endphp
                 <tr>
                     <td rowspan="3" colspan="5">
@@ -378,7 +377,7 @@ libxml_use_internal_errors(true);
                         </p>
                     </td>
                     <td colspan="3">Total ({{ $data['currency'] }})</td>
-                    <td colspan="1" style="text-align: right">{{ \toDecimal($total) }}</td>
+                    <td colspan="1" style="text-align: right">{{ \toDecimal($totalPrice) }}</td>
                 </tr>
                 <tr>
                     <td colspan="3">Tax ({{ $data['currency'] }})</td>
