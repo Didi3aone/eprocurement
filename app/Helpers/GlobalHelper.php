@@ -127,7 +127,15 @@
     //author : didi
     function checkArraySame(array $arr, $testValue = null) 
     {
-        
+        // dd($arr);
+        // $target = array('SY01', 'SY01');
+
+        // dd(array_intersect($arr, $target));
+
+        if (in_array('SY01', $arr) && in_array('Z102', $arr)) {
+            return true ;
+        }
+
         $testValue = func_num_args() > 1 ? $testValue : current($arr);
         foreach ($arr as $val) {
             if ($testValue !== $val) {
