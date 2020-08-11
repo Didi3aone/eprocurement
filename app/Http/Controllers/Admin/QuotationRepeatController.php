@@ -625,10 +625,9 @@ class QuotationRepeatController extends Controller
             $totalPrices = (\removeComma($detail['price']) * $detail['qty']);
             $getRfq= \App\Models\RfqDetail::where('rfq_number',$detail['rfq'] )->first();
             // dd($detail['price']/$getRfq->per_unit);
-            if( null != $getRfq ) {
+            if( !empty($getRfq) ) {
                 $totalPrices = (\removeComma($detail['price'])/$getRfq->per_unit) * $detail['qty'];
             }
-            $totalPrices = 0;
 
             $quotationDetail = new QuotationDetail;
             $quotationDetail->quotation_order_id        = $id;
