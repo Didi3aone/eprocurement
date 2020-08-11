@@ -109,7 +109,8 @@ class PurchaseRequestController extends Controller
                         $q->where(function ($q) use ($search) {
                             $q->where('PR_NO', 'ILIKE', "%{$search}%")
                                 ->orWhere('material_id', 'ILIKE', "%{$search}%")
-                                ->orWhere('short_text', 'ILIKE', "%{$search}%");
+                                ->orWhere('short_text', 'ILIKE', "%{$search}%")
+                                ->orWhere('purchasing_group_code', 'ILIKE', "%{$search}%");
                         });
                     })->count();
 
@@ -124,7 +125,8 @@ class PurchaseRequestController extends Controller
                             $q->where('PR_NO', 'ILIKE', "%{$search}%")
                             // ->whereIn('purchase_requests_details.purchasing_group_code', $userMapping)
                                 ->orWhere('material_id', 'ILIKE', "%{$search}%")
-                                ->orWhere('short_text', 'ILIKE', "%{$search}%");
+                                ->orWhere('short_text', 'ILIKE', "%{$search}%")
+                                ->orWhere('purchasing_group_code', 'ILIKE', "%{$search}%");
                         });
                     })
                     ->offset($start)
