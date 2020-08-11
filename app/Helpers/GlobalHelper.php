@@ -523,4 +523,66 @@
         else
             return 0; 
     } 
+
+    function toDateDb($date)
+    {
+        return date('Y-m-d', strtotime($date));
+    }
+
+    function generatePrNo()
+    {
+        $maxCode  = \App\Models\PurchaseRequest::max('request_no');
+        if( empty( $maxCode) ) {
+            $NextCode = 0000001;
+        } else {
+            $NextCode = substr($maxCode,9) + 1;
+        }
+        
+        $DocNo = sprintf("%07s", $NextCode);
+
+        return "PR/".date('m')."/".date('y')."/".$DocNo;
+    }
+
+    /**
+     * Function that groups an array of associative arrays by some key.
+     *  ref https://ourcodeworld.com/articles/read/762/how-to-group-an-array-of-associative-arrays-by-key-in-php
+     * @param {String} $key Property to sort by.
+     * @param {Array} $data Array that stores multiple associative arrays.
+     */
+    function group_by($key, $data) {
+        $result = array();
+
+        foreach($data as $val) {
+            if(array_key_exists($key, $val)){
+                $result[$val[$key]][] = $val;
+            }else{
+                $result[""][] = $val;
+            }
+        }
+
+        return $result;
+    }
+
+    function _group_by($array, $key) {
+        $return = array();
+        foreach($array as $val) {
+            $return[$val[$key]][] = $val;
+        }
+        return $return;
+    }
+
+    function getUomCode($uom)
+    {
+        $uomCode1 = \App\Models\UomConvert::where('uom_1',$uom)->first();
+        $uomCode2 = \App\Models\UomConvert::where('uom_2',$uom)->first();
+        if( null != $uomCode1 ) {
+            $unit = $uomCode1->uom_2;
+        } else if( null != $uomCode2 ) {
+            $unit = $uomCode2->uom_1;
+        } else {
+            $unit = $uom;
+        }
+
+        return $unit;
+    }
 ?>
