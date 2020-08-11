@@ -299,7 +299,7 @@
                 </h6>
             </div>
             <div class="right">
-                <p style="margin-bottom: 6px">    PO NO &nbsp;&nbsp;&nbsp;&nbsp;: {{ '0000' }}</p>
+                <p style="margin-bottom: 6px">    PO NO &nbsp;&nbsp;&nbsp;&nbsp;: {{ $po->PO_NUMBER }}</p>
                 <p style="margin-bottom: 6px">    Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ date('d.m.Y') }} </p>
                 <p style="margin-bottom: 6px">    Revisi &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ '0000' }} </p>
                 <p></p>
@@ -375,7 +375,8 @@
                     <td style="text-align:center;">{{ $value->material_id ?? '' }}</td>
                     <td>{!! \wordwrap($value->short_text,20,'<br>') !!}</td>
                     <td>{!! $value->notes == "PR MRP" ? "" :  \wordwrap($value->notes,20,'<br>') !!}</td>
-                    <td style="text-align:center;">{{ date('d.m.Y',strtotime($value->delivery_date_new)) }}</td>
+                    <td style="text-align:center;">{{ $value->delivery_date_new ? date('d.m.Y',strtotime($value->delivery_date_new)) : 
+                        date('d.m.Y',strtotime($value->delivery_date)) }}</td>
                     <td style="text-align:center;">{{ $value->qty." ".$value->unit }}</td>
                     <td style="text-align:right;">{{ $value->PR_NO }}</td>
                     <td style="text-align:right;">{{ \toDecimal($value->price) }}</td>
