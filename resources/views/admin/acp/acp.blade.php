@@ -48,7 +48,7 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <a class="btn btn-xs btn-warning" href="{{ route('admin.show-acp-approval', $val->acp['id']) }}">
+                                                <a class="btn btn-xs btn-warning" href="{{ route('admin.show-acp-approval', $val->acp['id'] ?? 0) }}">
                                                     <i class="fa fa-eye"></i> Show
                                                 </a>
                                             </td>
