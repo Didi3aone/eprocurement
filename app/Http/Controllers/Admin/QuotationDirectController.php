@@ -40,7 +40,7 @@ class QuotationDirectController extends Controller
         $quotation = QuotationDetail::join('quotation','quotation.id','=','quotation_details.quotation_order_id')
                     ->join('vendors','vendors.code','=','quotation.vendor_id')
                     ->where('quotation.status',Quotation::QuotationDirect)
-                    ->where('quotation.approval_status',Quotation::Waiting)
+                    // ->where('quotation.approval_status',Quotation::Waiting) 
                     ->orWhere('quotation.approval_status', Quotation::ApprovalAss)
                     ->whereIn('quotation_details.purchasing_group_code', $userMapping)
                     ->select(
