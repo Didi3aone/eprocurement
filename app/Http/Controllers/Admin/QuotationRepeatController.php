@@ -81,11 +81,12 @@ class QuotationRepeatController extends Controller
                         'quotation.po_no',
                         'quotation.approval_status',
                         'vendors.company_name',
+                        'vendors.email',
+                        \DB::raw('sum(quotation_details.price) as totalValue')
                     )
-                    ->groupBy('quotation.id','vendors.company_name')
+                    ->groupBy('quotation.id','vendors.company_name','vendors.email')
                     ->orderBy('id', 'desc')
                     ->get();
-
         return view('admin.quotation.repeat.index-approval', compact('quotation'));
     }
 

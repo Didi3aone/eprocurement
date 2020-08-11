@@ -2,10 +2,10 @@
 @section('content')
 <div class="row page-titles">
     <div class="col-md-5 col-8 align-self-center">
-        <h3 class="text-themecolor">Master</h3>
+        <h3 class="text-themecolor">Po Approval</h3>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="javascript:void(0)">Quotation</a></li>
-            <li class="breadcrumb-item active">Index</li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Direct</a></li>
+            <li class="breadcrumb-item active">List</li>
         </ol>
     </div>
 </div>
@@ -31,6 +31,7 @@
                                         <th>PO Eprocurement</th>
                                         <th>Vendor</th>
                                         <th>Date</th>
+                                        <th>Total Value</th>
                                         <th>&nbsp;</th>
                                     </tr>
                                 </thead>
@@ -43,15 +44,16 @@
                                             </td>
                                             <td>{{ $val->id ?? '' }}</td>
                                             <td>{{ $val->po_no ?? '' }}</td>
-                                            <td>{{ $val->company_name }}</td>
+                                            <td>{{ $val->company_name." - ".$val->email }}</td>
                                             <td>
                                                 {{ \Carbon\Carbon::parse($val->created_at)->format('d-m-Y') }}
                                             </td>
+                                            <td>{{ \toDecimal($val->totalvalue) }}</td>
                                             <td>
                                                 <a class="btn btn-primary btn-xs" href="{{ route('admin.quotation-direct-show-approval', $val->id) }}">
                                                     <i class="fa fa-eye"></i> {{ trans('global.view') }}
                                                 </a>
-                                                <a class="btn btn-warning btn-xs" href="{{ route('admin.master-acp-show',$val->acp_id) }}" target="_blank">
+                                                <a class="btn btn-warning btn-xs" href="{{ route('admin.master-acp-show',$val->acp_id ?? 0) }}" target="_blank">
                                                     <i class="fa fa-eye"></i> Show ACP
                                                 </a>
                                             </td>

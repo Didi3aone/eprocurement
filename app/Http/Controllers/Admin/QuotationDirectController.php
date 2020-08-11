@@ -83,12 +83,13 @@ class QuotationDirectController extends Controller
                     ->whereIn('quotation_details.purchasing_group_code', $userMapping)
                     ->select(
                         'quotation.id',
-                        'quotation.acp_id',
                         'quotation.po_no',
                         'quotation.approval_status',
-                        'vendors.company_name'
+                        'vendors.company_name',
+                        'vendors.email',
+                        \DB::raw('sum(quotation_details.price) as totalValue')
                     )
-                    ->groupBy('quotation.id','vendors.company_name')
+                    ->groupBy('quotation.id','vendors.company_name','vendors.email')
                     ->orderBy('id', 'desc')
                     ->get();
 
