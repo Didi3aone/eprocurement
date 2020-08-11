@@ -76,6 +76,14 @@ class AcpController extends Controller
         return view('admin.acp.show-acp-approval', compact('acp'));   
     }
 
+
+    public function showAcpApprovalFinish($id)
+    {
+        $acp   = AcpTable::find($id);
+
+        return view('admin.acp.show-acp-approval-finish', compact('acp'));   
+    }
+
     /**
      * approval PR and send To Sap
      * @author didi

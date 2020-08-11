@@ -27,7 +27,7 @@
                                 </thead>
                                 <tbody>
                                     @foreach($quotation as $key => $val)
-                                        <tr data-entry-id="{{ $val->id }}">
+                                         <tr data-entry-id="{{ $val->id }}">
                                             <td>{{ $val->id ?? '' }}</td>
                                             <td>{{ $val->acp['acp_no'] ?? '' }}</td>
                                             <td>
@@ -40,7 +40,7 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <a class="btn btn-xs btn-warning" href="{{ route('admin.show-acp-approval', $val->acp['id']) }}">
+                                                <a class="btn btn-xs btn-warning" href="{{ route('admin.show-acp-approval-finish', $val->acp['id']) }}">
                                                     <i class="fa fa-eye"></i> Show
                                                 </a>
                                             </td>

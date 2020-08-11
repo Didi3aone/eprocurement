@@ -270,6 +270,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('acp-post-rejected', 'AcpController@acpApprovalReject')->name('acp-post-rejected');
     Route::get('show-acp-direct/{id}', 'AcpController@showDirect')->name('show-acp-direct');
     Route::get('show-acp-approval/{id}', 'AcpController@showAcpApproval')->name('show-acp-approval');
+    Route::get('show-acp-approval-finish/{id}', 'AcpController@showAcpApprovalFinish')->name('show-acp-approval-finish');
     Route::get('show-acp-bidding/{id}', 'AcpController@showBidding')->name('show-acp-bidding');
     Route::post('post-acp-direct', 'AcpController@approvalDirectAcp')->name('post-acp-direct');
     Route::post('post-acp-approval', 'AcpController@approvalAcp')->name('post-acp-approval');
