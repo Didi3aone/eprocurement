@@ -27,20 +27,51 @@ class AcpController extends Controller
     public function acpApproval()
     {
         $quotation = QuotationApproval::where('nik', \Auth::user()->nik)
+                    ->join('master_acps','master_acps.id','=','quotation_approvals.acp_id')
+                    ->join('master_acp_materials','master_acp_materials.master_acp_id','master_acps.id')
                     ->where('flag', QuotationApproval::NotYetApproval)
                     ->where('acp_type', 'ACP')
+                    ->select(
+                        'master_acps.id',
+                        'quotation_approvals.nik',
+                        'master_acps.acp_no',
+                        'master_acps.status_approval',
+                        \DB::raw('sum(master_acp_materials.price) as totalvalue'),
+                        'quotation_approvals.flag'
+                    )
+                    ->groupBy(
+                        'master_acps.id',
+                        'quotation_approvals.nik',
+                        'quotation_approvals.flag'
+                    )
                     ->get();
-
+        // dd($quotation);
         return view('admin.acp.acp', compact('quotation'));
     }
 
     public function listAcpApproval()
     {
         $quotation = QuotationApproval::where('nik', \Auth::user()->nik)
+                    ->join('master_acps','master_acps.id','=','quotation_approvals.acp_id')
+                    ->join('master_acp_materials','master_acp_materials.master_acp_id','master_acps.id')
                     ->where('flag', QuotationApproval::alreadyApproval)
                     ->where('acp_type', 'ACP')
+                    ->where('master_acps.status_approval','<>','0')
+                    ->select(
+                        'master_acps.id',
+                        'quotation_approvals.nik',
+                        'master_acps.acp_no',
+                        'master_acps.status_approval',
+                        \DB::raw('sum(master_acp_materials.price) as totalvalue'),
+                        'quotation_approvals.flag'
+                    )
+                    ->groupBy(
+                        'master_acps.id',
+                        'quotation_approvals.nik',
+                        'quotation_approvals.flag'
+                    )
                     ->get();
-
+        // dd($quotation);
         return view('admin.acp.list-data', compact('quotation'));
     }
 
