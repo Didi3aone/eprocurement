@@ -31,6 +31,9 @@ class PurchaseOrderController extends Controller
     {
         abort_if(Gate::denies('purchase_order_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
+        $userMapping = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first();
+        $userMapping = explode(',', $userMapping->purchasing_group_code);
+
         $po = PurchaseOrdersDetail::join('purchase_orders', 'purchase_orders.id', '=', 'purchase_orders_details.purchase_order_id')
                 ->leftJoin('master_acps', 'master_acps.id', '=', 'purchase_orders_details.acp_id')
                 ->leftJoin('vendors', 'vendors.code', '=', 'purchase_orders.vendor_id')
@@ -64,14 +67,14 @@ class PurchaseOrderController extends Controller
                 );
         if( \Auth::user()->roles[0]->title == 'staff-accounting'
             || \Auth::user()->roles[0]->title == 'Admin' ) {
-                $cache = "";
+                $cache = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first()->purchasing_group_code;
                 $po = $po;
             } else {
-                $cache = \Auth::user()->user_id;
-                $po = $po->where('purchase_orders.created_by', \Auth::user()->user_id);
+                $cache = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first()->purchasing_group_code;
+                $po = $po->whereIn('purchase_orders_details.purchasing_group_code', $userMapping);
 
             }
-
+ 
         
         if (\request()->ajax()) {
             $q = \collect($request->all())->forget('draw')->forget('_')->toJson();
