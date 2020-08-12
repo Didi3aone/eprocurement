@@ -898,8 +898,10 @@ class VendorController extends Controller
         $is_default = $request->input('is_default');
         $index = 0;
         foreach ($is_default as $i => $row) {
-            if ($row=='1') $index = $i;
+            if ($row=='1') 
+                $index = $i - 1;
         }
+        // dd($email[$index]);
         $email_default = $email[$index];
 
         $terms_of_payment = MasterVendorTermsOfPayment::findOrFail($terms_of_payment_id);

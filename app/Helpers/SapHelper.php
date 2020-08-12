@@ -3194,6 +3194,7 @@ class SapHelper {
         ];
 
         $params[0]['RETURN'] = $RETURN;
+        // dd($params);
         // dd($params[0]['POITEM']);
         // echo "<pre>".print_r($params);die;
         // echo "</pre>";
@@ -5285,6 +5286,13 @@ class SapHelper {
         // dd($params);
       
         $result = $client->__soapCall('ZFM_WS_POCHANGE', $params, NULL, $header);
+        \App\Models\employeeApps\SapLogSoap::create([
+            'log_type' => 'PO CHANGE',
+            'log_type_id' => $poHeader->PO_NUMBER,
+            'log_params_employee' => \json_encode($params),
+            'log_response_sap' => \json_encode($result),
+            'status' => 'FAILED',
+        ]); 
         // dd($result);
         return $result;
     }
