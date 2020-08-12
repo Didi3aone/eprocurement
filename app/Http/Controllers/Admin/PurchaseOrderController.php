@@ -128,6 +128,12 @@ class PurchaseOrderController extends Controller
                     'q' => $q,
                     'data' => \collect($items)->map(function ($value, $key) use ($start) {
                         return [
+                            [
+                                $value->id,
+                                $value->qty,
+                                $value->doc_type,
+                                $value->purchasing_group_code
+                            ],
                             $value->PO_NUMBER,
                             $value->PO_ITEM,
                             $value->acp_no ?? $value->purchasing_document,
@@ -149,12 +155,6 @@ class PurchaseOrderController extends Controller
                             $value->request_no,
                             '0',
                             $value->tax_code,
-                            [
-                                $value->id,
-                                $value->qty,
-                                $value->doc_type,
-                                $value->purchasing_group_code
-                            ]
                         ];
                     }),
                 ];

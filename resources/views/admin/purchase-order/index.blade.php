@@ -17,6 +17,9 @@
                     <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                             <tr>
+                                <th>
+                                    &nbsp;
+                                </th>
                                 <th>Purchasing Document</th>
                                 <th>Item Po Line</th>
                                 <th>Rfq/ACP Document</th>
@@ -38,9 +41,6 @@
                                 <th>Req Tracking Number</th>
                                 <th>Still to be Delivered Value</th>
                                 <th>Tax Code</th>
-                                <th>
-                                    &nbsp;
-                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -79,8 +79,8 @@ $('#datatables-run').DataTable({
     ajax: "/admin/purchase-order",
     "createdRow": function( row, data, dataIndex ) {
         var tp1 = $('#hidden_action').html()
-        tp1 = tp1.replace(/REPLACE/g, data[21][0])
-        $tp1 = $(row).children('td')[21]
+        tp1 = tp1.replace(/REPLACE/g, data[0][0])
+        $tp1 = $(row).children('td')[0]
         $($tp1).html(tp1)
     },
     searchDelay: 750,
