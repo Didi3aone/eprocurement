@@ -159,6 +159,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // purchase order
     Route::get('purchase-order-quotation/{po_no}', 'PurchaseOrderController@quotation')->name('purchase-order-quotation');
     Route::post('purchase-order-make-quotation', 'PurchaseOrderController@makeQuotation')->name('purchase-order-make-quotation');
+    Route::get('purchase-order-direct', 'PurchaseOrderController@indexDirect')->name('purchase-order-direct');
     Route::post('purchase-order-quotation-approval/{id}', 'PurchaseOrderController@approveQuotation')->name('purchase-order-quotation-approval');
     Route::get('purchase-order-quotation-show', 'PurchaseOrderController@viewQuotation')->name('purchase-order-quotation-show');
     Route::post('purchase-order-make-bidding', 'PurchaseOrderController@makeBidding')->name('purchase-order-make-bidding');
@@ -285,6 +286,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
 
     Route::resource('ship-to', 'MasterShipToController');
 
+    Route::get('report-service-level','ReportController@index')->name('report-service-level');
     // SOAP
     // Route::get('soap', 'SoapController@show')->name('soap');
 });

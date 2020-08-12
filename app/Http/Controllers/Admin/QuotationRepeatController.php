@@ -99,20 +99,45 @@ class QuotationRepeatController extends Controller
     {
         abort_if(Gate::denies('approval_po_repeat_prochead'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $quotation = QuotationDetail::join('quotation','quotation.id','=','quotation_details.quotation_order_id')
+        $data = QuotationDetail::join('quotation','quotation.id','=','quotation_details.quotation_order_id')
                     ->leftJoin('vendors','vendors.code','=','quotation.vendor_id')
-                    ->where('quotation.status',Quotation::QuotationRepeat)
+                    ->where('quotation.status',Quotation::QuotationDirect)
                     ->where('quotation.approval_status',Quotation::ApprovalAss)
+                    ->where('quotation.approved_head','PROCUREMENT01')
                     ->select(
                         'quotation.id',
                         'quotation.po_no',
                         'quotation.approval_status',
-                        'vendors.name'
+                        'quotation.created_at',
+                        'vendors.name',
+                        'quotation_details.id as detailId',
+                        'quotation_details.short_text',
+                        'quotation_details.material',
+                        'quotation_details.purchasing_group_code',
+                        'quotation_details.plant_code',
+                        'quotation_details.price',
+                        'quotation_details.orginal_price',
+                        'quotation_details.total_price',
+                        'quotation_details.currency',
+                        'quotation_details.tax_code',
+                        'quotation_details.qty',
+                        'quotation_details.PO_ITEM',
+                        'quotation_details.delivery_date',
+                        'quotation_details.PR_NO',
+                        'quotation_details.purchasing_document',
+                        'quotation_details.storage_location',
+                        'quotation_details.preq_name',
+                        'quotation_details.material_group',
+                        'quotation_details.PREQ_ITEM',
+                        'quotation_details.acp_id',
                     )
-                    ->groupBy('quotation.id','vendors.name')
                     ->orderBy('id', 'desc')
                     ->get();
-        // dd($quotation);
+        $quotation = [];
+        foreach( $data as $key => $rows ) {
+            $quotation[$rows->po_no][] = $rows;
+        }
+
         return view('admin.quotation.repeat.index-approval-head', compact('quotation'));
     }
 
@@ -458,7 +483,7 @@ class QuotationRepeatController extends Controller
             'notes'        => $header->notes,
             'po_date'      => \Carbon\Carbon::now(),
             'vendor_id'    => $header->vendor_id,
-            'status'       => Quotation::QuotationDirect,
+            'status'       => Quotation::QuotationRepeat,
             'payment_term' => $header->payment_term,
             'currency'     => $header->currency,
             'PO_NUMBER'    => $poNumber ?? 0,

@@ -87,6 +87,7 @@ class QuotationDirectController extends Controller
                         'quotation.approval_status',
                         'quotation.acp_id',
                         'vendors.company_name',
+                        'quotation.acp_id',
                         'vendors.email',
                         \DB::raw('sum(quotation_details.price) as totalValue')
                     )

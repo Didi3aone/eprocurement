@@ -17,15 +17,30 @@ class UpdateGl implements ToCollection
     public function collection(Collection $rows)
     {
         foreach ($rows as $row ) {
-            // dd($preq);
+            // dd($row);
             $pr = \App\Models\PurchaseRequest::where('PR_NO', $row[0])->first();
+            if( !empty($pr) )
+                $glUpdate = \App\Models\PurchaseRequestsDetail::where('request_id', $pr->id)
+                        ->first();
+                // dd($glUpdate);
+                
+                $glUpdate->gl_acct_code =  $row[1];
+                $glUpdate->cost_center_code =  $row[2];
+                $glUpdate->update();
+        }
 
-            $glUpdate = \App\Models\PurchaseRequestsDetail::where('request_id', $pr->id)
-                    ->first();
-            // dd($glUpdate);
-            
-            $glUpdate->gl_acct_code =  $row[1];
-            $glUpdate->update();
+        foreach ($rows as $row ) {
+            // dd($preq);
+            // $pr = \App\Models\Vendor\Quotation::where('PR_NO', $row[0])->first();
+            // if( !empty($pr) )
+                $glUpdate = \App\Models\Vendor\QuotationDetail::where('PR_NO', $row[0])
+                        ->first();
+                // dd($glUpdate);
+                if( !empty($glUpdate) ) {
+                    $glUpdate->gl_acct_code =  $row[1];
+                    $glUpdate->cost_center_code =  $row[2];
+                    $glUpdate->update();
+                }
         }
     }
 }
