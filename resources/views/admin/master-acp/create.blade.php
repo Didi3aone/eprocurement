@@ -207,9 +207,10 @@
     /**<td class="file_attachment">
         <input type="file" name="file_attachment_${vendor}[]" class="form-control"/>
     </td>**/
-    function rowMaterial (vendor) {
+    function rowMaterial (vendor,indexs) {
         return `
             <tr>
+                <td>${indexs}</td>
                 <td>
                     <select name="material_${vendor}[]" id="" class="choose-material form-control select2"></select>
                 </td>
@@ -277,6 +278,7 @@
                         <table class="table table-striped" style="overflow-x:auto">
                             <thead>
                                 <tr>
+                                    <th>No</th>
                                     <th style="width: 30%;padding-right:18px;">Material Code</th>
                                     <th style="width: 20%">Currency</th>
                                     <th style="width: 20%;padding-right:18px;">Price</th>
@@ -392,6 +394,7 @@
         return false;
     })
 
+    let indexs = 1;
     $(document).on('click', '.add_material', function (e) {
         e.preventDefault()
         var interval
@@ -411,7 +414,7 @@
         const vendor = $(this).data('vendor')
         
 
-        $(document).find('.list-material-' + vendor).append(rowMaterial(vendor))
+        $(document).find('.list-material-' + vendor).append(rowMaterial(vendor, indexs))
         $('.select2').select2()
         $tr.find('input[type="number"]').addClass('form-control')
 
@@ -466,6 +469,7 @@
             },
             allowClear: true
         })
+        indexs++
     })
 
     $(function() {
