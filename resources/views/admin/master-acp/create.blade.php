@@ -170,6 +170,7 @@
     })
 
     $('#saves').click(function() {
+        var $form = $('.card-body form')
         checked = $("input[type=checkbox]:checked").length;
         vendorGet = $(".vendor_id").length
 
@@ -177,6 +178,7 @@
             swal('Oops','Please choose at least 3 vendors','error')
             return false;
         }*/
+
         //console.log(vendorGet)
         if(!checked) {
             swal('Oops','Please check winner vendor','error')
@@ -187,9 +189,11 @@
             swal('Oops','Choose the winner of one vendor','error')
             return false;
         }
+        $form.submit();
+
         $("#saves").attr('disabled', 'disabled');
         $('#saves').text('Please wait ...')
-        return true;
+        return true; 
     });
 
 
