@@ -53,7 +53,7 @@
                                                 <a class="btn btn-primary btn-xs" href="{{ route('admin.quotation-direct-show-approval', $val->id) }}">
                                                     <i class="fa fa-eye"></i> {{ trans('global.view') }}
                                                 </a>
-                                                <a class="btn btn-warning btn-xs" href="{{ route('admin.master-acp-show',$val->acp_id ?? 0) }}" target="_blank">
+                                                <a class="btn btn-warning btn-xs" href="{{ route('admin.master-acp-show',$val->acp_id) }}" target="_blank">
                                                     <i class="fa fa-eye"></i> Show ACP
                                                 </a>
                                             </td>

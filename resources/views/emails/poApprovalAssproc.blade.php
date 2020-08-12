@@ -81,7 +81,7 @@
 						</td>
 						<td style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
                             <div>
-								{{ $value->material_id." - ".$value->description }} 	
+								{{ $value->material_id." - ".$value->short_text }} 	
 							</div>
 						</td>
                         <td style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">

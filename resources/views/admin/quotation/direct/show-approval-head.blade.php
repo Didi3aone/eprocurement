@@ -117,7 +117,7 @@
         <div class="row" style="margin-top: 20px">
             <div class="col-lg-12">
                 <div class="form-actions">
-                    <a href="#" class="btn btn-success approve" onclick="approve('{{ $quotation->id }}')" id="save"> <i class="fa fa-check"></i> Approve</a>
+                    <a href="#" class="btn btn-success approve" onclick="approve('{{ $quotation->po_no }}')" id="save"> <i class="fa fa-check"></i> Approve</a>
                     <button type="button" class="btn btn-danger" onclick="reject('{{ $quotation->id }}')"><i class="fa fa-times"></i>  Reject</button>
                 </div>
             </div>

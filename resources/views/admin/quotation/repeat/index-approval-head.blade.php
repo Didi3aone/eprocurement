@@ -107,11 +107,8 @@
                                                 <td>{{ \toDecimal($value->price) ?? '' }}</td>
                                                 <td>{{ \toDecimal($totalPrice) }}</td>
                                                 <td>
-                                                    <a class="btn btn-primary btn-xs" href="{{ route('admin.quotation-direct-show-approval-head', $value->id) }}">
+                                                    <a class="btn btn-primary btn-xs" href="{{ route('admin.quotation-repeat-show-approval-head', $value->id) }}">
                                                         <i class="fa fa-eye"></i> {{ trans('global.view') }}
-                                                    </a>
-                                                    <a class="btn btn-warning btn-xs" href="{{ route('admin.master-acp-show',$value->acp_id) }}" target="_blank">
-                                                        <i class="fa fa-eye"></i> Show ACP
                                                     </a>
                                                 </td>
                                             </tr>
@@ -178,7 +175,7 @@
 
         if (check_po.length > 0) {
             $('#modal_approval_po').modal('show')
-            $('.approval_po_repeat').attr('href', '{{ url("admin/quotation/direct/approve/head/") }}/' + ids)
+            $('.approval_po_repeat').attr('href', '{{ url("admin/quotation/repeat/approve/head/") }}/' + ids)
         } else {
             alert('Please check your PO!')
             $('#modal_approval_po').modal('hide')
