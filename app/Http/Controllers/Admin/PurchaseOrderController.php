@@ -37,10 +37,10 @@ class PurchaseOrderController extends Controller
         $po = PurchaseOrdersDetail::join('purchase_orders', 'purchase_orders.id', '=', 'purchase_orders_details.purchase_order_id')
                 ->leftJoin('master_acps', 'master_acps.id', '=', 'purchase_orders_details.acp_id')
                 ->leftJoin('vendors', 'vendors.code', '=', 'purchase_orders.vendor_id')
-                ->join('quotation','quotation.id','=','purchase_orders.quotation_id')
+                // ->join('quotation','quotation.id','=','purchase_orders.quotation_id')
                 ->where('purchase_orders.status_approval', PurchaseOrder::Approved)
                 ->where('is_active',PurchaseOrdersDetail::Active)
-                ->where('quotation.status',PurchaseOrder::POrepeat)
+                // ->where('quotation.status',PurchaseOrder::POrepeat)
                 ->select(
                     'purchase_orders_details.purchasing_document',
                     'purchase_orders_details.PO_ITEM',
@@ -65,7 +65,7 @@ class PurchaseOrderController extends Controller
                     'purchase_orders.id',
                     'purchase_orders.vendor_id',
                     'master_acps.acp_no',
-                    'vendors.name as vendor'
+                    'vendors.name as vendor',
                 );
         if( \Auth::user()->roles[0]->title == 'staff-accounting'
             || \Auth::user()->roles[0]->title == 'Admin' ) {

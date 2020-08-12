@@ -158,15 +158,15 @@
                         <li>
                             <a href="{{ route('admin.purchase-order.index') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
-                                List PO Repeat
+                                List PO
                             </a>
                         </li>
-                        <li>
+                        {{-- <li>
                             <a href="{{ route('admin.purchase-order-direct') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
                                 List PO Direct
                             </a>
-                        </li>
+                        </li> --}}
                         <li>
                             <a href="#" class="has-arrow">
                                 <i class="fa fa-caret-right">
