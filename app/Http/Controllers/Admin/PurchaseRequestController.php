@@ -503,16 +503,16 @@ class PurchaseRequestController extends Controller
                     );
 
                 if( $prHeader->is_project == PurchaseRequest::Project ) {
-                    if( PurchaseRequestDetail::MaterialText 
-                        OR PurchaseRequestDetail::Service ) {
+                    if( PurchaseRequestsDetail::MaterialText 
+                        OR PurchaseRequestsDetail::Service ) {
                             $grProccess = $prDetail->gr_processing_time;
                             $delivPlan  = $prDetail->deliv_plan_processing_time;
                             $finalLeadTime = ($grProccess + $delivPlan + 30 + 1);
                             $delivery_date = date('Y-m-d', strtotime('+'.$finalLeadTime.' weekday'));
                         }
                 } else {
-                    if( PurchaseRequestDetail::MaterialText 
-                        OR PurchaseRequestDetail::Service ) {
+                    if( PurchaseRequestsDetail::MaterialText 
+                        OR PurchaseRequestsDetail::Service ) {
                             $grProccess    = $prDetail->gr_processing_time;
                             $delivPlan     = $prDetail->deliv_plan_processing_time;
                             $finalLeadTime = ($grProccess + $delivPlan + 14 + 1);
