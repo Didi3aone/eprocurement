@@ -101,7 +101,7 @@ class QuotationRepeatController extends Controller
 
         $data = QuotationDetail::join('quotation','quotation.id','=','quotation_details.quotation_order_id')
                     ->leftJoin('vendors','vendors.code','=','quotation.vendor_id')
-                    ->where('quotation.status',Quotation::QuotationDirect)
+                    ->where('quotation.status',Quotation::QuotationRepeat)
                     ->where('quotation.approval_status',Quotation::ApprovalAss)
                     ->where('quotation.approved_head','PROCUREMENT01')
                     ->select(
@@ -383,13 +383,13 @@ class QuotationRepeatController extends Controller
         try {
             $ids = base64_decode($ids);
             $ids = explode(',', $ids);
-            
+            // dd($ids);
             foreach( $ids as $id ) {
-                $quotation = Quotation::find($id);
-
-                $quotationDetail = QuotationDetail::where('quotation_order_id', $id)->get();
-                $quotationDeliveryDate = QuotationDelivery::where('quotation_id', $id)->get();
-
+                $quotation = Quotation::where('po_no',$id)->first();
+                // dd($quotation);
+                $quotationDetail = QuotationDetail::where('quotation_order_id', $quotation->id)->get();
+                $quotationDeliveryDate = QuotationDelivery::where('quotation_id', $quotation->id)->get();
+                // dd($quotationDetail);
                 // $sendSap = true;
                 $sendSap = \sapHelp::sendPoToSap($quotation, $quotationDetail,$quotationDeliveryDate);
                 if( $sendSap ) {

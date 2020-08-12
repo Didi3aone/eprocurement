@@ -87,7 +87,6 @@ class QuotationDirectController extends Controller
                         'quotation.approval_status',
                         'quotation.acp_id',
                         'vendors.company_name',
-                        'quotation.acp_id',
                         'vendors.email',
                         \DB::raw('sum(quotation_details.price) as totalValue')
                     )
@@ -238,8 +237,9 @@ class QuotationDirectController extends Controller
             if ($request->upload_file) {
                 $file_upload = $this->fileUpload($request);
             }
-            $max  = Quotation::select(\DB::raw('count(id) as id'))->first()->id;
-            $poNo = 'PO/' . date('m') . '/' . date('Y') . '/' . sprintf('%07d', ++$max);
+            $max    = Quotation::select(\DB::raw('count(id) as id'))->first()->id;
+            $unique = substr(time(),6);
+            $poNo   = 'PO/' . date('m') . '/' . date('Y') . '/' . $unique . '/' .sprintf('%07d', ++$max);
             $payVendor = \App\Models\Vendor::where('code', $request->vendor_id)
                 ->first()->payment_terms;
                 
