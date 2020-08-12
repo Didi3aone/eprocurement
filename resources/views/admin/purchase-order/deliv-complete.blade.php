@@ -106,15 +106,15 @@
                                     <tr id="item_{{ $key }}">
                                         @if( $value->delivery_complete == 1 )
                                             {{-- <input type="hidden" class="ida" name="tax_code[]" id="tax_codes" value="{{ $value->tax_code == 'V1' ? 1 : 0 }}"> --}}
-                                            <input type="hidden" class="ida" name="delivery_complete[]" id="delivery_complete" value="{{ $value->delivery_complete == '1' ? 1 : 0 }}">
+                                            {{-- <input type="hidden" class="ida" name="delivery_complete[]" id="delivery_complete" value="{{ $value->delivery_complete }}"> --}}
                                         @endif
                                         <input type="hidden" class="id" name="idDetail[]" id="id" value="{{ $value->id }}">
                                         <input type="hidden" class="id" name="idPrDetail[]" id="idPrDetail" value="">
                                        <td>{{ $value->material_id." - ". $value->short_text }}</td>
                                        <td>{{ $value->unit }}</td>
-                                       <td><input type="text" class="qty" name="qty[]" id="qty" {{ $readonly }} value="{{ $value->qty }}"></td>
-                                       <td><input type="text" class="price" name="price[]" id="price" {{ $readonly }} value="{{ $value->price }}"</td>
-                                       <td><input type="text" class="delivery_date mdate" {{ $disabled }} name="delivery_date[]" id="delivery_date" value="{{ $value->delivery_date }}"></td>
+                                       <td><input type="text" class="qty" name="qty[]" disabled id="qty" {{ $readonly }} value="{{ $value->qty }}"></td>
+                                       <td><input type="text" class="price" name="price[]" disabled id="price" {{ $readonly }} value="{{ $value->price }}"</td>
+                                       <td><input type="text" class="delivery_date mdate" {{ $disabled }} disabled name="delivery_date[]" id="delivery_date" value="{{ $value->delivery_date }}"></td>
                                         <td>
                                             <input type="checkbox" class="" id="check_{{ $value->id }}" disabled name="tax_code[]" value="1"
                                                 @if($value->tax_code == 'V1') checked @endif>

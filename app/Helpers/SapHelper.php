@@ -5293,7 +5293,7 @@ class SapHelper {
             'log_response_sap' => \json_encode($result),
             'status' => 'FAILED',
         ]); 
-        dd($result);
+        // dd($result);
         return $result;
     }
 
@@ -5690,7 +5690,7 @@ class SapHelper {
 
                 $POITEMX = [
                     'PO_ITEM' => $poDetail[$i]->PO_ITEM,
-                    'PO_ITEMX' => 'X',
+                    'PO_ITEMX' => '',
                     'DELETE_IND' => '',
                     'SHORT_TEXT' => '',
                     'MATERIAL' => '',
@@ -6232,7 +6232,7 @@ class SapHelper {
 
                 $POITEMX = [
                     'PO_ITEM' => $poDetail[$i]->PO_ITEM,
-                    'PO_ITEMX' => 'X',
+                    'PO_ITEMX' => '',
                     'DELETE_IND' => '',
                     'SHORT_TEXT' => '',
                     'MATERIAL' => '',
@@ -6861,7 +6861,7 @@ class SapHelper {
 
                 $POITEMX = [
                     'PO_ITEM' => $poDetail[$i]->PO_ITEM,
-                    'PO_ITEMX' => 'X',
+                    'PO_ITEMX' => '',
                     'DELETE_IND' => '',
                     'SHORT_TEXT' => '',
                     'MATERIAL' => '',

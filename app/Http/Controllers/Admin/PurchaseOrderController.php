@@ -895,6 +895,7 @@ class PurchaseOrderController extends Controller
             }
        
             $poChange = \sapHelp::sendPOchangeDelivToSap($purchaseOrder->PO_NUMBER);
+            // $poChange = true;
             if ($poChange) {
                 $purchaseOrder->status_approval = PurchaseOrder::Approved;
                 $purchaseOrder->save();
