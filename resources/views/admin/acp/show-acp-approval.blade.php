@@ -122,7 +122,7 @@
                     </div>
                     <div class="form-group">
                         <label>Reason</label>
-                        <textarea type="text" class="form-control form-control-line" name="description" disabled>{{ $acp->description }}</textarea>
+                        <textarea type="text" class="form-control form-control-line" name="description">{{ $acp->description }}</textarea>
                     </div>
                     @if($acp->status_approval != 2  && $acp->status_approval !=3)
                     <div class="row" style="margin-top: 20px">
