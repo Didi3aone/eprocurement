@@ -868,6 +868,45 @@ class PurchaseOrderController extends Controller
         }
     }
 
+    public function deliveryComplete($id)
+    {
+        abort_if(Gate::denies('purchase_order_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $purchaseOrder = PurchaseOrder::findOrFail($id);
+        $currency = \App\Models\Currency::all();
+        $top = \App\Models\PaymentTerm::all();
+        $purchaseOrderDetail = PurchaseOrdersDetail::where('purchase_order_id', $id)->orderBy('PO_ITEM', 'asc')->get();
+
+        return view('admin.purchase-order.deliv-complete', compact('purchaseOrder', 'currency', 'top', 'purchaseOrderDetail'));
+    }
+
+    public function storeDelivComplete(Request $request , $id)
+    {
+        $purchaseOrder = PurchaseOrder::findOrFail($id);
+
+        if( $request->has('idDetail') ) {
+            foreach ($request->idDetail as $key => $rows) {
+                $poDetail    = PurchaseOrdersDetail::find($rows);
+                $deliveryComplete              = $request->delivery_complete[$key] ?? "";                
+                $poDetail->delivery_complete    = $deliveryComplete;
+
+                $poDetail->update();
+            }
+       
+            $poChange = \sapHelp::sendPOchangeDelivToSap($purchaseOrder->PO_NUMBER);
+            if ($poChange) {
+                $purchaseOrder->status_approval = PurchaseOrder::Approved;
+                $purchaseOrder->save();
+                return redirect()->route('admin.purchase-order.index')->with('status', 'Delivery Complete successfully');
+            } else {
+                \Session::flash('error', 'Internal server error');
+            }
+    
+            return redirect()->route('admin.purchase-order.index');
+        }
+
+    }
+
     public function printPo($id)
     {
         $po = PurchaseOrder::find($id);

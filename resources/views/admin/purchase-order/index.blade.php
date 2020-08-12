@@ -66,6 +66,9 @@
         <i class="fa fa-edit"></i> {{ trans('global.edit') }}
     </a>
     @endcan
+    <a class="btn btn-xs btn-warning" href="{{ route('admin.purchase-order-delivery', "REPLACE") }}">
+        <i class="fa fa-truck"></i> Delivery Complete
+    </a>
 </script>
 <script>
 $('#datatables-run').DataTable({

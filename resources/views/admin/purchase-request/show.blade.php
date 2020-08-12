@@ -74,7 +74,7 @@
                                     @if( $files !== false )
                                         <td>
                                             @foreach( unserialize((string)$prProject->upload_file) as $fileUpload)
-                                                <a href="{{ 'https://employee.enesis.com/public/uploads/'.$fileUpload }}" target="_blank" download>
+                                                <a href="{{ 'https://employee.enesis.com/uploads/'.$fileUpload }}" target="_blank" download>
                                                     {{ $fileUpload ??'' }}
                                                 </a>
                                                 <br>

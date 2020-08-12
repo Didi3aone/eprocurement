@@ -187,6 +187,7 @@ class AcpController extends Controller
             //check posisi approval
             if( (int) $posisi->approval_position == (int) $total ) {
                 $acp->status_approval = AcpTable::Approved;
+                $acp->description     = $request->description;
                 $acp->update();
                 //current approval update
                 QuotationApproval::where('quotation_id',$request->quotation_id)->where('nik',\Auth::user()->nik)->update([
@@ -210,6 +211,9 @@ class AcpController extends Controller
                     'status' => QuotationApproval::waitingApproval,
                     'flag'   => QuotationApproval::NotYetApproval,
                 ]);
+                $acp->description     = $request->description;
+
+                $acp->update();
 
                 
                 if (\App\Models\BaseModel::Development == $configEnv->type) {

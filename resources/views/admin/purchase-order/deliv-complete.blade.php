@@ -11,7 +11,7 @@
 </div>
 <div class="row">
     <div class="col-12">
-        <form class="form-material m-t-40" method="POST" action="{{ route("admin.purchase-order.update", [$purchaseOrder->id]) }}" enctype="multipart/form-data">
+        <form class="form-material m-t-40" method="POST" action="{{ route("admin.purchase-order-update-complete", [$purchaseOrder->id]) }}" enctype="multipart/form-data">
             @method('PUT')
             @csrf
             <div class="card">
@@ -90,10 +90,7 @@
                                     <th style="width: 20%">Net Price</th>
                                     <th style="width: 14%">Delivery Date</th>
                                     <th style="width: 64%">Tax</th>
-                                    {{-- <th style="width: 64%">Delivery Complete</th> --}}
-                                    <th style="width: 64%">
-                                        {{-- <button type="button" id="add_item" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add Item</button> --}}
-                                    </th>
+                                    <th style="width: 64%">Delivery Complete</th>
                                 </tr>
                              </thead>
                             <tbody id="poItem">
@@ -109,8 +106,8 @@
                                     <tr id="item_{{ $key }}">
                                         @if( $value->is_gr == \App\Models\PurchaseOrdersDetail::YesGr )
                                             <input type="hidden" class="ida" name="tax_code[]" id="tax_codes" value="{{ $value->tax_code == 'V1' ? 1 : 0 }}">
+                                            <input type="hidden" class="ida" name="delivery_complete[]" id="delivery_complete" value="{{ $value->delivery_complete == '1' ? 1 : 0 }}">
                                         @endif
-                                        <input type="hidden" class="ida" name="delivery_complete[]" id="delivery_complete" value="{{ $value->delivery_complete }}">
                                         <input type="hidden" class="id" name="idDetail[]" id="id" value="{{ $value->id }}">
                                         <input type="hidden" class="id" name="idPrDetail[]" id="idPrDetail" value="">
                                        <td>{{ $value->material_id." - ". $value->short_text }}</td>
@@ -118,27 +115,15 @@
                                        <td><input type="text" class="qty" name="qty[]" id="qty" {{ $readonly }} value="{{ $value->qty }}"></td>
                                        <td><input type="text" class="price" name="price[]" id="price" {{ $readonly }} value="{{ $value->price }}"</td>
                                        <td><input type="text" class="delivery_date mdate" {{ $disabled }} name="delivery_date[]" id="delivery_date" value="{{ $value->delivery_date }}"></td>
-                                       <td>
-                                            <input type="checkbox" class="" id="check_{{ $value->id }}" <?= $disabled ?> name="tax_code[]" value="1"
+                                        <td>
+                                            <input type="checkbox" class="" id="check_{{ $value->id }}" disabled name="tax_code[]" value="1"
                                                 @if($value->tax_code == 'V1') checked @endif>
                                             <label for="check_{{ $value->id }}">&nbsp;</label>
-                                       </td>
-                                       {{-- <td>
-                                            <input type="checkbox" class="" id="checks_{{ $key }}" @if($value->delivery_complete == '1') checked @endif disabled name="delivery_complete[]" value="1">
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" class="" id="checks_{{ $key }}" @if($value->delivery_complete == '1') checked @endif name="delivery_complete[]" value="1">
                                             <label for="checks_{{ $key }}">&nbsp;</label>
-                                       </td> --}}
-                                       <td>
-                                            @if( $value->is_gr == \App\Models\PurchaseOrdersDetail::NoGr && $value->is_active == 1)
-                                            <a href="javascript:;" data-key="{{ $key }}" data-id="{{ $value->id }}" data-po="{{ $purchaseOrder->PO_NUMBER }}"  class="remove-item btn btn-danger btn-xs">
-                                                <i class="fa fa-trash"></i> Delete
-                                            </a>
-                                            @endif
-                                            @if($value->is_active == 0)
-                                            <a href="javascript:;" data-key="{{ $key }}" data-id="{{ $value->id }}" data-po="{{ $purchaseOrder->PO_NUMBER }}"  class="undelete btn btn-success btn-xs">
-                                                <i class="fa fa-check"></i> Restore
-                                            </a>
-                                            @endif
-                                       </td>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
