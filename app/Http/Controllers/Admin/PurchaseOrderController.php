@@ -676,9 +676,9 @@ class PurchaseOrderController extends Controller
 
             return redirect()->route('admin.purchase-order.index')->with('status', 'Purchase order has been updated & waiting approval');
         } else {
-            $poChange = true;
+            // $poChange = true;
             // dd('2');
-            // $poChange = \sapHelp::sendPOchangeToSap($purchaseOrder->PO_NUMBER);
+            $poChange = \sapHelp::sendPOchangeToSap($purchaseOrder->PO_NUMBER);
             if ($poChange) {
                 $purchaseOrder->status_approval = PurchaseOrder::Approved;
                 $purchaseOrder->save();
