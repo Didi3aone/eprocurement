@@ -882,6 +882,7 @@ class PurchaseOrderController extends Controller
 
     public function storeDelivComplete(Request $request , $id)
     {
+        // dd($request);
         $purchaseOrder = PurchaseOrder::findOrFail($id);
 
         if( $request->has('idDetail') ) {

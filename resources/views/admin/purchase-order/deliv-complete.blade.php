@@ -104,8 +104,8 @@
                                         }
                                     @endphp
                                     <tr id="item_{{ $key }}">
-                                        @if( $value->is_gr == \App\Models\PurchaseOrdersDetail::YesGr )
-                                            <input type="hidden" class="ida" name="tax_code[]" id="tax_codes" value="{{ $value->tax_code == 'V1' ? 1 : 0 }}">
+                                        @if( $value->delivery_complete == 1 )
+                                            {{-- <input type="hidden" class="ida" name="tax_code[]" id="tax_codes" value="{{ $value->tax_code == 'V1' ? 1 : 0 }}"> --}}
                                             <input type="hidden" class="ida" name="delivery_complete[]" id="delivery_complete" value="{{ $value->delivery_complete == '1' ? 1 : 0 }}">
                                         @endif
                                         <input type="hidden" class="id" name="idDetail[]" id="id" value="{{ $value->id }}">
