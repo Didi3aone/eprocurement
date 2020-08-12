@@ -37,8 +37,10 @@ class PurchaseOrderController extends Controller
         $po = PurchaseOrdersDetail::join('purchase_orders', 'purchase_orders.id', '=', 'purchase_orders_details.purchase_order_id')
                 ->leftJoin('master_acps', 'master_acps.id', '=', 'purchase_orders_details.acp_id')
                 ->leftJoin('vendors', 'vendors.code', '=', 'purchase_orders.vendor_id')
+                ->join('quotation','quotation.id','=','purchase_orders.quotation_id')
                 ->where('purchase_orders.status_approval', PurchaseOrder::Approved)
                 ->where('is_active',PurchaseOrdersDetail::Active)
+                ->where('quotation.status',PurchaseOrder::POrepeat)
                 ->select(
                     'purchase_orders_details.purchasing_document',
                     'purchase_orders_details.PO_ITEM',
@@ -165,6 +167,157 @@ class PurchaseOrderController extends Controller
         }
 
         return view('admin.purchase-order.index', [
+            'po' => $po->orderBy('purchase_orders_details.created_at', 'desc')->limit(10)->get()
+        ]);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function indexDirect(Request $request)
+    {
+        abort_if(Gate::denies('purchase_order_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $userMapping = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first();
+        $userMapping = explode(',', $userMapping->purchasing_group_code);
+
+        $po = PurchaseOrdersDetail::join('purchase_orders', 'purchase_orders.id', '=', 'purchase_orders_details.purchase_order_id')
+                ->leftJoin('master_acps', 'master_acps.id', '=', 'purchase_orders_details.acp_id')
+                ->leftJoin('vendors', 'vendors.code', '=', 'purchase_orders.vendor_id')
+                ->join('quotation','quotation.id','=','purchase_orders.quotation_id')
+                ->where('purchase_orders.status_approval', PurchaseOrder::Approved)
+                ->where('quotation.status', PurchaseOrder::POdirect)
+                ->where('is_active',PurchaseOrdersDetail::Active)
+                ->select(
+                    'purchase_orders_details.purchasing_document',
+                    'purchase_orders_details.PO_ITEM',
+                    'purchase_orders_details.material_id',
+                    'purchase_orders_details.short_text',
+                    'purchase_orders_details.storage_location',
+                    'purchase_orders_details.qty',
+                    'purchase_orders_details.qty_gr',
+                    'purchase_orders_details.qty_billing',
+                    'purchase_orders_details.unit',
+                    'purchase_orders_details.currency as original_currency',
+                    'purchase_orders_details.original_price',
+                    'purchase_orders.currency',
+                    'purchase_orders_details.price',
+                    'purchase_orders_details.tax_code',
+                    'purchase_orders_details.id as detail_id',
+                    'purchase_orders_details.request_no',
+                    'purchase_orders_details.plant_code',
+                    'purchase_orders_details.purchasing_group_code',
+                    'purchase_orders.po_date',
+                    'purchase_orders.PO_NUMBER',
+                    'purchase_orders.id',
+                    'purchase_orders.vendor_id',
+                    'master_acps.acp_no',
+                    'vendors.name as vendor',
+                    'quotation.status'
+                );
+        if( \Auth::user()->roles[0]->title == 'staff-accounting'
+            || \Auth::user()->roles[0]->title == 'Admin' ) {
+                $cache = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first()->purchasing_group_code;
+                $po = $po;
+            } else {
+                $cache = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first()->purchasing_group_code;
+                $po = $po->whereIn('purchase_orders_details.purchasing_group_code', $userMapping);
+
+            }
+ 
+        
+        if (\request()->ajax()) {
+            $q = \collect($request->all())->forget('draw')->forget('_')->toJson();
+            $result = \Cache::remember($q.$cache, 60, function () use ($request, $po, $q) {
+                $columns = [
+                    0 => 'PO_NUMBER',
+                    1 => 'PO_ITEM',
+                    2 => 'acp_no',
+                    3 => 'purchasing_group_code',
+                    4 => 'po_date',
+                ];
+                $totalData = $po->count();
+
+                $totalFiltered = $po
+                    ->when($request->input('search.value'), function ($q) use ($request) {
+                        $search = $request->input('search.value');
+                        $q->where('PO_NUMBER', 'ILIKE', "%{$search}%")
+                            ->orWhere('PO_ITEM', 'ILIKE', "%{$search}%")
+                            ->orWhere('acp_no', 'ILIKE', "%{$search}%")
+                            ->orWhere('purchasing_document', 'ILIKE', "%{$search}%")
+                            ->orWhere('po_date', 'ILIKE', "%{$search}%");
+                    })->count();
+
+                $limit = $request->input('length');
+                $start = $request->input('start');
+                $order = $columns[$request->input('order.0.column')];
+                $dir = $request->input('order.0.dir');
+                $items = $po
+                    ->when($request->input('search.value'), function ($q) use ($request) {
+                        $search = $request->input('search.value');
+                        $q->where('PO_NUMBER', 'ILIKE', "%{$search}%")
+                        // ->whereIn('purchase_requests_details.purchasing_group_code', $userMapping)
+                            ->orWhere('PO_ITEM', 'ILIKE', "%{$search}%")
+                            ->orWhere('acp_no', 'ILIKE', "%{$search}%")
+                            ->orWhere('purchasing_document', 'ILIKE', "%{$search}%")
+                            ->orWhere('po_date', 'ILIKE', "%{$search}%");
+                    })
+                    ->offset($start)
+                    ->limit($limit)
+                    ->orderBy($order, $dir)
+                    ->get();
+                    // dd($items);
+                // $paginate = $materials->paginate(10,['*'],'draw');
+                // $paginate = $materials->paginate(10,['*'],'draw');
+                $result = [
+                    'draw' => (int) \request()->get('draw'),
+                    'recordsTotal' => $totalData,
+                    'recordsFiltered' => $totalFiltered,
+                    'request' => \collect($request->all())->forget('draw')->forget('_'),
+                    'q' => $q,
+                    'data' => \collect($items)->map(function ($value, $key) use ($start) {
+                        return [
+                            $value->PO_NUMBER,
+                            $value->PO_ITEM,
+                            $value->acp_no ?? $value->purchasing_document,
+                            $value->purchasing_group_code,
+                            $value->po_date,
+                            $value->material_id,
+                            $value->short_text,
+                            $value->vendor_id." - ".$value->vendor,
+                            $value->plant_code,
+                            $value->storage_location,
+                            $value->qty,
+                            $value->unit,
+                            $value->qty - $value->qty_gr,
+                            $value->qty - $value->qty_billing,
+                            $value->original_currency,
+                            $value->original_price,
+                            $value->currency,
+                            $value->price,
+                            $value->request_no,
+                            '0',
+                            $value->tax_code,
+                            [
+                                $value->id,
+                                $value->qty,
+                                $value->doc_type,
+                                $value->purchasing_group_code
+                            ]
+                        ];
+                    }),
+                ];
+
+                return $result;
+            });
+            $result['draw'] = (int) \request()->get('draw');
+
+            return \response()->json($result);
+        }
+
+        return view('admin.purchase-order.index-direct', [
             'po' => $po->orderBy('purchase_orders_details.created_at', 'desc')->limit(10)->get()
         ]);
     }

@@ -158,25 +158,39 @@
                         <li>
                             <a href="{{ route('admin.purchase-order.index') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
-                                List PO
+                                List PO Repeat
                             </a>
                         </li>
-                        @can('purchase_order_approval_change_ass_access')
                         <li>
-                            <a href="{{ route('admin.purchase-order-change-ass') }}" class="">
+                            <a href="{{ route('admin.purchase-order-direct') }}" class="">
                                 <i class="fa fas fa-caret-right"></i> 
-                                Approval Change Assproc
+                                List PO Direct
                             </a>
                         </li>
-                        @endcan
-                        @can('purchase_order_approval_change_head_access')
                         <li>
-                            <a href="{{ route('admin.purchase-order-change-head') }}" class="">
-                                <i class="fa fas fa-caret-right"></i> 
-                                Approval Change Head
+                            <a href="#" class="has-arrow">
+                                <i class="fa fa-caret-right">
+                                </i> Change
                             </a>
+                            <ul aria-expanded="false" class="collapse">
+                                @can('purchase_order_approval_change_ass_access')
+                                <li>
+                                    <a href="{{ route('admin.purchase-order-change-ass') }}" class="">
+                                        <i class="fa fas fa-caret-right"></i> 
+                                        List Assproc
+                                    </a>
+                                </li>
+                                @endcan
+                                @can('purchase_order_approval_change_head_access')
+                                <li>
+                                    <a href="{{ route('admin.purchase-order-change-head') }}" class="">
+                                        <i class="fa fas fa-caret-right"></i> 
+                                        List Head
+                                    </a>
+                                </li>
+                                @endcan
+                            </ul>
                         </li>
-                        @endcan
                     </ul>
                 </li>
                 @endcan
@@ -202,6 +216,23 @@
                             </a>
                         </li>
                         @endcan --}}
+                    </ul>
+                </li>
+                @endcan
+                @can('reporting_access')
+                <li class=""> 
+                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-file-pdf-o"></i>
+                        <span class="hide-menu"> {{ 'Report' }} </span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse">
+                        @can('reporting_access')
+                        <li>
+                            <a href="{{ route('admin.report-service-level') }}" class="">
+                                <i class="fa fas fa-caret-right"></i> 
+                                Service level
+                            </a>
+                        </li>
+                        @endcan
                     </ul>
                 </li>
                 @endcan
