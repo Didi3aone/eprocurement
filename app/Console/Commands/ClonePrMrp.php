@@ -5,7 +5,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use App\Models\TempPurchaseRequest;
 use App\Models\PurchaseRequest;
-use App\Models\PurchaseRequestDetail;
+use App\Models\PurchaseRequestsDetail;
 use App\Models\Material;
  
 class ClonePrMrp extends Command
@@ -94,7 +94,7 @@ class ClonePrMrp extends Command
                     for ($i=0; $i < count($getDetail); $i ++) { 
                         if( $rows->PR_NO == $getDetail[$i]['PR_NO'] ) { 
                             $materials = Material::where('code',$rows[$i]['material_id'])->first();
-                            $purchaseRequestDetail                          = new PurchaseRequestDetail;
+                            $purchaseRequestDetail                          = new PurchaseRequestsDetail;
                             $purchaseRequestDetail->request_id              = $purchaseRequest->id;
                             $purchaseRequestDetail->description             = $getDetail[$i]['description'] ??  $getDetail[$i]['short_text'];
                             $purchaseRequestDetail->category                = $getDetail[$i]['category'] ?? '';
@@ -139,10 +139,11 @@ class ClonePrMrp extends Command
                     echo "PR No ".$rows->PR_NO." berhasil disimpan didatabase \n";
                 }
 
-
                 $temp = TempPurchaseRequest::find($rows->id);
-                $temp->is_clone = 1;
-                $temp->update();
+                if( !empty($temp) ) {
+                    $temp->is_clone = 1;
+                    $temp->update();
+                }
 
 
             }
