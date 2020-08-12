@@ -27,7 +27,6 @@
                     <div class="form-group">
                         <label>Plant</label>
                         <select class="form-control select2 form-control-line" name="plant_id" required> 
-                            <option value="">-- Select --</option>
                             @foreach($plant ?? '' as $code => $name)
                                 <option value="{{ $code }}">{{ $code." - ".$name }}</option>
                             @endforeach

@@ -167,6 +167,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('purchase-order-approval-po/{id}', 'PurchaseOrderController@approvalPo')->name('purchase-order-approval-po');
     Route::put('purchase-order-approval-change-ass', 'PurchaseOrderController@approvalChangeAss')->name('purchase-order-approval-change-ass');
     Route::put('purchase-order-approval-change-head', 'PurchaseOrderController@approvalChangeHead')->name('purchase-order-approval-change-head');
+    Route::put('purchase-order-update-complete/{id}', 'PurchaseOrderController@storeDelivComplete')->name('purchase-order-update-complete');
     Route::get('purchase-order/release', 'PurchaseOrderController@release')->name('purchase-order.release');
     Route::get('purchase-order/direct', 'PurchaseOrderController@direct')->name('purchase-order.direct');
     Route::put('purchase-order-destroy', 'PurchaseOrderController@destroyItem')->name('purchase-order-destroy');
@@ -174,6 +175,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('purchase-order-print/{id}', 'PurchaseOrderController@printPo')->name('purchase-order-print');
     Route::get('purchase-order-show-ass/{id}', 'PurchaseOrderController@showApprovalAss')->name('purchase-order-show-ass');
     Route::get('purchase-order-show-head/{id}', 'PurchaseOrderController@showApprovalHead')->name('purchase-order-show-head');
+    Route::get('purchase-order-delivery/{id}', 'PurchaseOrderController@deliveryComplete')->name('purchase-order-delivery');
     Route::get('purchase-order-change-ass', 'PurchaseOrderController@approvalPoChange')->name('purchase-order-change-ass');
     Route::get('purchase-order-change-head', 'PurchaseOrderController@approvalPoChangeHead')->name('purchase-order-change-head');
     Route::get('purchase-order-check-qty-pr', 'PurchaseOrderController@checkQtyPr')->name('purchase-order-check-qty-pr');
