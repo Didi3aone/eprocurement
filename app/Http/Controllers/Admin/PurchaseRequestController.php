@@ -503,16 +503,16 @@ class PurchaseRequestController extends Controller
                     );
 
                 if( $prHeader->is_project == PurchaseRequest::Project ) {
-                    if( PurchaseRequestDetail::MaterialText 
-                        OR PurchaseRequestDetail::Service ) {
+                    if( PurchaseRequestsDetail::MaterialText 
+                        OR PurchaseRequestsDetail::Service ) {
                             $grProccess = $prDetail->gr_processing_time;
                             $delivPlan  = $prDetail->deliv_plan_processing_time;
                             $finalLeadTime = ($grProccess + $delivPlan + 30 + 1);
                             $delivery_date = date('Y-m-d', strtotime('+'.$finalLeadTime.' weekday'));
                         }
                 } else {
-                    if( PurchaseRequestDetail::MaterialText 
-                        OR PurchaseRequestDetail::Service ) {
+                    if( PurchaseRequestsDetail::MaterialText 
+                        OR PurchaseRequestsDetail::Service ) {
                             $grProccess    = $prDetail->gr_processing_time;
                             $delivPlan     = $prDetail->deliv_plan_processing_time;
                             $finalLeadTime = ($grProccess + $delivPlan + 14 + 1);
@@ -547,10 +547,12 @@ class PurchaseRequestController extends Controller
                     $trackNo1 = substr($prHeader->request_no, 0, 2);
                     $trackNo2 = substr($prHeader->request_no, 9);
                     $TRACKINGNO = $trackNo1.$trackNo2;
+                    $TRACKINGNO = str_replace('PR','PRJ',$TRACKINGNO);
                 } else {
                     $trackNo1 = substr($prDetail->request_no, 0, 2);
                     $trackNo2 = substr($prDetail->request_no, 9);
                     $TRACKINGNO = $trackNo1.$trackNo2;
+                    $TRACKINGNO = str_replace('RN','PRJ',$TRACKINGNO);
                 }
 
                 if (PurchaseRequestsDetail::YesValidate == $prDetail->is_validate
