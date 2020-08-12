@@ -5283,7 +5283,7 @@ class SapHelper {
             "SYSTEM" => "0"
         ];
         $params[0]['RETURN'] = $RETURN;
-        // dd($params);
+        // dd($params); 
       
         $result = $client->__soapCall('ZFM_WS_POCHANGE', $params, NULL, $header);
         \App\Models\employeeApps\SapLogSoap::create([
@@ -5293,7 +5293,7 @@ class SapHelper {
             'log_response_sap' => \json_encode($result),
             'status' => 'FAILED',
         ]); 
-        // dd($result);
+        dd($result);
         return $result;
     }
 
