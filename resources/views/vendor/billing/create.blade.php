@@ -205,6 +205,14 @@
 
 @section('scripts')
 <script>
+    $(document).ready(function() {
+        $(':input[type="submit"]').prop('disabled', true);
+        // $(document).on('change', '.qty', function () {
+        $(document).on('click', '#add-material', function() {
+            $(':input[type="submit"]').prop('disabled', false);
+        });
+    });
+
     const base_url = '{{ url('/') }}'
     $('#datatables-run').DataTable({
         "searching": false,
