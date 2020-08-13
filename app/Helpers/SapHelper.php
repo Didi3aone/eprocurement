@@ -1224,6 +1224,7 @@ class SapHelper {
         $params[0]['POHEADER'] = $POHEADER;
         $params[0]['POHEADERX'] = $POHEADERX;
         $params[0]['POTEXTHEADER'] = $POTEXTHEADER;
+        // $params[0]['TESTRUN'] = 'X';
 
         $count_ = count($quotationDetail);
         $is_array = ((int)$count_) > 1 ? true : false;
@@ -1902,7 +1903,7 @@ class SapHelper {
                     'NO_MORE_GR' => '',
                     'FINAL_INV' => '',
                     'ITEM_CAT' => '9',
-                    'ACCTASSCAT' => 'K',
+                    'ACCTASSCAT' => $quotationDetail[$i]->account_assignment,
                     'DISTRIB' => '',
                     'PART_INV' => '',
                     'GR_IND' => 'X',
@@ -2552,7 +2553,7 @@ class SapHelper {
                     'NO_MORE_GR' => '',
                     'FINAL_INV' => '',
                     'ITEM_CAT' => '9',
-                    'ACCTASSCAT' => 'K',
+                    'ACCTASSCAT' => $quotationDetail[$i]->account_assignment,
                     'DISTRIB' => '',
                     'PART_INV' => '',
                     'GR_IND' => 'X',
@@ -3199,7 +3200,7 @@ class SapHelper {
         // echo "<pre>".print_r($params);die;
         // echo "</pre>";
         $result = $client->__soapCall('ZFM_WS_PO', $params, NULL, $header);
-        // dd($result->RETURN);
+        // dd($result);
         // dd($result->POSCHEDULE);
         // echo "<pre>".print_r($params);die;"</pre>";
         if( $result->EXPPURCHASEORDER) {
