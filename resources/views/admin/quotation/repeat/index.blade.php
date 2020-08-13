@@ -9,6 +9,16 @@
         </ol>
     </div>
 </div>
+@if(Session::has('notif'))   
+    @foreach(Session::get('notif')->item as $key => $value)
+        <div class="alert alert-danger alert-dismissible fade show col-lg-12" role="alert">
+        <strong>Error  !!!</strong> <br/> {{ $value->MESSAGE }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+    @endforeach
+@endif
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -37,6 +47,11 @@
                                                 <a class="btn btn-primary btn-xs" href="{{ route('admin.quotation-repeat.show', $val->id) }}">
                                                     <i class="fa fa-eye"></i> {{ trans('global.view') }}
                                                 </a>
+                                                @can('button_test_run_access')
+                                                <a class="btn btn-danger btn-xs" href="{{ route('admin.quotation-test-run', $val->id) }}">
+                                                    <i class="fa fa-bug"></i> Test Run Bos
+                                                </a>
+                                                @endcan
                                             </td>
                                         </tr>
                                     @endforeach

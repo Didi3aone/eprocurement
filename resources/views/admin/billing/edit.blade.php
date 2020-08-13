@@ -159,7 +159,7 @@
                         </div>
                         <div class="form-group col-lg-4" id="jmlPPH" style="display:none">
                             <label>{{ trans('cruds.billing.fields.jumlah_pph') }}</label>
-                            <input type="text" class="form-control money form-control-line" name="jumlah_pph" id="jumlah_pph" value=""> 
+                            <input type="text" class="form-control money form-control-line" name="jumlah_pph" id="jumlah_pph" value="" readonly> 
                         </div>
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.currency') }}</label>
@@ -267,7 +267,8 @@
                         @php
                             $balance = $billing->dpp - $totalVl;
                         @endphp
-                        <input type="hidden" class="form-control form-control-line" name="nominal_balances" id="nominal_balances" value="{{ toDecimal($balance) }}"> 
+                        {{-- <input type="hidden" class="form-control form-control-line" name="nominal_balances" id="nominal_balances" value="{{ toDecimal($balance) }}">  --}}
+                        <input type="hidden" class="form-control form-control-line" name="nominal_balances" id="nominal_balances" value=""> 
                         <input type="hidden" class="form-control form-control-line" name="summary" id="summary" value="{{ toDecimal($totalSum) }}"> 
                     </div>
                     <br>
@@ -285,6 +286,14 @@
 
 @section('scripts')
 <script>
+    $(document).ready(function() {
+        var dpp = $("#dpp").val().replace(/,/g, '')
+        var invoice = $("#nominal_invoice_staff").val().replace(/,/g, '')
+        let balance  = parseInt(dpp) - parseInt(invoice)
+        console.log(balance)
+        $("#nominal_balance").val(balance)
+    });
+    
     $('#datatables-run').DataTable({
         "searching": false,
         "bPaginate": false,
@@ -301,6 +310,7 @@
     $("#tipe_pph").change(function() {
         let rates = $('#tipe_pph option:selected').data('rate')
         let rateId = $('#tipe_pph option:selected').data('id')
+        $("#nominal_balances").empty()
         $("#tipe_pphs").val(rateId);
         if($(this).val() != '') {
             $("#basePPh").show()
@@ -318,6 +328,7 @@
                 nominal_invoice_staff = $("#nominal_invoice_staff").val().replace(/,/g, "")
             var ppns = ''
                 tt = dpp.replace(/,/g, '.')
+                dd = dpp.replace(/,/g, '')
                 tPph = basPph.replace(/,/g, "")
             var count = (tPph) * (rates/100)
             var roundedString = count.toFixed(2);
@@ -342,6 +353,8 @@
 
             $("#jumlah_pph").val(roundedString)
             $("#nominal_invoice_staff").val(_nominal_invoice_.toFixed(2))
+            var balance = dd.replace(".00", "") - _nominal_invoice_
+            $("#nominal_balance").val(balance.toFixed(2))
         } else {
             $("#basePPh").hide()
             $("#jmlPPH").hide()
@@ -356,11 +369,15 @@
             } else {
                 $("#nominal_invoice_staff").val($("#summary").val())
             }
+            var invoice = $("#nominal_invoice_staff").val().replace(/,/g, '')
+            var balance = dd.replace(".00", "") - invoice
+            $("#nominal_balance").val(balance.toFixed(2))
         }
     })
 
     $("#taxAmount").on('keyup',function() {
         let taxAmount = $(this).val()
+        let dpp = $("#dpp").val().replace(/,/g, '')
         if (isNaN(taxAmount.replace(/,/g, ''))) return false
 
         var nominalBalance = $("#summary").val().replace(/,/g, '')
@@ -370,12 +387,15 @@
         if( _tipePph != '') {
             totalInvoice = parseFloat(totalInvoice) - $("#jumlah_pph").val().replace(/,/g, '')
         } 
-
         $("#nominal_invoice_staff").val(keyupFormatUangWithDecimal(totalInvoice.toString()))
+        var invoice = $("#nominal_invoice_staff").val().replace(/,/g, '')
+        let balance  = parseInt(dpp) - parseInt(invoice)
+        $("#nominal_balance").val(balance.toFixed(2))
     })
 
     $("#base_pph").on('keyup',function() {
         let based = parseFloat($(this).val().replace(/,/g, ""))
+        let dpp = $("#dpp").val().replace(/,/g, '')
         const rates = $("#tipe_pph").val()
         const total = (based * rates/100)
         var _tipePph = $("#tipe_pph").val()
@@ -402,6 +422,9 @@
         $("#nominal_invoice_staff").val(keyupFormatUangWithDecimal(_TotalInvoice.toString()))
 
         $("#jumlah_pph").val(keyupFormatUangWithDecimal(total.toString()))
+        var invoice = $("#nominal_invoice_staff").val().replace(/,/g, '')
+        let balance  = parseInt(dpp) - parseInt(invoice)
+        $("#nominal_balance").val(balance.toFixed(2))
     })
 
     $(document).on('click', '#approval', function (result) {
@@ -435,6 +458,7 @@
                 $("#taxAmount").attr('readonly',true)
                 $("#nominal_invoice_staff").attr('readonly',true)
                 const summary = $("#summary").val().replace(/,/g, "")
+                var dpp = $("#dpp").val().replace(/,/g, '')
                 var ppn = $("#ppn").val()
                 var tipePph = $("#tipe_pph").val()
 
@@ -455,10 +479,14 @@
                 console.log('TOTAL INVOICE CHECLIS = ' + totalInv)
 
                 $("#nominal_invoice_staff").val(totalInv.toFixed(2))
+                var invoice = $("#nominal_invoice_staff").val().replace(/,/g, '')
+                let balance  = parseInt(dpp) - parseInt(invoice)
+                $("#nominal_balance").val(balance.toFixed(2))
             } 
         } else {
             $("#nominal_invoice_staff").attr('readonly',false)
             $("#taxAmount").attr('readonly',false)
+            var dpp = $("#dpp").val().replace(/,/g, '')
             const _summary  = $("#summary").val().replace(/,/g, "")
             var _tipePph    = $("#tipe_pph").val()
             var _totalInv   = _summary
@@ -469,6 +497,9 @@
                 _totalInv = _summary
             }
             $("#nominal_invoice_staff").val(_totalInv.toFixed(2))
+            var invoice = $("#nominal_invoice_staff").val().replace(/,/g, '')
+            let balance  = parseInt(dpp) - parseInt(invoice)
+            $("#nominal_balance").val(balance.toFixed(2))
             //$("#payment_block").val(' ')
             //$("#nominal_invoice_staff")
         }
@@ -476,6 +507,7 @@
 
     $('.amount').on('keyup', function() {
         let value = $(this).val()
+        let dpp = $("#dpp").val().replace(/,/g, '')
         if (isNaN(value.replace(/,/g, ''))) return false
 
         let _value = document.getElementsByClassName('amount')
@@ -491,6 +523,9 @@
             let totalB  = parseInt(DPP) - parseInt(total)
             $('#nominal_balance').val(formatNumber(totalB))
             $("#nominal_invoice_staff").val(formatNumber(total))
+            var invoice = $("#nominal_invoice_staff").val().replace(/,/g, '')
+            let balance  = parseInt(dpp) - parseInt(invoice)
+            $("#nominal_balance").val(balance.toFixed(2))
         }
     })
 

@@ -9,13 +9,15 @@
         </ol>
     </div>
 </div>
-@if(session('status'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-        {{ session('status') }}
+@if(Session::has('notif'))   
+    @foreach(Session::get('notif')->item as $key => $value)
+        <div class="alert alert-danger alert-dismissible fade show col-lg-12" role="alert">
+        <strong>Error  !!!</strong> <br/> {{ $value->MESSAGE }}
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
-    </div>
+        </div>
+    @endforeach
 @endif
 <div class="row">
     <div class="col-12">

@@ -188,6 +188,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('quotation/import', 'QuotationController@import')->name('quotation.import');
     Route::get('quotation/online', 'QuotationController@online')->name('quotation.online');
 
+    Route::get('quotation-test-run/{id}', 'QuotationController@TestRun')->name('quotation-test-run');
+
     // repeat
     // Route::get('quotation/repeat', 'QuotationController@repeat')->name('quotation.repeat');
     // Route::get('quotation/repeat/approve/{ids}', 'QuotationController@repeat_approve')->name('quotation.repeat.approve');
