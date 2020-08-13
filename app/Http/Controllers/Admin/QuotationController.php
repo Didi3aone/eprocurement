@@ -1172,8 +1172,9 @@ class QuotationController extends Controller
         $quotationDetail        = \App\Models\Vendor\QuotationDetail::where('quotation_order_id', $id)->get();
         $quotationDeliveryDate  = \App\Models\Vendor\QuotationDelivery::where('quotation_id', $id)->get();
         $sendSap = \sapHelp::sendPoTesRun($quotation, $quotationDetail,$quotationDeliveryDate);
-        if( $sendSap['is_error'] ) {
-            \Session::flash('notif', $detail['error']);
+        // dd($sendSap);
+        if( $sendSap['is_error'] == true) {
+            \Session::flash('notif', $sendSap['error']);
             return redirect()->route('admin.quotation-repeat.index');
         } else {
             return redirect()->route('admin.quotation-repeat.index')->with('status', 'Repeat Order has been successfully ordered!');

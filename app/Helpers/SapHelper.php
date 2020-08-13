@@ -4103,7 +4103,7 @@ class SapHelper {
                     'NO_MORE_GR' => '',
                     'FINAL_INV' => '',
                     'ITEM_CAT' => '9',
-                    'ACCTASSCAT' => 'K',
+                    'ACCTASSCAT' => $quotationDetail[$i]->account_assignment,
                     'DISTRIB' => '',
                     'PART_INV' => '',
                     'GR_IND' => 'X',
@@ -4753,7 +4753,7 @@ class SapHelper {
                     'NO_MORE_GR' => '',
                     'FINAL_INV' => '',
                     'ITEM_CAT' => '9',
-                    'ACCTASSCAT' => 'K',
+                    'ACCTASSCAT' => $quotationDetail[$i]->account_assignment,
                     'DISTRIB' => '',
                     'PART_INV' => '',
                     'GR_IND' => 'X',
@@ -5401,11 +5401,11 @@ class SapHelper {
         // echo "<pre>".print_r($params);die;
         // echo "</pre>";
         $result = $client->__soapCall('ZFM_WS_PO', $params, NULL, $header);
-        // dd($result->RETURN);
+        // dd($result->RETURN->item);
 
         // dd($result->POSCHEDULE);
         // echo "<pre>".print_r($params);die;"</pre>";
-        if( $result->RETURN ) {
+        if( empty($result->RETURN->item)  ) {
             // dd('1');
             return [
                 'is_error' => false,
@@ -5419,6 +5419,7 @@ class SapHelper {
             ];
         }
     }
+
     /**
      * Send po change to sap
      * @version V1
@@ -7508,6 +7509,13 @@ class SapHelper {
         return $result;
     }
 
+    /**
+     * Send po change delivery to sap
+     * @version V1
+     * @author didi
+     * @param string $poNumber
+     * @return void
+     */
     public static function sendPOchangeDelivToSap($poNumber)
     {
         $soapFile = \sapHelp::getSoapXml('PURCHASE_ORDER_CHANGE');
