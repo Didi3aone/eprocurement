@@ -159,83 +159,83 @@ class QuotationRepeatController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'ship_id' => 'required',
-            'notes' => 'required'
-        ]);
-        $qty = 0;
-        $price = 0;
-        $details = [];
-        for ($i = 0; $i < count($request->get('qty')); $i++) {
-            $qy = str_replace('.', '', $request->get('qty')[$i]);
-            $qty += $qy;
-
-            // update material qty
-            $material = PurchaseRequestsDetail::where('id', $request->idDetail[$i])->first();
-            $material->qty_requested = $material->qty;
-            // insert to pr history
-            $requestNo = '';
-            if( $request->get('rn_no')[$i] == 'DIRECT') {
-                $requestNo = $request->get('pr_no')[$i];
-            } else {
-                $requestNo = $request->get('rn_no')[$i];
-            }
-
-            // insert to pr history
-            $data = [
-                'request_detail_id'         => $request->idDetail[$i],
-                'request_no'                => $request->get('rn_no')[$i],
-                'pr_id'                     => $request->get('pr_no')[$i],
-                'rn_no'                     => $request->get('rn_no')[$i],
-                'material_id'               => $request->get('material_id')[$i],
-                'description'               => $request->get('description')[$i],
-                'unit'                      => $request->get('unit')[$i],
-                'vendor_id'                 => $request->get('vendor_id'),
-                'plant_code'                => $request->get('plant_code')[$i],
-                'price'                     => $request->get('price')[$i],
-                'original_price'            => $request->get('original_price')[$i],
-                'original_currency'         => $request->get('original_currency')[$i],
-                'qty'                       => $request->get('qty')[$i],
-                'qty_pr'                    => $material->qty,
-                'is_assets'                 => $request->get('is_assets')[$i],
-                'assets_no'                 => $request->get('assets_no')[$i],
-                'short_text'                => $request->get('short_text')[$i],
-                'text_id'                   => $request->get('text_id')[$i],
-                'text_form'                 => $request->get('text_form')[$i],
-                'text_line'                 => $request->get('text_line')[$i],
-                'delivery_date_category'    => $request->get('delivery_date_category')[$i],
-                'account_assignment'        => $request->get('account_assignment')[$i],
-                'purchasing_group_code'     => $request->get('purchasing_group_code')[$i],
-                'preq_name'                 => $request->get('preq_name')[$i],
-                'gl_acct_code'              => $request->get('gl_acct_code')[$i],
-                'cost_center_code'          => $request->get('cost_center_code')[$i],
-                'profit_center_code'        => $request->get('profit_center_code')[$i],
-                'storage_location'          => $request->get('storage_location')[$i],
-                'material_group'            => $request->get('material_group')[$i],
-                'preq_item'                 => $request->get('preq_item')[$i],
-                'PR_NO'                     => $request->get('PR_NO')[$i],
-                'delivery_date'             => $request->get('delivery_date')[$i],
-                'delivery_date_new'         => $request->get('delivery_date_new')[$i],
-                'rfq'                       => $request->get('rfq')[$i],
-                'tax_code'                  => $request->get('tax_code')[$i] ?? "",
-                'vendor_id'                 => $request->vendor_id,
-                'request_no'                => $requestNo,
-                'acp_id'                    => $request->get('acp_id')[$i],
-                'item_category'             => $request->get('category')[$i],
-                'notes'                     => $request->get('notes_detail')[$i],
-            ];
-
-            array_push($details, $data);
-            PurchaseRequestHistory::insertHistory($data);
-
-            $material->qty      -= $request->get('qty')[$i];
-            $material->qty_order = $request->get('qty')[$i];
-            $material->save();
-        }
-
         \DB::beginTransaction();
 
         try {
+            $validatedData = $request->validate([
+                'ship_id' => 'required',
+                'notes' => 'required'
+            ]);
+            $qty = 0;
+            $price = 0;
+            $details = [];
+            for ($i = 0; $i < count($request->get('qty')); $i++) {
+                $qy = str_replace('.', '', $request->get('qty')[$i]);
+                $qty += $qy;
+    
+                // update material qty
+                $material = PurchaseRequestsDetail::where('id', $request->idDetail[$i])->first();
+                $material->qty_requested = $material->qty;
+                // insert to pr history
+                $requestNo = '';
+                if( $request->get('rn_no')[$i] == 'DIRECT') {
+                    $requestNo = $request->get('pr_no')[$i];
+                } else {
+                    $requestNo = $request->get('rn_no')[$i];
+                }
+    
+                // insert to pr history
+                $data = [
+                    'request_detail_id'         => $request->idDetail[$i],
+                    'request_no'                => $request->get('rn_no')[$i],
+                    'pr_id'                     => $request->get('pr_no')[$i],
+                    'rn_no'                     => $request->get('rn_no')[$i],
+                    'material_id'               => $request->get('material_id')[$i],
+                    'description'               => $request->get('description')[$i],
+                    'unit'                      => $request->get('unit')[$i],
+                    'vendor_id'                 => $request->get('vendor_id'),
+                    'plant_code'                => $request->get('plant_code')[$i],
+                    'price'                     => $request->get('price')[$i],
+                    'original_price'            => $request->get('original_price')[$i],
+                    'original_currency'         => $request->get('original_currency')[$i],
+                    'qty'                       => $request->get('qty')[$i],
+                    'qty_pr'                    => $material->qty,
+                    'is_assets'                 => $request->get('is_assets')[$i],
+                    'assets_no'                 => $request->get('assets_no')[$i],
+                    'short_text'                => $request->get('short_text')[$i],
+                    'text_id'                   => $request->get('text_id')[$i],
+                    'text_form'                 => $request->get('text_form')[$i],
+                    'text_line'                 => $request->get('text_line')[$i],
+                    'delivery_date_category'    => $request->get('delivery_date_category')[$i],
+                    'account_assignment'        => $request->get('account_assignment')[$i],
+                    'purchasing_group_code'     => $request->get('purchasing_group_code')[$i],
+                    'preq_name'                 => $request->get('preq_name')[$i],
+                    'gl_acct_code'              => $request->get('gl_acct_code')[$i],
+                    'cost_center_code'          => $request->get('cost_center_code')[$i],
+                    'profit_center_code'        => $request->get('profit_center_code')[$i],
+                    'storage_location'          => $request->get('storage_location')[$i],
+                    'material_group'            => $request->get('material_group')[$i],
+                    'preq_item'                 => $request->get('preq_item')[$i],
+                    'PR_NO'                     => $request->get('PR_NO')[$i],
+                    'delivery_date'             => $request->get('delivery_date')[$i],
+                    'delivery_date_new'         => $request->get('delivery_date_new')[$i],
+                    'rfq'                       => $request->get('rfq')[$i],
+                    'tax_code'                  => $request->get('tax_code')[$i] ?? "",
+                    'vendor_id'                 => $request->vendor_id,
+                    'request_no'                => $requestNo,
+                    'acp_id'                    => $request->get('acp_id')[$i],
+                    'item_category'             => $request->get('category')[$i],
+                    'notes'                     => $request->get('notes_detail')[$i],
+                ];
+    
+                array_push($details, $data);
+                PurchaseRequestHistory::insertHistory($data);
+    
+                $material->qty      -= $request->get('qty')[$i];
+                $material->qty_order = $request->get('qty')[$i];
+                $material->save();
+            }
+
             $file_upload = "";
             if ($request->upload_file) {
                 $file_upload = $this->fileUpload($request);
@@ -261,7 +261,28 @@ class QuotationRepeatController extends Controller
 
             $quotation->save();
 
-            $this->_insert_details($details, $quotation->id);
+             //insert ITEM
+            $detail = $this->_insert_details($details, $quotation->id);
+            // dd($detail);
+            if( true == $detail['is_error'] ) {
+                 \Session::flash('notif', $detail['error']); 
+                 //rollback if error send sap
+                 \DB::rollBack();
+                 for ($i = 0; $i < count($request->get('qty')); $i++) {
+                     $qy = str_replace('.', '', $request->get('qty')[$i]);
+                     $qty += $qy;
+                     // update material qty
+                     $material = PurchaseRequestsDetail::where('id', $request->id[$i])->first();
+                     $material->qty_requested = $material->qty;
+                     $material->qty       += $request->get('qty')[$i];
+                     $material->qty_order -= $request->get('qty')[$i];
+                     $material->save();
+                 }
+                 return redirect()->route('admin.purchase-request.index');
+             } else {
+                 //done process
+                 return redirect()->route('admin.quotation-direct.index')->with('status', 'Direct Order has been successfully ordered!');
+             }
 
             \DB::commit();
         } catch (Exception $e) {
@@ -757,6 +778,20 @@ class QuotationRepeatController extends Controller
         $quotation->save();
 
         \Mail::to($email)->send(new poApprovalAssproc($quotation,$name));
+
+        $quotationDetail        = QuotationDetail::where('quotation_order_id', $id)->get();
+        $quotationDeliveryDate  = QuotationDelivery::where('quotation_id', $id)->get();
+        
+        $sendSap = \sapHelp::sendPoTesRun($quotation, $quotationDetail,$quotationDeliveryDate);
+        // dd($sendSap['is_error']);
+        if( $sendSap['is_error'] ) {
+            \Mail::to($email)->send(new poApprovalAssproc($quotation,$name));
+            return $sendSap;
+            // return redirect()->route('admin.quotation-repeat.index')->with('status', 'Repeat Order has been successfully ordered!'); 
+        } else {
+            // \DB::rollBack();
+            return $sendSap;
+        }
     }
 
     public function fileUpload($request)
