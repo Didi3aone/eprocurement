@@ -844,6 +844,9 @@ class VendorController extends Controller
             }
             $vendors->vendor_email = $vendor_email;
             $vendor_bank = VendorBankDetails::where('vendor_id', $vendors->id)->get();
+            foreach ($vendor_bank as $row) {
+                $row->bank_keys = str_replace(' ', '', $row->bank_keys);
+            }
             $vendors->vendor_bank = $vendor_bank;
         }
         $terms_of_payment = MasterVendorTermsOfPayment::get();
@@ -897,12 +900,15 @@ class VendorController extends Controller
         $email = $request->input('email');
         $is_default = $request->input('is_default');
         $index = 0;
-        foreach ($is_default as $i => $row) {
-            if ($row=='1') 
-                $index = $i - 1;
-        }
+        // foreach ($is_default as $i => $row) {
+        //     if ($row=='1') 
+        //         $index = $i - 1;
+        // }
         // dd($email[$index]);
-        $email_default = $email[$index];
+        $email_default = $email[$is_default[0]];
+        if (!$email_default) {
+            return redirect('admin/vendors/'.$id.'/edit')->with('error', 'Set email default with correct email');
+        }
 
         $terms_of_payment = MasterVendorTermsOfPayment::findOrFail($terms_of_payment_id);
         $user_vendors = UserVendors::findOrFail($id);
@@ -962,7 +968,7 @@ class VendorController extends Controller
                 $post = [];
                 $post['vendor_id'] = $id;
                 $post['email'] = $email[$i];
-                $post['is_default'] = $is_default[$i] ?? 0;
+                $post['is_default'] = $email[$i]==$email_default?1:0;
                 if ($vendor_email_id[$i]) {
                     $do_update = $do_update && VendorEmail::where('id', $vendor_email_id[$i])->update($post);
                 } else {
@@ -995,7 +1001,7 @@ class VendorController extends Controller
             return redirect()->route('admin.vendors.index')->with('status', trans('cruds.vendors.alert_success_update'));
         } catch (Exception $e) {
             \DB::rollback();
-            return redirect()->route('admin.vendors.index')->with('error', trans('cruds.vendors.alert_error_update'));
+            return redirect('admin/vendors/'.$id.'/edit')->with('error', trans('cruds.vendors.alert_error_update'));
         }
     }
 
