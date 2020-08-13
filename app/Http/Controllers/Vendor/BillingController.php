@@ -326,11 +326,10 @@ class BillingController extends Controller
 
                 $po_gr->qty_billing = $qty;
                 $po_gr->qty         = $qty_old - $qty;
+                $po_gr->qty_old     = $qty_old;
                 $po_gr->save();
 
-                $poDetail = PurchaseOrdersDetail::where('id', $request->get('purchase_order_detail_id')[$key])
-                            ->where('PO_ITEM',$PO_ITEM)
-                            ->first();
+                $poDetail = PurchaseOrdersDetail::where('id', $request->get('purchase_order_detail_id')[$key])->first();
                 $poDetail->qty_billing += $qty;
                 $poDetail->save();
             }

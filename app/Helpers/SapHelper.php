@@ -1224,6 +1224,7 @@ class SapHelper {
         $params[0]['POHEADER'] = $POHEADER;
         $params[0]['POHEADERX'] = $POHEADERX;
         $params[0]['POTEXTHEADER'] = $POTEXTHEADER;
+        // $params[0]['TESTRUN'] = 'X';
 
         $count_ = count($quotationDetail);
         $is_array = ((int)$count_) > 1 ? true : false;
@@ -1902,7 +1903,7 @@ class SapHelper {
                     'NO_MORE_GR' => '',
                     'FINAL_INV' => '',
                     'ITEM_CAT' => '9',
-                    'ACCTASSCAT' => 'K',
+                    'ACCTASSCAT' => $quotationDetail[$i]->account_assignment,
                     'DISTRIB' => '',
                     'PART_INV' => '',
                     'GR_IND' => 'X',
@@ -2552,7 +2553,7 @@ class SapHelper {
                     'NO_MORE_GR' => '',
                     'FINAL_INV' => '',
                     'ITEM_CAT' => '9',
-                    'ACCTASSCAT' => 'K',
+                    'ACCTASSCAT' => $quotationDetail[$i]->account_assignment,
                     'DISTRIB' => '',
                     'PART_INV' => '',
                     'GR_IND' => 'X',
@@ -3199,7 +3200,7 @@ class SapHelper {
         // echo "<pre>".print_r($params);die;
         // echo "</pre>";
         $result = $client->__soapCall('ZFM_WS_PO', $params, NULL, $header);
-        // dd($result->RETURN);
+        // dd($result);
         // dd($result->POSCHEDULE);
         // echo "<pre>".print_r($params);die;"</pre>";
         if( $result->EXPPURCHASEORDER) {
@@ -6711,6 +6712,15 @@ class SapHelper {
                 
                 $dataChild = PurchaseOrderServiceChild::where('purchase_order_id', $poHeader->id)->get();
                 for( $k = 0; $k < count($dataChild); $k++ ) {
+                    $uomCode1 = \App\Models\UomConvert::where('uom_1',$quotationDetail[$i]->unit)->first();
+                    $uomCode2 = \App\Models\UomConvert::where('uom_2',$quotationDetail[$i]->unit)->first();
+                    if( null != $uomCode1 ) {
+                        $unit = $uomCode1->uom_2;
+                    } else if( null != $uomCode2 ) {
+                        $unit = $uomCode2->uom_1;
+                    } else {
+                        $unit = $quotationDetail[$i]->unit;
+                    }
                     $createLine = $k + 1;
                     $POSERVICES = [
                         "PCKG_NO" => $dataChild[$k]->package_no,//0 = 9X 1; CHILD = 2 DST 
@@ -6726,7 +6736,7 @@ class SapHelper {
                         "SSC_ITEM" => "",
                         "EXT_SERV" => "",
                         "QUANTITY" => $poDetail[$i]->qty,//DARI PR 
-                        "BASE_UOM" => \App\Models\UomConvert::where('uom_2',$poDetail[$i]->unit)->first()->uom_1,//$quotationDetail[$i]->unit,     
+                        "BASE_UOM" => $unit,//$quotationDetail[$i]->unit,     
                         "UOM_ISO" => "",    
                         "OVF_TOL" => "",
                         "OVF_UNLIM" => "",    
@@ -7340,6 +7350,15 @@ class SapHelper {
 
                 $dataChild = \App\Models\PurchaseOrderServiceChild::where('purchase_order_id', $poHeader->id)->get();
                 for( $k = 0; $k < count($dataChild); $k++ ) {
+                    $uomCode1 = \App\Models\UomConvert::where('uom_1',$quotationDetail[$i]->unit)->first();
+                    $uomCode2 = \App\Models\UomConvert::where('uom_2',$quotationDetail[$i]->unit)->first();
+                    if( null != $uomCode1 ) {
+                        $unit = $uomCode1->uom_2;
+                    } else if( null != $uomCode2 ) {
+                        $unit = $uomCode2->uom_1;
+                    } else {
+                        $unit = $quotationDetail[$i]->unit;
+                    }
                     $createLine = $k + 1;
                     $POSERVICES = [
                         "PCKG_NO" => $dataChild[$k]->package_no,//0 = 9X 1; CHILD = 2 DST 
@@ -7355,7 +7374,7 @@ class SapHelper {
                         "SSC_ITEM" => "",
                         "EXT_SERV" => "",
                         "QUANTITY" => $poDetail[$i]->qty,//DARI PR 
-                        "BASE_UOM" =>  \App\Models\UomConvert::where('uom_2',$poDetail[$i]->unit)->first()->uom_1,//$poDetail[$i]->unit,     
+                        "BASE_UOM" =>  $unit,//$poDetail[$i]->unit,     
                         "UOM_ISO" => "",    
                         "OVF_TOL" => "",
                         "OVF_UNLIM" => "",    

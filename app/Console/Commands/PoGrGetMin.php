@@ -51,7 +51,7 @@ class PoGrGetMin extends Command
     public function handle()
     {
         echo "Start ..... \n";
-        $wsdl = public_path() . "/xml/zbn_eproc_pogr_v3.xml";
+        $wsdl = public_path() . "/xml/zbn_eproc_pogr_prod.xml";
 
         $username = "IT_02";
         $password = "ademsari";
@@ -141,9 +141,9 @@ class PoGrGetMin extends Command
                                         'purchase_order_detail_id'  => $poDetail->id ?? 0,
                                         'price_per_pc'              => ($value[$i]->WRBTR/$qty) * 100,
                                         'cost_center_code'          => $value[$i]->KOSTL, 
-                                        'posting_date'              => $value[$i]->BUDAT, 
+                                        'posting_date'              => $value[$i]->BUDAT == '0000-00-00' ? date('Y-m-d') : $value[$i]->BUDAT, 
                                         'item_category'             => $poDetail->item_category,
-                                        'description'               => $poDetail->description,
+                                        'description'               => $poDetail->short_text,
                                     ]);
 
                                     $gr = \App\Models\PurchaseOrderGr::where('debet_credit','S')
@@ -213,9 +213,9 @@ class PoGrGetMin extends Command
                                     'purchase_order_detail_id'  => $poDetail->id ?? 0,
                                     'price_per_pc'              => ($value->WRBTR/$qty) * 100,
                                     'cost_center_code'          => $value->KOSTL, 
-                                    'posting_date'              => $value->BUDAT, 
+                                    'posting_date'              => $value->BUDAT == '0000-00-00' ? date('Y-m-d') : $value->BUDAT, 
                                     'item_category'             => $poDetail->item_category,
-                                    'description'               => $poDetail->description,
+                                    'description'               => $poDetail->short_text,
                                 ]);
 
                                 $gr = \App\Models\PurchaseOrderGr::where('debet_credit','S')
