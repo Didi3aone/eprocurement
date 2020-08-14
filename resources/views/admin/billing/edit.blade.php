@@ -353,9 +353,5 @@
         }
     })
 
-    $(function() {
-     
-    })
-
 </script>
 @endsection
