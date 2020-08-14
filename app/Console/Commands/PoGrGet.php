@@ -3,7 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Email\vendorNotifEmailGr;
+use App\Mail\vendorNotifEmailGr;
+use App\Mail\mailCron;
 
 class PoGrGet extends Command
 {
@@ -52,6 +53,9 @@ class PoGrGet extends Command
     public function handle()
     {
         echo "Start ..... \n";
+        // $email = 'diditriawan13@gmail.com';
+        // $name  = 'didigantengs';
+        // \Mail::to($email)->send(new mailCron($name));
         $wsdl = public_path() . "/xml/zbn_eproc_pogr_prod.xml";
 
         $username = "IT_02";
@@ -125,7 +129,7 @@ class PoGrGet extends Command
                                         'po_no'                     => $value[$i]->EBELN,
                                         'po_item'                   => $value[$i]->EBELP,
                                         'vendor_id'                 => $poHeader->vendor_id ?? '3000046',
-                                        'movement_type'             => $value[$i]->EBELP,
+                                        'movement_type'             => $value[$i]->BWART ?? '',
                                         'debet_credit'              => $value[$i]->SHKZG ?? '',//s itu debit h itu kredit
                                         'material_no'               => str_replace('00000000000','',$value[$i]->MATNR),
                                         'qty'                       => $qty,
@@ -187,7 +191,7 @@ class PoGrGet extends Command
                                     'po_no'                     => $value->EBELN,
                                     'po_item'                   => $value->EBELP,
                                     'vendor_id'                 => $poHeader->vendor_id ?? '3000046',
-                                    'movement_type'             => $value->EBELP,
+                                    'movement_type'             => $value->BWART,
                                     'debet_credit'              => $value->SHKZG ?? '',//s itu debit h itu kredit
                                     'material_no'               => str_replace('00000000000','',$value->MATNR),
                                     'qty'                       => $qty,

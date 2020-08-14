@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Mail\mailCron;
 
 class PoGrGetMin extends Command
 {
@@ -52,7 +53,9 @@ class PoGrGetMin extends Command
     {
         echo "Start ..... \n";
         $wsdl = public_path() . "/xml/zbn_eproc_pogr_prod.xml";
-
+        // $email = 'diditriawan13@gmail.com';
+        // $name  = 'didigantengs';
+        // \Mail::to($email)->send(new mailCron($name));
         $username = "IT_02";
         $password = "ademsari";
         $client = new \SoapClient($wsdl, array(
@@ -118,7 +121,7 @@ class PoGrGetMin extends Command
                                         'po_no'                     => $value[$i]->EBELN,
                                         'po_item'                   => $value[$i]->EBELP,
                                         'vendor_id'                 => $poHeader->vendor_id ?? '3000046',
-                                        'movement_type'             => $value[$i]->EBELP,
+                                        'movement_type'             => $value[$i]->BWART,
                                         'debet_credit'              => $value[$i]->SHKZG ?? '',//s itu debit h itu kredit
                                         'material_no'               => str_replace('00000000000','',$value[$i]->MATNR),
                                         'qty'                       => $qty,
@@ -190,7 +193,7 @@ class PoGrGetMin extends Command
                                     'po_no'                     => $value->EBELN,
                                     'po_item'                   => $value->EBELP,
                                     'vendor_id'                 => $poHeader->vendor_id ?? '3000046',
-                                    'movement_type'             => $value->EBELP,
+                                    'movement_type'             => $value->BWART,
                                     'debet_credit'              => $value->SHKZG ?? '',//s itu debit h itu kredit
                                     'material_no'               => str_replace('00000000000','',$value->MATNR),
                                     'qty'                       => $qty,
