@@ -145,7 +145,7 @@ class LoginController extends Controller
             $this->insert_vendor_bank_details($request, $user_vendor->id, $is_local);
             $this->insert_vendor_tax_number($request, $user_vendor->id);
             $this->insert_vendor_identification_numbers($user_vendor->id, $is_local);
-            $this->insert_vendor_email($user_vendor->id, $is_local);
+            $this->insert_vendor_email($request, $user_vendor->id);
 
             \DB::commit();
             return redirect()->route('vendor.login')->with('success', 'Register success');

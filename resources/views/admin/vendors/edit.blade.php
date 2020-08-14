@@ -78,11 +78,11 @@
                                 <tr>
                                     <td>
                                         <input type="hidden" name="vendor_email_id[]" value="{{ $row->id }}">
-                                        <input type="hidden" name="is_default[]" value="{{ $row->is_default }}">
+                                        <!-- <input type="hidden" name="is_default[]" value="{{ $row->is_default }}"> -->
                                         <input class="form-control" style="width: 70%;" type="text" name="email[]" value="{{ $row->email }}" placeholder="Type email here" {{ $i==0 ? 'required=""':'' }}>
                                     </td>
                                     <td>
-                                        <input class="form-check-input" style="left: 85%; opacity: 100%;" type="radio" value="1" name="is_default[]" {{ $row->is_default == 1 ? 'checked' : '' }}>
+                                        <input class="form-check-input" style="left: 85%; opacity: 100%;" type="radio" value="{{$i}}" name="is_default[]" {{ $row->is_default == 1 ? 'checked' : '' }}>
                                     </td>
                                 </tr>
                                 @endforeach
