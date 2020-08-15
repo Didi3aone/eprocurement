@@ -27,11 +27,52 @@ class AcpController extends Controller
     public function acpApproval()
     {
         $quotation = QuotationApproval::where('nik', \Auth::user()->nik)
+                    ->join('master_acps','master_acps.id','=','quotation_approvals.acp_id')
+                    ->join('master_acp_materials','master_acp_materials.master_acp_id','master_acps.id')
                     ->where('flag', QuotationApproval::NotYetApproval)
                     ->where('acp_type', 'ACP')
+                    ->select(
+                        'master_acps.id',
+                        'quotation_approvals.nik',
+                        'master_acps.acp_no',
+                        'master_acps.status_approval',
+                        \DB::raw('sum(master_acp_materials.price) as totalvalue'),
+                        'quotation_approvals.flag'
+                    )
+                    ->groupBy(
+                        'master_acps.id',
+                        'quotation_approvals.nik',
+                        'quotation_approvals.flag'
+                    )
                     ->get();
-
+        // dd($quotation);
         return view('admin.acp.acp', compact('quotation'));
+    }
+
+    public function listAcpApproval()
+    {
+        $quotation = QuotationApproval::where('nik', \Auth::user()->nik)
+                    ->join('master_acps','master_acps.id','=','quotation_approvals.acp_id')
+                    ->join('master_acp_materials','master_acp_materials.master_acp_id','master_acps.id')
+                    ->where('flag', QuotationApproval::alreadyApproval)
+                    ->where('acp_type', 'ACP')
+                    ->where('master_acps.status_approval','<>','0')
+                    ->select(
+                        'master_acps.id',
+                        'quotation_approvals.nik',
+                        'master_acps.acp_no',
+                        'master_acps.status_approval',
+                        \DB::raw('sum(master_acp_materials.price) as totalvalue'),
+                        'quotation_approvals.flag'
+                    )
+                    ->groupBy(
+                        'master_acps.id',
+                        'quotation_approvals.nik',
+                        'quotation_approvals.flag'
+                    )
+                    ->get();
+        // dd($quotation);
+        return view('admin.acp.list-data', compact('quotation'));
     }
 
     public function biddingAcp ()
@@ -62,8 +103,17 @@ class AcpController extends Controller
     public function showAcpApproval($id)
     {
         $acp   = AcpTable::find($id);
+        // dd($acp->detail);
 
         return view('admin.acp.show-acp-approval', compact('acp'));   
+    }
+
+
+    public function showAcpApprovalFinish($id)
+    {
+        $acp   = AcpTable::find($id);
+
+        return view('admin.acp.show-acp-approval-finish', compact('acp'));   
     }
 
     /**
@@ -127,6 +177,7 @@ class AcpController extends Controller
 
     public function approvalAcp(Request $request)
     {
+        $configEnv = \configEmailNotification();
         \DB::beginTransaction();
         try {
             //get data
@@ -136,6 +187,7 @@ class AcpController extends Controller
             //check posisi approval
             if( (int) $posisi->approval_position == (int) $total ) {
                 $acp->status_approval = AcpTable::Approved;
+                $acp->description     = $request->description;
                 $acp->update();
                 //current approval update
                 QuotationApproval::where('quotation_id',$request->quotation_id)->where('nik',\Auth::user()->nik)->update([
@@ -159,12 +211,19 @@ class AcpController extends Controller
                     'status' => QuotationApproval::waitingApproval,
                     'flag'   => QuotationApproval::NotYetApproval,
                 ]);
+                $acp->description     = $request->description;
 
-                $users = getProfileLocal(\Auth::user()->nik);
-                // $email = $users->email;
-                // $name  = $users->name;
-                $name  = "didi";
-                $email = 'diditriawan13@gmail.com';
+                $acp->update();
+
+                
+                if (\App\Models\BaseModel::Development == $configEnv->type) {
+                    $email = $configEnv->value;
+                    $name  = "Didi Ganteng";
+                } else {
+                    $email = \Auth::user()->email;
+                    $name  = \Auth::user()->name;
+                }
+                
                 \Mail::to($email)->send(new enesisApprovalAcpMail($acp, $name));
             }
             \DB::commit();
@@ -188,6 +247,10 @@ class AcpController extends Controller
                 'approve_date'  => \Carbon\Carbon::now(),
             ]);
 
+        $acp = AcpTable::find($request->id);
+        $acp->status_approval = AcpTable::Rejected;
+        $acp->update();
+
         \Session::flash('status','Acp has been rejected');
     }
-}
+} 

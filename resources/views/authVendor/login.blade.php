@@ -1,5 +1,10 @@
 @extends('layouts.app')
 @section('content')
+@if(session()->has('status'))
+    <div class="alert alert-success" role="alert">
+        {{ session('status') }}
+    </div>
+@endif
 <section id="wrapper">
     <div class="login-register" style="background-image:url({{ asset('images/background/login-register.jpg') }};">        
         <div class="login-box card">
@@ -19,11 +24,11 @@
                     {{-- </h3> --}}
                     <div class="form-group ">
                         <div class="col-xs-12">
-                            <input class="form-control {{ $errors->has('email') ? ' is-invalid' : '' }}" value="{{ old('email', null) }}" name="email" type="email" required="" placeholder="Email"> 
+                            <input class="form-control {{ $errors->has('code') ? ' is-invalid' : '' }}" value="{{ old('code', null) }}" name="code" type="code" required="" placeholder="code"> 
                         </div>
-                        @if($errors->has('email'))
+                        @if($errors->has('code'))
                             <div class="invalid-feedback">
-                                {{ $errors->first('email') }}
+                                {{ $errors->first('code') }}
                             </div>
                         @endif
                     </div>
@@ -48,6 +53,11 @@
                     <div class="form-group text-center m-t-20">
                         <div class="col-xs-12">
                             <button class="btn btn-success btn-lg btn-block text-uppercase waves-effect waves-light" type="submit">Log In</button>
+                        </div>
+                    </div>
+                    <div class="form-group m-b-0">
+                        <div class="col-sm-12">
+                            <p class="text-center"><a href="{{ route('vendor.password.request') }}" class="text-info m-l-5"><b>Forgot Password</b></a></p>
                         </div>
                     </div>
                     <div class="form-group m-b-0">

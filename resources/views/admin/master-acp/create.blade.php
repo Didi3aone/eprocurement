@@ -24,6 +24,14 @@
                             </div>
                         @endif
                     </div> --}}
+                    <div class="form-group">
+                        <label>Plant</label>
+                        <select class="form-control select2 form-control-line" name="plant_id" required> 
+                            @foreach($plant ?? '' as $code => $name)
+                                <option value="{{ $code }}">{{ $code." - ".$name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     <label>Material From PR</label>
                     <div class="form-group">
                         <div class="form-check form-check-inline">
@@ -87,10 +95,6 @@
                         <label>Upload File</label>
                         <input type="file" class="form-control form-control-line {{ $errors->has('upload_file') ? 'is-invalid' : '' }}" multiple name="upload_file[]" value=""> 
                     </div>
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea type="text" class="form-control form-control-line" name="description"></textarea>
-                    </div>
                     <hr style="margin: 30px 0">
                     <div class="form-group">
                         <label for="">{{ trans('cruds.master-acp.invite_vendor') }}</label>
@@ -103,12 +107,12 @@
                                         value="{{ $val->code }}"
                                         data-id="{{ $val->id }}"
                                         data-title="{{ $val->title }}"
-                                        data-name="{{ $val->name }}"
+                                        data-name="{{ $val->company_name }}"
                                         data-email="{{ $val->email }}"
                                         data-street="{{ $val->street }}"
                                         data-city="{{ $val->city }}"
                                     >
-                                        {{ $val->code." - ".$val->name }}
+                                        {{ $val->code." - ".$val->company_name }}
                                     </option>
                                     @endforeach
                                 </select>
@@ -132,6 +136,10 @@
                                 <tbody id="vendors"></tbody>
                             </table>
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Reason</label>
+                        <textarea type="text" class="form-control form-control-line" name="description"></textarea>
                     </div>
                     <div class="form-actions">
                         {{-- <button type="submit" class="d-none">Submit</button> --}}
@@ -161,8 +169,16 @@
     })
 
     $('#saves').click(function() {
+        var $form = $('.card-body form')
         checked = $("input[type=checkbox]:checked").length;
+        vendorGet = $(".vendor_id").length
 
+       /* if( vendorGet < 3 ) {
+            swal('Oops','Please choose at least 3 vendors','error')
+            return false;
+        }*/
+
+        //console.log(vendorGet)
         if(!checked) {
             swal('Oops','Please check winner vendor','error')
             return false;
@@ -172,6 +188,11 @@
             swal('Oops','Choose the winner of one vendor','error')
             return false;
         }
+        $form.submit();
+
+        $("#saves").attr('disabled', 'disabled');
+        $('#saves').text('Please wait ...')
+        return true; 
     });
 
 
@@ -189,9 +210,10 @@
     /**<td class="file_attachment">
         <input type="file" name="file_attachment_${vendor}[]" class="form-control"/>
     </td>**/
-    function rowMaterial (vendor) {
+    function rowMaterial (vendor,indexs) {
         return `
             <tr>
+                <td>${indexs}</td>
                 <td>
                     <select name="material_${vendor}[]" id="" class="choose-material form-control select2"></select>
                 </td>
@@ -203,6 +225,9 @@
                 </td>
                 <td class="qty">
                     <input type="text" name="qty_${vendor}[]" class="form-control" required/>
+                </td>
+                <td class="qty_pr">
+                    <input type="text" name="qty_pr_${vendor}[]" class="form-control" required/>
                 </td>
                 <td>
                     <button 
@@ -220,8 +245,11 @@
         e.preventDefault()
 
         const $search = $('#search-vendor').children('option:selected')
+        $search.attr('disabled', 'disabled')
         const input_vendor = $search.val()
         const $vendorId = $("#search-vendor").val()
+        $('#search-vendor').val('').trigger('change')
+        $('#search-vendor').select2()
 
         if (input_vendor != '-- Select --') {
             const id_vendor = $search.data('id')
@@ -253,10 +281,12 @@
                         <table class="table table-striped" style="overflow-x:auto">
                             <thead>
                                 <tr>
-                                    <th style="width: 30%">Material Code</th>
+                                    <th>No</th>
+                                    <th style="width: 30%;padding-right:18px;">Material Code</th>
                                     <th style="width: 20%">Currency</th>
-                                    <th style="width: 25%">Price</th>
-                                    <th style="width: 20%">Per</th>
+                                    <th style="width: 20%;padding-right:18px;">Price</th>
+                                    <th style="width: 20%;padding-right:18px;">Per</th>
+                                    <th style="width: 20%;padding-right:18px;">Qty PR</th>
                                     <th class="text-right" style="width: 10%">&nbsp;</th>
                                 </tr>
                             </thead>
@@ -266,35 +296,128 @@
                 </tr>
             `
             $('#vendors').append(template)
+            duplicateTable(input_vendor)
         } else {
             swal('Oops','No vendor selected','error')
             return false
         }
     })
-
+    function duplicateTable(targetClass) {
+        $.each($('#vendors .select2:not(span)'), function(){
+            try {
+                $(this).select2("destroy")
+            } catch (error) {}
+        })
+        var $trEl = $('#vendors > tr')
+        if($trEl.length>2) {
+            var $materialEl = $($trEl[1]).find('tbody > tr')
+            if($materialEl.length>=1) {
+                var $targetEl = $(`.material-${targetClass} tbody`)
+                $.each($($materialEl), function(){
+                    var $el = $(this).clone()
+                    $targetEl.append($el)
+                    //commend
+                    // console.log(this, $el, $targetEl)
+                })
+                $(`.material-${targetClass} tbody .choose-material`).attr('name', `material_${targetClass}[]`)
+                $(`.material-${targetClass} tbody .choose-currency`).attr('name', `currency_${targetClass}[]`)
+                $(`.material-${targetClass} tbody .prices`).attr('name', `price_${targetClass}[]`)
+                $(`.material-${targetClass} tbody .qty input`).attr('name', `qty_${targetClass}[]`)
+                $(`.material-${targetClass} tbody .qty_pr input`).attr('name', `qty_pr_${targetClass}[]`)
+            }
+        }
+        $("#vendors .select2").select2()
+        var $elMaterial = $(document).find('#vendors .choose-material')
+        $elMaterial.select2('destroy')
+        $elMaterial.select2({
+            ajax: {
+                url: base_url + '/admin/master-acp-material',
+                dataType: 'json',
+                tokenSeparators: [",", " "],
+                //tokenSeparators: [',', ', ', ' '],
+                delay: 250,
+                data: function(params) {
+                    return {
+                        q: params.term, // search term
+                        page: params.page,
+                        fromPr : $("input[name='is_from_pr']:checked").val()
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: response
+                    }
+                },
+                cache: true
+            },
+            escapeMarkup: function(markup) {
+                return markup;
+            },
+            templateSelection: function(data) {
+                return data.title;
+            },
+            allowClear: true
+        })
+        var $elCurrency = $(document).find('#vendors .choose-currency')
+        $elCurrency.select2('destroy')
+        $elCurrency.select2({
+            ajax: {
+                url: base_url + '/admin/master-acp-currency',
+                dataType: 'json',
+                delay: 300,
+                processResults: function (response) {
+                    return {
+                        results: response
+                    }
+                },
+                cache: true
+            },
+            escapeMarkup: function(markup) {
+                return markup;
+            },
+            templateSelection: function(data) {
+                return data.title;
+            },
+            allowClear: true
+        })
+    }
     $(document).on('click', '.remove-vendor', function (e) {
         const vendor = $(this).data('vendor')
-
+        var value = $(this).closest('tr').find('.vendor_id').val()
+        $.each($('#search-vendor option'), function(){
+            $this = $(this)
+            if($this.val()===value) {
+                $this.removeAttr('disabled')
+            }
+        })
+        $('#search-vendor').select2()
         $(this).closest('tr').remove()
         $('.material-' + vendor).remove()
 
         return false;
     })
 
+    let indexs = 1;
     $(document).on('click', '.add_material', function (e) {
         e.preventDefault()
+        var interval
+        var formatData = function($el) {
+            clearInterval(interval)
+            interval = setInterval(() => {
+                $el.mask('#,##0.00', {reverse: true})
+            }, 500)
+        }
         $('.money').mask('#.##0', { reverse: true })
-
-        $(document).on('keyup', '.prices input', function(e){
+        $(document).on('keyup', 'input.prices ', function(e){
             // ...
-            alert()
+            formatData($(this))
         });
 
         const $tr = $(this).closest('tr').parent()
         const vendor = $(this).data('vendor')
         
 
-        $(document).find('.list-material-' + vendor).append(rowMaterial(vendor))
+        $(document).find('.list-material-' + vendor).append(rowMaterial(vendor, indexs))
         $('.select2').select2()
         $tr.find('input[type="number"]').addClass('form-control')
 
@@ -302,12 +425,15 @@
             ajax: {
                 url: base_url + '/admin/master-acp-material',
                 dataType: 'json',
-                delay: 300,
+                tokenSeparators: [",", " "],
+                //tokenSeparators: [',', ', ', ' '],
+                delay: 250,
                 data: function(params) {
                     return {
                         q: params.term, // search term
                         page: params.page,
-                        fromPr : $("input[name='is_from_pr']:checked").val()
+                        fromPr : $("input[name='is_from_pr']:checked").val(),
+                        isProject : $("input[name='is_project']:checked").val(),
                     };
                 },
                 processResults: function (response) {
@@ -346,6 +472,7 @@
             },
             allowClear: true
         })
+        indexs++
     })
 
     $(function() {

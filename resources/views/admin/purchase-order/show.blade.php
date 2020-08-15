@@ -34,7 +34,7 @@
                         </tr>
                         <tr>
                             <th>Vendor</th>
-                            <td>{{ $purchaseOrder->vendors['name'] }}</td>
+                            <td>{{ $purchaseOrder->vendor_id." - ".$purchaseOrder->vendors['name'] }}</td>
                         </tr>
                         <tr>
                             <th>Payment Term</th>
@@ -62,10 +62,51 @@
                     <tbody>
                         @foreach($purchaseOrder->orderDetail as $key => $value)
                         <tr>
-                            <td>{{ $value->material_id." - ".$value->description }}</td>
-                            <td>{{ $value->unit }}</td>
+                            <td>{{ $value->material_id." - ".$value->short_text }}</td>
+                            <td>{{ \getUomCode($value->unit) }}</td>
                             <td>{{ $value->qty }}</td>
                             <td>{{ $value->price }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>PO Number</th>
+                            <th>Material</th>
+                            <th>Unit</th>
+                            <th>Qty</th>
+                            <th>Debit Credit</th>
+                            <th>Amount</th>
+                            <th>Item GR</th>
+                            <th>Doc Gr</th>
+                            <th>Ref Doc</th>
+                            <th>Delivery Completed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($purchaseOrder->orderGrDetail as $key => $value)
+                        <tr>
+                            <td>{{ $value->po_no }}</td>
+                            <td>{{ $value->material_no }}</td>
+                            <td>{{ $value->satuan }}</td>
+                            <td>{{ $value->qty }}</td>
+                            <td>{{ $value->debet_credit }}</td>
+                            <td>{{ $value->amount }}</td>
+                            <td>{{ $value->item_gr }}</td>
+                            <td>{{ $value->doc_gr }}</td>
+                            <td>{{ $value->reference_document }}</td>
+                            <td>{{ $value->delivery_completed }}</td>
                         </tr>
                         @endforeach
                     </tbody>

@@ -24,24 +24,34 @@
                     <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                             <tr>
+                                <th>Billing ID</th>
                                 <th>Faktur No.</th>
                                 <th>Invoice No.</th>
                                 <th>Status</th>
+                                <th>Approved Date</th>
+                                <th>Document No.</th>
+                                <th>Transfer Date</th>
                                 <th>&nbsp;</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($billing as $key => $rows)
                                 <tr>
+                                    <td>{{ $rows->billing_no }}</td>
                                     <td>{{ $rows->no_faktur }}</td>
                                     <td>{{ $rows->no_invoice }}</td>
                                     <td>{{ App\Models\Vendor\Billing::TypeStatus[$rows->status] }}</td>
+                                    <td>{{ $rows->updated_at }}</td>
+                                    <td>{{ $rows->document_no }}</td>
+                                    <td>{{ '-' }}</td>
                                     <td>
-                                        @if($rows->status != \App\Models\Vendor\Billing::Approved)
-                                        {{-- <a href="{{ route('vendor.billing-edit',$rows->id) }}" class="btn btn-primary btn-xs"><i class="fa fa-eye"></i> Show</a> --}}
-                                        {{-- <a href="" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Delete</a> --}}
-                                        {{-- <a href="{{ route('vendor.billing-show',$rows->id) }}" class="btn btn-info btn-xs"><i class="fa fa-eye"></i> Show</a> --}}
+                                        @if($rows->status == \App\Models\Vendor\Billing::Rejected )
+                                            <a href="{{ route('vendor.billing-edit',$rows->id) }}" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i> Edit</a>
                                         @endif
+                                        @if($rows->status == \App\Models\Vendor\Billing::Approved)
+                                        <a href="{{ route('vendor.billing-print',$rows->id) }}" class="btn btn-success btn-xs" target="_blank"><i class="fa fa-print"></i> Print</a>
+                                        @endif
+                                        <a href="{{ route('vendor.billing-show',$rows->id) }}" class="btn btn-info btn-xs"><i class="fa fa-eye"></i> Show</a>
                                     </td>
                                 </tr>
                             @endforeach

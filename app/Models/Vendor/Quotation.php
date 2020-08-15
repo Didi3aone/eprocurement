@@ -26,7 +26,7 @@ class Quotation extends Model
 
     public const TypeStatusApproval = [
         0 => 'Waiting For Approval',
-        10 => 'Waitinr Approval Proc Head',
+        10 => 'Waiting Approval Proc Head',
         20 => 'Approved',
         30 => 'Rejected'
     ];
@@ -71,6 +71,11 @@ class Quotation extends Model
         });
     }
 
+    public static function getQuotationById($id)
+    {
+        return Quotation::where('id',$id)->first();
+    }
+
     public function detail ()
     {
         return $this->hasMany(QuotationDetail::class, 'quotation_order_id', 'id');
@@ -89,5 +94,15 @@ class Quotation extends Model
     public function getTerm() 
     {
         return $this->hasOne(\App\Models\PaymentTerm::class,'payment_terms','payment_term');
+    }
+
+    public function getUserAss()
+    {
+        return $this->hasOne(\App\Models\User::class,'nik','approved_asspro');
+    }
+
+    public function getUserHead()
+    {
+        return $this->hasOne(\App\Models\User::class,'nik','approved_head');
     }
 }

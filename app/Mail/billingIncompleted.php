@@ -7,11 +7,11 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class enesisNotifEmailGr extends Mailable
+class billingIncompleted extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $po;
+    public $billing;
     public $name;
 
     /**
@@ -19,9 +19,9 @@ class enesisNotifEmailGr extends Mailable
      *
      * @return void
      */
-    public function __construct($po, $name)
+    public function __construct($billing, $name)
     {
-        $this->po = $po;
+        $this->billing = $billing;
         $this->name = $name;
     }
 
@@ -32,6 +32,6 @@ class enesisNotifEmailGr extends Mailable
      */
     public function build()
     {
-        return $this->subject('Good Receipts')->view('emails.vendors.purchaseOrderGr');
+        return $this->subject('BILLING ID '.$this->billing->billing_no." INCOMPLETED")->view('emails.billing.billingIncompleted');
     }
 }

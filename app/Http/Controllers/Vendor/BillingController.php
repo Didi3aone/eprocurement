@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBillingRequest;
 use Illuminate\Http\Request;
 use App\Models\PurchaseOrder;
+use App\Models\PurchaseOrdersDetail;
 use App\Models\Vendor\Billing;
 use App\Models\Vendor\BillingDetail;
 use App\Models\Vendor\VendorTaxNumbers;
@@ -198,7 +199,11 @@ class BillingController extends Controller
     public function create() 
     {
         $po_gr = PurchaseOrderGr::where('vendor_id', \Auth::user()->code)
-            ->where('qty','>',0)
+            ->select('doc_gr')
+            ->where('debet_credit','S')
+            ->where('is_cancel',PurchaseOrderGr::NoCancel)
+            ->groupBy('doc_gr')
+            ->orderBy('doc_gr','asc')
             ->get();
         $rekening =  VendorBankDetails::where('vendor_id', \Auth::user()->id)
             ->get()
@@ -211,8 +216,9 @@ class BillingController extends Controller
 
     public function store(StoreBillingRequest $request)
     {
-        \DB::beginTransaction();
+        // dd($request);
         try {
+            \DB::beginTransaction();
             // save file
             $filePoName = '';
             $suratJalan = '';
@@ -251,17 +257,17 @@ class BillingController extends Controller
                 $fileInvoice->move(public_path() . '/files/uploads/', $fileInvoiceName);
             }
 
-            $nominal_inv_after_ppn =  str_replace(',', '.', $request->nominal_inv_after_ppn);
+            $nominal_inv_after_ppn =  str_replace(',', '', $request->nominal_inv_after_ppn);
 
             $billing = new Billing;
-            $billing->billing_no            = '20'.substr(time(),14)."".time();
+            $billing->billing_no            = date('ymd').substr(time(),0,-25)."".time();
             $billing->tgl_faktur            = $request->tgl_faktur;
             $billing->no_faktur             = $request->no_faktur;
             $billing->no_invoice            = $request->no_invoice;
             $billing->tgl_invoice           = $request->tgl_invoice;
             $billing->nominal_inv_after_ppn = $nominal_inv_after_ppn;
             $billing->ppn                   = $request->ppn;
-            $billing->dpp                   = $request->dpp;
+            $billing->dpp                   = str_replace(',','',$request->dpp);
             $billing->no_rekening           = $request->no_rekening;
             $billing->no_surat_jalan        = $suratJalanName;
             $billing->npwp                  = $request->npwp;
@@ -306,17 +312,26 @@ class BillingController extends Controller
                 $billingDetail->material_doc_item           = $request->get('material_doc_item')[$key];
                 $billingDetail->cost_center_code            = $request->get('cost_center_code')[$key];
                 $billingDetail->tahun_gr                    = $request->get('tahun_gr')[$key];
-                $billingDetail->gr_date                     = $request->get('gr_date')[$key];
+                $billingDetail->gr_date                     = $request->get('posting_date')[$key];
+                $billingDetail->purchase_order_detail_id    = $request->get('purchase_order_detail_id')[$key];
+                $billingDetail->item_category               = $request->get('item_category')[$key];
+                $billingDetail->description                 = $request->get('description')[$key];
                 $billingDetail->save();
 
                 $po_gr = PurchaseOrderGr::where('po_no', $po_no)
                         ->where('po_item', $PO_ITEM)
-                        ->where('material_no', $material_no)
+                        ->where('doc_gr', $request->get('doc_gr')[$key])
+                        // ->where('material_no', $material_no)
                         ->first();
 
                 $po_gr->qty_billing = $qty;
-                $po_gr->qty = $qty_old - $qty;
+                $po_gr->qty         = $qty_old - $qty;
+                $po_gr->qty_old     = $qty_old;
                 $po_gr->save();
+
+                $poDetail = PurchaseOrdersDetail::where('id', $request->get('purchase_order_detail_id')[$key])->first();
+                $poDetail->qty_billing += $qty;
+                $poDetail->save();
             }
 
             \DB::commit();
@@ -334,42 +349,158 @@ class BillingController extends Controller
         $billing = Billing::find($id);
         $details = BillingDetail::where('billing_id', $id)
             ->get();
+        $rekening =  VendorBankDetails::where('vendor_id', \Auth::user()->id)
+            ->get()
+            ->pluck('account_no', 'id');
 
-        return view('vendor.billing.edit',compact('billing', 'details'));
+        return view('vendor.billing.edit',compact('billing', 'details','rekening'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            \DB::beginTransaction();
+            // save file
+            $filePoName = '';
+            $suratJalanName = '';
+            $fileFakturName  = '';
+            $fileInvoiceName = '';
+            $fileBebasName = '';
+            $path = 'billing/';
+
+            if ($request->file('po') != null) {
+                $filePo = $request->file('po');
+                $filePoName = time() . $filePo->getClientOriginalName();
+                $filePo->move(public_path() . '/files/uploads/', $filePoName);
+            }
+
+            if ($request->file('no_surat_jalan') != null) {
+                $suratJalan = $request->file('no_surat_jalan');
+                $suratJalanName = time() . $suratJalan->getClientOriginalName();
+                $suratJalan->move(public_path() . '/files/uploads/', $suratJalanName);
+            }
+
+            if ($request->file('surat_ket_bebas_pajak') != null) {
+                $fileBebas = $request->file('surat_ket_bebas_pajak');
+                $fileBebasName = time() . $fileBebas->getClientOriginalName();
+                $fileBebas->move(public_path() . '/files/uploads/', $fileBebasName);
+            }
+            
+            if ($request->file('file_faktur') != null) {
+                $fileFaktur = $request->file('file_faktur');
+                $fileFakturName = time() . $fileFaktur->getClientOriginalName();
+                $fileFaktur->move(public_path() . '/files/uploads/', $fileFakturName);
+            }
+            
+            if ($request->file('file_invoice') != null) {
+                $fileInvoice = $request->file('file_invoice');
+                $fileInvoiceName = time() . $fileInvoice->getClientOriginalName();
+                $fileInvoice->move(public_path() . '/files/uploads/', $fileInvoiceName);
+            }
+
+            $nominal_inv_after_ppn =  str_replace(',', '', $request->nominal_inv_after_ppn);
+
+            $billing = Billing::find($id);
+            $billing->tgl_faktur            = $request->tgl_faktur;
+            $billing->no_faktur             = $request->no_faktur;
+            $billing->no_invoice            = $request->no_invoice;
+            $billing->tgl_invoice           = $request->tgl_invoice;
+            $billing->nominal_inv_after_ppn = $nominal_inv_after_ppn;
+            $billing->ppn                   = $request->ppn;
+            $billing->dpp                   = $request->dpp;
+            $billing->no_rekening           = $request->no_rekening;
+            $billing->npwp                  = $request->npwp;
+            $billing->status                = Billing::WaitingApprove;
+            
+            if( $suratJalanName != '' ) {
+                $billing->no_surat_jalan        = $suratJalanName;
+            }
+            if( $fileBebasName != '' ) {
+                $billing->surat_ket_bebas_pajak = $fileBebasName;
+            } 
+            if( $filePoName != '' ) {
+                $billing->po                    = $filePoName;
+            }
+            if( $fileFakturName != '' ) {
+                $billing->file_faktur           = $fileFakturName;
+            }
+            if( $fileInvoiceName != '' ) {
+                $billing->file_invoice          = $fileInvoiceName;
+            }
+            $billing->keterangan_po         = $request->keterangan_po;
+            $billing->vendor_id             = Auth::user()->code;
+            $billing->save();
+
+            if( $request->has('idDetails') ) {
+                foreach ($request->get('idDetails') as $key => $val) {
+                    $billingDetail = BillingDetail::find($val);
+                    //jika rubah qty
+                    if( $billingDetail->qty != $request->get('qty')[$key] ) {
+                        $poGr = PurchaseOrderGr::where('po_no', $billingDetail->po_no)
+                            ->where('po_item', $billingDetail->PO_ITEM)
+                            ->where('doc_gr', $billingDetail->doc_gr)
+                            ->where('material_no', $billingDetail->material_id)
+                            ->first();
+
+                        $poGr->qty    += $billingDetail->qty;
+                        $poGr->update();
+
+                        $poDetail = PurchaseOrdersDetail::find($billingDetail->purchase_order_detail_id);
+                        $poDetail->qty_billing -= $billingDetail->qty;
+                        $poDetail->update();
+                    }
+
+                    $poNo               = $request->get('po_no')[$key];
+                    $qty                = $request->get('qty')[$key];
+                    $qty_old            = $request->get('qty_old')[$key];
+
+                    $billingDetail->billing_id   = $id;
+                    $billingDetail->po_no        = $poNo;
+                    $billingDetail->qty          = $qty;
+                    $billingDetail->qty_old      = $qty_old;
+                    $billingDetail->update();
+
+                    $_poGr = PurchaseOrderGr::where('po_no', $poNo)
+                            ->where('po_item', $billingDetail->PO_ITEM)
+                            // ->where('material_no', $billingDetail->material_id)
+                            ->where('doc_gr', $billingDetail->doc_gr)
+                            ->first();
+
+                    $_poGr->qty_billing = $qty;
+                    $_poGr->qty         = $qty_old - $qty;
+                    $_poGr->update();
+
+                    $poDetail_ = PurchaseOrdersDetail::find($billingDetail->purchase_order_detail_id);
+                    $poDetail_->qty_billing = $qty;
+                    $poDetail_->update();
+                }
+            }
+
+            \DB::commit();
+        } catch (\Throwable $th) {
+            throw $th;
+            \DB::rollback();
+            return redirect()->route('vendor.billing-create')->withInput();
+        }
+
+        return redirect()->route('vendor.billing')->with('status', 'Billing has been successfully saved');
     }
 
     public function poGR ($po_no)
     { 
-        $model = PurchaseOrderGr::where('po_no', $po_no)->first();
-
-        $material_description = $model->material ? $model->material->description : '';
+        $model = PurchaseOrderGr::with('material')->where('doc_gr', $po_no)
+            ->where('qty','>','0.00')
+            ->where('is_cancel',PurchaseOrderGr::NoCancel)
+            ->where('debet_credit','S')
+            ->get();
         
-        $data['po_no']                      = $model->po_no;
-        $data['po_item']                    = $model->po_item;
-        $data['material']                   = $model->material_no;
-        $data['qty']                        = $model->qty;
-        $data['doc_gr']                     = $model->doc_gr;
-        $data['item_gr']                    = $model->item_gr;
-        $data['posting_date']               = $model->posting_date;
-        $data['reference_document']         = $model->reference_document;
-        $data['description']                = $material_description;
-        $data['debet_credit']               = $model->debet_credit;
-        $data['currency']                   = $model->currency;
-        $data['plant']                      = $model->plant;
-        $data['gl_account']                 = $model->gl_account;
-        $data['profit_center']              = $model->profit_center;
-        $data['amount']                     = $model->amount;
-        $data['material_document']          = $model->material_document;
-        $data['reference_document_item']    = $model->reference_document_item;
-        $data['doc_gr']                     = $model->doc_gr;
-        $data['storage_location']           = $model->storage_location;
-        $data['satuan']                     = $model->satuan;
-        $data['material_doc_item']          = $model->material_doc_item;
-        $data['price_per_pc']               = $model->price_per_pc;
-        $data['cost_center_code']           = $model->cost_center_code;
-        $data['tahun_gr']                   = $model->tahun_gr;
-        
+        return response()->json($model);
+    }
 
-        return response()->json($data);
+    public function printBilling($id)
+    {
+        $billingId = Billing::find($id);
+        $billingId = $billingId->billing_no;
+        return view('vendor.billing.print',compact('billingId'));
     }
 }

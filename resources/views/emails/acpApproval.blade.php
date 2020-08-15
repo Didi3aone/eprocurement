@@ -75,22 +75,107 @@
 								}
 								$rowSpan = count(\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id));
 							@endphp
-							<tr>
-								<td rowspan={{ $rowSpan }}>{{ $rows->vendor['name'] }}</td>
-								<td rowspan={{ $rowSpan }}>{!! $winner !!}</td>
-								@foreach (\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id) as $row)
+							@foreach (\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id) as $row)
+								<tr>
+									<td>{{ $rows->vendor['name'] }}</td>
+									<td>{!! $winner !!}</td>
 									<td>{{ $row->material_id ?? '-'}}</td>
 									<td>{{ \App\Models\MasterMaterial::getMaterialName($row->material_id)->description ?? $row->material_id  }}</td>
 									<td>{{ $row->uom_code }}</td>
+									<td>{{ \toDecimal($row->price) }}</td>
 									<td>{{ $row->qty }}</td>
-									<td>{{ $row->currency }}</td>
-									<td>{{ $row->price }}</td>
-							</tr>
+								</tr>
 							@endforeach
 						@endforeach
 					</tbody>
 				</table>
 			</div>
+
+			@if($acp->reference_acp_no != '' )
+			<h3 style="font-size: 14px; margin: 0;">
+				Referal No{{  $acp->reference_acp_no }}
+			</h3>
+			<div style="border-top: 1px dashed #ddd; border-bottom:1px dashed #ddd">
+				<table style="width: 100%; background:#f2f2f2;" border=1>
+					<thead>
+					<tr>
+						<th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+                            <div>
+								Vendor
+							</div>
+						</th>
+						<th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+                            <div>
+								Winner 	
+							</div>
+						</th>
+                        <th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+                            <div>
+								Material 	
+							</div>
+						</th>
+						<th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+                            <div>
+								Description 	
+							</div>
+						</th>
+						<th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+                            <div>
+								Unit 	
+							</div>
+						</th>
+						<th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+                            <div>
+								Price 	
+							</div>
+						</th>
+						<th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+                            <div>
+								Per 	
+							</div>
+						</th>
+						<th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+                            <div>
+								Qty PR 	
+							</div>
+						</th>
+						<th style="font-size: 13px; padding: 25px; line-height: 1.5; border-right:1px dashed #ddd; border-left:1px dashed #ddd">
+                            <div>
+								Total Price 	
+							</div>
+						</th>
+					</tr>
+					</thead>
+					<tbody>
+						@php
+							$acps = \App\Models\AcpTable::where('reference_acp_no', $acp->reference_acp_no)->first();
+						@endphp
+						@foreach($acps->detail as $rows)
+							@php
+								$winner = '<span class="badge badge-danger">Lose</span>';
+								if( $rows->is_winner == \App\Models\AcpTableDetail::Winner ) {
+									$winner = '<span class="badge badge-primary">Winner</span>';
+								}
+								$rowSpan = count(\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id));
+							@endphp
+							@foreach (\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id) as $row)
+								<tr>
+									<td>{{ $rows->vendor['name'] }}</td>
+									<td>{!! $winner !!}</td>
+									<td>{{ $row->material_id ?? '-'}}</td>
+									<td>{{ \App\Models\MasterMaterial::getMaterialName($row->material_id)->description ?? $row->material_id  }}</td>
+									<td>{{ $row->uom_code }}</td>
+									<td>{{ \toDecimal($row->price) }}</td>
+									<td>{{ $row->qty }}</td>
+									<td>{{ \toDecimal($row->qty_pr) }}</td>
+									<td>{{ \toDecimal($row->total_price) }}</td>
+								</tr>
+							@endforeach
+						@endforeach
+					</tbody>
+				</table>
+			</div>
+			@endif
             <p style="font-size: 13px;">
                 Untuk info detail <a href='https://eprocurement.enesis.com'>link</a>
             </p>

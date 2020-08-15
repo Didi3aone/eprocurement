@@ -12,6 +12,9 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
+            <div class="card-header">
+                <a href="{{ route('admin.purchase-request.index') }}" class="btn btn-inverse">Cancel</a>
+            </div>
             <div class="card-body">
                 <form action="{{ route('admin.quotation.winner') }}" method="post">
                     <div class="row">

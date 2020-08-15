@@ -22,6 +22,7 @@ class VendorWithholdingTaxTypeExport implements FromCollection, WithHeadings, Wi
                     'vendor_withholding_tax_type.subject'
                 )
                 ->join('vendors', 'vendors.id', 'vendor_withholding_tax_type.vendor_id')
+                ->where('vendors.is_export', 0)
                 ->get();
         return $data;
     }

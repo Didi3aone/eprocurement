@@ -9,13 +9,15 @@
         </ol>
     </div>
 </div>
-@if(session('status'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-        {{ session('status') }}
+@if(Session::has('notif'))   
+    @foreach(Session::get('notif')->item as $key => $value)
+        <div class="alert alert-danger alert-dismissible fade show col-lg-12" role="alert">
+        <strong>Error  !!!</strong> <br/> {{ $value->MESSAGE }}
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
-    </div>
+        </div>
+    @endforeach
 @endif
 <div class="row">
     <div class="col-12">
@@ -53,7 +55,9 @@
                                         <th>Material Group</th>
                                         <th>Purchasing Group</th>
                                         <th>Requisitioner</th>
+                                        <th>Last PO</th>
                                         <th>Req Tracking Number</th>
+                                        <th>Delivery Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -110,6 +114,9 @@
 </script>
 <script id="hidden_doc" type="text-x-custom-template">
     <input type="text" class="form-control doctype" readonly name="doctype[]" style="width: 70%;">
+</script>
+<script id="hidden_group" type="text-x-custom-template">
+    <input type="text" class="form-control groups" readonly name="group[]" style="width: 70%;">
 </script>
 <script id="hidden_dialog" type="text-x-custom-template">
 <a 
@@ -193,6 +200,7 @@
         let quantities = []
         let prices = []
         let docs = []
+        let groups = []
         
         for (let i = 0; i < check_pr.length; i++) {
             let id = check_pr[i].value
@@ -200,19 +208,21 @@
             // quantities.push($('.qty_pr_' + id).val())
             quantities.push($('.qty_' + id).val())
             docs.push($('.docs_' + id).val())
+            groups.push($('.groups_' + id).val())
             // quantities.push($('.qty_open_' + id).val())
         }
-        console.log('ids', ids, 'quantities', quantities,'docs',docs)
+        console.log('ids', ids, 'quantities', quantities,'docs',docs,'groups',groups)
 
         ids = btoa(ids)
         quantities = btoa(quantities)
         docs = btoa(docs)
+        groups = btoa(groups)
 
         $('.bidding-online').attr('href', '{{ url("admin/purchase-request-online") }}/' + ids + '/' + quantities)
 
         if (check_pr.length > 0) {
-            $('.bidding-repeat').attr('href', '{{ url("admin/purchase-request-repeat") }}/' + ids + '/' + quantities +'/'+ docs)
-            $('.bidding-direct').attr('href', '{{ url("admin/purchase-request-direct") }}/' + ids + '/' + quantities +'/'+ docs)
+            $('.bidding-repeat').attr('href', '{{ url("admin/purchase-request-repeat") }}/' + ids + '/' + quantities +'/'+ docs + '/' + groups)
+            $('.bidding-direct').attr('href', '{{ url("admin/purchase-request-direct") }}/' + ids + '/' + quantities +'/'+ docs + '/' + groups)
         } else {
             alert('Please check your material!')
             $('#modal_create_po').modal('hide')
@@ -226,12 +236,15 @@
         processing: true,
         serverSide: true,
         pageLength: 50,
+        scrollY         : "800px",
+        scrollCollapse  : true,
         ajax: "/admin/purchase-request",
         "createdRow": function( row, data, dataIndex ) {
             var tp1 = $('#hidden_input').html()
             var tp2 = $('#hidden_qty').html()
             var tp3 = $('#hidden_dialog').html()
             var tp4 = $("#hidden_doc").html()
+            var tp5 = $("#hidden_group").html()
 
             // console.log(row,data,dataIndex)
             $modal = $(row).children('td')[1]
@@ -239,36 +252,42 @@
             $($modal).children('a').text(data[1])
             $tbody = $($modal).find('.modal tbody')
             $tbody.append('<tr></tr>')
-            data[19].map(function(list){
+            data[20].map(function(list){
                 $tbody.children('tr').append(`<td>${list}</td>`)
             })
             $($modal).children('a').on('click', function() {
                 $(this).parent().children('.modal').modal('toggle')
             })
+            console.log(data[20][3])
             $tp1 = $(row).children('td')[0]
             $tp2 = $(row).children('td')[11]
             $tp4 = $(row).children('td')[2]
+            $tp5 = $(row).children('td')[15]
             $open = $(row).children('td')[12]
             $($open).addClass('qty_open_text')
             $($tp1).html(tp1)
             $($tp2).html(tp2)
             $($tp4).html(tp4)
+            $($tp5).html(tp5)
             $input = $($tp2).children('input')
             $inputs = $($tp4).children('input')
-            $input.addClass(`qty_${data[19][0]}`)
-            $input.val(data[19][1])
-            $inputs.addClass(`docs_${data[19][0]}`)
-            $inputs.val(data[19][2])
+            $inputss = $($tp5).children('input')
+            $input.addClass(`qty_${data[20][0]}`)
+            $input.val(data[20][1])
+            $inputs.addClass(`docs_${data[20][0]}`)
+            $inputs.val(data[20][2])
+            $inputss.addClass(`groups_${data[20][0]}`)
+            $inputss.val(data[20][3])
             $input.on('change blur keyup', function (e) {
                 e.preventDefault()
                 countQty($(this))
             })
             $check = $($tp1).children('.check_pr')
-            $check.attr('id', `check_${data[19][0]}`)
-            $check.val(data[19][0])
+            $check.attr('id', `check_${data[20][0]}`)
+            $check.val(data[20][0])
             $pr = $($tp1).children('.qty_pr')
-            $pr.val(data[19][1])
-            $($tp1).children('label').attr('for', `check_${data[19][0]}`)
+            $pr.val(data[20][1])
+            $($tp1).children('label').attr('for', `check_${data[20][0]}`)
         },
         searchDelay: 750,
         order: [[0, 'desc']],

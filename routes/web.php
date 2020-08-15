@@ -11,6 +11,7 @@ Route::get('/home', function () {
 
 Auth::routes();
 
+Route::get('/getMrp','GetMrpController@handle');
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'middleware' => ['auth']], function () {
     Route::get('/', 'HomeController@index')->name('home');
 
@@ -30,6 +31,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('vendors/migrate_bank', 'VendorController@migrate_bank')->name('vendors.migrate_bank');
     Route::post('vendors/set-password', 'VendorController@setPassword')->name('vendors.set-password');
     Route::get('get-vendors', 'VendorController@getVendor')->name('get-vendors');
+    Route::post('vendors/add-bank', 'VendorController@addBank')->name('vendors.add-bank');
+    Route::post('vendors/delete-bank', 'VendorController@deleteBank')->name('vendors.delete-bank');
     Route::resource('vendors', 'VendorController');
 
     // GLs
@@ -138,8 +141,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::put('purchase-request-approval/{id}', 'PurchaseRequestController@approvalPr')->name('purchase-request-approval');
     Route::get('purchase-request-show/{id}', 'PurchaseRequestController@showDetail')->name('purchase-request-show');
     Route::get('purchase-request-online/{ids}/{quantities}', 'PurchaseRequestController@online')->name('purchase-request-online');
-    Route::get('purchase-request-repeat/{ids}/{quantities}/{docs}', 'PurchaseRequestController@repeat')->name('purchase-request-repeat');
-    Route::get('purchase-request-direct/{ids}/{quantities}/{docs}', 'PurchaseRequestController@direct')->name('purchase-request-direct');
+    Route::get('purchase-request-repeat/{ids}/{quantities}/{docs}/{groups}', 'PurchaseRequestController@repeat')->name('purchase-request-repeat');
+    Route::get('purchase-request-direct/{ids}/{quantities}/{docs}/{groups}', 'PurchaseRequestController@direct')->name('purchase-request-direct');
     Route::get('purchase-request-project', 'PurchaseRequestController@approvalProject')->name('purchase-request-project');
     Route::put('purchase-request-project-approval', 'PurchaseRequestController@approvalPrStaffPurchasing')->name('purchase-request-project-approval');
     Route::put('purchase-request-project-rejected', 'PurchaseRequestController@rejectedPr')->name('purchase-request-project-rejected');
@@ -156,23 +159,36 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // purchase order
     Route::get('purchase-order-quotation/{po_no}', 'PurchaseOrderController@quotation')->name('purchase-order-quotation');
     Route::post('purchase-order-make-quotation', 'PurchaseOrderController@makeQuotation')->name('purchase-order-make-quotation');
+    Route::get('purchase-order-direct', 'PurchaseOrderController@indexDirect')->name('purchase-order-direct');
     Route::post('purchase-order-quotation-approval/{id}', 'PurchaseOrderController@approveQuotation')->name('purchase-order-quotation-approval');
     Route::get('purchase-order-quotation-show', 'PurchaseOrderController@viewQuotation')->name('purchase-order-quotation-show');
     Route::post('purchase-order-make-bidding', 'PurchaseOrderController@makeBidding')->name('purchase-order-make-bidding');
     Route::get('purchase-order-create-po/{id}', 'PurchaseOrderController@createPo')->name('purchase-order-create-po');
     Route::get('purchase-order-approval-po/{id}', 'PurchaseOrderController@approvalPo')->name('purchase-order-approval-po');
+    Route::put('purchase-order-approval-change-ass', 'PurchaseOrderController@approvalChangeAss')->name('purchase-order-approval-change-ass');
+    Route::put('purchase-order-approval-change-head', 'PurchaseOrderController@approvalChangeHead')->name('purchase-order-approval-change-head');
+    Route::put('purchase-order-update-complete/{id}', 'PurchaseOrderController@storeDelivComplete')->name('purchase-order-update-complete');
     Route::get('purchase-order/release', 'PurchaseOrderController@release')->name('purchase-order.release');
     Route::get('purchase-order/direct', 'PurchaseOrderController@direct')->name('purchase-order.direct');
     Route::put('purchase-order-destroy', 'PurchaseOrderController@destroyItem')->name('purchase-order-destroy');
-    Route::get('purchase-order-print/{id}','PurchaseOrderController@printPo')->name('purchase-order-print');
-    Route::get('purchase-order-change-ass','PurchaseOrderController@approvalPoChange')->name('purchase-order-change-ass');
-    Route::get('purchase-order-change-head','PurchaseOrderController@approvalPoChangeHead')->name('purchase-order-change-head');
+    Route::put('purchase-order-restore', 'PurchaseOrderController@restoreItem')->name('purchase-order-restore');
+    Route::get('purchase-order-print/{id}', 'PurchaseOrderController@printPo')->name('purchase-order-print');
+    Route::get('purchase-order-show-ass/{id}', 'PurchaseOrderController@showApprovalAss')->name('purchase-order-show-ass');
+    Route::get('purchase-order-show-head/{id}', 'PurchaseOrderController@showApprovalHead')->name('purchase-order-show-head');
+    Route::get('purchase-order-delivery/{id}', 'PurchaseOrderController@deliveryComplete')->name('purchase-order-delivery');
+    Route::get('purchase-order-change-ass', 'PurchaseOrderController@approvalPoChange')->name('purchase-order-change-ass');
+    Route::get('purchase-order-change-head', 'PurchaseOrderController@approvalPoChangeHead')->name('purchase-order-change-head');
+    Route::get('purchase-order-check-qty-pr', 'PurchaseOrderController@checkQtyPr')->name('purchase-order-check-qty-pr');
     Route::resource('purchase-order', 'PurchaseOrderController');
+
+    Route::resource('purchase-order-detail', 'PurchaseOrderDetailController');
 
     // quotation
     Route::delete('quotation/destroy', 'QuotationController@massDestroy')->name('quotation.massDestroy');
     Route::post('quotation/import', 'QuotationController@import')->name('quotation.import');
     Route::get('quotation/online', 'QuotationController@online')->name('quotation.online');
+
+    Route::get('quotation-test-run/{id}', 'QuotationController@TestRun')->name('quotation-test-run');
 
     // repeat
     // Route::get('quotation/repeat', 'QuotationController@repeat')->name('quotation.repeat');
@@ -247,15 +263,19 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('billing-show/{id}', 'BillingController@show')->name('billing-show');
     Route::get('billing-show-staff/{id}', 'BillingController@showStaff')->name('billing-show-staff');
     Route::put('billing-post-approved', 'BillingController@storeApproved')->name('billing-post-approved');
+    Route::put('billing-post-verify', 'BillingController@storeVerify')->name('billing-post-verify');
     Route::put('billing-post-rejected', 'BillingController@storeRejected')->name('billing-post-rejected');
+    Route::put('billing-post-incompleted', 'BillingController@storeIncompleted')->name('billing-post-incompleted');
 
     // ACP
     Route::get('acp-direct', 'AcpController@directAcp')->name('acp-direct');
     Route::get('acp-bidding', 'AcpController@biddingAcp')->name('acp-bidding');
     Route::get('acp-approval', 'AcpController@acpApproval')->name('acp-approval');
+    Route::get('list-acp', 'AcpController@listAcpApproval')->name('list-acp');
     Route::post('acp-post-rejected', 'AcpController@acpApprovalReject')->name('acp-post-rejected');
     Route::get('show-acp-direct/{id}', 'AcpController@showDirect')->name('show-acp-direct');
     Route::get('show-acp-approval/{id}', 'AcpController@showAcpApproval')->name('show-acp-approval');
+    Route::get('show-acp-approval-finish/{id}', 'AcpController@showAcpApprovalFinish')->name('show-acp-approval-finish');
     Route::get('show-acp-bidding/{id}', 'AcpController@showBidding')->name('show-acp-bidding');
     Route::post('post-acp-direct', 'AcpController@approvalDirectAcp')->name('post-acp-direct');
     Route::post('post-acp-approval', 'AcpController@approvalAcp')->name('post-acp-approval');
@@ -268,6 +288,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('acp-net-price', 'MasterAcpController@getNetPrice')->name('acp-net-price');
     Route::resource('master-acp', 'MasterAcpController');
 
+    Route::resource('ship-to', 'MasterShipToController');
+
+    Route::get('report-service-level','ReportController@index')->name('report-service-level');
     // SOAP
     // Route::get('soap', 'SoapController@show')->name('soap');
 });
@@ -280,6 +303,11 @@ Route::get('vendor/register', '\App\Http\Controllers\AuthVendor\LoginController@
 Route::post('vendor/register', '\App\Http\Controllers\AuthVendor\LoginController@register')->name('vendor.register');
 Route::post('vendor/login', '\App\Http\Controllers\AuthVendor\LoginController@login')->name('vendor.login');
 Route::get('vendor/set-password/{code}', '\App\Http\Controllers\AuthVendor\LoginController@setPassword')->name('vendor.set-password');
+// Reset Pass
+Route::get('vendor/password/reset/{token}', '\App\Http\Controllers\AuthVendor\ResetPasswordController@showResetForm')->name('vendor.password.reset');
+Route::post('vendor/password/reset', '\App\Http\Controllers\AuthVendor\ResetPasswordController@reset')->name('vendor.password.update');
+Route::get('vendor/password/reset', '\App\Http\Controllers\AuthVendor\ForgotPasswordController@showLinkRequestForm')->name('vendor.password.request');
+Route::post('vendor/password/email', '\App\Http\Controllers\AuthVendor\ForgotPasswordController@sendResetLinkEmail')->name('vendor.password.email');
 
 Route::group(['prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor', 'middleware' => ['auth:vendor']], function () {
     Route::get('/', 'VendorController@index')->name('home');
@@ -320,11 +348,17 @@ Route::group(['prefix' => 'vendor', 'as' => 'vendor.', 'namespace' => 'Vendor', 
     Route::get('billing-create', 'BillingController@create')->name('billing-create');
     Route::get('billing', 'BillingController@index')->name('billing');
     Route::get('billing-show/{id}', 'BillingController@show')->name('billing-show');
+    Route::get('billing-print/{id}', 'BillingController@printBilling')->name('billing-print');
     Route::get('billing-po-gr/{po_no}', 'BillingController@poGR')->name('billing-po-gr');
     Route::get('billing-edit/{id}', 'BillingController@edit')->name('billing-edit');
     Route::post('billing-post', 'BillingController@store')->name('billing-post');
-    Route::post('billing-post-update/{id}', 'BillingController@store')->name('billing-post-update');
+    Route::post('billing-post-update/{id}', 'BillingController@update')->name('billing-post-update');
 
     // logout
     Route::post('logout', '\App\Http\Controllers\AuthVendor\LoginController@logout')->name('logout');
+});
+
+Route::group(['middleware' => ['auth:vendor,web']], function () {
+    Route::get('change-password', 'ChangePasswordController@index')->name('form.change.password');
+    Route::post('change-password', 'ChangePasswordController@store')->name('change.password');
 });

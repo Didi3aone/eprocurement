@@ -39,7 +39,6 @@ class StoreBillingRequest extends FormRequest
             'no_rekening' => [
                 'required',
             ],
-           
         ];
     }
 }

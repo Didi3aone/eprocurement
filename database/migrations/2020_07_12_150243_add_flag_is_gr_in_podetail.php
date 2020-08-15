@@ -28,11 +28,13 @@ class AddFlagIsGrInPodetail extends Migration
         Schema::table('purchase_orders', function (Blueprint $table) {
             $table->string('approved_asspro')->nullable();
             $table->string('approved_head')->nullable();
+            $table->string('reject_reason')->nullable();
         });
 
         Schema::table('vendors', function (Blueprint $table) {
             $table->string('swift_code')->nullable();
             $table->integer('is_export')->default(0);
+            $table->integer('is_approve_proc')->default(0);
         });
 
         Schema::table('master_acp_materials', function (Blueprint $table) {

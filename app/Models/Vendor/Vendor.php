@@ -2,27 +2,27 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Hash;
-use Illuminate\Auth\Notifications\ResetPassword;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Carbon\Carbon;
 use Laravel\Passport\HasApiTokens;
+use App\Notifications\ResetPassword;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Vendor extends Authenticatable
 {
+    use Notifiable;
+    use HasApiTokens;
     protected $connection = 'pgsql';
-
-    use Notifiable, HasApiTokens;
     protected $guard = 'vendor';
+    protected $rememberTokenName = false;
 
     protected $fillable = [
         'code',
         'vendor_title_id',
         'vendor_bp_group_id',
         'specialize',
-        'company_name', 
+        'company_name',
         'different_city',
         'city',
         'postal_code',
@@ -42,22 +42,25 @@ class Vendor extends Authenticatable
         'email',
         'email_2',
         'password',
-        'status'
+        'status',
+        'company_web',
+        'remember_token',
+        'is_export'
     ];
 
     public function getPaymentTerms($vendorCode)
     {
         return Vendor::where('code', $vendorCode)->first()->payment_terms;
     }
-    
+
     public function getEmailVerifiedAtAttribute($value)
     {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('panel.date_format') . ' ' . config('panel.time_format')) : null;
+        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('panel.date_format').' '.config('panel.time_format')) : null;
     }
 
     public function setEmailVerifiedAtAttribute($value)
     {
-        $this->attributes['email_verified_at'] = $value ? Carbon::createFromFormat(config('panel.date_format') . ' ' . config('panel.time_format'), $value)->format('Y-m-d H:i:s') : null;
+        $this->attributes['email_verified_at'] = $value ? Carbon::createFromFormat(config('panel.date_format').' '.config('panel.time_format'), $value)->format('Y-m-d H:i:s') : null;
     }
 
     public function setPasswordAttribute($input)
@@ -79,6 +82,6 @@ class Vendor extends Authenticatable
 
     public function department()
     {
-        return $this->hasOne(\App\Models\Department::class,'code','department_id');
+        return $this->hasOne(\App\Models\Department::class, 'code', 'department_id');
     }
 }

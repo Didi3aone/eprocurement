@@ -2,6 +2,10 @@
 
 namespace App\Console;
 
+use App\Console\Commands\PoGrGet;
+use App\Console\Commands\PoGrGetMin;
+use App\Console\Commands\PoMrpGet;
+use App\Console\Commands\ClonePrMrp;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -13,7 +17,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        PoGrGet::class,
+        PoGrGetMin::class
     ];
 
     /**
@@ -24,8 +29,23 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->command('queue:work')->hourly();
+        
+        //get GR debet S
+        $schedule->command('po:gr')->everyMinute();
+
+        //get GR debet H
+        $schedule->command('po:gr-min')->cron('*/2 * * * *');
+
+        //get pr mrp
+        $schedule->command('MRP:GET')->timezone('Asia/Jakarta')->at('06:09');
+        //clone
+        $schedule->command('CLONE:MRP')->timezone('Asia/Jakarta')->at('06:15');
+
+        //get pr mrp
+        $schedule->command('MRP:GET')->timezone('Asia/Jakarta')->at('14:58');
+        //clone
+        $schedule->command('CLONE:MRP')->timezone('Asia/Jakarta')->at('15:02');
     }
 
     /**

@@ -41,8 +41,13 @@ class PurchaseOrderGr extends Model
         'price_per_pc',
         'qty_billing',
         'cost_center_code',
-        'posting_date'
+        'posting_date',
+        'item_category',
+        'description'
     ];
+
+    public const YesCancel = 0;
+    public const NoCancel = 1;
 
     public static function boot()
     {

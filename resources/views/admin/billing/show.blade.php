@@ -12,7 +12,7 @@
 <div class="row">
     <div class="col-12">
         <form class="form-material m-t-40" action="{{ route("admin.billing-store") }}" enctype="multipart/form-data" method="post">
-            @csrf
+            @csrf 
             @method('put')
             <input type="hidden" name="id" value="{{ $billing->id }}">
             <div class="card">
@@ -109,10 +109,10 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        {{-- <div class="form-group col-lg-4">
+                        <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.document_no') }}</label>
-                            <input type="text" class="form-control form-control-line" name="document_no" value="" readonly> 
-                        </div> --}}
+                            <input type="text" class="form-control form-control-line" name="document_no" value="{{ $billing->document_no }}" readonly> 
+                        </div>
                         {{-- <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.proposal_date') }}</label>
                             <input type="text" class="form-control form-control-line " name="proposal_date" value="{{ $billing->proposal_date ?? old('proposal_date', '') }}" readonly> 
@@ -198,6 +198,7 @@
                                         <th style="width:10%;">Qty</th>
                                         <th>Value</th>
                                         <th>Material</th>
+                                        <th>Description</th>
                                         <th>PO No</th>
                                         <th>PO Item</th>
                                         <th>GR Doc</th>
@@ -212,7 +213,8 @@
                                         <input type="hidden" name="po_no" value="{{ $val->po_no }}">
                                         <td>{{ $val->qty }}</td>
                                         <td>{{ $val->amount }}</td>
-                                        <td>{{ $val->material_id." - ".$val->material->description }}</td>
+                                        <td>{{ $val->material_id }}</td>
+                                        <td>{{ $val->description }}</td>
                                         <td>{{ $val->po_no }}</td>
                                         <td>{{ $val->PO_ITEM }}</td>
                                         <td>{{ $val->doc_gr }}</td>
@@ -227,7 +229,7 @@
                     <br>
                     <br>
                     <div class="form-actions">
-                        <a href="javascript:;" id="submit" type="button" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.submit') }}</a>
+                        {{-- <a href="javascript:;" id="submit" type="button" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.submit') }}</a> --}}
                         <a href="{{ route('admin.billing-spv-list') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i>Back To List</a>
                     </div>
                 </div>
@@ -254,7 +256,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-trash"></i> Close</button>
-                    <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Save</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Submit</button>
                 </div>
             </form>
         </div>

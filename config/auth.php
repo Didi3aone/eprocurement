@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Authentication Defaults
@@ -14,7 +13,7 @@ return [
     */
 
     'defaults' => [
-        'guard'     => 'web',
+        'guard' => 'web',
         'passwords' => 'users',
     ],
 
@@ -37,17 +36,17 @@ return [
 
     'guards' => [
         'web' => [
-            'driver'   => 'session',
+            'driver' => 'session',
             'provider' => 'users',
         ],
         'vendor' => [
-            'driver'   => 'session',
+            'driver' => 'session',
             'provider' => 'vendors',
         ],
         'api' => [
-            'driver'   => 'passport',
+            'driver' => 'passport',
             'provider' => 'users',
-            'hash'     => false,
+            'hash' => false,
         ],
     ],
 
@@ -71,11 +70,11 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model'  => App\Models\User::class,
+            'model' => App\Models\User::class,
         ],
         'vendors' => [
             'driver' => 'eloquent',
-            'model'  => App\Models\Vendor::class,
+            'model' => App\Models\Vendor::class,
         ],
 
         // 'users' => [
@@ -102,14 +101,13 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
-            'table'    => 'password_resets',
-            'expire'   => 60,
+            'table' => 'password_resets',
+            'expire' => 60,
         ],
-        // 'vendors' => [
-        //     'provider' => 'vendors',
-        //     'table' => 'vendor_password_resets',
-        //     'expire'   => 60
-        // ]
+        'vendors' => [
+            'provider' => 'vendors',
+            'table' => 'password_resets',
+            'expire' => 60,
+        ],
     ],
-
 ];

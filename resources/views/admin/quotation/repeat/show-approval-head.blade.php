@@ -12,6 +12,9 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
+            <div class="card-header">
+                <a href="{{ route('admin.quotation-repeat.index') }}" class="btn btn-primary btn-xs">Back To List</a>
+            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-lg-12">
@@ -20,6 +23,10 @@
                                 <tr>
                                     <th>PO Eprocurement</th>
                                     <td>{{ $quotation->po_no }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Plant</th>
+                                    <td>{{ \getplan($quotation->detail[0]['plant_code'])->description }}</td>
                                 </tr>
                                 <tr>
                                     <th>Vendor</th>
@@ -32,6 +39,30 @@
                                 <tr>
                                     <th>Payment Terms</th>
                                     <td>{{ $quotation->getTerm['own_explanation'] }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Terms Of Payment description</th>
+                                    <td>{{ $quotation->notes }}</td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        Upload File
+                                    </th>
+                                    @if(isset($quotation->upload_file))
+                                        @php
+                                            $files = @unserialize($quotation->upload_file);
+                                        @endphp
+                                        @if( $files !== false )
+                                            <td>
+                                                @foreach( unserialize((string)$quotation->upload_file) as $fileUpload)
+                                                    <a href="{{ asset('files/uploads/'.$fileUpload) }}" target="_blank" download>
+                                                        {{ $fileUpload ??'' }}
+                                                    </a>
+                                                    <br>
+                                                @endforeach
+                                            </td>
+                                        @endif
+                                    @endif
                                 </tr>
                             </tbody>
                         </table>
@@ -49,16 +80,18 @@
                             <th>Qty</th>
                             <th>Currency</th>
                             <th>Price</th>
+                            <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($quotation->detail as $key => $value)
                             <tr>
-                                <td>{{ $value->material." - ".$value->description }}</td>
-                                <td>{{ $value->unit }}</td>
+                                <td>{{ $value->material." - ".$value->short_text }}</td>
+                                <td>{{ \App\Models\UomConvert::where('uom_1', $value->unit)->first()->uom_2 ?? $value->unit }}</td>
                                 <td>{{ $value->qty }}</td>
-                                <td>{{ $value->currency }}</td>
-                                <td>{{ $value->price }}</td>
+                                <td>{{ $quotation->currency }}</td>
+                                <td>{{ \toDecimal($value->price) }}</td>
+                                <td>{{ toDecimal(\removeComma($value->price) * $value->qty) }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -68,7 +101,7 @@
         <div class="row" style="margin-top: 20px">
             <div class="col-lg-12">
                 <div class="form-actions">
-                    <a href="#" class="btn btn-success approve" onclick="approve('{{ $quotation->id }}')" id="save"> <i class="fa fa-check"></i> Approve</a>
+                    <a href="#" class="btn btn-success approve" onclick="approve('{{ $quotation->po_no }}')" id="save"> <i class="fa fa-check"></i> Approve</a>
                     <button type="button" class="btn btn-danger" onclick="reject('{{ $quotation->id }}')"><i class="fa fa-times"></i>  Reject</button>
                 </div>
             </div>

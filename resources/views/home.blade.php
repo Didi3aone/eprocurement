@@ -36,6 +36,7 @@
     <!-- Column -->
     <div class="col-lg-3 col-md-6">
         <div class="card">
+            <a href="{{ route('admin.purchase-request.index') }}">
             <div class="card-body">
                 <div class="d-flex flex-row">
                     <div class="round round-lg align-self-center round-info"><i class="mdi mdi-cart-outline"></i></div>
@@ -44,35 +45,40 @@
                         <h5 class="text-muted m-b-0">Total PR</h5></div>
                 </div>
             </div>
+            </a>
         </div>
     </div>
     <!-- Column -->
     <!-- Column -->
     <div class="col-lg-3 col-md-6">
         <div class="card">
+            <a href="{{ route('admin.purchase-order.index') }}">
             <div class="card-body">
                 <div class="d-flex flex-row">
                     <div class="round round-lg align-self-center round-warning"><i class="mdi mdi-car"></i></div>
                     <div class="m-l-10 align-self-center">
-                        <h3 class="m-b-0 font-lgiht">0</h3>
+                        <h3 class="m-b-0 font-lgiht">{{ $poTotal }}</h3>
                         <h5 class="text-muted m-b-0">Total PO</h5></div>
                 </div>
             </div>
+            </a>
         </div>
     </div>
     <!-- Column -->
     <!-- Column -->
     <div class="col-lg-3 col-md-6">
-        {{-- <div class="card">
+        <div class="card">
+            <a href="{{ route('admin.master-acp.index') }}">
             <div class="card-body">
                 <div class="d-flex flex-row">
-                    <div class="round round-lg align-self-center round-primary"><i class="fa fa-users"></i></div>
+                    <div class="round round-lg align-self-center round-primary"><i class="fa fa-money"></i></div>
                     <div class="m-l-10 align-self-center">
-                        <h3 class="m-b-0 font-lgiht">0</h3>
-                        <h5 class="text-muted m-b-0">Bidding Proses</h5></div>
+                        <h3 class="m-b-0 font-lgiht">{{ $acpTotal }}</h3>
+                        <h5 class="text-muted m-b-0">Acp</h5></div>
                 </div>
             </div>
-        </div> --}}
+            </a>
+        </div>
     </div>
     <!-- Column -->
     <!-- Column -->

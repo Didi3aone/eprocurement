@@ -17,4 +17,9 @@ class MasterPph extends Model
         'withholding_tax_rate',
         'name',
     ];
+
+    public static function getPphById($id)
+    {
+        return MasterPph::where('id',$id)->first();   
+    }
 }

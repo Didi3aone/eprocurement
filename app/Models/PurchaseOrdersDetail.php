@@ -52,12 +52,19 @@ class PurchaseOrdersDetail extends Model
         'delivery_date',
         'plant_code',
         'SCHED_LINE',
-        'request_detail_id'
+        'request_detail_id',
+        'qty_billing',
+        'rfq_number',
+        'total_price'
     ];
 
     public const SERVICE = 9;
+    public const MaterialText = 99;
+    public const Material = 0;
 
     public const YesGr = 1;
+    public const Active = 1;
+    public const NoGr  = 0;
 
     public function po()
     {
@@ -67,5 +74,10 @@ class PurchaseOrdersDetail extends Model
     public function acp()
     {
         return $this->hasOne(\App\Models\AcpTable::class, 'acp_id');
+    }
+
+    public function getChangeDetail()
+    {
+        return $this->hasOne(\App\Models\PurchaseOrderChangeHistoryDetail::class, 'po_detail_id','id');
     }
 }

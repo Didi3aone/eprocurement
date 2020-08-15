@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use DB;
+use PDF;
 use Gate;
 use App\Models\Vendor;
 use App\Models\UserMap;
@@ -33,6 +34,7 @@ class PurchaseRequestController extends Controller
 
         $userMapping = UserMap::where('user_id', Auth::user()->user_id)->first();
         $userMapping = explode(',', $userMapping->purchasing_group_code);
+        // dd($userMapping);
         $materials = PurchaseRequestsDetail::select(
             \DB::raw('purchase_requests_details.id as id'),
             'purchase_requests_details.request_id',
@@ -49,6 +51,7 @@ class PurchaseRequestController extends Controller
             'purchase_requests_details.material_group',
             'purchase_requests_details.purchasing_group_code',
             'purchase_requests_details.material_id',
+            'purchase_requests_details.delivery_date',
             \DB::raw('purchase_requests_details.request_no as rn_no'),
             'purchase_requests_details.release_date',
             \DB::raw('purchase_requests.request_no as pr_no'),
@@ -59,21 +62,26 @@ class PurchaseRequestController extends Controller
             'purchase_requests.id as uuid'
         )
             ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
+            ->whereNotNull('purchase_requests.PR_NO')
+            ->where('purchase_requests_details.qty', '>', 0)
             ->where('purchase_requests_details.is_validate', PurchaseRequestsDetail::YesValidate)
             ->whereIn('purchase_requests_details.purchasing_group_code', $userMapping)
-            ->where('purchase_requests_details.qty', '>', 0)
-            ->where(function ($query) {
-                $query->where('purchase_requests_details.status_approval', PurchaseRequestsDetail::Approved)
-                    ->orWhere('purchase_requests_details.status_approval', PurchaseRequestsDetail::ApprovedPurchasing);
-            })
-            ->where(function ($query) {
-                $query->where('purchase_requests.status_approval', PurchaseRequest::ApprovedDept)
-                    ->orWhere('purchase_requests.status_approval', PurchaseRequest::ApprovedProc);
-            });
+            ->whereIn('purchase_requests_details.status_approval', [PurchaseRequestsDetail::Approved, PurchaseRequestsDetail::ApprovedPurchasing])
+            // ->where('purchase_requests_details.line_no', '0000000001')
+            //     ->orWhere('purchase_requests_details.line_no', '000000000')
+            // ->where(function ($query) {
+            //     $query->where('purchase_requests_details.status_approval', PurchaseRequestsDetail::Approved)
+            //         ->orWhere('purchase_requests_details.status_approval', PurchaseRequestsDetail::ApprovedPurchasing);
+            // })
+            ->whereIn('purchase_requests.status_approval', [PurchaseRequest::ApprovedDept, PurchaseRequest::ApprovedProc]);
+        // ->where(function ($query) {
+        //     $query->where('purchase_requests.status_approval', PurchaseRequest::ApprovedDept)
+        //         ->orWhere('purchase_requests.status_approval', PurchaseRequest::ApprovedProc);
+        // });
         // ->orderBy('purchase_requests.created_at', 'asc');
         if (\request()->ajax()) {
             $q = \collect($request->all())->forget('draw')->forget('_')->toJson();
-            $result = \Cache::remember($q, 60, function () use ($request, $materials, $q) {
+            $result = \Cache::remember($q.\Auth::user()->user_id, 60, function () use ($request, $materials, $q) {
                 $columns = [
                     0 => 'id',
                     1 => 'PR_NO',
@@ -81,15 +89,29 @@ class PurchaseRequestController extends Controller
                     3 => 'release_date',
                     4 => 'material_id',
                     5 => 'short_text',
+                    9 => 'plant_code',
+                    15 => 'purchasing_group_code',
+                    18 => 'request_no',
+                    18 => 'pr_no',
+                    19 => 'delivery_date',
+                    10 => 'storage_location',
+                    12 => 'qty_order',
+                    11 => 'qty',
+                    16 => 'preq_name',
+                    14 => 'material_group'
+
                 ];
                 $totalData = $materials->count();
 
                 $totalFiltered = $materials
                     ->when($request->input('search.value'), function ($q) use ($request) {
                         $search = $request->input('search.value');
-                        $q->where('PR_NO', 'ILIKE', "%{$search}%")
-                            ->orWhere('material_id', 'ILIKE', "%{$search}%")
-                            ->orWhere('short_text', 'ILIKE', "%{$search}%");
+                        $q->where(function ($q) use ($search) {
+                            $q->where('PR_NO', 'ILIKE', "%{$search}%")
+                                ->orWhere('material_id', 'ILIKE', "%{$search}%")
+                                ->orWhere('short_text', 'ILIKE', "%{$search}%")
+                                ->orWhere('purchasing_group_code', 'ILIKE', "%{$search}%");
+                        });
                     })->count();
 
                 $limit = $request->input('length');
@@ -99,9 +121,13 @@ class PurchaseRequestController extends Controller
                 $items = $materials
                     ->when($request->input('search.value'), function ($q) use ($request) {
                         $search = $request->input('search.value');
-                        $q->where('PR_NO', 'ILIKE', "%{$search}%")
-                            ->orWhere('material_id', 'ILIKE', "%{$search}%")
-                            ->orWhere('short_text', 'ILIKE', "%{$search}%");
+                        $q->where(function ($q) use ($search) {
+                            $q->where('PR_NO', 'ILIKE', "%{$search}%")
+                            // ->whereIn('purchase_requests_details.purchasing_group_code', $userMapping)
+                                ->orWhere('material_id', 'ILIKE', "%{$search}%")
+                                ->orWhere('short_text', 'ILIKE', "%{$search}%")
+                                ->orWhere('purchasing_group_code', 'ILIKE', "%{$search}%");
+                        });
                     })
                     ->offset($start)
                     ->limit($limit)
@@ -116,6 +142,15 @@ class PurchaseRequestController extends Controller
                     'request' => \collect($request->all())->forget('draw')->forget('_'),
                     'q' => $q,
                     'data' => \collect($items)->map(function ($value, $key) use ($start) {
+                        if ('' != $value->material_id) {
+                            $getLast = '';
+                            if (null != \App\Models\RfqDetail::getLastPo($value->material_id)) {
+                                $getLast = \App\Models\RfqDetail::getLastPo($value->material_id)->po_number;
+                            }
+                        } else {
+                            $getLast = '';
+                        }
+
                         $other = \App\Models\PurchaseRequestApprovalHistory::getHistoryApproval($value->uuid);
                         $other = $other->map(function ($row) {
                             return [
@@ -125,31 +160,42 @@ class PurchaseRequestController extends Controller
                             ];
                         });
 
+                        // $getHistPo = [];
+                        // if( $value->material_id != '' ) {
+                        // }
+                        $unit = $value->unit;
+                        if (null != \App\Models\UomConvert::where('uom_1', $value->unit)->first()) {
+                            $unit = \App\Models\UomConvert::where('uom_1', $value->unit)->first()->uom_2;
+                        }
+
                         return [
-                            ($key + 1) + $start,
-                            $value->PR_NO,
-                            $value->doc_type,
-                            $value->preq_item,
-                            $value->release_date,
-                            $value->material_id,
-                            $value->short_text,
-                            $value->qty,
-                            $value->unit,
-                            $value->plant_code,
-                            $value->storage_location,
-                            $value->qty,
-                            $value->qty - $value->qty_order,
-                            'D',
-                            $value->material_group,
-                            $value->purchasing_group_code,
-                            $value->preq_name,
-                            $value->request_no ?? $value->pr_no,
-                            '0000',
+                            ($key + 1) + $start, //0
+                            $value->PR_NO, //1
+                            $value->doc_type, //2
+                            $value->preq_item, //3
+                            $value->release_date, //4
+                            $value->material_id ?? '-', //5
+                            $value->short_text, //6
+                            $value->qty, //7
+                            $unit, //8
+                            $value->plant_code, //9
+                            $value->storage_location, //10
+                            $value->qty, //11
+                            $value->qty - $value->qty_order, //12
+                            'D', //13
+                            $value->material_group, //14
+                            $value->purchasing_group_code, //15
+                            $value->preq_name, //16
+                            $getLast, //17
+                            $value->request_no ?? $value->pr_no, //18
+                            $value->delivery_date, //19
+                            // '0000',
                             [
                                 $value->id,
                                 $value->qty,
                                 $value->doc_type,
-                            ],
+                                $value->purchasing_group_code,
+                            ], //19
                             $other,
                         ];
                     }),
@@ -226,7 +272,8 @@ class PurchaseRequestController extends Controller
                 'purchase_requests.request_no as pr_no',
                 'purchase_requests.PR_NO',
                 'purchase_requests.doc_type',
-                'purchase_requests.request_date as request_date'
+                'purchase_requests.request_date as request_date',
+                'purchase_requests.upload_file',
             )
                 ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
                 ->where('purchase_requests_details.id', $id)
@@ -281,19 +328,32 @@ class PurchaseRequestController extends Controller
      * @param mixed $ids
      * @param mixed $quantities
      * @param mixed $docs
+     * @param mixed $groups
      *
      * @return \Illuminate\Http\Response
      */
-    public function repeat(Request $request, $ids, $quantities, $docs)
+    public function repeat(Request $request, $ids, $quantities, $docs, $groups)
     {
+        ini_set('memory_limit', '20000M');
+        //ini_set('memory_limit', '-1');
+        set_time_limit(0);
         $ids = base64_decode($ids);
         $quantities = base64_decode($quantities);
         $docs = base64_decode($docs);
         $docs = explode(',', $docs);
 
+        $groups = base64_decode($groups);
+        $groups = explode(',', $groups);
+
         $checkDoc = checkArraySame($docs);
+        $checkGroup = \checkArraySame($groups);
+
         if (false == $checkDoc) {
             return redirect()->route('admin.purchase-request.index')->with('error', 'Doc type. must be the same');
+        }
+
+        if (false == $checkGroup) {
+            return redirect()->route('admin.purchase-request.index')->with('error', 'Purchasing group. must be the same');
         }
 
         $return = $this->createPrPo($ids, $quantities);
@@ -320,7 +380,7 @@ class PurchaseRequestController extends Controller
         $docTypes = DocumentType::where('type', '2')
                 ->where('code', $type)
                 ->get();
-        $currency = Currency::all();
+        $shipTo   = \App\Models\MasterShipToAdress::all()->pluck('name','id');
 
         $uri = [
             'ids' => base64_encode($ids),
@@ -334,7 +394,7 @@ class PurchaseRequestController extends Controller
             'vendor',
             'uri',
             'top',
-            'currency'
+            'shipTo'
         ));
     }
 
@@ -344,20 +404,31 @@ class PurchaseRequestController extends Controller
      * @param mixed $ids
      * @param mixed $quantities
      * @param mixed $docs
+     * @param mixed $groups
      *
      * @return \Illuminate\Http\Response
      */
-    public function direct(Request $request, $ids, $quantities, $docs)
+    public function direct(Request $request, $ids, $quantities, $docs, $groups)
     {
         $ids = base64_decode($ids);
         $quantities = base64_decode($quantities);
         $docs = base64_decode($docs);
         $docs = explode(',', $docs);
 
+        $groups = base64_decode($groups);
+        $groups = explode(',', $groups);
+
         $checkDoc = checkArraySame($docs);
+        $checkGroup = \checkArraySame($groups);
+
         if (false == $checkDoc) {
             return redirect()->route('admin.purchase-request.index')->with('error', 'Doc type. must be the same');
         }
+
+        if (false == $checkGroup) {
+            return redirect()->route('admin.purchase-request.index')->with('error', 'Purchasing group. must be the same');
+        }
+
         $return = $this->createPrPo($ids, $quantities);
 
         $data = $return['data'];
@@ -383,7 +454,7 @@ class PurchaseRequestController extends Controller
                 ->where('code', $type)
                 ->get();
 
-        $currency = Currency::all();
+        $shipTo   = \App\Models\MasterShipToAdress::all()->pluck('name','id');
 
         $uri = [
             'ids' => base64_encode($ids),
@@ -397,7 +468,7 @@ class PurchaseRequestController extends Controller
             'vendor',
             'uri',
             'top',
-            'currency'
+            'shipTo'
         ));
     }
 
@@ -426,19 +497,45 @@ class PurchaseRequestController extends Controller
                     $status = PurchaseRequestsDetail::ApprovedPurchasing;
                 }
 
-                $leadTime = \App\Models\RekapLeadtime::getLeadTime(
-                            $prDetail->material_id,
-                            $prDetail->plant_code,
-                            $prDetail->purchasing_group_code);
+                $leadTime = \App\Models\RekapLeadtime::calculateLeadTime(
+                        $prDetail->material_id,
+                        $prDetail->plant_code
+                    );
 
+                if( $prHeader->is_project == PurchaseRequest::Project ) {
+                    if( PurchaseRequestsDetail::MaterialText 
+                        OR PurchaseRequestsDetail::Service ) {
+                            $grProccess = $prDetail->gr_processing_time;
+                            $delivPlan  = $prDetail->deliv_plan_processing_time;
+                            $finalLeadTime = ($grProccess + $delivPlan + 30 + 1);
+                            $delivery_date = date('Y-m-d', strtotime('+'.$finalLeadTime.' weekday'));
+                        }
+                } else {
+                    if( PurchaseRequestsDetail::MaterialText 
+                        OR PurchaseRequestsDetail::Service ) {
+                            $grProccess    = $prDetail->gr_processing_time;
+                            $delivPlan     = $prDetail->deliv_plan_processing_time;
+                            $finalLeadTime = ($grProccess + $delivPlan + 14 + 1);
+                            $delivery_date = date('Y-m-d', strtotime('+'.$finalLeadTime.' weekday'));
+                        }
+                }
+
+                //echo $delivery_date;die;
                 if (null != $leadTime) {
                     $today = \Carbon\Carbon::now();
                     $approveDate = $today->toDateString();
-                    $finalLeadTime = $leadTime->lead_time_pr_po + $leadTime->lead_time_po_gr;
+                    $finalLeadTime = $leadTime->planned_deliv_time + $leadTime->gr_processing_time;
 
-                    $prDetail->release_date = date('Y-m-d', strtotime($approveDate.' + '.$finalLeadTime.' days'));
-                    $prDetail->delivery_date = date('Y-m-d', strtotime($approveDate.' + '.$finalLeadTime.' days'));
+                    $prDetail->release_date = date('Y-m-d');
+                    $prDetail->delivery_date = date('Y-m-d', strtotime($approveDate.' + '.$finalLeadTime.' weekday'));
+                    if (PurchaseRequest::Project == $prHeader->is_project) {
+                        $delivery_date = date('Y-m-d', strtotime('+30 weekday'));
+                    } else {
+                        $delivery_date = date('Y-m-d', strtotime($approveDate.' + '.$finalLeadTime.' weekday'));
+                    }
                 }
+                $prDetail->delivery_date = $delivery_date;
+
                 $prDetail->status_approval = $status;
                 $assetNo = '';
                 if (PurchaseRequestsDetail::Assets == $prDetail->is_assets) {
@@ -450,10 +547,12 @@ class PurchaseRequestController extends Controller
                     $trackNo1 = substr($prHeader->request_no, 0, 2);
                     $trackNo2 = substr($prHeader->request_no, 9);
                     $TRACKINGNO = $trackNo1.$trackNo2;
+                    $TRACKINGNO = str_replace('PR','PRJ',$TRACKINGNO);
                 } else {
                     $trackNo1 = substr($prDetail->request_no, 0, 2);
                     $trackNo2 = substr($prDetail->request_no, 9);
                     $TRACKINGNO = $trackNo1.$trackNo2;
+                    $TRACKINGNO = str_replace('RN','PRJ',$TRACKINGNO);
                 }
 
                 if (PurchaseRequestsDetail::YesValidate == $prDetail->is_validate
@@ -462,6 +561,7 @@ class PurchaseRequestController extends Controller
 
                     //for sap
                     $param_sap[$key]['DOC_TYPE'] = $prHeader->doc_type;
+                    $param_sap[$key]['HEADER_ID'] = $prHeader->id;
                     $param_sap[$key]['PUR_GROUP'] = $prDetail->purchasing_group_code;
                     $param_sap[$key]['PREQ_NAME'] = strtoupper(split_name($prDetail->preq_name));
                     $param_sap[$key]['SHORT_TEXT'] = $prDetail->short_text ?? 'tes';
@@ -472,7 +572,7 @@ class PurchaseRequestController extends Controller
                     $param_sap[$key]['MAT_GRP'] = $prDetail->material_group ?? '';
                     $param_sap[$key]['QUANTITY'] = $prDetail->qty;
                     $param_sap[$key]['UNIT'] = $prDetail->unit;
-                    $param_sap[$key]['DELIV_DATE'] = $prDetail->delivery_date;
+                    $param_sap[$key]['DELIV_DATE'] = $delivery_date;
                     $param_sap[$key]['REL_DATE'] = $prDetail->release_date;
                     $param_sap[$key]['ACCTASSCAT'] = $prDetail->account_assignment;
                     $param_sap[$key]['GR_IND'] = $prDetail->gr_ind;
@@ -637,12 +737,25 @@ class PurchaseRequestController extends Controller
     public function confirmation(Request $request)
     {
         $data = $request->all();
+        // dd($data);
+        // dd($data['plant_code'][0]);
+        // dd($data);
         $docType = DocumentType::where('code', $request->input('doc_type'))->first();
         $paymentTerm = PaymentTerm::where('payment_terms', $request->input('payment_term'))->first();
         $max = Quotation::select(\DB::raw('count(id) as id'))->first()->id;
         $poNo = 'PO/'.date('m').'/'.date('Y').'/'.sprintf('%07d', ++$max);
         $vendor = Vendor::where('code', $request->input('vendor_id'))->first();
+        $title = 'Purchase Order';
+        $ship = \App\Models\MasterShipToAdress::find($request->ship_id);
+        $print = false;
         // dd($request->all());
-        return \view('admin.purchase-request.confirmation', \compact('data', 'poNo', 'vendor', 'docType', 'paymentTerm'));
+        $pdf = PDF::loadview('prints/purchase-order', \compact('data', 'poNo', 'vendor', 'docType', 'paymentTerm', 'title', 'print','ship'))
+            ->setPaper('A4', 'potrait')
+            ->setOptions(['debugCss' => true, 'isPhpEnabled' => true])
+            ->setWarnings(true);
+        // $pdf->save(public_path("storage/{$id}_print.pdf"));
+        // Mail::to('jul14n4v@gmail.com')->send(new SendMail($po));
+        // $print = true;
+        return $pdf->stream();
     }
 }

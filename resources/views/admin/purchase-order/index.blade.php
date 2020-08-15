@@ -2,10 +2,10 @@
 @section('content')
 <div class="row page-titles">
     <div class="col-md-5 col-8 align-self-center">
-        <h3 class="text-themecolor">Master</h3>
+        <h3 class="text-themecolor">Purchase Order</h3>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="javascript:void(0)">{{ trans('cruds.purchase-order.title') }}</a></li>
-            <li class="breadcrumb-item active">Index</li>
+            <li class="breadcrumb-item active">List</li>
         </ol>
     </div>
 </div>
@@ -17,7 +17,9 @@
                     <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                             <tr>
-                                <th>Release Indicator</th>
+                                <th>
+                                    &nbsp;
+                                </th>
                                 <th>Purchasing Document</th>
                                 <th>Item Po Line</th>
                                 <th>Rfq/ACP Document</th>
@@ -39,49 +41,9 @@
                                 <th>Req Tracking Number</th>
                                 <th>Still to be Delivered Value</th>
                                 <th>Tax Code</th>
-                                <th>
-                                    &nbsp;
-                                </th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($po as $key => $q)
-                                <tr>
-                                    <td>-</td>
-                                    <td>{{ $q->purchasing_document ?? 0 }}</td>
-                                    <td>{{ $q->PO_ITEM }}</td>
-                                    <td>{{ $q->acp_no ?? $q->purchasing_document }}</td>
-                                    <td>{{ $q->purchasing_group_code }}</td>
-                                    <td>{{ $q->po_date }}</td>
-                                    <td>{{ $q->material_id }}</td>
-                                    <td>{{ $q->short_text }}</td>
-                                    <td>{{ $q->vendor }}</td>
-                                    <td>{{ $q->plant_code }}</td>
-                                    <td>{{ $q->storage_location }}</td>
-                                    <td>{{ $q->qty }}</td>
-                                    <td>{{ $q->unit }}</td>
-                                    <td>{{ '0' }}</td>
-                                    <td>{{ '0' }}</td>
-                                    <td>{{ $q->original_currency }}</td>
-                                    <td>{{ $q->original_price }}</td>
-                                    <td>{{ $q->currency }}</td>
-                                    <td>{{ $q->price }}</td>
-                                    <td>{{ $q->request_no }}</td>
-                                    <td>{{ '0' }}</td>
-                                    <td>{{ $q->tax_code  }}</td>
-                                    <td>
-                                        <a class="btn btn-xs btn-primary" href="{{ route('admin.purchase-order.show', $q->id) }}">
-                                            <i class="fa fa-eye"></i> {{ trans('global.view') }}
-                                        </a>
-                                        <a class="btn btn-xs btn-info" href="{{ route('admin.purchase-order-print', $q->id) }}" target="_blank">
-                                            <i class="fa fa-print"></i> {{ 'print' }}
-                                        </a>
-                                        <a class="btn btn-xs btn-success" href="{{ route('admin.purchase-order.edit', $q->id) }}">
-                                            <i class="fa fa-edit"></i> {{ trans('global.edit') }}
-                                        </a>
-                                    </td>
-                                </tr>
-                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -92,9 +54,36 @@
 @endsection
 @section('scripts')
 @parent
+<script id="hidden_action" type="text/x-custom-template">
+    <a class="btn btn-xs btn-primary" href="{{ route('admin.purchase-order.show', "REPLACE") }}">
+        <i class="fa fa-eye"></i> {{ trans('global.view') }}
+    </a>
+    <a class="btn btn-xs btn-info" href="{{ route('admin.purchase-order-print', "REPLACE") }}" target="_blank">
+        <i class="fa fa-print"></i> {{ 'print' }}
+    </a>
+    @can('purchase_order_edit')
+    <a class="btn btn-xs btn-success" href="{{ route('admin.purchase-order.edit', "REPLACE") }}">
+        <i class="fa fa-edit"></i> {{ trans('global.edit') }}
+    </a>
+    @endcan
+    <a class="btn btn-xs btn-warning" href="{{ route('admin.purchase-order-delivery', "REPLACE") }}">
+        <i class="fa fa-truck"></i> Delivery Complete
+    </a>
+</script>
 <script>
 $('#datatables-run').DataTable({
     dom: 'Bfrtip',
+    processing: true,
+    serverSide: true,
+    pageLength: 50,
+    ajax: "/admin/purchase-order",
+    "createdRow": function( row, data, dataIndex ) {
+        var tp1 = $('#hidden_action').html()
+        tp1 = tp1.replace(/REPLACE/g, data[0][0])
+        $tp1 = $(row).children('td')[0]
+        $($tp1).html(tp1)
+    },
+    searchDelay: 750,
     order: [[0, 'desc']],
     buttons: [
         'copy', 'csv', 'excel', 'pdf', 'print'

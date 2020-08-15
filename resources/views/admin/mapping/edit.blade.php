@@ -17,30 +17,31 @@
                     @method('PUT')
                     @csrf
                     <div class="form-group">
-                        <label class="required" for="nik">{{ trans('cruds.user-mapping.fields.nik') }}</label>
-                        <select class="form-control select2" name="nik" id="nik">
+                        <label class="required" for="nik">User ID</label>
+                        <select class="form-control select2" name="user_id" id="user_id">
                             @foreach ($users as $user)
-                                <option value="{{ $user->nik }}"{{ $user->nik == $model->nik ? ' selected' : '' }}>{{ $user->nik }} - {{ $user->name }}</option>
+                                <option value="{{ $user->nik }}" @if($model->user_id == $user->nik) selected @endif>{{ $user->nik }} - {{ $user->name }}</option>
                             @endforeach
                         </select>
-                        @if($errors->has('nik'))
-                            <div class="invalid-feedback">
-                                {{ $errors->first('nik') }}
-                            </div>
-                        @endif
                     </div>
                     <div class="form-group">
-                        <label class="required" for="plant">{{ trans('cruds.user-mapping.fields.plant') }}</label>
-                        <select class="form-control select2" name="plant" id="plant">
-                            @foreach ($plants as $plant)
-                                <option value="{{ $plant->code }}"{{ $plant->code == $model->plant ? ' selected' : '' }}>{{ $plant->code }} - {{ $plant->description }}</option>
+                        <label class="required" for="plant">Purchasing Group</label>
+                        <div style="padding-bottom: 4px">
+                            <span class="btn btn-info btn-xs select-all" style="border-radius: 0">{{ trans('global.select_all') }}</span>
+                            <span class="btn btn-info btn-xs deselect-all" style="border-radius: 0">{{ trans('global.deselect_all') }}</span>
+                        </div>
+                        <select class="form-control select2" name="purchasing_group_code[]" multiple id="purchasing_group_code">
+                            @foreach ($prg as $prgs) 
+                                @php
+                                    $explode = explode(',', $model->purchasing_group_code);
+                                    $select = '';
+                                    if( in_array($prgs->code,$explode) ) {
+                                        $select = 'selected';
+                                    }
+                                @endphp
+                                <option value="{{ $prgs->code }}" {{ $select }}>{{ $prgs->code }} - {{ $prgs->description }}</option>
                             @endforeach
                         </select>
-                        @if($errors->has('plant'))
-                            <div class="invalid-feedback">
-                                {{ $errors->first('plant') }}
-                            </div>
-                        @endif
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.save') }}</button>

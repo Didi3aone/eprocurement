@@ -24,6 +24,7 @@ class QuotationDetail extends Model
 
     public const SERVICE  = 9;
     public const STANDART = 0;
+    public const MATERIAL_TEXT = 99;
 
     public function quotation ()
     {
@@ -46,5 +47,10 @@ class QuotationDetail extends Model
             ->where('vendor_id', $this->vendor_id)
             ->selectRaw('count(*) as count')
             ->groupBy('quotation_order_id');
+    }
+
+    public static function getDetailPo($id)
+    {
+        return QuotationDetail::where('quotation_order_id', $id)->get();
     }
 }

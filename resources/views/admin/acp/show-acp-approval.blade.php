@@ -34,6 +34,10 @@
                                         <td>{{ $acp->is_project == 1 ? 'Project' : '-' }}</td>
                                     </tr>
                                     <tr>
+                                        <th>Plant</th>
+                                        <td>{{  \getplan($acp->plant_id)->description }}</td>
+                                    </tr>
+                                    <tr>
                                         <th>File</th>
                                         @if(isset($acp->upload_file))
                                             <td>
@@ -53,10 +57,6 @@
                                             </td>
                                         @endif
                                     </tr>
-                                    <tr>
-                                        <th>Description</th>
-                                        <td>{{ $acp->description }}</td>
-                                    </tr>
                                 </div>
                                 </tbody>
                             </table>
@@ -72,36 +72,59 @@
                                     <th style="text-align:center;">Description</th>
                                     <th style="text-align:center;">Unit</th>
                                     <th style="text-align:center;">Per</th>
+                                    <th style="text-align:center;">Qty Pr</th>
                                     <th style="text-align:center;">Currency</th>
                                     <th style="text-align:center;">Price</th>
+                                    <th style="text-align:center;">Total Price</th>
                                 </tr>
                             </thead>
                             <tbody>
                             @foreach($acp->detail as $rows)
+                            {{-- {{dd($rows)}} --}}
                                 @php
                                     $winner = '<span class="badge badge-danger">Lose</span>';
                                     if( $rows->is_winner == \App\Models\AcpTableDetail::Winner ) {
                                         $winner = '<span class="badge badge-primary">Winner</span>';
                                     }
                                     $rowSpan = count(\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id));
+                                    $totalPrice = 0;
                                 @endphp
                                 <tr>
-                                    <td rowspan={{ $rowSpan }}>{{ $rows->vendor['name'] }}</td>
+                                    <td rowspan={{ $rowSpan }}>{{ $rows->vendor['company_name'] }}</td>
                                     <td rowspan={{ $rowSpan }}>{!! $winner !!}</td>
-                                    @foreach (\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id) as $row)
-                                        <td>{{ $row->material_id ?? '-'}}</td>
+                                    @foreach (\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id) as $key => $row)
+                                        @php
+                                            //$total = (\removeComma($row->price) * $row->qty);
+                                           // $totalPrice += ($total);
+                                            $totalPrice += ($row->total_price);
+                                            $data = count(\App\Models\AcpTableMaterial::getMaterialVendor($rows->vendor_code, $rows->master_acp_id));
+                                           // dd($data);
+                                        @endphp
+                                        <td>{{ $row->material_id ?? $row->material_id }}</td>
                                         <td>{{ \App\Models\MasterMaterial::getMaterialName($row->material_id)->description ?? $row->material_id  }}</td>
                                         <td>{{ $row->uom_code }}</td>
                                         <td>{{ $row->qty }}</td>
+                                        <td>{{ toDecimal($row->qty_pr) }}</td>
                                         <td>{{ $row->currency }}</td>
-                                        <td>{{ $row->price }}</td>
+                                        <td style="text-align:right;">{{ \toDecimal($row->price) }}</td>
+                                        <td style="text-align:right;">{{ \toDecimal($row->total_price) }}</td>
                                 </tr>
                                 @endforeach
+                                <tr>
+                                    <td colspan=9></td>
+                                    <td colspan={{ $rowSpan + $rowSpan }} style="text-align:right;"> 
+                                        <b style="color:black;font-size:17px;">{{ \toDecimal($totalPrice) }}</b>
+                                    </td>
+                                </tr>
                             @endforeach
                             </tbody>
                         </table>
                     </div>
-
+                    <div class="form-group">
+                        <label>Reason</label>
+                        <textarea type="text" class="form-control form-control-line" name="description">{{ $acp->description }}</textarea>
+                    </div>
+                    @if($acp->status_approval != 2  && $acp->status_approval !=3)
                     <div class="row" style="margin-top: 20px">
                         <div class="col-lg-12">
                             <div class="form-actions">
@@ -110,6 +133,7 @@
                             </div>
                         </div>
                     </div>
+                    @endif
                 </form>
             </div>
             {{-- <div class="card-body">

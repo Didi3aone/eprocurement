@@ -23,6 +23,7 @@ use App\Models\Vendor\VendorPartnerFunctions;
 use App\Models\Vendor\VendorBankDetails;
 use App\Models\Vendor\VendorTaxNumbers;
 use App\Models\Vendor\VendorIdentificationNumbers;
+use App\Models\Vendor\VendorEmail;
 use App\Models\Vendor\MasterVendorCountry;
 
 use Exception;
@@ -61,16 +62,16 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $this->validate($request,[
-            'email' => 'required:email',
+            'code' => 'required:code',
             'password' => 'required'
         ]);
 
         $credential = [
-            'email' => $request->email,
+            'code' => $request->code,
             'password' => $request->password
         ];
 
-        $model = Vendor::where('email', $request->email)->first();
+        $model = Vendor::where('code', $request->code)->first();
 
         if (empty($model))
             return redirect()->route('vendor.login')->with('error', trans('global.vendor_not_found'));
@@ -78,11 +79,11 @@ class LoginController extends Controller
         if ($model->status == 0)
             return redirect()->route('vendor.login')->with('error', trans('validation.vendor_not_validate'));
 
-        if (Auth::guard('vendor')->attempt($request->only('email', 'password'))) {
+        if (Auth::guard('vendor')->attempt($request->only('code', 'password'))) {
             return redirect()->intended(route('vendor.home'));
         }
 
-        return redirect()->back()->withInputs($request->only('email'));
+        return redirect()->back()->withInputs($request->only('code'));
     }
 
     public function showRegisterForm ()
@@ -144,6 +145,7 @@ class LoginController extends Controller
             $this->insert_vendor_bank_details($request, $user_vendor->id, $is_local);
             $this->insert_vendor_tax_number($request, $user_vendor->id);
             $this->insert_vendor_identification_numbers($user_vendor->id, $is_local);
+            $this->insert_vendor_email($request, $user_vendor->id);
 
             \DB::commit();
             return redirect()->route('vendor.login')->with('success', 'Register success');
@@ -164,6 +166,7 @@ class LoginController extends Controller
         $different_city = $request->input('different_city') ?? "-";
         $city = $request->input('city');
         $country = $request->input('country');
+        $company_web = $request->input('company_web');
         $postalCode = $request->input('postal_code');
         $street = $request->input('street'); // address
         $street_2 = $request->input('street_2');
@@ -192,6 +195,8 @@ class LoginController extends Controller
         $post['city'] = $city;
         $post['postal_code'] = $postalCode;
         $post['country'] = $country;
+        if ($company_web)
+            $post['company_web'] = $company_web;
         $post['street'] = $street;
         $post['street_2'] = $street_2;
         $post['street_3'] = $street_3;
@@ -205,7 +210,7 @@ class LoginController extends Controller
         $post['fax_2'] = $fax_2;
         $post['name'] = $name;
         $post['email'] = $email;
-        $post['email_2'] = $email_2;
+        // $post['email_2'] = $email_2;
         $post['password'] = bcrypt($password);
         $post['status'] = $status;
         $do_insert = UserVendors::create($post);
@@ -357,33 +362,26 @@ class LoginController extends Controller
         return true;
     }
 
-    // not used
-    public function register_old (Request $request)
+    private function insert_vendor_email($request, $vendor_id)
     {
-        $model = new Vendor;
-        $model->name = $request->input('name');
-        $model->email = $request->input('email');
-        $model->password = bcrypt($request->input('password'));
-        $model->company_type = 1;
-        $model->company_from = 1;
-        $model->npwp = $request->input('npwp');
-        $model->country_id = 1;
-        $model->province_id = 1;
-        $model->regencies_id = 1;
-        $model->district_id = 1;
-        $model->address = $request->input('address');
-        $model->specialize = $request->input('specialize');
-        $model->company_name = $request->input('company_name');
-        $model->zip_code = $request->input('zip_code');
-        $model->code_area = $request->input('code_area');
-        $model->pkp = $request->input('pkp');
-        $model->office_phone = $request->input('office_phone');
-        $model->office_fax = $request->input('office_fax');
-        $model->phone = $request->input('phone');
-        $model->status = 0;
-        $model->save();
+        $email = $request->input('email');
+        $email_2 = $request->input('email_2');
 
-        return redirect()->route('vendor.login');
+        $post = [];
+        $post['vendor_id'] = $vendor_id;
+        $post['email'] = $email;
+        $post['is_default'] = 1;
+        $do_insert = VendorEmail::create($post);
+        if (!$do_insert) throw new Exception('Failed at insert_vendor_email');
+
+        $post = [];
+        $post['vendor_id'] = $vendor_id;
+        $post['email'] = $email_2;
+        $post['is_default'] = 0;
+        $do_insert = VendorEmail::create($post);
+        if (!$do_insert) throw new Exception('Failed at insert_vendor_email');
+
+        return true;
     }
 
     public function setPassword ($code)

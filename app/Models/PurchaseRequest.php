@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Ramsey\Uuid\Exception\UnsatisfiedDependencyException;
 use Ramsey\Uuid\Uuid as Generator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PurchaseRequest extends Model
 {
+    use softDeletes;
     protected $connection = 'pgsql';
     protected $primaryKey = 'id';
     public $incrementing = false;

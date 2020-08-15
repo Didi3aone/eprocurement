@@ -38,7 +38,10 @@ class MaterialController extends Controller
     
     public function list ()
     {
-        return DataTables::of(MasterMaterial::limit(10000)->get())->make(true);
+        set_time_limit(0);
+        ini_set('memory_limit', '2048M');
+
+        return DataTables::of(MasterMaterial::get())->make(true);
     }
 
     public function select2 (Request $request)
@@ -77,8 +80,6 @@ class MaterialController extends Controller
 
     public function import(Request $request)
     {
-        // abort_if(Gate::denies('vendor_import_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-        
         $path = 'xls/';
         $file = $request->file('xls_file');
         
@@ -166,6 +167,7 @@ class MaterialController extends Controller
         $plants = Plant::all();
         $purchasingGroups = PurchasingGroup::all();
         $profitCenters = ProfitCenter::all();
+        $unit = \App\Models\MasterUnit::all();
 
         return view('admin.material.edit', compact(
             'material',
@@ -173,7 +175,8 @@ class MaterialController extends Controller
             'materialTypes',
             'plants',
             'purchasingGroups',
-            'profitCenters'
+            'profitCenters',
+            'unit'
         ));
     }
 
@@ -189,13 +192,13 @@ class MaterialController extends Controller
         $material = MasterMaterial::findOrFail($id);
         
         $material->code = $request->get('code');
-        $material->small_description = $request->get('small_description');
         $material->description = $request->get('description');
-        $material->m_group_id = $request->get('m_group_id');
-        $material->m_type_id = $request->get('m_type_id');
-        $material->m_plant_id = $request->get('m_plant_id');
-        $material->m_purchasing_id = $request->get('m_purchasing_id');
-        $material->m_profit_id = $request->get('m_profit_id');
+        $material->material_group_code = $request->get('material_group_code');
+        $material->material_type_code = $request->get('material_type_code');
+        $material->plant_code = $request->get('plant_code');
+        $material->uom_code = $request->get('uom_code');
+        $material->purchasing_group_code = $request->get('purchasing_group_code');
+        $material->profit_center_code = $request->get('profit_center_code');
 
         $material->save();
         

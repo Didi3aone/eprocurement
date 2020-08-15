@@ -24,7 +24,7 @@
                         <table class="table table-bordered">
                             <tr>
                                 <th>{{ trans('cruds.billing.fields.file_invoice') }}</th>
-                                <td><a href="{{ asset('file/uploads/'.$billing->file_invoice) }}">{{ $billing->file_invoice }}</a></td>
+                                <td><a href="{{ asset('file/uploads/'.$billing->file_invoice) }}" download>{{ $billing->file_invoice }}</a></td>
                             </tr>
                             <tr>
                                 <th>File PO</th>
@@ -32,15 +32,15 @@
                             </tr>
                             <tr>
                                 <th>{{ trans('cruds.billing.fields.file_faktur') }}</th>
-                                <td><a href="{{ asset('file/uploads/'.$billing->file_faktur ) }}">{{ $billing->file_faktur }}</a></td>
+                                <td><a href="{{ asset('file/uploads/'.$billing->file_faktur ) }}" download>{{ $billing->file_faktur }}</a></td>
                             </tr>
                             <tr>
                                 <th>{{ trans('cruds.billing.fields.file_skp') }}</th>
-                                <td><a href="{{ asset('file/uploads/'.$billing->surat_ket_bebas_pajak) }}">{{ $billing->surat_ket_bebas_pajak }}</a></td>
+                                <td><a href="{{ asset('file/uploads/'.$billing->surat_ket_bebas_pajak) }}" download>{{ $billing->surat_ket_bebas_pajak }}</a></td>
                             </tr>
                             <tr>
                                 <th>No Surat jalan</th>
-                                <td><a href="{{ asset('file/uploads/'.$billing->no_surat_jalan) }}">{{ $billing->no_surat_jalan }}</a></td>
+                                <td><a href="{{ asset('file/uploads/'.$billing->no_surat_jalan) }}" download>{{ $billing->no_surat_jalan }}</a></td>
                             </tr>
                         </table>
                     </div>
@@ -86,7 +86,7 @@
                         </div>
                         <div class="form-group col-lg-4">
                             <label>DPP</label>
-                            <input type="text" class="form-control form-control-line" name="dpp" id="dpp" value="{{ $billing->dpp ?? old('dpp', '') }}" readonly> 
+                            <input type="text" class="form-control form-control-line" name="dpp" id="dpp" value="{{ toDecimal($billing->dpp) ?? old('dpp', '') }}" readonly> 
                         </div>
                         <div class="form-group col-lg-4">
                             <label>No. Rekening </label>
@@ -145,20 +145,21 @@
                         </div>
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.tipe_pph') }}</label>
+                            <input type="hidden" name="tipe_pphs" id="tipe_pphs" value="">
                             <select class="form-control select2 form-control-line" name="tipe_pph" id="tipe_pph">
                                 <option value=""> -Select-</option>
                                 @foreach ($tipePphs as $tipe)
-                                    <option value="{{ $tipe->id }}" data-rate="{{ $tipe->withholding_tax_rate }}">{{ $tipe->withholding_tax_code }} - {{ $tipe->name }}</option>
+                                    <option value="{{ $tipe->withholding_tax_rate }}" data-id="{{ $tipe->id }}" data-rate="{{ $tipe->withholding_tax_rate }}">{{ $tipe->withholding_tax_code }} - {{ $tipe->name }}</option>
                                 @endforeach
                             </select>
-                        </div>
-                        <div class="form-group col-lg-4">
+                        </div> 
+                        <div class="form-group col-lg-4" id="basePPh" style="display:none">
                             <label>Base PPH</label>
-                            <input type="text" class="form-control form-control-line" name="base_pph" value="{{ $billing->dpp }}"> 
+                            <input type="text" class="form-control form-control-line" onkeyup="leadingZero(this.value, $(this), true)" name="base_pph" id="base_pph" value="{{ toDecimal($billing->dpp) }}"> 
                         </div>
-                        <div class="form-group col-lg-4">
+                        <div class="form-group col-lg-4" id="jmlPPH" style="display:none">
                             <label>{{ trans('cruds.billing.fields.jumlah_pph') }}</label>
-                            <input type="text" class="form-control money form-control-line" name="jumlah_pph" id="jumlah_pph" value=""> 
+                            <input type="text" class="form-control money form-control-line" name="jumlah_pph" id="jumlah_pph" value="" readonly> 
                         </div>
                         <div class="form-group col-lg-4">
                             <label>{{ trans('cruds.billing.fields.currency') }}</label>
@@ -171,7 +172,7 @@
                         <div class="form-group col-lg-4">
                             <label>{{ 'Tax Amount' }}</label>
                             <input type="text" class="form-control form-control-line " name="tax_amount" value="" id="taxAmount"> 
-                            <input type="checkbox" class="" id="check_1" name="calculate_tax" value="1">
+                            <input type="checkbox" class="calculate_tax" id="check_1" name="calculate_tax" value="1">
                             <label for="check_1">&nbsp; Calculate Tax</label>
                         </div>
                         <div class="form-group col-lg-4">
@@ -197,11 +198,15 @@
                         {{-- <div class="form-group col-lg-6">
                             <label>Ref Key 3</label>
                             <input type="text" class="form-control form-control-line " name="ref_key_3" maxlength="16" value=""> 
-                        </div>
-                        <div class="form-group col-lg-6">
-                            <label>Ref Key 1</label>
-                            <input type="text" class="form-control form-control-line " name="ref_key_1" maxlength="16" value=""> 
                         </div> --}}
+                        <div class="form-group col-lg-6">
+                            <input type="checkbox" class="" id="check_B" name="payment_block" value="1">
+                            <label for="check_B">&nbsp; Payment Block</label>
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>Nominal Balance</label>
+                            <input type="text" class="form-control form-control-line" name="nominal_balance" id="nominal_balance" value="" readonly> 
+                        </div>
                     </div>
                 </div>
             </div>
@@ -223,6 +228,7 @@
                                         <th style="width:10%;">Qty</th>
                                         <th>Value</th>
                                         <th>Material</th>
+                                        <th>Description</th>
                                         <th>PO No</th>
                                         <th>PO Item</th>
                                         <th>GR Doc</th>
@@ -231,12 +237,21 @@
                                     </tr>
                                 </thead>
                                 <tbody id="billing-detail">
+                                    @php
+                                        $totalSum = 0;
+                                    @endphp
                                     @foreach ($billing->detail as $val)
+                                    @php
+                                        $totalSum += $val->amount;
+                                        $totalVl = ($val->price_per_pc * $val->qty)
+                                    @endphp
                                     <tr>
                                         <input type="hidden" value="{{ $val->id }}" name="iddetail[]">
+                                        <input type="hidden" value="{{ $val->po_no }}" name="po_no">
                                         <td>{{ $val->qty }}</td>
-                                        <td><input type="text" class="amount" name="amount[]" id="amount" value="{{ $val->amount }}"/></td>
-                                        <td>{{ $val->material_id." - ".$val->material->description }}</td>
+                                        <td><input type="text" class="amount" name="amount[]" id="amount" value="{{ number_format($totalVl) }}" onkeyup="leadingZero(this.value, $(this), true)"/></td>
+                                        <td>{{ $val->material_id }}</td>
+                                        <td>{{ $val->description }}</td>
                                         <td>{{ $val->po_no }}</td>
                                         <td>{{ $val->PO_ITEM }}</td>
                                         <td>{{ $val->doc_gr }}</td>
@@ -248,48 +263,37 @@
                             </table>
                         </div>
                     </div>
+                    <div class="form-group col-lg-4">
+                        @php
+                            $balance = $billing->dpp - $totalVl;
+                        @endphp
+                        {{-- <input type="hidden" class="form-control form-control-line" name="nominal_balances" id="nominal_balances" value="{{ toDecimal($balance) }}">  --}}
+                        <input type="hidden" class="form-control form-control-line" name="nominal_balances" id="nominal_balances" value=""> 
+                        <input type="hidden" class="form-control form-control-line" name="summary" id="summary" value="{{ toDecimal($totalSum) }}"> 
+                    </div>
                     <br>
                     <br>
                     <div class="form-actions">
-                        <a href="javascript:;" id="approval" type="button" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.approve') }}</a>
-                        <a href="javascript:;" id="reject" data-toggle="modal" data-id="{{ $billing->id }}" data-target="#modal_rejected_reason" type="button" class="btn btn-danger"> 
-                        <i class="fa fa-times"></i> {{ trans('global.reject') }}</a>
-                        <a href="{{ route('admin.billing') }}" type="button" class="btn btn-inverse"><i class="fa fa-arrow-left"></i> Back To List</a>
+                        {{-- <button id="save" type="submit" class="btn btn-success"> <i class="fa fa-check"></i> {{ trans('global.submit') }}</button> --}}
+                        <a href="javascript:void(0)" id='submit' class="btn btn-success"><i class="fa fa-check"></i>{{ trans('global.submit') }}</a>
                     </div>
                 </div>
             </div>
         </form>
     </div>
 </div>
-
-<div class="modal fade" id="modal_rejected_reason" tabindex="-1" role="dialog" aria-labelledby="modal_rejected_reason" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Rejected Reason</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form action="{{ route('admin.billing-post-rejected') }}" method="post" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
-                <div class="modal-body">
-                    <input type="hidden" name="id" id="billing-id" value="">
-                    <textarea name="reason" id="reason" cols="30" rows="10"></textarea>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
-                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 @endsection
 
 @section('scripts')
 <script>
+    $(document).ready(function() {
+        var dpp = $("#dpp").val().replace(/,/g, '')
+        var invoice = $("#nominal_invoice_staff").val().replace(/,/g, '')
+        let balance  = parseInt(dpp) - parseInt(invoice)
+        // console.log(balance)
+        $("#nominal_balance").val(balance)
+    });
+    
     $('#datatables-run').DataTable({
         "searching": false,
         "bPaginate": false,
@@ -298,29 +302,113 @@
         "ordering": false
     });
 
+    $("#nominal_balance").val($("#nominal_balances").val())
+     $("#nominal_invoice_staff").val($("#summary").val())
+
     $('.money').mask('#.##0', { reverse: true });
 
     $("#tipe_pph").change(function() {
         let rates = $('#tipe_pph option:selected').data('rate')
+        let rateId = $('#tipe_pph option:selected').data('id')
+        $("#tipe_pphs").val(rateId);
+        if($(this).val() != '') {
+            $("#basePPh").show()
+            $("#jmlPPH").show()
 
-        //dpp * rate
-        // rumus nominal invoice 
-        // dpp * ppn (1.1) - nominal pph
-        var dpp = $("#dpp").val()
-        var ppn = $("#ppn").val()
-        var ppns = ''
-        if( ppn == 'V1' ) {
-            ppns = 1.1
+            //dpp * rate
+            //rate tipe pph * base = nominal pph
+            // rumus nominal invoice 
+            // dpp * ppn (1.1) - nominal pph
+            // klo d tick total value * 1.1.
+            // klo ngga summary + tax amount 
+            var dpp = $("#dpp").val()
+            var ppn = $("#ppn").val()
+                basPph = $("#base_pph").val()
+                nominal_invoice_staff = $("#nominal_invoice_staff").val().replace(/,/g, "")
+            var ppns = ''
+                tt = dpp.replace(/,/g, '.')
+                tPph = basPph.replace(/,/g, "")
+            var count = (tPph) * (rates/100)
+            var roundedString = count.toFixed(2);
+            var cm = roundedString.replace(".", ",")
+            var nomInv = nominal_invoice_staff - roundedString
+            
+            var _nominal_invoice_ = $("#summary").val().replace(/,/g, '')
+            
+            console.log('JUMLAH PPH ='+ roundedString)
+
+            if ($('.calculate_tax').is(":checked")) {
+                if( ppn == 'V1' ) {
+                    _nominal_invoice_ = (_nominal_invoice_ * 1.1) - roundedString
+                } else {
+                    _nominal_invoice_ = (_nominal_invoice_ - roundedString)
+                }
+            } else {
+                _nominal_invoice_ = (_nominal_invoice_ - roundedString)
+            }
+
+            console.log('NOMINAL INVOICE ='+ _nominal_invoice_)
+
+            $("#jumlah_pph").val(roundedString)
+        } else {
+            $("#basePPh").hide()
+            $("#jmlPPH").hide()
+            var ppn_ = $("#ppn").val()
+            if( ppn_ == 'V1' ) {
+                if ($('.calculate_tax').is(":checked")) {
+                    var noPPh = $("#summary").val().replace(/,/g, '') * 1.1
+                    $("#nominal_invoice_staff").val(noPPh.toFixed(2))
+                } else {
+                    $("#nominal_invoice_staff").val($("#summary").val())
+                }
+            } else {
+                $("#nominal_invoice_staff").val($("#summary").val())
+            }
+        }
+    })
+
+    $("#taxAmount").on('keyup',function() {
+        let taxAmount = $(this).val()
+        if (isNaN(taxAmount.replace(/,/g, ''))) return false
+
+        var nominalBalance = $("#summary").val().replace(/,/g, '')
+        var totalInvoice = parseFloat(taxAmount) + parseFloat(nominalBalance)
+
+        var _tipePph = $("#tipe_pph").val() 
+        if( _tipePph != '') {
+            totalInvoice = parseFloat(totalInvoice) - $("#jumlah_pph").val().replace(/,/g, '')
+        } 
+        $("#nominal_invoice_staff").val(keyupFormatUangWithDecimal(totalInvoice.toString()))
+    })
+
+    $("#base_pph").on('keyup',function() {
+        let based = parseFloat($(this).val().replace(/,/g, ""))
+        const rates = $("#tipe_pph").val()
+        const total = (based * rates/100)
+        var _tipePph = $("#tipe_pph").val()
+        var _ppn = $("#ppn").val()
+
+        //get dulu summaryny
+        var _nominalInvoice = $("#summary").val().replace(/,/g, "")
+        //cek di tick belom
+        if ($('.calculate_tax').is(":checked")) {
+            //klo iya cek ppnny
+            if( _ppn == 'V1' ) {
+                _nominalInvoice = _nominalInvoice * 1.1
+            }
+        } else {
+            _nominalInvoice = (_nominalInvoice)
         }
 
-        tt = dpp.replace(/,/g, '.');
-        var count = parseFloat(tt) * rates;
-        var roundedString = count.toFixed(2);
-        var cm = roundedString.replace(".", ",");
+        console.log('NOMINAL INVOICE ' + _nominalInvoice)
+        console.log('JUMLAH PPH ' + total)
+        
+        var _TotalInvoice = _nominalInvoice - total 
+        console.log(_TotalInvoice)
 
-        var nomInv = parseFloat(tt) * ppns - roundedString;
-        $("#jumlah_pph").val(cm)
-        $("#nominal_invoice_staff").val(nomInv.toFixed(2))
+        $("#nominal_invoice_staff").val(keyupFormatUangWithDecimal(_TotalInvoice.toString()))
+
+        $("#jumlah_pph").val(keyupFormatUangWithDecimal(total.toString()))
     })
 
     $(document).on('click', '#approval', function (result) {
@@ -335,6 +423,12 @@
         $modal.modal('show')
     })
 
+    $(document).on('click', '#rejects', function (result) {
+        const $modal = $('#modal_rejected_reasons')
+        $modal.find('#billing-id').val($(this).data('id'))
+        $modal.modal('show')
+    })
+
     $(document).on('click', '#submit', function (result) {
         $form = $('.form-material')
         $form.attr('action', '{{ route('admin.billing-store') }}')
@@ -344,14 +438,115 @@
     $("#check_1").click(function() {
         if(this.checked) {
             if( this.value == 1) {
+                //$("#payment_block").val('B') --}}
                 $("#taxAmount").attr('readonly',true)
                 $("#nominal_invoice_staff").attr('readonly',true)
+                const summary = $("#summary").val().replace(/,/g, "")
+                var ppn = $("#ppn").val()
+                var tipePph = $("#tipe_pph").val()
+
+                var totalInv = summary
+                if( tipePph != '') {
+                    totalInv = parseFloat(totalInv) - $("#jumlah_pph").val().replace(/,/g, "")
+                } 
+
+                if( ppn == 'V1' ) {
+                    totalInv = parseFloat(summary) * 1.1
+
+                    if( tipePph != '') {
+                        totalInv = parseFloat(totalInv) - $("#jumlah_pph").val().replace(/,/g, "")
+                    }
+                } else {
+                    totalInv = summary
+                }
+                console.log('TOTAL INVOICE CHECLIS = ' + totalInv)
+
+                $("#nominal_invoice_staff").val(totalInv.toFixed(2))
             } 
         } else {
             $("#nominal_invoice_staff").attr('readonly',false)
             $("#taxAmount").attr('readonly',false)
+            const _summary  = $("#summary").val().replace(/,/g, "")
+            var _tipePph    = $("#tipe_pph").val()
+            var _totalInv   = _summary
+
+            if( tipePph != '') {
+                _totalInv = parseFloat(_totalInv) - $("#jumlah_pph").val().replace(/,/g, "")
+            } else {
+                _totalInv = _summary
+            }
+            $("#nominal_invoice_staff").val(_totalInv.toFixed(2))
+            //$("#payment_block").val(' ')
+            //$("#nominal_invoice_staff")
         }
     })
 
+    $('.amount').on('keyup', function() {
+        let value = $(this).val()
+        let dpp = $("#dpp").val().replace(/,/g, '')
+        if (isNaN(value.replace(/,/g, ''))) return false
+
+        let _value = document.getElementsByClassName('amount')
+        if (_value.length > 0) {
+            let total = 0
+            for (let i = 0; i < _value.length; i++) {
+                let _value_value = _value[i].value
+                if (_value_value=='') _value_value = '0'
+                total += parseInt(_value_value.replace(/,/g, ''))
+            }
+
+            let DPP = $("#dpp").val().replace(/,/g, '')
+            let totalB  = parseInt(DPP) - parseInt(total)
+            $('#nominal_balance').val(formatNumber(totalB))
+            $("#nominal_invoice_staff").val(formatNumber(total))
+            var invoice = $("#nominal_invoice_staff").val().replace(/,/g, '')
+            let balance  = parseInt(dpp) - parseInt(invoice)
+            $("#nominal_balance").val(balance.toFixed(2))
+        }
+    })
+
+    function formatNumber(num) {
+        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    }
+
+    $(function() {
+     
+    })
+    window.leadingZero = function(value, element, decimal = false) {
+        var convert_number = removeChar(value);
+
+        if(decimal) {
+            if(value != '') {
+            element.val(keyupFormatUangWithDecimal(value));
+            } else {
+            element.val(0);
+            }
+        } else {
+            if(value != '') {
+            element.val(keyupFormatUang(parseInt(convert_number)));
+            } else {
+            element.val(0);
+            }
+        }
+    }
+
+    function removeChar(value) {
+        return value.toString().replace(/[.*+?^${}()|[\]\\]/g, '');
+    }
+
+    window.keyupFormatUang = function(value) {
+        var number = '';    
+        var value_rev = value.toString().split('').reverse().join('');
+        
+        for(var i = 0; i < value_rev.length; i++) {
+            if(i % 3 == 0) number += value_rev.substr(i, 3) + '.';
+        }
+        
+        return number.split('', number.length - 1).reverse().join('');
+        }
+
+        window.keyupFormatUangWithDecimal = function(value) {
+        return value.replace(/^0+/, '').replace(/(?!\.)\D/g, "").replace(/(?<=\..*)\./g, "").replace(/(?<=\.\d\d).*/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
 </script>
 @endsection

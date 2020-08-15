@@ -64,6 +64,7 @@
                             <th>Material</th>
                             <th>Unit</th>
                             <th>Qty</th>
+                            <th>Currency</th>
                             <th>Price</th>
                         </tr>
                     </thead>
@@ -73,7 +74,8 @@
                             <td>{{ $value->description }}</td>
                             <td>{{ $value->unit }}</td>
                             <td>{{ $value->qty }}</td>
-                            <td>{{ $value->price }}</td>
+                            <td>{{ $value->currency }}</td>
+                            <td>{{ \toDecimal($value->price) }}</td>
                         </tr>
                         @endforeach
                     </tbody>

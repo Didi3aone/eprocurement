@@ -6,7 +6,7 @@
     use App\Mail\enesisApprovalAcpMail;
     use App\Models\AcpTable;
     use App\Models\AcpTableDetail;
-    use App\Models\AcpTableMaterials;
+    use App\Models\Plant;
 
     function configEmailNotification()
     {
@@ -16,6 +16,11 @@
     function getEmailLocal($nik)
     {
         return u::where('nik',$nik)->first();
+    }
+
+    function getplan($code)
+    {
+        return Plant::where('code',$code)->first();
     }
 
     function getProfileLocal($nik)
@@ -122,7 +127,15 @@
     //author : didi
     function checkArraySame(array $arr, $testValue = null) 
     {
-        
+        // dd($arr);
+        // $target = array('SY01', 'SY01');
+
+        // dd(array_intersect($arr, $target));
+
+        if (in_array('SY01', $arr) && in_array('Z102', $arr)) {
+            return true ;
+        }
+
         $testValue = func_num_args() > 1 ? $testValue : current($arr);
         foreach ($arr as $val) {
             if ($testValue !== $val) {
@@ -137,12 +150,22 @@
     // puyeng aink
     function saveApprovals($assProc, $quotation_id, $tingkat,$type, $isPlant, $isCmo = false)
     {
+        $configEnv = \configEmailNotification();
         $acp   = AcpTable::find($quotation_id);
+        $plantHead ='';
+        
+        if( $acp->plant_id == '1101' OR $acp->plant_id == '2101' ) {
+            $plantHead = '120049';
+        } else if( $acp->plant_id == '1201') {
+            $plantHead = '020300';
+        } else if( $acp->plant_id == '1202' ) {
+            $plantHead = '130639';
+        }
 
         if( $tingkat == 'STAFF' ) {
             if( $isPlant ) {
                 QuotationApproval::create([
-                    'nik'                   => 190256,
+                    'nik'                   => $plantHead,
                     'approval_position'     => 1,
                     'status'                => QuotationApproval::waitingApproval,
                     'quotation_id'          => $quotation_id,
@@ -150,8 +173,15 @@
                     'acp_type'              => $type,
                     'acp_id'                => $quotation_id
                 ]);
-                $email = "diditriawan13@gmail.com";
-                $name  = "didi";
+               
+                if (\App\Models\BaseModel::Development == $configEnv->type) {
+                    $email = "diditriawan13@gmail.com";
+                    $name  = "didi";
+                } else {
+                    $email = \Auth::user()->email;
+                    $name  = \Auth::user()->name;
+                }
+                
                 \Mail::to($email)->send(new enesisApprovalAcpMail($acp, $name));
 
                 QuotationApproval::create([
@@ -184,8 +214,14 @@
                     'acp_id'                => $quotation_id
                 ]);
 
-                $email = "diditriawan13@gmail.com";
-                $name  = "didi";
+                if (\App\Models\BaseModel::Development == $configEnv->type) {
+                    $email = "diditriawan13@gmail.com";
+                    $name  = "didi";
+                } else {
+                    $email = \Auth::user()->email;
+                    $name  = \Auth::user()->name;
+                }
+                
                 \Mail::to($email)->send(new enesisApprovalAcpMail($acp, $name));
     
                 QuotationApproval::create([
@@ -202,7 +238,7 @@
         } else if ($tingkat == 'CFO') {
             if( $isPlant ) {
                 QuotationApproval::create([
-                    'nik'                   => 190256,
+                    'nik'                   => $plantHead,
                     'approval_position'     => 1,
                     'status'                => QuotationApproval::waitingApproval,
                     'quotation_id'          => $quotation_id,
@@ -210,8 +246,13 @@
                     'acp_type'              => $type,
                     'acp_id'                => $quotation_id
                 ]);
-                $email = "diditriawan13@gmail.com";
-                $name  = "didi";
+                if (\App\Models\BaseModel::Development == $configEnv->type) {
+                    $email = "diditriawan13@gmail.com";
+                    $name  = "didi";
+                } else {
+                    $email = \Auth::user()->email;
+                    $name  = \Auth::user()->name;
+                }
                 \Mail::to($email)->send(new enesisApprovalAcpMail($acp, $name));
 
                 QuotationApproval::create([
@@ -239,7 +280,7 @@
                 if( $isCmo ) {
                     $nexturutan = 5;
                     QuotationApproval::create([
-                        'nik'                   => 190256,
+                        'nik'                   => 190026,
                         'approval_position'     => 4,
                         'status'                => QuotationApproval::waitingApproval,
                         'quotation_id'          => $quotation_id,
@@ -269,8 +310,13 @@
                     'acp_id'                => $quotation_id
                 ]);
                     
-                $email = "diditriawan13@gmail.com";
-                $name  = "didi";
+                if (\App\Models\BaseModel::Development == $configEnv->type) {
+                    $email = "diditriawan13@gmail.com";
+                    $name  = "didi";
+                } else {
+                    $email = \Auth::user()->email;
+                    $name  = \Auth::user()->name;
+                }
                 \Mail::to($email)->send(new enesisApprovalAcpMail($acp, $name));
 
                 QuotationApproval::create([
@@ -287,7 +333,7 @@
                 if( $isCmo ) {
                     $nexturutan = 4;
                     QuotationApproval::create([
-                        'nik'                   => 190256,
+                        'nik'                   => 190026,
                         'approval_position'     => 3,
                         'status'                => QuotationApproval::waitingApproval,
                         'quotation_id'          => $quotation_id,
@@ -310,7 +356,7 @@
         } else if ($tingkat == 'COO') {
             if( $isPlant ) {
                 QuotationApproval::create([
-                    'nik'                   => 190256,
+                    'nik'                   => $plantHead,
                     'approval_position'     => 1,
                     'status'                => QuotationApproval::waitingApproval,
                     'quotation_id'          => $quotation_id,
@@ -319,8 +365,13 @@
                     'acp_id'                => $quotation_id
                 ]);
 
-                $email = "diditriawan13@gmail.com";
-                $name  = "didi";
+                if (\App\Models\BaseModel::Development == $configEnv->type) {
+                    $email = "diditriawan13@gmail.com";
+                    $name  = "didi";
+                } else {
+                    $email = \Auth::user()->email;
+                    $name  = \Auth::user()->name;
+                }
                 \Mail::to($email)->send(new enesisApprovalAcpMail($acp, $name));
 
                 QuotationApproval::create([
@@ -347,7 +398,7 @@
                 if( $isCmo ) {
                     $nexturutan = 5;
                     QuotationApproval::create([
-                        'nik'                   => 190256,
+                        'nik'                   => 190026,
                         'approval_position'     => 4,
                         'status'                => QuotationApproval::waitingApproval,
                         'quotation_id'          => $quotation_id,
@@ -386,8 +437,13 @@
                     'acp_id'                => $quotation_id
                 ]);
 
-                $email = "diditriawan13@gmail.com";
-                $name  = "didi";
+                if (\App\Models\BaseModel::Development == $configEnv->type) {
+                    $email = "diditriawan13@gmail.com";
+                    $name  = "didi";
+                } else {
+                    $email = \Auth::user()->email;
+                    $name  = \Auth::user()->name;
+                }
                 \Mail::to($email)->send(new enesisApprovalAcpMail($acp, $name));
     
                 QuotationApproval::create([
@@ -404,7 +460,7 @@
                 if( $isCmo ) {
                     $nexturutan = 4;
                     QuotationApproval::create([
-                        'nik'                   => 190256,
+                        'nik'                   => 190026,
                         'approval_position'     => 3,
                         'status'                => QuotationApproval::waitingApproval,
                         'quotation_id'          => $quotation_id,
@@ -439,5 +495,94 @@
     function removeTitik($titik)
     {
         return str_replace('.','',$titik);
+    }
+
+    function removeComma($comma)
+    {
+        return str_replace(',','',$comma);
+    }
+
+    function toDecimal($duit)
+    {
+        return number_format($duit, 2, ".", ",");
+    }
+
+    function date_compare($a, $b)
+    {
+        $t1 = strtotime($a['Date']);
+        $t2 = strtotime($b['Date']);
+        return $t2 - $t1;  // descending
+    }  
+
+    function compareByTimeStamp($time1, $time2) 
+    { 
+        if (strtotime($time1) < strtotime($time2)) 
+            return 1; 
+        else if (strtotime($time1) > strtotime($time2))  
+            return -1; 
+        else
+            return 0; 
+    } 
+
+    function toDateDb($date)
+    {
+        return date('Y-m-d', strtotime($date));
+    }
+
+    function generatePrNo()
+    {
+        $maxCode  = \App\Models\PurchaseRequest::max('request_no');
+        if( empty( $maxCode) ) {
+            $NextCode = 0000001;
+        } else {
+            $NextCode = substr($maxCode,9) + 1;
+        }
+        
+        $DocNo = sprintf("%07s", $NextCode);
+
+        return "PR/".date('m')."/".date('y')."/".$DocNo;
+    }
+
+    /**
+     * Function that groups an array of associative arrays by some key.
+     *  ref https://ourcodeworld.com/articles/read/762/how-to-group-an-array-of-associative-arrays-by-key-in-php
+     * @param {String} $key Property to sort by.
+     * @param {Array} $data Array that stores multiple associative arrays.
+     */
+    function group_by($key, $data) {
+        $result = array();
+
+        foreach($data as $val) {
+            if(array_key_exists($key, $val)){
+                $result[$val[$key]][] = $val;
+            }else{
+                $result[""][] = $val;
+            }
+        }
+
+        return $result;
+    }
+
+    function _group_by($array, $key) {
+        $return = array();
+        foreach($array as $val) {
+            $return[$val[$key]][] = $val;
+        }
+        return $return;
+    }
+
+    function getUomCode($uom)
+    {
+        $uomCode1 = \App\Models\UomConvert::where('uom_1',$uom)->first();
+        $uomCode2 = \App\Models\UomConvert::where('uom_2',$uom)->first();
+        if( null != $uomCode1 ) {
+            $unit = $uomCode1->uom_2;
+        } else if( null != $uomCode2 ) {
+            $unit = $uomCode2->uom_1;
+        } else {
+            $unit = $uom;
+        }
+
+        return $unit;
     }
 ?>
