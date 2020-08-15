@@ -1233,6 +1233,11 @@ class SapHelper {
             $poItem = ('000'.(10+($i*10)));
             $schedLine = ('000'.($i+1));
 
+            $itemFree = "";
+            if( $quotationDetail[$i]->is_free_item == 1 ) {
+                $itemFree = 'X';
+            }
+
             if( $quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::STANDART 
                 OR $quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::MATERIAL_TEXT) {
                 $POITEM = [
@@ -1285,7 +1290,7 @@ class SapHelper {
                     'GR_IND' => '',
                     'GR_NON_VAL' => '',
                     'IR_IND' => '',
-                    'FREE_ITEM' => '',
+                    'FREE_ITEM' => $itemFree,
                     'GR_BASEDIV' => '',
                     'ACKN_REQD' => '',
                     'ACKNOWL_NO' => '',
@@ -1476,7 +1481,7 @@ class SapHelper {
                     'GR_IND' => '',
                     'GR_NON_VAL' => '',
                     'IR_IND' => '',
-                    'FREE_ITEM' => '',
+                    'FREE_ITEM' => $itemFree,
                     'GR_BASEDIV' => '',
                     'ACKN_REQD' => '',
                     'ACKNOWL_NO' => '',
@@ -1909,7 +1914,7 @@ class SapHelper {
                     'GR_IND' => 'X',
                     'GR_NON_VAL' => '',
                     'IR_IND' => 'X',
-                    'FREE_ITEM' => '',
+                    'FREE_ITEM' => $itemFree,
                     'GR_BASEDIV' => 'X',
                     'ACKN_REQD' => '',
                     'ACKNOWL_NO' => '',
@@ -2100,7 +2105,7 @@ class SapHelper {
                     'GR_IND' => 'X',
                     'GR_NON_VAL' => '',
                     'IR_IND' => 'X',
-                    'FREE_ITEM' => '',
+                    'FREE_ITEM' => $itemFree,
                     'GR_BASEDIV' => 'X',
                     'ACKN_REQD' => '',
                     'ACKNOWL_NO' => '',
@@ -2559,7 +2564,7 @@ class SapHelper {
                     'GR_IND' => 'X',
                     'GR_NON_VAL' => '',
                     'IR_IND' => 'X',
-                    'FREE_ITEM' => '',
+                    'FREE_ITEM' => $itemFree,
                     'GR_BASEDIV' => 'X',
                     'ACKN_REQD' => '',
                     'ACKNOWL_NO' => '',
@@ -2750,7 +2755,7 @@ class SapHelper {
                     'GR_IND' => 'X',
                     'GR_NON_VAL' => '',
                     'IR_IND' => 'X',
-                    'FREE_ITEM' => '',
+                    'FREE_ITEM' => $itemFree,
                     'GR_BASEDIV' => 'X',
                     'ACKN_REQD' => '',
                     'ACKNOWL_NO' => '',

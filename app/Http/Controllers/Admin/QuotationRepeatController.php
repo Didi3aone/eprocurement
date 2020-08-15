@@ -226,6 +226,7 @@ class QuotationRepeatController extends Controller
                     'acp_id'                    => $request->get('acp_id')[$i],
                     'item_category'             => $request->get('category')[$i],
                     'notes'                     => $request->get('notes_detail')[$i],
+                    'is_free_item'              => $request->get('is_free_item')[$i],
                 ];
     
                 array_push($details, $data);
@@ -560,6 +561,7 @@ class QuotationRepeatController extends Controller
                 'line_no'                   => $rows->line_no,
                 'SCHED_LINE'                => $sched->SCHED_LINE,
                 'request_detail_id'         => $rows->request_detail_id,
+                'is_free_item'              => $rows->is_free_item
             ]);
 
             if( $rows->item_category == QuotationDetail::SERVICE ) {
@@ -718,6 +720,7 @@ class QuotationRepeatController extends Controller
             $quotationDetail->line_no                   = $lineNumber;
             $quotationDetail->request_detail_id         = $detail['request_detail_id'];
             $quotationDetail->rfq_number                = $detail['rfq'];
+            $quotationDetail->is_free_item              = $detail['is_free_item'];
             $quotationDetail->save();
 
             if( $detail['item_category'] == QuotationDetail::SERVICE ) {

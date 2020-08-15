@@ -54,6 +54,7 @@ class AcpController extends Controller
         $quotation = QuotationApproval::where('nik', \Auth::user()->nik)
                     ->join('master_acps','master_acps.id','=','quotation_approvals.acp_id')
                     ->join('master_acp_materials','master_acp_materials.master_acp_id','master_acps.id')
+                    ->join('master_acp_vendors','master_acp_vendors.master_acp_id','master_acps.id')
                     ->where('flag', QuotationApproval::alreadyApproval)
                     ->where('acp_type', 'ACP')
                     ->where('master_acps.status_approval','<>','0')
