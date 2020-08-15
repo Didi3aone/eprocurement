@@ -339,16 +339,16 @@
 
             if ($('.calculate_tax').is(":checked")) {
                 if( ppn == 'V1' ) {
-                    _nominal_invoice_ = (_nominal_invoice_ * 1.1) - roundedString
+                    _nominal_invoice_ = parseInt(_nominal_invoice_ * 1.1) + parseInt(roundedString)
                 } else {
-                    _nominal_invoice_ = (_nominal_invoice_ - roundedString)
+                    _nominal_invoice_ = parseInt(_nominal_invoice_) + parseInt(roundedString)
                 }
             } else {
                 _nominal_invoice_ = (_nominal_invoice_ - roundedString)
             }
 
-            console.log('NOMINAL INVOICE ='+ _nominal_invoice_)
-
+            console.log('NOMINAL INVOICE ='+ _nominal_invoice_.toFixed(2))
+            $("#nominal_invoice_staff").val(_nominal_invoice_.toFixed(2))
             $("#jumlah_pph").val(roundedString)
         } else {
             $("#basePPh").hide()
@@ -509,9 +509,6 @@
         return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
     }
 
-    $(function() {
-     
-    })
     window.leadingZero = function(value, element, decimal = false) {
         var convert_number = removeChar(value);
 
