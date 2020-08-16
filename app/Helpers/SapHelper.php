@@ -1038,12 +1038,12 @@ class SapHelper {
     {
         set_time_limit(0);
         $soapFile = \sapHelp::getSoapXml('PURCHASE_ORDER');
-        // if( $soapFile->is_active_env == \App\Models\BaseModel::Development ) {
-        //     $wsdl = public_path()."/xml/zbn_eproc_po.xml";
-        // } else {
-        //     $wsdl = public_path() ."/xml/". $soapFile->xml_file;
-        // }
-        $wsdl = public_path()."/xml/zbn_eproc_po_prod.xml";
+        if( $soapFile->is_active_env == \App\Models\BaseModel::Development ) {
+            $wsdl = public_path()."/xml/zbn_eproc_po.xml";
+        } else {
+            $wsdl = public_path() ."/xml/". $soapFile->xml_file;
+        }
+        // $wsdl = public_path()."/xml/zbn_eproc_po_prod.xml";
         // dd($wsdl);
         
         $username = "IT_02";
