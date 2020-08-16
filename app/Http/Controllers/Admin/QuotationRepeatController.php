@@ -288,7 +288,7 @@ class QuotationRepeatController extends Controller
                 return redirect()->route('admin.purchase-request.index');
             } else {
                 //done process
-                return redirect()->route('admin.quotation-direct.index')->with('status', 'Direct Order has been successfully ordered!');
+                return redirect()->route('admin.quotation-repeat.index')->with('status', 'Direct Order has been successfully ordered!');
             }
 
             \DB::commit();
