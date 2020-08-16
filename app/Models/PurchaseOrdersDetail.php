@@ -55,7 +55,8 @@ class PurchaseOrdersDetail extends Model
         'request_detail_id',
         'qty_billing',
         'rfq_number',
-        'total_price'
+        'total_price',
+        'is_free_item'
     ];
 
     public const SERVICE = 9;

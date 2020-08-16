@@ -1239,18 +1239,19 @@ class SapHelper {
             $material_id        = $quotationDetail[$i]->material;
             // dd($quotationDetail[$i]);
             if($cek_purc_doc == 1 ){
-
                 $price_per = Self::getPricePer($cek_purc_doc, $quotationDetail[$i]->acp_id, $material_id, 'X' );
                 // return \sapHelp::getPricePer('Purchasing_doc','acp/rfq','Material','Plant') ;
-
             }else{
-
                 $price_per =  Self::getPricePer($cek_purc_doc, $quotationDetail[$i]->rfq_number, $material_id, $quotationDetail[$i]->plant_code );
                 // return \sapHelp::getPricePer('Purchasing_doc','acp/rfq','Material','Plant') ;
             }
 
             // dd($price_per);
 
+            $itemFree = "";
+            if( $quotationDetail[$i]->is_free_item == 1 ) {
+                $itemFree = 'X';
+            }
 
             if( $quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::STANDART 
                 OR $quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::MATERIAL_TEXT) {
@@ -1305,7 +1306,7 @@ class SapHelper {
                     'GR_IND' => '',
                     'GR_NON_VAL' => '',
                     'IR_IND' => '',
-                    'FREE_ITEM' => '',
+                    'FREE_ITEM' => $itemFree,
                     'GR_BASEDIV' => '',
                     'ACKN_REQD' => '',
                     'ACKNOWL_NO' => '',
@@ -1496,7 +1497,7 @@ class SapHelper {
                     'GR_IND' => '',
                     'GR_NON_VAL' => '',
                     'IR_IND' => '',
-                    'FREE_ITEM' => '',
+                    'FREE_ITEM' => $itemFree,
                     'GR_BASEDIV' => '',
                     'ACKN_REQD' => '',
                     'ACKNOWL_NO' => '',
@@ -1930,7 +1931,7 @@ class SapHelper {
                     'GR_IND' => 'X',
                     'GR_NON_VAL' => '',
                     'IR_IND' => 'X',
-                    'FREE_ITEM' => '',
+                    'FREE_ITEM' => $itemFree,
                     'GR_BASEDIV' => 'X',
                     'ACKN_REQD' => '',
                     'ACKNOWL_NO' => '',
@@ -2121,7 +2122,7 @@ class SapHelper {
                     'GR_IND' => 'X',
                     'GR_NON_VAL' => '',
                     'IR_IND' => 'X',
-                    'FREE_ITEM' => '',
+                    'FREE_ITEM' => $itemFree,
                     'GR_BASEDIV' => 'X',
                     'ACKN_REQD' => '',
                     'ACKNOWL_NO' => '',
@@ -2581,7 +2582,7 @@ class SapHelper {
                     'GR_IND' => 'X',
                     'GR_NON_VAL' => '',
                     'IR_IND' => 'X',
-                    'FREE_ITEM' => '',
+                    'FREE_ITEM' => $itemFree,
                     'GR_BASEDIV' => 'X',
                     'ACKN_REQD' => '',
                     'ACKNOWL_NO' => '',
@@ -2772,7 +2773,7 @@ class SapHelper {
                     'GR_IND' => 'X',
                     'GR_NON_VAL' => '',
                     'IR_IND' => 'X',
-                    'FREE_ITEM' => '',
+                    'FREE_ITEM' => $itemFree,
                     'GR_BASEDIV' => 'X',
                     'ACKN_REQD' => '',
                     'ACKNOWL_NO' => '',
@@ -5445,7 +5446,6 @@ class SapHelper {
         // echo "<pre>".print_r($params);die;
         // echo "</pre>";
         $result = $client->__soapCall('ZFM_WS_PO', $params, NULL, $header);
-        // dd($result);
 
         // dd($result->POSCHEDULE);
         // echo "<pre>".print_r($params);die;"</pre>";

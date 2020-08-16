@@ -143,6 +143,7 @@
                             <th style="width: 14%">Delivery Date PR</th>
                             <th style="width: 14%">Delivery Date</th>
                             <th style="width: 64%">Tax</th>
+                            <th style="width: 64%">Free Item ? </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -230,6 +231,9 @@
                                 <td><input type="text" class="mdate" name="delivery_date_new[]" id="delivery_date_new" value="{{ $value->delivery_date }}"></td>
                                 <td><input type="checkbox" class="" id="check_{{ $value->id }}" name="tax_code[]" value="1">
                                     <label for="check_{{ $value->id }}">&nbsp;</label>
+                                </td>
+                                <td><input type="checkbox" class="" id="is_free_item_{{ $value->id }}" name="is_free_item[]" value="1">
+                                    <label for="is_free_item_{{ $value->id }}">&nbsp;</label>
                                 </td>
                             </tr>
                         @endforeach

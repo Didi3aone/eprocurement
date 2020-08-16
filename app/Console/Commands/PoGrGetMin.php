@@ -94,7 +94,7 @@ class PoGrGetMin extends Command
                                             ->where('po_item',$value[$i]->EBELP)
                                             ->first();
                             
-                            if( $value[$i]->SHKZG != 'S' ) {
+                            if( $value[$i]->BWART == '102' ) {
                                 if( $checkExistData == null ) {
                                     $poDetail = \App\Models\PurchaseOrdersDetail::where('purchase_order_id', $poHeader->id)
                                             ->where('PO_ITEM', $value[$i]->EBELP)
@@ -167,7 +167,7 @@ class PoGrGetMin extends Command
                                     ->where('doc_gr',$value->MBLNR)
                                     ->where('po_item',$value->EBELP)
                                     ->first();
-                        if( $value->SHKZG != 'S' ) {
+                        if( $value->BWART == '102' ) {
                             if( $checkExistData == null ) {
                                 $poDetail = \App\Models\PurchaseOrdersDetail::where('purchase_order_id', $poHeader->id)
                                             ->where('PO_ITEM', $value->EBELP)
