@@ -43,7 +43,8 @@ class QuotationRepeatController extends Controller
                         'quotation.po_no',
                         'quotation.vendor_id',
                         'quotation.approval_status',
-                        'vendors.company_name'
+                        'vendors.company_name',
+                        'quotation.status',
                     )
                     ->groupBy('quotation.id','vendors.company_name')
                     ->orderBy('id', 'desc');
@@ -82,6 +83,7 @@ class QuotationRepeatController extends Controller
                         'quotation.approval_status',
                         'vendors.company_name',
                         'vendors.email',
+                        'quotation.status',
                         \DB::raw('sum(quotation_details.price) as totalValue')
                     )
                     ->groupBy('quotation.id','vendors.company_name','vendors.email')
@@ -130,6 +132,7 @@ class QuotationRepeatController extends Controller
                         'quotation_details.material_group',
                         'quotation_details.PREQ_ITEM',
                         'quotation_details.acp_id',
+                        'quotation.status',
                     )
                     ->orderBy('id', 'desc')
                     ->get();
