@@ -40,7 +40,7 @@ class QuotationDirectController extends Controller
         $quotation = QuotationDetail::join('quotation','quotation.id','=','quotation_details.quotation_order_id')
                     ->join('vendors','vendors.code','=','quotation.vendor_id')
                     ->where('quotation.status',Quotation::QuotationDirect)
-                    // ->where('quotation.approval_status',Quotation::Waiting) 
+                    ->where('quotation.approval_status',Quotation::Waiting) 
                     ->orWhere('quotation.approval_status', Quotation::ApprovalAss)
                     ->whereIn('quotation_details.purchasing_group_code', $userMapping)
                     ->select(
@@ -49,6 +49,7 @@ class QuotationDirectController extends Controller
                         'quotation.vendor_id',
                         'quotation.approval_status',
                         'vendors.company_name',
+                        'quotation.status',
                     )
                     ->groupBy('quotation.id','vendors.company_name')
                     ->orderBy('id', 'desc');
@@ -88,6 +89,7 @@ class QuotationDirectController extends Controller
                         'quotation.acp_id',
                         'vendors.company_name',
                         'vendors.email',
+                        'quotation.status',
                         \DB::raw('sum(quotation_details.price) as totalValue')
                     )
                     ->groupBy('quotation.id','vendors.company_name','vendors.email')
@@ -137,6 +139,7 @@ class QuotationDirectController extends Controller
                         'quotation_details.material_group',
                         'quotation_details.PREQ_ITEM',
                         'quotation_details.acp_id',
+                        'quotation.status',
                     )
                     ->orderBy('id', 'desc')
                     ->get();
@@ -441,6 +444,12 @@ class QuotationDirectController extends Controller
         } catch (\Throwable $th) {
             throw $th;
         }
+    }
+
+    public function getPricePer()
+    {
+        return \sapHelp::getPricePer('2200001976','2200001976','3000471','1201') ;
+        // return \sapHelp::getPricePer('Purchasing_doc','acp/rfq','Material','Plant') ;
     }
 
      /**

@@ -56,7 +56,7 @@ class AcpController extends Controller
                     ->join('master_acp_materials','master_acp_materials.master_acp_id','master_acps.id')
                     ->where('flag', QuotationApproval::alreadyApproval)
                     ->where('acp_type', 'ACP')
-                    ->where('master_acps.status_approval','<>','0')
+                    // ->where('master_acps.status_approval','<>','0')
                     ->select(
                         'master_acps.id',
                         'quotation_approvals.nik',

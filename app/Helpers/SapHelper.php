@@ -37,7 +37,7 @@ class SapHelper {
      * get url soaps
      * @param string $soapModul
      * @return void
-     */
+    */
     public static function getSoapXml($soapModul)
     {
         $soapUrl    = DB::connection('pgsql3')->table('soap_urls')
@@ -899,7 +899,8 @@ class SapHelper {
                         "GR_PRICE"           => '0.0000', 
                         "FROM_LINE"          => '', 
                         "TO_LINE"            => '', 
-                        "SHORT_TEXT"         => $row['TEXT_LINE'], 
+                        // "SHORT_TEXT"         => $row['TEXT_LINE'], 
+                        "SHORT_TEXT"         => $row['SHORT_TEXT'], 
                         "DISTRIB"            => '', 
                         "PERS_NO"            => '00000000', 
                         "WAGETYPE"           => '', 
@@ -1233,6 +1234,24 @@ class SapHelper {
             $poItem = ('000'.(10+($i*10)));
             $schedLine = ('000'.($i+1));
 
+            //Cek Price Per
+            $cek_purc_doc       = substr($quotationDetail[$i]->purchasing_document,0,1);
+            $material_id        = $quotationDetail[$i]->material;
+            // dd($quotationDetail[$i]);
+            if($cek_purc_doc == 1 ){
+
+                $price_per = Self::getPricePer($cek_purc_doc, $quotationDetail[$i]->acp_id, $material_id, 'X' );
+                // return \sapHelp::getPricePer('Purchasing_doc','acp/rfq','Material','Plant') ;
+
+            }else{
+
+                $price_per =  Self::getPricePer($cek_purc_doc, $quotationDetail[$i]->rfq_number, $material_id, $quotationDetail[$i]->plant_code );
+                // return \sapHelp::getPricePer('Purchasing_doc','acp/rfq','Material','Plant') ;
+            }
+
+            // dd($price_per);
+
+
             if( $quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::STANDART 
                 OR $quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::MATERIAL_TEXT) {
                 $POITEM = [
@@ -1261,7 +1280,8 @@ class SapHelper {
                     'CONV_NUM1' => '',
                     'CONV_DEN1' => '',
                     'NET_PRICE' => $quotationDetail[$i]->price ?? '1000000',
-                    'PRICE_UNIT' => '',
+                    // 'PRICE_UNIT' => '',
+                    'PRICE_UNIT' => $price_per,
                     'GR_PR_TIME' => '',
                     'TAX_CODE' => $quotationDetail[$i]->tax_code,
                     'BON_GRP1' => '',
@@ -1452,7 +1472,7 @@ class SapHelper {
                     'CONV_NUM1' => '',
                     'CONV_DEN1' => '',
                     'NET_PRICE' => 'X',
-                    'PRICE_UNIT' => '',
+                    'PRICE_UNIT' => 'X',
                     'GR_PR_TIME' => '',
                     'TAX_CODE' => 'X',
                     'BON_GRP1' => '',
@@ -1885,7 +1905,8 @@ class SapHelper {
                     'CONV_NUM1' => '',
                     'CONV_DEN1' => '',
                     'NET_PRICE' => $quotationDetail[$i]->price ?? '1000000',
-                    'PRICE_UNIT' => '',
+                    // 'PRICE_UNIT' => '',
+                    'PRICE_UNIT' => $price_per,
                     'GR_PR_TIME' => '',
                     'TAX_CODE' => $quotationDetail[$i]->tax_code,
                     'BON_GRP1' => '',
@@ -2076,7 +2097,7 @@ class SapHelper {
                     'CONV_NUM1' => '',
                     'CONV_DEN1' => '',
                     'NET_PRICE' => 'X',
-                    'PRICE_UNIT' => '',
+                    'PRICE_UNIT' => 'X',
                     'GR_PR_TIME' => '',
                     'TAX_CODE' => 'X',
                     'BON_GRP1' => '',
@@ -2535,7 +2556,8 @@ class SapHelper {
                     'CONV_NUM1' => '',
                     'CONV_DEN1' => '',
                     'NET_PRICE' => $quotationDetail[$i]->price ?? '1000000',
-                    'PRICE_UNIT' => '',
+                    // 'PRICE_UNIT' => '',
+                    'PRICE_UNIT' => $price_per,
                     'GR_PR_TIME' => '',
                     'TAX_CODE' => $quotationDetail[$i]->tax_code,
                     'BON_GRP1' => '',
@@ -2726,7 +2748,7 @@ class SapHelper {
                     'CONV_NUM1' => '',
                     'CONV_DEN1' => '',
                     'NET_PRICE' => 'X',
-                    'PRICE_UNIT' => '',
+                    'PRICE_UNIT' => 'X',
                     'GR_PR_TIME' => '',
                     'TAX_CODE' => 'X',
                     'BON_GRP1' => '',
@@ -3236,6 +3258,7 @@ class SapHelper {
      */
     public static function sendPoTesRun($quotation, $quotationDetail, $quotationDeliveryDate)
     {
+
         set_time_limit(0);
         $soapFile = \sapHelp::getSoapXml('PURCHASE_ORDER');
         if( $soapFile->is_active_env == \App\Models\BaseModel::Development ) {
@@ -3433,6 +3456,24 @@ class SapHelper {
             $poItem = ('000'.(10+($i*10)));
             $schedLine = ('000'.($i+1));
 
+            //Cek Price Per
+            $cek_purc_doc       = substr($quotationDetail[$i]->purchasing_document,0,1);
+            $material_id        = $quotationDetail[$i]->material;
+            // dd($quotationDetail[$i]);
+            if($cek_purc_doc == 1 ){
+
+                $price_per = Self::getPricePer($cek_purc_doc, $quotationDetail[$i]->acp_id, $material_id, 'X' );
+                // return \sapHelp::getPricePer('Purchasing_doc','acp/rfq','Material','Plant') ;
+
+            }else{
+
+                $price_per =  Self::getPricePer($cek_purc_doc, $quotationDetail[$i]->rfq_number, $material_id, $quotationDetail[$i]->plant_code );
+                // return \sapHelp::getPricePer('Purchasing_doc','acp/rfq','Material','Plant') ;
+            }
+
+            // dd($price_per);
+
+
             if( $quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::STANDART 
                 OR $quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::MATERIAL_TEXT) {
                 $POITEM = [
@@ -3461,7 +3502,8 @@ class SapHelper {
                     'CONV_NUM1' => '',
                     'CONV_DEN1' => '',
                     'NET_PRICE' => $quotationDetail[$i]->price ?? '1000000',
-                    'PRICE_UNIT' => '',
+                    // 'PRICE_UNIT' => '',
+                    'PRICE_UNIT' => $price_per,
                     'GR_PR_TIME' => '',
                     'TAX_CODE' => $quotationDetail[$i]->tax_code,
                     'BON_GRP1' => '',
@@ -3652,7 +3694,7 @@ class SapHelper {
                     'CONV_NUM1' => '',
                     'CONV_DEN1' => '',
                     'NET_PRICE' => 'X',
-                    'PRICE_UNIT' => '',
+                    'PRICE_UNIT' => 'X',
                     'GR_PR_TIME' => '',
                     'TAX_CODE' => 'X',
                     'BON_GRP1' => '',
@@ -4085,7 +4127,8 @@ class SapHelper {
                     'CONV_NUM1' => '',
                     'CONV_DEN1' => '',
                     'NET_PRICE' => $quotationDetail[$i]->price ?? '1000000',
-                    'PRICE_UNIT' => '',
+                    // 'PRICE_UNIT' => '',
+                    'PRICE_UNIT' => $price_per,
                     'GR_PR_TIME' => '',
                     'TAX_CODE' => $quotationDetail[$i]->tax_code,
                     'BON_GRP1' => '',
@@ -4276,7 +4319,7 @@ class SapHelper {
                     'CONV_NUM1' => '',
                     'CONV_DEN1' => '',
                     'NET_PRICE' => 'X',
-                    'PRICE_UNIT' => '',
+                    'PRICE_UNIT' => 'X',
                     'GR_PR_TIME' => '',
                     'TAX_CODE' => 'X',
                     'BON_GRP1' => '',
@@ -4735,7 +4778,8 @@ class SapHelper {
                     'CONV_NUM1' => '',
                     'CONV_DEN1' => '',
                     'NET_PRICE' => $quotationDetail[$i]->price ?? '1000000',
-                    'PRICE_UNIT' => '',
+                    // 'PRICE_UNIT' => '',
+                    'PRICE_UNIT' => $price_per,
                     'GR_PR_TIME' => '',
                     'TAX_CODE' => $quotationDetail[$i]->tax_code,
                     'BON_GRP1' => '',
@@ -4926,7 +4970,7 @@ class SapHelper {
                     'CONV_NUM1' => '',
                     'CONV_DEN1' => '',
                     'NET_PRICE' => 'X',
-                    'PRICE_UNIT' => '',
+                    'PRICE_UNIT' => 'X',
                     'GR_PR_TIME' => '',
                     'TAX_CODE' => 'X',
                     'BON_GRP1' => '',
@@ -5401,7 +5445,7 @@ class SapHelper {
         // echo "<pre>".print_r($params);die;
         // echo "</pre>";
         $result = $client->__soapCall('ZFM_WS_PO', $params, NULL, $header);
-        // dd($result->RETURN->item);
+        // dd($result);
 
         // dd($result->POSCHEDULE);
         // echo "<pre>".print_r($params);die;"</pre>";
@@ -10001,5 +10045,37 @@ class SapHelper {
                 $temp->update();
             }
         }
+    }
+
+    public static function getPricePer( $purchasing_document, $acp_or_rfq_id, $material_id, $plant)
+    {
+        $cek_purc_doc = substr($purchasing_document,0,1);
+        // dd($purchasing_document, $acp_or_rfq_id, $material_id);
+
+        if( $cek_purc_doc == 1 ){
+
+            $query = DB::connection('pgsql')
+                ->table('vw_acp_winner')
+                ->where('master_acp_id', $acp_or_rfq_id)
+                ->where('material_id', $material_id)
+                ->first();
+
+            $price_per = $query->qty ;
+
+        }else{
+
+            $query = DB::connection('pgsql')
+                ->table('rfq_details')
+                ->where('rfq_number', $acp_or_rfq_id)
+                ->where('material_id', $material_id)
+                ->where('plant_code', $plant )
+                ->first();
+
+            $price_per = $query->per_unit ;
+
+        }
+            
+        return $price_per ;
+            
     }
 }
