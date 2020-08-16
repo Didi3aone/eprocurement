@@ -269,6 +269,10 @@ class QuotationDirectController extends Controller
                 \Session::flash('notif', $detail['error']); 
                 //rollback if error send sap
                 \DB::rollBack();
+                //ini rollback ga jalan jadi pake cara orang awam
+                Quotation::where('id', $quotation->id)->delete();
+                QuotationDetail::where('quotation_order_id', $quotation->id)->delete();
+
                 for ($i = 0; $i < count($request->get('qty')); $i++) {
                     $qy = str_replace('.', '', $request->get('qty')[$i]);
                     $qty += $qy;
@@ -589,7 +593,7 @@ class QuotationDirectController extends Controller
                 'line_no'                   => $rows->line_no,
                 'SCHED_LINE'                => $sched->SCHED_LINE,
                 'request_detail_id'         => $rows->request_detail_id,
-                'is_free_item'              => $rows->is_free_item
+                'is_free_item'              => $rows->is_free_item ?? 0
             ]);
 
             if( $rows->item_category == QuotationDetail::SERVICE ) {
@@ -747,7 +751,7 @@ class QuotationDirectController extends Controller
             $quotationDetail->subpackage_no             = $subpackgparent;
             $quotationDetail->line_no                   = $lineNumber;
             $quotationDetail->request_detail_id         = $detail['request_detail_id'];
-            $quotationDetail->is_free_item              = $detail['is_free_item'];
+            $quotationDetail->is_free_item              = $detail['is_free_item'] ?? 0;
             $quotationDetail->save();
 
             if( $detail['item_category'] == QuotationDetail::SERVICE ) {

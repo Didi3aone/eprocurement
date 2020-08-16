@@ -266,24 +266,30 @@ class QuotationRepeatController extends Controller
             $detail = $this->_insert_details($details, $quotation->id);
             // dd($detail);
             if( true == $detail['is_error'] ) {
-                 \Session::flash('notif', $detail['error']); 
-                 //rollback if error send sap
-                 \DB::rollBack();
-                 for ($i = 0; $i < count($request->get('qty')); $i++) {
-                     $qy = str_replace('.', '', $request->get('qty')[$i]);
-                     $qty += $qy;
-                     // update material qty
-                     $material = PurchaseRequestsDetail::where('id', $request->id[$i])->first();
-                     $material->qty_requested = $material->qty;
-                     $material->qty       += $request->get('qty')[$i];
-                     $material->qty_order -= $request->get('qty')[$i];
-                     $material->save();
-                 }
-                 return redirect()->route('admin.purchase-request.index');
-             } else {
-                 //done process
-                 return redirect()->route('admin.quotation-direct.index')->with('status', 'Direct Order has been successfully ordered!');
-             }
+                \Session::flash('notif', $detail['error']); 
+                //rollback if error send sap
+                \DB::rollBack();
+                //ini rollback ga jalan jadi pake cara orang awam
+                Quotation::where('id', $quotation->id)->delete();
+                QuotationDetail::where('quotation_order_id', $quotation->id)->delete();
+
+                //balikin qty
+                for ($i = 0; $i < count($request->get('qty')); $i++) {
+                    $qy = str_replace('.', '', $request->get('qty')[$i]);
+                    $qty += $qy;
+                    // update material qty
+                    $material = PurchaseRequestsDetail::where('id', $request->id[$i])->first();
+                    $material->qty_requested = $material->qty;
+                    $material->qty       += $request->get('qty')[$i];
+                    $material->qty_order -= $request->get('qty')[$i];
+                    $material->save();
+                }
+
+                return redirect()->route('admin.purchase-request.index');
+            } else {
+                //done process
+                return redirect()->route('admin.quotation-direct.index')->with('status', 'Direct Order has been successfully ordered!');
+            }
 
             \DB::commit();
         } catch (Exception $e) {
@@ -561,7 +567,7 @@ class QuotationRepeatController extends Controller
                 'line_no'                   => $rows->line_no,
                 'SCHED_LINE'                => $sched->SCHED_LINE,
                 'request_detail_id'         => $rows->request_detail_id,
-                'is_free_item'              => $rows->is_free_item
+                'is_free_item'              => $rows->is_free_item ?? 0
             ]);
 
             if( $rows->item_category == QuotationDetail::SERVICE ) {
@@ -720,7 +726,7 @@ class QuotationRepeatController extends Controller
             $quotationDetail->line_no                   = $lineNumber;
             $quotationDetail->request_detail_id         = $detail['request_detail_id'];
             $quotationDetail->rfq_number                = $detail['rfq'];
-            $quotationDetail->is_free_item              = $detail['is_free_item'];
+            $quotationDetail->is_free_item              = $detail['is_free_item'] ?? 0;
             $quotationDetail->save();
 
             if( $detail['item_category'] == QuotationDetail::SERVICE ) {
