@@ -226,10 +226,11 @@ class QuotationDirectController extends Controller
                     'acp_id'                    => $request->get('acp_id')[$i],
                     'item_category'             => $request->get('category')[$i],
                     'notes'                     => $request->get('notes_detail')[$i],
-                    'is_free_item'              => $request->get('is_free_item')[$i],
+                    'is_free_item'              => $request->get('is_free_item')[$i] ?? 0
                 ];
-    
+
                 array_push($details, $data);
+                // dd($details);
     
                 PurchaseRequestHistory::insertHistory($data);
                 $material->qty      -= $request->get('qty')[$i];
@@ -265,8 +266,8 @@ class QuotationDirectController extends Controller
             $quotation->save();
 
             //insert ITEM
-            $detail = $this->_insert_details($details, $quotation->id);
             // dd($detail);
+            $detail = $this->_insert_details($details, $quotation->id);
             
             if( true == $detail['is_error'] ) {
                 \Session::flash('notif', $detail['error']); 
@@ -724,7 +725,6 @@ class QuotationDirectController extends Controller
 
             if( null != $getQtyAcp ) {
                 $perQty = ($detail['qty']/$getQtyAcp->qty);
-                // $totalPrices = (\removeComma($detail['price']) * $perQty);
                 $totalPrices = (\removeComma($price_v2) * $perQty);
             }
 

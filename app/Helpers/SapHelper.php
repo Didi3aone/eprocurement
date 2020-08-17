@@ -1039,12 +1039,12 @@ class SapHelper {
     {
         set_time_limit(0);
         $soapFile = \sapHelp::getSoapXml('PURCHASE_ORDER');
-        // if( $soapFile->is_active_env == \App\Models\BaseModel::Development ) {
-        //     $wsdl = public_path()."/xml/zbn_eproc_po.xml";
-        // } else {
-        //     $wsdl = public_path() ."/xml/". $soapFile->xml_file;
-        // }
-        $wsdl = public_path()."/xml/zbn_eproc_po_prod.xml";
+        if( $soapFile->is_active_env == \App\Models\BaseModel::Development ) {
+            $wsdl = public_path()."/xml/zbn_eproc_po.xml";
+        } else {
+            $wsdl = public_path() ."/xml/". $soapFile->xml_file;
+        }
+        // $wsdl = public_path()."/xml/zbn_eproc_po_prod.xml";
         // dd($wsdl);
         
         $username = "IT_02";
@@ -1245,7 +1245,7 @@ class SapHelper {
                 $price_per =  Self::getPricePer($cek_purc_doc, $quotationDetail[$i]->rfq_number, $material_id, $quotationDetail[$i]->plant_code );
                 // return \sapHelp::getPricePer('Purchasing_doc','acp/rfq','Material','Plant') ;
             }
-
+            
             // dd($price_per);
 
             $itemFree = '';
@@ -3459,6 +3459,13 @@ class SapHelper {
             $poItem = ('000'.(10+($i*10)));
             $schedLine = ('000'.($i+1));
 
+            $itemFree = '';
+            $netPriceItemX = 'X';
+            if( $quotationDetail[$i]->is_free_item == 1 ) {
+                $itemFree = 'X';
+                $netPriceItemX = '';
+            }
+
             //Cek Price Per
             $cek_purc_doc       = substr($quotationDetail[$i]->purchasing_document,0,1);
             $material_id        = $quotationDetail[$i]->material;
@@ -3537,7 +3544,7 @@ class SapHelper {
                     'GR_IND' => '',
                     'GR_NON_VAL' => '',
                     'IR_IND' => '',
-                    'FREE_ITEM' => $itemFree,
+                    'FREE_ITEM' => $itemFree ,
                     'GR_BASEDIV' => '',
                     'ACKN_REQD' => '',
                     'ACKNOWL_NO' => '',
