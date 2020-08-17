@@ -8,5 +8,5 @@ class EmailMarketingVendor extends Model
 {
     protected $connection = 'pgsql';
 
-    public $table = 'email_marketing_vendor';
+    public $table = 'email_marketing_vendors';
 }
