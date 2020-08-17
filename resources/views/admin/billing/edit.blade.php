@@ -460,8 +460,7 @@
                     totalInv = summary
                 }
                 console.log('TOTAL INVOICE CHECLIS = ' + totalInv)
-
-                $("#nominal_invoice_staff").val(totalInv.toFixed(2))
+                $("#nominal_invoice_staff").val(keyupFormatUangWithDecimal(totalInv.toString()))
             } 
         } else {
             $("#nominal_invoice_staff").attr('readonly',false)
