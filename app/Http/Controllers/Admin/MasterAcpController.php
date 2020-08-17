@@ -183,7 +183,7 @@ class MasterAcpController extends Controller
             $acp->reference_acp_no  = $request->get('reference_acp_no') ?? '';
             $acp->upload_file       = $file_upload;
             $acp->plant_id          = $request->get('plant_id');
-            $acp->exchange_rate     = $request->get('exchange_rate');
+            $acp->exchange_rate     = $request->get('exchange_rate') ?? 0;
             $acp->save();
 
             $result = [];
