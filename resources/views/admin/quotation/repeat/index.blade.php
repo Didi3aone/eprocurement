@@ -33,6 +33,7 @@
                                         <th>PO Eprocurement</th>
                                         <th>Vendor</th>
                                         <th>Approval Status</th>
+                                        <th>Status</th>
                                         <th>&nbsp;</th>
                                     </tr>
                                 </thead>
@@ -43,6 +44,7 @@
                                             <td>{{ $val->po_no ?? '' }}</td>
                                             <td>{{ $val->vendor_id." - ".$val->company_name }}</td>
                                             <td>{{ \App\Models\Vendor\Quotation::TypeStatusApproval[$val->approval_status] }}</td>
+                                            <td>{{ $val->status ?? '' }}</td>
                                             <td>
                                                 <a class="btn btn-primary btn-xs" href="{{ route('admin.quotation-repeat.show', $val->id) }}">
                                                     <i class="fa fa-eye"></i> {{ trans('global.view') }}

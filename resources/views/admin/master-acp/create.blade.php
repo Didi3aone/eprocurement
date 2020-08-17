@@ -123,6 +123,10 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label>{{ 'Exchange rate' }}</label>
+                        <input type="text" class="form-control form-control-line" name="exchange_rate" value=""> 
+                    </div>
+                    <div class="form-group">
                         <div class="table-responsive">
                             <table class="table">
                                 <thead>
