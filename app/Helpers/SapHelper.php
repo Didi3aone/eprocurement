@@ -6773,14 +6773,14 @@ class SapHelper {
                 
                 $dataChild = PurchaseOrderServiceChild::where('purchase_order_id', $poHeader->id)->get();
                 for( $k = 0; $k < count($dataChild); $k++ ) {
-                    $uomCode1 = \App\Models\UomConvert::where('uom_1',$quotationDetail[$i]->unit)->first();
-                    $uomCode2 = \App\Models\UomConvert::where('uom_2',$quotationDetail[$i]->unit)->first();
+                    $uomCode1 = \App\Models\UomConvert::where('uom_1',$poDetail[$i]->unit)->first();
+                    $uomCode2 = \App\Models\UomConvert::where('uom_2',$poDetail[$i]->unit)->first();
                     if( null != $uomCode1 ) {
                         $unit = $uomCode1->uom_2;
                     } else if( null != $uomCode2 ) {
                         $unit = $uomCode2->uom_1;
                     } else {
-                        $unit = $quotationDetail[$i]->unit;
+                        $unit = $poDetail[$i]->unit;
                     }
                     $createLine = $k + 1;
                     $POSERVICES = [
@@ -7411,14 +7411,14 @@ class SapHelper {
 
                 $dataChild = \App\Models\PurchaseOrderServiceChild::where('purchase_order_id', $poHeader->id)->get();
                 for( $k = 0; $k < count($dataChild); $k++ ) {
-                    $uomCode1 = \App\Models\UomConvert::where('uom_1',$quotationDetail[$i]->unit)->first();
-                    $uomCode2 = \App\Models\UomConvert::where('uom_2',$quotationDetail[$i]->unit)->first();
+                    $uomCode1 = \App\Models\UomConvert::where('uom_1',$poDetail[$i]->unit)->first();
+                    $uomCode2 = \App\Models\UomConvert::where('uom_2',$poDetail[$i]->unit)->first();
                     if( null != $uomCode1 ) {
                         $unit = $uomCode1->uom_2;
                     } else if( null != $uomCode2 ) {
                         $unit = $uomCode2->uom_1;
                     } else {
-                        $unit = $quotationDetail[$i]->unit;
+                        $unit = $poDetail[$i]->unit;
                     }
                     $createLine = $k + 1;
                     $POSERVICES = [
