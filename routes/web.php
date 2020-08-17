@@ -229,6 +229,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('quotation/direct/approve/ass/{ids}', 'QuotationDirectController@directApproveAss')->name('quotation.direct.approve.ass');
     Route::get('quotation/direct/approve/head/{ids}', 'QuotationDirectController@directApproveHead')->name('quotation.direct.approve.head');
     Route::resource('quotation-direct', 'QuotationDirectController');
+    Route::get('quotation-direct-get-price', 'QuotationDirectController@getPricePer')->name('price-per');
 
     Route::get('quotation-repeat-approval-head', 'QuotationRepeatController@approvalListHead')->name('quotation-repeat-approval-head');
     Route::get('quotation-repeat-approval-ass', 'QuotationRepeatController@approvalListAss')->name('quotation-repeat-approval-ass');

@@ -1248,9 +1248,11 @@ class SapHelper {
 
             // dd($price_per);
 
-            $itemFree = "";
+            $itemFree = '';
+            $netPriceItemX = 'X';
             if( $quotationDetail[$i]->is_free_item == 1 ) {
                 $itemFree = 'X';
+                $netPriceItemX = '';
             }
 
             if( $quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::STANDART 
@@ -1472,7 +1474,7 @@ class SapHelper {
                     'ORDERPR_UN_ISO' => '',
                     'CONV_NUM1' => '',
                     'CONV_DEN1' => '',
-                    'NET_PRICE' => 'X',
+                    'NET_PRICE' => $netPriceItemX,
                     'PRICE_UNIT' => 'X',
                     'GR_PR_TIME' => '',
                     'TAX_CODE' => 'X',
@@ -1572,7 +1574,7 @@ class SapHelper {
                     'VENDRBATCH' => '',
                     'CALCTYPE' => '',
                     'NO_ROUNDING' => '',
-                    'PO_PRICE' => 'X',
+                    'PO_PRICE' => $netPriceItemX,
                     'SUPPL_STLOC' => '',
                     'SRV_BASED_IV' => '',
                     'FUNDS_RES' => '',
@@ -3474,6 +3476,13 @@ class SapHelper {
 
             // dd($price_per);
 
+            $itemFree = '';
+            $netPriceItemX = 'X';
+            if( $quotationDetail[$i]->is_free_item == 1 ) {
+                $itemFree = 'X';
+                $netPriceItemX = '';
+            }
+
 
             if( $quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::STANDART 
                 OR $quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::MATERIAL_TEXT) {
@@ -3528,7 +3537,7 @@ class SapHelper {
                     'GR_IND' => '',
                     'GR_NON_VAL' => '',
                     'IR_IND' => '',
-                    'FREE_ITEM' => '',
+                    'FREE_ITEM' => $itemFree,
                     'GR_BASEDIV' => '',
                     'ACKN_REQD' => '',
                     'ACKNOWL_NO' => '',
@@ -3694,7 +3703,7 @@ class SapHelper {
                     'ORDERPR_UN_ISO' => '',
                     'CONV_NUM1' => '',
                     'CONV_DEN1' => '',
-                    'NET_PRICE' => 'X',
+                    'NET_PRICE' => $netPriceItemX,
                     'PRICE_UNIT' => 'X',
                     'GR_PR_TIME' => '',
                     'TAX_CODE' => 'X',
@@ -3719,7 +3728,7 @@ class SapHelper {
                     'GR_IND' => '',
                     'GR_NON_VAL' => '',
                     'IR_IND' => '',
-                    'FREE_ITEM' => '',
+                    'FREE_ITEM' => $itemFree,
                     'GR_BASEDIV' => '',
                     'ACKN_REQD' => '',
                     'ACKNOWL_NO' => '',
@@ -3794,7 +3803,7 @@ class SapHelper {
                     'VENDRBATCH' => '',
                     'CALCTYPE' => '',
                     'NO_ROUNDING' => '',
-                    'PO_PRICE' => 'X',
+                    'PO_PRICE' => $netPriceItemX,
                     'SUPPL_STLOC' => '',
                     'SRV_BASED_IV' => '',
                     'FUNDS_RES' => '',
