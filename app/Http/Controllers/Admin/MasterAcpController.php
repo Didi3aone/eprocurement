@@ -302,11 +302,11 @@ class MasterAcpController extends Controller
                 }
 
                 $totalPrice = \removeComma($val['price'])/$val['qty'] * $val['qty_pr'];
-
                 $priceForAcp = $totalPrice;
                 if( 'IDR' != $val['currency'] )  {
-                    $priceForAcp = ($request->get('exchange_rate') *  \removeComma($val['price']));
+                    $priceForAcp = ($request->get('exchange_rate') *  \removeComma($val['price']))/$val['qty'] * $val['qty_pr'];
                 }
+                // dd($priceForAcp);
 
                 $assProc = \App\Models\UserMap::getAssProc($cMo->purchasing_group_code)->user_id;
                 $material = new AcpTableMaterial();
