@@ -140,7 +140,8 @@ class MasterAcpController extends Controller
     public function getCurrency(Request $request)
     {
         $currency = \App\Models\Currency::where('currency', 'like', '%'.strtoupper($request->query('term')).'%')
-                    ->where('iso_code','IDR')->get();
+                    // ->where('iso_code','IDR')
+                    ->get();
 
         $data = [];
         foreach ($currency as $row) {
