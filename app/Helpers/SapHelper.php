@@ -1244,7 +1244,7 @@ class SapHelper {
                     $price_per = 1 ;
                 }else {
                     # code...
-                    $price_per = Self::getPricePer($cek_purc_doc, $quotationDetail[$i]->acp_id, $material_id, 'X' );
+                    $price_per = Self::getPricePer($cek_purc_doc, $quotationDetail[$i]->purchasing_document, $material_id, 'X' );
                     // return \sapHelp::getPricePer('Purchasing_doc','acp/rfq','Material','Plant') ;
                 }
             }else{
@@ -3478,8 +3478,14 @@ class SapHelper {
             // dd($quotationDetail[$i]);
             if($cek_purc_doc == 1 ){
 
-                $price_per = Self::getPricePer($cek_purc_doc, $quotationDetail[$i]->acp_id, $material_id, 'X' );
-                // return \sapHelp::getPricePer('Purchasing_doc','acp/rfq','Material','Plant') ;
+                if($quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::SERVICE)
+                {
+                    $price_per = 1 ;
+                }else {
+                    # code...
+                    $price_per = Self::getPricePer($cek_purc_doc, $quotationDetail[$i]->purchasing_document, $material_id, 'X' );
+                    // return \sapHelp::getPricePer('Purchasing_doc','acp/rfq','Material','Plant') ;
+                }
 
             }else{
 
@@ -10078,7 +10084,7 @@ class SapHelper {
 
             $query = DB::connection('pgsql')
                 ->table('vw_acp_winner')
-                ->where('master_acp_id', $acp_or_rfq_id)
+                ->where('acp_no', $acp_or_rfq_id)
                 ->where('material_id', $material_id)
                 ->first();
 
@@ -10090,10 +10096,10 @@ class SapHelper {
                 ->table('rfq_details')
                 ->where('rfq_number', $acp_or_rfq_id)
                 ->where('material_id', $material_id)
-                ->where('plant_code', $plant )
+                // ->where('plant_code', $plant )
                 ->first();
-
-            $price_per = $query->per_unit ;
+            // dd($query);
+            $price_per = floor($query->per_unit) ;
 
         }
             
