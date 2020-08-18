@@ -378,7 +378,7 @@ class PurchaseRequestController extends Controller
         }
 
         $docTypes = DocumentType::where('type', '2')
-                ->where('code', $type)
+                // ->where('code', $type)
                 ->get();
         $shipTo   = \App\Models\MasterShipToAdress::all()->pluck('name','id');
 

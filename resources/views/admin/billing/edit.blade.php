@@ -339,9 +339,9 @@
 
             if ($('.calculate_tax').is(":checked")) {
                 if( ppn == 'V1' ) {
-                    _nominal_invoice_ = parseInt(_nominal_invoice_ * 1.1) + parseInt(roundedString)
+                    _nominal_invoice_ = parseInt(_nominal_invoice_ * 1.1) - parseInt(roundedString)
                 } else {
-                    _nominal_invoice_ = parseInt(_nominal_invoice_) + parseInt(roundedString)
+                    _nominal_invoice_ = parseInt(_nominal_invoice_) - parseInt(roundedString)
                 }
             } else {
                 _nominal_invoice_ = (_nominal_invoice_ - roundedString)
