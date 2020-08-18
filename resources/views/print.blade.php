@@ -300,7 +300,7 @@
             </div>
             <div class="right">
                 <p style="margin-bottom: 6px">    PO NO &nbsp;&nbsp;&nbsp;&nbsp;: {{ $po->PO_NUMBER }}</p>
-                <p style="margin-bottom: 6px">    Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ date('d.m.Y') }} </p>
+                <p style="margin-bottom: 6px">    Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ date('d.m.Y',strtotime($po->created_at)) }} </p>
                 <p style="margin-bottom: 6px">    Revisi &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ '0000' }} </p>
                 <p></p>
                 <br>
@@ -335,6 +335,7 @@
                 @php
                     $total = 0;
                     $totalTax = 0;
+                    $totalPrice = 0;
                 @endphp
                 @foreach($po->orderDetail as $key => $value)
                     @php
@@ -351,7 +352,12 @@
                             $perQty = ($value->qty/$qtyAcp->qty);
                             $totalPrice = (\removeComma($value->price) * $perQty);
                         } else {
+                            $getRfq= \App\Models\RfqDetail::where('rfq_number',$value->rfq_number)->first();
                             $totalPrice = ($value->price * $value->qty);
+                            if( !empty($getRfq) ) {
+                                $totalPrice = (\removeComma($value->price)/$getRfq->per_unit) * $value->qty;
+                            }
+                            
                         }
 
                         $total += $totalPrice;
@@ -373,8 +379,8 @@
                         <div style="display:block; height: {{ $size }}; min-height: {{ $size }};">{{ $key + 1 }}</div>
                     </td>
                     <td style="text-align:center;">{{ $value->material_id ?? '' }}</td>
-                    <td>{!! \wordwrap($value->short_text,20,'<br>') !!}</td>
-                    <td>{!! $value->notes == "PR MRP" ? "" :  \wordwrap($value->notes,20,'<br>') !!}</td>
+                    <td>{!! str_replace('&','dan',\wordwrap(trim($value->short_text),20,'<br>')) !!}</td>
+                    <td>{!! $value->notes == "PR MRP" ? "" :  str_replace('&','dan',\wordwrap(trim($value->notes),20,'<br>')) !!}</td>
                     <td style="text-align:center;">{{ $value->delivery_date_new ? date('d.m.Y',strtotime($value->delivery_date_new)) : 
                         date('d.m.Y',strtotime($value->delivery_date)) }}</td>
                     <td style="text-align:center;">{{ $value->qty." ".$value->unit }}</td>
