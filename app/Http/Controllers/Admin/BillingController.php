@@ -21,6 +21,7 @@ use App\Mail\billingIncompleted;
 use App\Mail\billingRejected;
 use App\Mail\billingApproved;
 use App\Mail\billingVerify;
+use App\Models\EmailMarketingVendor;
 class BillingController extends Controller
 {
     /**
@@ -153,21 +154,37 @@ class BillingController extends Controller
         try {
             $billing = Billing::find($request->id);
             
-            $billing->status                = Billing::Approved;
-            $billing->is_spv                = Billing::sendToSpv;//approve spv
+            $billing->status      = Billing::Approved;
+            $billing->is_spv      = Billing::sendToSpv;//approve spv
             $billing->update();
 
-            $vendor = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
+            $vendor             = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
+            $getEmailMarketing  = EmailMarketingVendor::where('vendor_id', $billing->vendor_id)->get();
+
             $configEnv = \configEmailNotification();
-            if (\App\Models\BaseModel::Development == $configEnv->type) {
-                $email = 'ari.budiman@enesis.com';
-                $name  = $vendor->name;
+            if( !empty($getEmailMarketing) ) {
+                foreach( $getEmailMarketing as $rows ) {
+                    if (\App\Models\BaseModel::Development == $configEnv->type) {
+                        $email = 'ari.budiman@enesis.com';
+                        $name  = $vendor->name;
+                    } else {
+                        $email = $rows->email;
+                        $name  = $vendor->name;
+                    }
+                    \Mail::to($email)->send(new billingApproved($billing, $name));
+                }
             } else {
-                $email = $vendor->email;
-                $name  = $vendor->name;
+                if (\App\Models\BaseModel::Development == $configEnv->type) {
+                    $email = 'ari.budiman@enesis.com';
+                    $name  = $vendor->name;
+                } else {
+                    $email = $vendor->email;
+                    $name  = $vendor->name;
+                }
+
+                \Mail::to($email)->send(new billingApproved($billing, $name));
             }
 
-            \Mail::to($email)->send(new billingApproved($billing, $name));
             \Session::flash('status','Billing has been approved');
             return \redirect()->route('admin.billing');
         } catch (\Throwable $th) {
@@ -186,16 +203,39 @@ class BillingController extends Controller
 
         $vendor = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
 
+        // $configEnv = \configEmailNotification();
+        // if (\App\Models\BaseModel::Development == $configEnv->type) {
+        //     $email = 'ari.budiman@enesis.com';
+        //     $name  = $vendor->name;
+        // } else {
+        //     $email = $vendor->email;
+        //     $name  = $vendor->name;
+        // }
+        $getEmailMarketing  = EmailMarketingVendor::where('vendor_id', $billing->vendor_id)->get();
+
         $configEnv = \configEmailNotification();
-        if (\App\Models\BaseModel::Development == $configEnv->type) {
-            $email = 'ari.budiman@enesis.com';
-            $name  = $vendor->name;
+        if( !empty($getEmailMarketing) ) {
+            foreach( $getEmailMarketing as $rows ) {
+                if (\App\Models\BaseModel::Development == $configEnv->type) {
+                    $email = 'ari.budiman@enesis.com';
+                    $name  = $vendor->name;
+                } else {
+                    $email = $rows->email;
+                    $name  = $vendor->name;
+                }
+                \Mail::to($email)->send(new billingRejected($billing, $name));
+            }
         } else {
-            $email = $vendor->email;
-            $name  = $vendor->name;
+            if (\App\Models\BaseModel::Development == $configEnv->type) {
+                $email = 'ari.budiman@enesis.com';
+                $name  = $vendor->name;
+            } else {
+                $email = $vendor->email;
+                $name  = $vendor->name;
+            }
+            \Mail::to($email)->send(new billingRejected($billing, $name));
         }
 
-        \Mail::to($email)->send(new billingRejected($billing, $name));
         \Session::flash('status','Billing has been rejected');
         return \redirect()->route('admin.billing');
     }
@@ -209,16 +249,39 @@ class BillingController extends Controller
         $billing->update();
 
         $vendor = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
-        $configEnv = \configEmailNotification();
-        if (\App\Models\BaseModel::Development == $configEnv->type) {
-            $email = 'ari.budiman@enesis.com';
-            $name  = $vendor->name;
-        } else {
-            $email = $vendor->email;
-            $name  = $vendor->name;
-        }
+        // if (\App\Models\BaseModel::Development == $configEnv->type) {
+        //     $email = 'ari.budiman@enesis.com';
+        //     $name  = $vendor->name;
+        // } else {
+        //     $email = $vendor->email;
+        //     $name  = $vendor->name;
+        // }
 
-        \Mail::to($email)->send(new billingVerify($billing, $name));
+        // \Mail::to($email)->send(new billingVerify($billing, $name));
+        $getEmailMarketing  = EmailMarketingVendor::where('vendor_id', $billing->vendor_id)->get();
+
+        $configEnv = \configEmailNotification();
+        if( !empty($getEmailMarketing) ) {
+            foreach( $getEmailMarketing as $rows ) {
+                if (\App\Models\BaseModel::Development == $configEnv->type) {
+                    $email = 'ari.budiman@enesis.com';
+                    $name  = $vendor->name;
+                } else {
+                    $email = $rows->email;
+                    $name  = $vendor->name;
+                }
+                \Mail::to($email)->send(new billingVerify($billing, $name));
+            }
+        } else {
+            if (\App\Models\BaseModel::Development == $configEnv->type) {
+                $email = 'ari.budiman@enesis.com';
+                $name  = $vendor->name;
+            } else {
+                $email = $vendor->email;
+                $name  = $vendor->name;
+            }
+            \Mail::to($email)->send(new billingVerify($billing, $name));
+        }
         \Session::flash('status','Billing has been verify');
         return \redirect()->route('admin.billing-edit',$request->id);
     }
@@ -232,16 +295,30 @@ class BillingController extends Controller
         $billing->update();
 
         $vendor = \App\Models\Vendor::where('code',$billing->vendor_id)->first();
-        $configEnv = \configEmailNotification();
-        if (\App\Models\BaseModel::Development == $configEnv->type) {
-            $email = 'ari.budiman@enesis.com';
-            $name  = $vendor->name;
-        } else {
-            $email = $vendor->email;
-            $name  = $vendor->name;
-        }
+        $getEmailMarketing  = EmailMarketingVendor::where('vendor_id', $billing->vendor_id)->get();
 
-        \Mail::to($email)->send(new billingIncompleted($billing, $name));
+        $configEnv = \configEmailNotification();
+        if( !empty($getEmailMarketing) ) {
+            foreach( $getEmailMarketing as $rows ) {
+                if (\App\Models\BaseModel::Development == $configEnv->type) {
+                    $email = 'ari.budiman@enesis.com';
+                    $name  = $vendor->name;
+                } else {
+                    $email = $rows->email;
+                    $name  = $vendor->name;
+                }
+                \Mail::to($email)->send(new billingIncompleted($billing, $name));
+            }
+        } else {
+            if (\App\Models\BaseModel::Development == $configEnv->type) {
+                $email = 'ari.budiman@enesis.com';
+                $name  = $vendor->name;
+            } else {
+                $email = $vendor->email;
+                $name  = $vendor->name;
+            }
+            \Mail::to($email)->send(new billingIncompleted($billing, $name));
+        }
 
         \Session::flash('status','Billing has been incompleted');
         return \redirect()->route('admin.billing');

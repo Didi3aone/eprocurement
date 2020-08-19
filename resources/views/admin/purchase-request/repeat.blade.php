@@ -194,9 +194,11 @@
                                 <td>{{ $value->unit }}</td>
                                 <td>{{ empty($value->qty) ? 0 : $value->qty }}</td>
                                 <td>
+                                    {{-- {{ \App\Models\RfqDetail::getRfq($materialId) }} --}}
                                     <select name="rfq[]" id="history" class="select2 history" required>
                                         <option> -- Select --</option>
                                         @foreach(\App\Models\RfqDetail::getRfq($materialId) as $key => $rows)
+                                            {{-- {{ dd($rows) }} --}}
                                             @if($rows->po_number != '')
                                                 <option value="{{ $rows->rfq_number }}"
                                                     data-price="{{ $rows->net_price }}"

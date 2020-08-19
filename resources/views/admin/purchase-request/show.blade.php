@@ -9,6 +9,28 @@
         </ol>
     </div>
 </div>
+@if(Session::has('notif_error'))   
+    @php
+       // dd(Session::get('notif_error'))
+    @endphp
+    @if(is_array(Session::get('notif')))
+        @foreach(Session::get('notif') as $key => $value)
+            <div class="alert alert-danger alert-dismissible fade show col-lg-12" role="alert">
+            <strong>Error  !!!</strong> <br/> {{ $value->MESSAGE }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+        @endforeach
+    @else 
+         <div class="alert alert-danger alert-dismissible fade show col-lg-12" role="alert">
+        <strong>Error  !!!</strong> <br/> {{ Session::get('notif_error')->MESSAGE }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+    @endif
+@endif
 <form class="form-rn m-t-40" action="{{ route('admin.purchase-request-project-approval') }}" enctype="multipart/form-data" method="post">
     @csrf
     @method('put')

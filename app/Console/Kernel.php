@@ -43,6 +43,11 @@ class Kernel extends ConsoleKernel
         $schedule->command('CLONE:MRP')->timezone('Asia/Jakarta')->at('06:15');
 
         //get pr mrp
+        $schedule->command('MRP:GET')->timezone('Asia/Jakarta')->at('12:09');
+        //clone
+        $schedule->command('CLONE:MRP')->timezone('Asia/Jakarta')->at('12:15');
+
+        //get pr mrp
         $schedule->command('MRP:GET')->timezone('Asia/Jakarta')->at('14:58');
         //clone
         $schedule->command('CLONE:MRP')->timezone('Asia/Jakarta')->at('15:02');

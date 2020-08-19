@@ -140,6 +140,7 @@ class MasterAcpController extends Controller
     public function getCurrency(Request $request)
     {
         $currency = \App\Models\Currency::where('currency', 'like', '%'.strtoupper($request->query('term')).'%')
+                    // ->where('iso_code','IDR')
                     ->get();
 
         $data = [];
@@ -183,6 +184,7 @@ class MasterAcpController extends Controller
             $acp->reference_acp_no  = $request->get('reference_acp_no') ?? '';
             $acp->upload_file       = $file_upload;
             $acp->plant_id          = $request->get('plant_id');
+            $acp->exchange_rate     = $request->get('exchange_rate') ?? 0;
             $acp->save();
 
             $result = [];
@@ -300,6 +302,11 @@ class MasterAcpController extends Controller
                 }
 
                 $totalPrice = \removeComma($val['price'])/$val['qty'] * $val['qty_pr'];
+                $priceForAcp = $totalPrice;
+                if( 'IDR' != $val['currency'] )  {
+                    $priceForAcp = ($request->get('exchange_rate') *  \removeComma($val['price']))/$val['qty'] * $val['qty_pr'];
+                }
+                // dd($priceForAcp);
 
                 $assProc = \App\Models\UserMap::getAssProc($cMo->purchasing_group_code)->user_id;
                 $material = new AcpTableMaterial();
@@ -321,7 +328,7 @@ class MasterAcpController extends Controller
                 //     return redirect()->route('admin.master-acp.index');
                 // }
                 if (1 == $val['winner']) {
-                    $price += $totalPrice;//$val['price'];
+                    $price += $priceForAcp;//$val['price'];
                     $isAcp = true;
                     // insert to rfq detail
                     $rfqDetail = new MasterRfqDetail();

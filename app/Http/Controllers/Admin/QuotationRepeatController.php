@@ -43,7 +43,8 @@ class QuotationRepeatController extends Controller
                         'quotation.po_no',
                         'quotation.vendor_id',
                         'quotation.approval_status',
-                        'vendors.company_name'
+                        'vendors.company_name',
+                        'quotation.status',
                     )
                     ->groupBy('quotation.id','vendors.company_name')
                     ->orderBy('id', 'desc');
@@ -82,6 +83,7 @@ class QuotationRepeatController extends Controller
                         'quotation.approval_status',
                         'vendors.company_name',
                         'vendors.email',
+                        'quotation.status',
                         \DB::raw('sum(quotation_details.price) as totalValue')
                     )
                     ->groupBy('quotation.id','vendors.company_name','vendors.email')
@@ -130,6 +132,7 @@ class QuotationRepeatController extends Controller
                         'quotation_details.material_group',
                         'quotation_details.PREQ_ITEM',
                         'quotation_details.acp_id',
+                        'quotation.status',
                     )
                     ->orderBy('id', 'desc')
                     ->get();
@@ -226,7 +229,7 @@ class QuotationRepeatController extends Controller
                     'acp_id'                    => $request->get('acp_id')[$i],
                     'item_category'             => $request->get('category')[$i],
                     'notes'                     => $request->get('notes_detail')[$i],
-                    'is_free_item'              => $request->get('is_free_item')[$i],
+                    'is_free_item'              => $request->get('is_free_item')[$i] ?? 0
                 ];
     
                 array_push($details, $data);
@@ -266,24 +269,30 @@ class QuotationRepeatController extends Controller
             $detail = $this->_insert_details($details, $quotation->id);
             // dd($detail);
             if( true == $detail['is_error'] ) {
-                 \Session::flash('notif', $detail['error']); 
-                 //rollback if error send sap
-                 \DB::rollBack();
-                 for ($i = 0; $i < count($request->get('qty')); $i++) {
-                     $qy = str_replace('.', '', $request->get('qty')[$i]);
-                     $qty += $qy;
-                     // update material qty
-                     $material = PurchaseRequestsDetail::where('id', $request->id[$i])->first();
-                     $material->qty_requested = $material->qty;
-                     $material->qty       += $request->get('qty')[$i];
-                     $material->qty_order -= $request->get('qty')[$i];
-                     $material->save();
-                 }
-                 return redirect()->route('admin.purchase-request.index');
-             } else {
-                 //done process
-                 return redirect()->route('admin.quotation-direct.index')->with('status', 'Direct Order has been successfully ordered!');
-             }
+                \Session::flash('notif', $detail['error']); 
+                //rollback if error send sap
+                \DB::rollBack();
+                //ini rollback ga jalan jadi pake cara orang awam
+                Quotation::where('id', $quotation->id)->delete();
+                QuotationDetail::where('quotation_order_id', $quotation->id)->delete();
+
+                //balikin qty
+                for ($i = 0; $i < count($request->get('qty')); $i++) {
+                    $qy = str_replace('.', '', $request->get('qty')[$i]);
+                    $qty += $qy;
+                    // update material qty
+                    $material = PurchaseRequestsDetail::where('id', $request->id[$i])->first();
+                    $material->qty_requested = $material->qty;
+                    $material->qty       += $request->get('qty')[$i];
+                    $material->qty_order -= $request->get('qty')[$i];
+                    $material->save();
+                }
+
+                return redirect()->route('admin.purchase-request.index');
+            } else {
+                //done process
+                return redirect()->route('admin.quotation-repeat.index')->with('status', 'Direct Order has been successfully ordered!');
+            }
 
             \DB::commit();
         } catch (Exception $e) {
@@ -561,7 +570,7 @@ class QuotationRepeatController extends Controller
                 'line_no'                   => $rows->line_no,
                 'SCHED_LINE'                => $sched->SCHED_LINE,
                 'request_detail_id'         => $rows->request_detail_id,
-                'is_free_item'              => $rows->is_free_item
+                'is_free_item'              => $rows->is_free_item ?? 0
             ]);
 
             if( $rows->item_category == QuotationDetail::SERVICE ) {
@@ -610,6 +619,8 @@ class QuotationRepeatController extends Controller
             $email = $po->vendors['email'] ?? 'diditriawan13@gmail.com';
         }
         \Mail::to($email)->send(new SendMail($po));
+        \Mail::to('farid.hidayat@enesis.com')->send(new SendMail($po));
+        \Mail::to('diditriawan13@gmail.com')->send(new SendMail($po));
         $print = true;
     }
 
@@ -667,10 +678,17 @@ class QuotationRepeatController extends Controller
                 }
             }
             
+            if( $detail['is_free_item'] == 1 ){
+                $price_v2 = 0 ;
+            }else {
+                $price_v2 = $detail['price'] ;
+            }
+
             //rumus 
             // qty order/per * price
             //$totalPrice = \removeComma($val['price'])/$val['qty'] * $val['qty_pr'];
-            $totalPrices = (\removeComma($detail['price']) * $detail['qty']);
+            // $totalPrices = (\removeComma($detail['price']) * $detail['qty']);
+            $totalPrices = (\removeComma($price_v2) * $detail['qty']);
             $getRfq= \App\Models\RfqDetail::where('rfq_number',$detail['rfq'] )->first();
             // dd($detail['price']/$getRfq->per_unit);
             // if( !empty($getRfq) ) {
@@ -687,7 +705,8 @@ class QuotationRepeatController extends Controller
             $quotationDetail->description               = $detail['description'];
             $quotationDetail->notes                     = $detail['notes'];
             $quotationDetail->plant_code                = $detail['plant_code'];
-            $quotationDetail->price                     = \removeComma($detail['price']);
+            // $quotationDetail->price                     = \removeComma($detail['price']);
+            $quotationDetail->price                     = \removeComma($price_v2);
             $quotationDetail->orginal_price             = \removeComma($detail['original_price']);
             $quotationDetail->is_assets                 = $detail['is_assets'];
             $quotationDetail->assets_no                 = $detail['assets_no'];
@@ -710,7 +729,8 @@ class QuotationRepeatController extends Controller
             $quotationDetail->total_price               = $totalPrices;
             $quotationDetail->purchasing_document       = $detail['rfq'];
             $quotationDetail->acp_id                    = $detail['acp_id'];
-            $quotationDetail->delivery_date             = $detail['delivery_date'];
+            // $quotationDetail->delivery_date             = $detail['delivery_date'];
+            $quotationDetail->delivery_date             = $detail['delivery_date_new'] ?? $detail['delivery_date'];
             $quotationDetail->currency                  = $detail['original_currency'];
             $quotationDetail->request_no                = $detail['request_no'];
             $quotationDetail->item_category             = $detail['item_category'];
@@ -720,7 +740,7 @@ class QuotationRepeatController extends Controller
             $quotationDetail->line_no                   = $lineNumber;
             $quotationDetail->request_detail_id         = $detail['request_detail_id'];
             $quotationDetail->rfq_number                = $detail['rfq'];
-            $quotationDetail->is_free_item              = $detail['is_free_item'];
+            $quotationDetail->is_free_item              = $detail['is_free_item'] ?? 0;
             $quotationDetail->save();
 
             if( $detail['item_category'] == QuotationDetail::SERVICE ) {

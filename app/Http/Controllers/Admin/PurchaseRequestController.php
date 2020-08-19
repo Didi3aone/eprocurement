@@ -378,7 +378,7 @@ class PurchaseRequestController extends Controller
         }
 
         $docTypes = DocumentType::where('type', '2')
-                ->where('code', $type)
+                // ->where('code', $type)
                 ->get();
         $shipTo   = \App\Models\MasterShipToAdress::all()->pluck('name','id');
 
@@ -610,6 +610,8 @@ class PurchaseRequestController extends Controller
                     $prHeader->PR_NO = $sap->PRNO;
                     $prHeader->status = PurchaseRequest::Success;
                 } else {
+                    \Session::flash('notif_error',$sap->RETURN->item);
+                    // dd($sap->RETURN->item->MESSAGE);
                     \App\Models\employeeApps\SapLogSoap::create([
                         'log_type' => 'PURCHASE REQUEST',
                         'log_type_id' => $prHeader->id,
@@ -618,11 +620,12 @@ class PurchaseRequestController extends Controller
                         'status' => 'FAILED',
                     ]);
 
-                    return \redirect()->route('admin.purchase-request.show', $prHeader->id)->with('error', 'Internal server error');
+                    return \redirect()->route('admin.purchase-request.show', $prHeader->id);//->with('error', $sap->RETURN->item->MESSAGE);
                 }
             }
 
             $prHeader->status_approval = PurchaseRequest::ApprovedProc;
+            $prHeader->approved_proc_by = \Auth::user()->nik;
             $prHeader->update();
 
             if (\App\Models\BaseModel::Development == $configEnv->type) {

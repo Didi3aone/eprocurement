@@ -78,6 +78,7 @@
                             <th>Material</th>
                             <th>Unit</th>
                             <th>Qty</th>
+                            <th>Free Item</th>
                             <th>Currency</th>
                             <th>Price</th>
                             <th>Total</th>
@@ -99,12 +100,18 @@
                                     $perQty = ($value->qty/$getQtyAcp->qty);
                                     $totalPrices = (\removeComma($value->price) * $perQty);
                                 }
+
+                                $free = ' - ' ;
+                                if ($value->is_free_item) {
+                                    $free = 'Free Of Charge' ;
+                                }
                                 
                             @endphp
                             <tr>
                                 <td>{{ $value->material." - ".$value->short_text }}</td>
                                 <td>{{ \App\Models\UomConvert::where('uom_1', $value->unit)->first()->uom_2 ?? $value->unit }}</td>
                                 <td>{{ $value->qty }}</td>
+                                <td>{{ $free }}</td>
                                 <td>{{ $quotation->currency }}</td>
                                 <td>{{ \toDecimal($value->price) }}</td>
                                 <td>{{ \toDecimal($totalPrices) }}</td>

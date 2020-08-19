@@ -78,6 +78,7 @@
                             <th>Material</th>
                             <th>Unit</th>
                             <th>Qty</th>
+                            <th>Free Item</th>
                             <th>Currency</th>
                             <th>Price</th>
                             <th>Total</th>
@@ -85,13 +86,27 @@
                     </thead>
                     <tbody>
                         @foreach($quotation->detail as $key => $value)
+                            @php
+                                $getRfq= \App\Models\RfqDetail::where('rfq_number',$value['rfq_number'])->first();
+                                $totalPrices = toDecimal(\removeComma($value->price) * $value->qty);
+                                if( !empty($getRfq) ) {
+                                    $totalPrices = toDecimal((\removeComma($value->price)/$getRfq->per_unit) * $value['qty']);
+                                }
+
+                                $free = ' - ' ;
+                                if ($value->is_free_item) {
+                                    $free = 'Free Of Charge' ;
+                                }
+
+                            @endphp
                             <tr>
                                 <td>{{ $value->material." - ".$value->short_text }}</td>
                                 <td>{{ \App\Models\UomConvert::where('uom_1', $value->unit)->first()->uom_2 ?? $value->unit }}</td>
                                 <td>{{ $value->qty }}</td>
+                                <td>{{ $free }}</td>
                                 <td>{{ $quotation->currency }}</td>
                                 <td>{{ \toDecimal($value->price) }}</td>
-                                <td>{{ toDecimal(\removeComma($value->price) * $value->qty) }}</td>
+                                <td>{{ $totalPrices }}</td>
                             </tr>
                         @endforeach
                     </tbody>

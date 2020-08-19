@@ -40,7 +40,7 @@ class QuotationDirectController extends Controller
         $quotation = QuotationDetail::join('quotation','quotation.id','=','quotation_details.quotation_order_id')
                     ->join('vendors','vendors.code','=','quotation.vendor_id')
                     ->where('quotation.status',Quotation::QuotationDirect)
-                    // ->where('quotation.approval_status',Quotation::Waiting) 
+                    ->where('quotation.approval_status',Quotation::Waiting) 
                     ->orWhere('quotation.approval_status', Quotation::ApprovalAss)
                     ->whereIn('quotation_details.purchasing_group_code', $userMapping)
                     ->select(
@@ -49,6 +49,7 @@ class QuotationDirectController extends Controller
                         'quotation.vendor_id',
                         'quotation.approval_status',
                         'vendors.company_name',
+                        'quotation.status',
                     )
                     ->groupBy('quotation.id','vendors.company_name')
                     ->orderBy('id', 'desc');
@@ -88,6 +89,7 @@ class QuotationDirectController extends Controller
                         'quotation.acp_id',
                         'vendors.company_name',
                         'vendors.email',
+                        'quotation.status',
                         \DB::raw('sum(quotation_details.price) as totalValue')
                     )
                     ->groupBy('quotation.id','vendors.company_name','vendors.email')
@@ -137,6 +139,7 @@ class QuotationDirectController extends Controller
                         'quotation_details.material_group',
                         'quotation_details.PREQ_ITEM',
                         'quotation_details.acp_id',
+                        'quotation.status',
                     )
                     ->orderBy('id', 'desc')
                     ->get();
@@ -223,10 +226,11 @@ class QuotationDirectController extends Controller
                     'acp_id'                    => $request->get('acp_id')[$i],
                     'item_category'             => $request->get('category')[$i],
                     'notes'                     => $request->get('notes_detail')[$i],
-                    'is_free_item'              => $request->get('is_free_item')[$i],
+                    'is_free_item'              => $request->get('is_free_item')[$i] ?? 0
                 ];
-    
+
                 array_push($details, $data);
+                // dd($details);
     
                 PurchaseRequestHistory::insertHistory($data);
                 $material->qty      -= $request->get('qty')[$i];
@@ -262,13 +266,17 @@ class QuotationDirectController extends Controller
             $quotation->save();
 
             //insert ITEM
-            $detail = $this->_insert_details($details, $quotation->id);
             // dd($detail);
+            $detail = $this->_insert_details($details, $quotation->id);
             
             if( true == $detail['is_error'] ) {
                 \Session::flash('notif', $detail['error']); 
                 //rollback if error send sap
                 \DB::rollBack();
+                //ini rollback ga jalan jadi pake cara orang awam
+                Quotation::where('id', $quotation->id)->delete();
+                QuotationDetail::where('quotation_order_id', $quotation->id)->delete();
+
                 for ($i = 0; $i < count($request->get('qty')); $i++) {
                     $qy = str_replace('.', '', $request->get('qty')[$i]);
                     $qty += $qy;
@@ -444,6 +452,12 @@ class QuotationDirectController extends Controller
         }
     }
 
+    public function getPricePer()
+    {
+        return \sapHelp::getPricePer('2200001976','2200001976','3000471','1201') ;
+        // return \sapHelp::getPricePer('Purchasing_doc','acp/rfq','Material','Plant') ;
+    }
+
      /**
      * multiple approve po.
      *
@@ -589,7 +603,7 @@ class QuotationDirectController extends Controller
                 'line_no'                   => $rows->line_no,
                 'SCHED_LINE'                => $sched->SCHED_LINE,
                 'request_detail_id'         => $rows->request_detail_id,
-                'is_free_item'              => $rows->is_free_item
+                'is_free_item'              => $rows->is_free_item ?? 0
             ]);
 
             if( $rows->item_category == QuotationDetail::SERVICE ) {
@@ -636,7 +650,8 @@ class QuotationDirectController extends Controller
             $email = $po->vendors['email'] ?? 'diditriawan13@gmail.com';
         }
         \Mail::to($email)->send(new SendMail($po));
-        // \Mail::to('yunan.yazid@enesis.com')->send(new SendMail($po));
+        \Mail::to('farid.hidayat@enesis.com')->send(new SendMail($po));
+        \Mail::to('diditriawan13@gmail.com')->send(new SendMail($po));
     }
 
     private function _insert_details($details, $id)
@@ -702,9 +717,16 @@ class QuotationDirectController extends Controller
                         ->first();
 
             $totalPrices = 0;
+
+            if( $detail['is_free_item'] == 1 ){
+                $price_v2 = 0 ;
+            }else {
+                $price_v2 = $detail['price'] ;
+            }
+
             if( null != $getQtyAcp ) {
                 $perQty = ($detail['qty']/$getQtyAcp->qty);
-                $totalPrices = (\removeComma($detail['price']) * $perQty);
+                $totalPrices = (\removeComma($price_v2) * $perQty);
             }
 
             $quotationDetail = new QuotationDetail;
@@ -715,7 +737,8 @@ class QuotationDirectController extends Controller
             $quotationDetail->description               = $detail['description'];
             $quotationDetail->notes                     = $detail['notes'];
             $quotationDetail->plant_code                = $detail['plant_code'];
-            $quotationDetail->price                     = \removeComma($detail['price']);
+            // $quotationDetail->price                     = \removeComma($detail['price']);
+            $quotationDetail->price                     = \removeComma($price_v2);
             $quotationDetail->orginal_price             = \removeComma($detail['original_price']);
             $quotationDetail->is_assets                 = $detail['is_assets'];
             $quotationDetail->assets_no                 = $detail['assets_no'];
@@ -738,7 +761,8 @@ class QuotationDirectController extends Controller
             $quotationDetail->total_price               = $totalPrices;
             $quotationDetail->purchasing_document       = $detail['rfq'];
             $quotationDetail->acp_id                    = $detail['acp_id'];
-            $quotationDetail->delivery_date             = $detail['delivery_date'];
+            // $quotationDetail->delivery_date             = $detail['delivery_date'];
+            $quotationDetail->delivery_date             = $detail['delivery_date_new'] ?? $detail['delivery_date'];
             $quotationDetail->currency                  = $detail['original_currency'];
             $quotationDetail->request_no                = $detail['request_no'];
             $quotationDetail->item_category             = $detail['item_category'];
@@ -747,7 +771,7 @@ class QuotationDirectController extends Controller
             $quotationDetail->subpackage_no             = $subpackgparent;
             $quotationDetail->line_no                   = $lineNumber;
             $quotationDetail->request_detail_id         = $detail['request_detail_id'];
-            $quotationDetail->is_free_item              = $detail['is_free_item'];
+            $quotationDetail->is_free_item              = $detail['is_free_item'] ?? 0;
             $quotationDetail->save();
 
             if( $detail['item_category'] == QuotationDetail::SERVICE ) {

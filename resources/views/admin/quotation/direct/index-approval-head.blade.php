@@ -32,7 +32,9 @@
                                         <th>&nbsp;</th>
                                         <th>PO Eprocurement</th>
                                         <th>Created at</th>
+                                        {{-- <th>#</th> --}}
                                         <th>Po Item</th>
+                                        <th>Free Item</th>
                                         <th>Material</th>
                                         <th>Short Text</th>
                                         <th>Qty</th>
@@ -56,6 +58,7 @@
                                     @php
                                         $i = 0;
                                     @endphp
+                                    {{-- {{ dd($quotation) }} --}}
                                     @foreach($quotation as $key => $val)
                                         <tr>
                                             <td>
@@ -63,6 +66,7 @@
                                                 <label for="check_{{ $key ?? '' }}">&nbsp;</label>
                                             </td>
                                             <td>{{ $key }}</td>
+                                            {{-- <td>{{ $key }}</td> --}}
                                             @php
                                                 $sumTotal = 0;
                                             @endphp
@@ -76,6 +80,12 @@
                                                         $totalPrice = ($value->price * $value->qty);
                                                     }
                                                     $sumTotal += $totalPrice;
+
+                                                    $free = ' - ' ;
+                                                    if ($value->is_free_item) {
+                                                        $free = 'Free Of Charge' ;
+                                                    }
+
                                                 @endphp
                                                 @if($key > 0)
                                                     @php
@@ -89,7 +99,9 @@
                                                 <td colspan="{{ $cols }}" style="text-align:right;">
                                                     {{ \Carbon\Carbon::parse($value->created_at)->format('d-m-Y') }}
                                                 </td>
+                                                {{-- <td>{{ $value->status }}</td> --}}
                                                 <td>{{ $value->PO_ITEM }}</td>
+                                                <td>{{ $free }}</td>
                                                 <td>{{ $value->material ?? '-' }}</td>
                                                 <td>{{ $value->short_text ?? '' }}</td>
                                                 <td>{{ $value->qty ?? '' }}</td>
