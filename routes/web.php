@@ -256,6 +256,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('rfq', 'RfqController');
 
     // Billings
+    Route::delete('billing-destroy/{id}', 'BillingController@destroy')->name('billing-destroy');
     Route::get('billing', 'BillingController@index')->name('billing');
     Route::get('billing-spv-list', 'BillingController@listSpv')->name('billing-spv-list');
     Route::get('billing-create', 'BillingController@create')->name('billing-create');

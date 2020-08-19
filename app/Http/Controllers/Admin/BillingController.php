@@ -323,4 +323,21 @@ class BillingController extends Controller
         \Session::flash('status','Billing has been incompleted');
         return \redirect()->route('admin.billing');
     }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        $billing = billing::find($id);
+        $billing->delete();
+
+        BillingDetail::where('billing_id', $id)->delete();
+
+        
+        return redirect()->route('admin.billing')->with('status', 'Billing has been successfully deleted !');
+    }
 }

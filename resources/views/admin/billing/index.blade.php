@@ -45,6 +45,14 @@
                                         @if($rows->status == \App\Models\Vendor\Billing::Verify )
                                             <a href="{{ route('admin.billing-edit',$rows->id) }}" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> Edit</a>
                                         @endif
+
+                                        @can('billing_delete')
+                                            <form action="{{ route('admin.billing-destroy', $rows->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
+                                                <input type="hidden" name="_method" value="DELETE">
+                                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                                <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
+                                            </form>
+                                        @endcan
                                     </td>
                                 </tr>
                             @endforeach
