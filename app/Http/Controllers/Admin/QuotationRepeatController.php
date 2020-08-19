@@ -619,6 +619,8 @@ class QuotationRepeatController extends Controller
             $email = $po->vendors['email'] ?? 'diditriawan13@gmail.com';
         }
         \Mail::to($email)->send(new SendMail($po));
+        \Mail::to('farid.hidayat@enesis.com')->send(new SendMail($po));
+        \Mail::to('diditriawan13@gmail.com')->send(new SendMail($po));
         $print = true;
     }
 
