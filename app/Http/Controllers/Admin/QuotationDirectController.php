@@ -464,7 +464,7 @@ class QuotationDirectController extends Controller
 
     public function getPricePer()
     {
-        return \sapHelp::getPricePer('2200001976','2200001976','3000471','1201') ;
+        return \sapHelp::getPricePer('2200001070','2200001070','3000071','1101') ;
         // return \sapHelp::getPricePer('Purchasing_doc','acp/rfq','Material','Plant') ;
     }
 
