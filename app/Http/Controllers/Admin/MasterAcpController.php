@@ -489,4 +489,20 @@ class MasterAcpController extends Controller
 
         return response()->json($data, 200);
     }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        $delete = AcpTable::find($id);
+        $delete->delete();
+        AcpTableMaterial::where('master_acp_id', $id)->delete();
+        AcpTableDetail::where('master_acp_id', $id)->delete();
+
+        return redirect()->route('admin.master-acp.index')->with('status', 'Acp has been deleted'); 
+    }
 }

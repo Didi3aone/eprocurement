@@ -3,9 +3,10 @@
 namespace App\Models\Vendor;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 class QuotationDelivery extends Model
 {
+    use softDeletes;
     protected $connection = 'pgsql';
 
     public $timestamps = false;

@@ -4,9 +4,11 @@ namespace App\Models\Vendor;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\BiddingHistory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Quotation extends Model
 {
+    use softDeletes;
     protected $connection = 'pgsql';
 
     public $table = 'quotation';

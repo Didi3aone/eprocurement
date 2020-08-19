@@ -369,7 +369,17 @@ class QuotationDirectController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $quotation = Quotation::find($id);
+        $quotation->delete();
+
+        QuotationDetail::where('quotation_order_id', $id)->delete();
+        QuotationDelivery::where('quotation_id', $id)->delete();
+        $service = QuotationServiceChild::where('quotation_id', $id)->first();
+        if( null != $service ) {
+            $service->delete();
+        }
+        
+        return redirect()->route('admin.quotation-direct.index')->with('status', 'Direct Order has been successfully deleted !');
     }
 
     /**

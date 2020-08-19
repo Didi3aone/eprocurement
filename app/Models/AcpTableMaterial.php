@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 class AcpTableMaterial extends Model
 {
+    use softDeletes;
     protected $connection = 'pgsql';
 
     public $table = 'master_acp_materials';

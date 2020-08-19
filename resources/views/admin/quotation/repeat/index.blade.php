@@ -50,9 +50,16 @@
                                                     <i class="fa fa-eye"></i> {{ trans('global.view') }}
                                                 </a>
                                                 @can('button_test_run_access')
-                                                <a class="btn btn-danger btn-xs" href="{{ route('admin.quotation-test-run', $val->id) }}">
+                                                <a class="btn btn-success btn-xs" href="{{ route('admin.quotation-test-run', $val->id) }}">
                                                     <i class="fa fa-bug"></i> Test Run Bos
                                                 </a>
+                                                @endcan
+                                                @can('quotation_delete')
+                                                    <form action="{{ route('admin.quotation-repeat.destroy', $val->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
+                                                        <input type="hidden" name="_method" value="DELETE">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                                        <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
+                                                    </form>
                                                 @endcan
                                             </td>
                                         </tr>
