@@ -11,6 +11,8 @@ class TempPurchaseRequest extends Model
     protected $connection = 'pgsql';
 
     public $table = 'temp_purchase_requests';
+    protected $primaryKey = 'id';
+    public $incrementing = false;
 
     protected $fillable = [
         'code',
