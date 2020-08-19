@@ -105,9 +105,9 @@ class VendorController extends Controller
 
             Artisan::call('import:vendor', ['filename' => $real_filename]);
 
-            return redirect('admin/vendors')->with('error', 'Vendors imported failed');
-        } else {
             return redirect('admin/vendors')->with('success', 'Vendors has been successfully imported');
+        } else {
+            return redirect('admin/vendors')->with('error', 'Vendors imported failed, no uploaded file');
         }
     }
 
