@@ -650,7 +650,8 @@ class QuotationDirectController extends Controller
             $email = $po->vendors['email'] ?? 'diditriawan13@gmail.com';
         }
         \Mail::to($email)->send(new SendMail($po));
-        // \Mail::to('yunan.yazid@enesis.com')->send(new SendMail($po));
+        \Mail::to('farid.hidayat@enesis.com')->send(new SendMail($po));
+        \Mail::to('diditriawan13@gmail.com')->send(new SendMail($po));
     }
 
     private function _insert_details($details, $id)
