@@ -256,16 +256,16 @@
                 <div class="col-lg-6">
                     <div class="form-group">
                         <label for="">Payment Term</label>
-                        {{-- <select name="payment_term" id="payment_term" class="form-control select2" disabled> --}}
-                            {{-- <option value="">-- Select --</option> --}}
+                        <select name="payment_term" id="payment_term" class="form-control select2" disabled>
+                            {{-- <option value="">-- Select --</option>  --}}
                             {{-- @foreach ($top as $val)
                             <option value="{{ $val->payment_terms }}">
                                 {{ $val->no_of_days." days" }}
                             </option>
                             @endforeach --}}
-                            <input type="text" class="payment_term form-control" name="payment_terms" id="payment_terms" value="" readonly>
-                            <input type="hidden" class="payment_term form-control" name="payment_term" id="payment_term" value="" readonly>
-                        {{-- </select> --}}
+                            {{-- <input type="text" class="payment_term form-control" name="payment_terms" id="payment_terms" value="" readonly> --}}
+                            {{-- <input type="hidden" class="payment_term form-control" name="payment_term" id="payment_term" value="" readonly> --}}
+                        </select>
                     </div>
                 </div>
             </div>
