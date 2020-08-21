@@ -18,7 +18,9 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         PoGrGet::class,
-        PoGrGetMin::class
+        PoGrGetMin::class,
+        PoMrpGet::class,
+        ClonePrMrp::class  
     ];
 
     /**
