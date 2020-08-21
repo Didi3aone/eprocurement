@@ -502,6 +502,7 @@ class MasterAcpController extends Controller
         $delete->delete();
         AcpTableMaterial::where('master_acp_id', $id)->delete();
         AcpTableDetail::where('master_acp_id', $id)->delete();
+        QuotationApproval::where('quotation_id', $id)->delete();
 
         return redirect()->route('admin.master-acp.index')->with('status', 'Acp has been deleted'); 
     }
