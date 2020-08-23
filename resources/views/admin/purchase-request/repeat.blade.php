@@ -202,6 +202,8 @@
                                             @if($rows->po_number != '')
                                                 <option value="{{ $rows->rfq_number }}"
                                                     data-price="{{ $rows->net_price }}"
+                                                    data-rfq_number="{{ $rows->rfq_number }}"
+                                                    {{-- data-price="{{ number_format((float)$rows->net_price, 2, '.', '') }}" --}}
                                                     data-vendor="{{ $rows->vendor_id }}"
                                                     data-currency="{{ $rows->currency }}"
                                                     data-is-from-po="{{ $rows->is_from_po }}"
@@ -350,6 +352,7 @@
         $("#image_loading").show()
         const row = $(this).closest('tr')
         const price = row.find('option:selected').data('price')
+        const rfq_number = row.find('option:selected').data('rfq_number')
         const oriCurrency = row.find('option:selected').data('currency')
         const net = row.find('.net_price')
         const ori = row.find('.original_price')
@@ -360,16 +363,32 @@
         getVendors(code)
         getCurrency(oriCurrency)
 
+        const id_acp_rfq = rfq_number.toString().substr(0, 1);
+
         if( price ) {
             console.log('PRICE' + price * 100)
+            console.log(id_acp_rfq)
             let FixedPrice = 0
             if( oriCurrency == 'IDR' ) {
-                FixedPrice = price * 100
+
+                if( id_acp_rfq === '1'){
+                    FixedPrice = price
+                    console.log('A')
+                    net.val(formatNumber(Math.round(FixedPrice)))
+                    ori.val(formatNumber(Math.round(FixedPrice)))
+                }else{
+                    FixedPrice = price * 100
+                    console.log('B')
+                    net.val(formatNumber(Math.round(FixedPrice)))
+                    ori.val(formatNumber(Math.round(FixedPrice)))
+                }
             } else {
                 FixedPrice = price 
+                net.val(FixedPrice)
+                ori.val(FixedPrice)
             }
-            net.val(formatNumber(Math.round(FixedPrice)))
-            ori.val(formatNumber(Math.round(FixedPrice)))
+            // net.val(formatNumber(Math.round(FixedPrice)))
+            // ori.val(formatNumber(Math.round(FixedPrice)))
         } else {
             net.val(0)
             ori.val(0)

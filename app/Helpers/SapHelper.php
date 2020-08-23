@@ -10082,13 +10082,18 @@ class SapHelper {
 
         if( $cek_purc_doc == 1 ){
 
-            $query = DB::connection('pgsql')
+            if($material_id == null){
+                $price_per = 1 ;
+            }else{
+
+                $query = DB::connection('pgsql')
                 ->table('vw_acp_winner')
                 ->where('acp_no', $acp_or_rfq_id)
                 ->where('material_id', $material_id)
                 ->first();
-
-            $price_per = $query->qty ;
+                
+                $price_per = $query->qty ;
+            }
 
         }else{
 
