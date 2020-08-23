@@ -235,7 +235,7 @@
         dom: 'Bfrtip',
         processing: true,
         serverSide: true,
-        pageLength: 50,
+        pageLength: 200,
         scrollY         : "800px",
         scrollCollapse  : true,
         ajax: "/admin/purchase-request",
