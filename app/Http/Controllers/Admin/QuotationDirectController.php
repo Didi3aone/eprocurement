@@ -537,131 +537,138 @@ class QuotationDirectController extends Controller
     private function _clone_purchase_orders($header, $detail, $poNumber)
     {
         $configEnv = \configEmailNotification();
-        
-        $poId = PurchaseOrder::create([
-            'quotation_id' => $header->id,
-            'notes'        => $header->notes,
-            'po_date'      => \Carbon\Carbon::now(),
-            'vendor_id'    => $header->vendor_id,
-            'status'       => Quotation::QuotationDirect,
-            'payment_term' => $header->payment_term,
-            'currency'     => $header->currency,
-            'PO_NUMBER'    => $poNumber ?? 0,
-            'doc_type'     => $header->doc_type,
-            'total_price'  => $header->total_price,
-            'created_by'   => $header->created_by,
-            'updated_by'   => $header->updated_by,
-            'ship_id'      => $header->ship_id
-        ]);
-
-        $po = $poId;
-        foreach ($detail as $rows) {
-            $sched = QuotationDelivery::where('quotation_detail_id', $rows->id)->first();
-
-            // insert RFQ
-            // by acp id
-            $rfqs = Rfq::where('acp_id', $rows->acp_id)->first();
-            if( $rfqs != null ) {
-                $rfqs->doc_type_po = $header->doc_type;
-                $rfqs->update();
-                
-                RfqDetail::where('rfq_number',$rfqs->rfq_number )
-                    ->update([
-                        'po_number'   => $poNumber
-                    ]);
-            }
-
-
-            $detail = PurchaseOrdersDetail::create([
-                'purchase_order_id'         => $poId->id,
-                'description'               => $rows->description ?? '-',
-                'qty'                       => $rows->qty,
-                'unit'                      => $rows->unit,
-                'notes'                     => $rows->notes ?? '-',
-                'price'                     => $rows->price ?? 0,
-                'material_id'               => $rows->material,
-                'assets_no'                 => $rows->assets_no,
-                'material_group'            => $rows->material_group,
-                'preq_item'                 => $rows->PREQ_ITEM,
-                'purchasing_document'       => $rows->purchasing_document ?? 0,
-                'PR_NO'                     => $rows->PR_NO,
-                'assets_no'                 => $rows->assets_no,
-                'acp_id'                    => $rows->acp_id,
-                'short_text'                => $rows->short_text,
-                'text_id'                   => $rows->text_id,
-                'text_form'                 => $rows->text_form,
-                'text_line'                 => $rows->text_line,
-                'delivery_date_category'    => $rows->delivery_date_category,
-                'account_assignment'        => $rows->account_assignment,
-                'purchasing_group_code'     => $rows->purchasing_group_code,
-                'gl_acct_code'              => $rows->gl_acct_code,
-                'cost_center_code'          => $rows->cost_center_code,
-                'profit_center_code'        => $rows->profit_center_code,
-                'storage_location'          => $rows->storage_location,
-                'PO_ITEM'                   => $rows->PO_ITEM,
-                'request_no'                => $rows->request_no,
-                'original_price'            => $rows->orginal_price,
-                'currency'                  => $rows->currency,
-                'preq_name'                 => $rows->preq_name,
-                'delivery_date'             => $rows->delivery_date,
-                'item_category'             => $rows->item_category,
-                'request_no'                => $rows->request_no,
-                'plant_code'                => $rows->plant_code,
-                'tax_code'                  => $rows->tax_code,
-                'package_no'                => $rows->package_no,
-                'subpackage_no'             => $rows->subpackage_no,
-                'line_no'                   => $rows->line_no,
-                'SCHED_LINE'                => $sched->SCHED_LINE,
-                'request_detail_id'         => $rows->request_detail_id,
-                'is_free_item'              => $rows->is_free_item ?? 0
+        if( $poNumber != 'ORDERFULLY' ) {
+            $poId = PurchaseOrder::create([
+                'quotation_id' => $header->id,
+                'notes'        => $header->notes,
+                'po_date'      => \Carbon\Carbon::now(),
+                'vendor_id'    => $header->vendor_id,
+                'status'       => Quotation::QuotationDirect,
+                'payment_term' => $header->payment_term,
+                'currency'     => $header->currency,
+                'PO_NUMBER'    => $poNumber ?? 0,
+                'doc_type'     => $header->doc_type,
+                'total_price'  => $header->total_price,
+                'created_by'   => $header->created_by,
+                'updated_by'   => $header->updated_by,
+                'ship_id'      => $header->ship_id
             ]);
 
-            if( $rows->item_category == QuotationDetail::SERVICE ) {
-                $service = QuotationServiceChild::where('quotation_id', $header->id)->get();
+            $po = $poId;
+            foreach ($detail as $rows) {
+                $sched = QuotationDelivery::where('quotation_detail_id', $rows->id)->first();
 
-                foreach($service as $key => $value ) {
-                    $poServiceChild = new \App\Models\PurchaseOrderServiceChild;
-                    $poServiceChild->purchase_order_id          = $poId->id;
-                    $poServiceChild->purchase_order_detail_id   = $detail->id;
-                    $poServiceChild->preq_item                  = $value->preq_item;
-                    $poServiceChild->po_item                    = $value->po_item;
-                    $poServiceChild->package_no                 = $value->package_no;
-                    $poServiceChild->subpackage_no              = $value->subpackage_no;
-                    $poServiceChild->short_text                 = $value->short_text;
+                // insert RFQ
+                // by acp id
+                $rfqs = Rfq::where('acp_id', $rows->acp_id)->first();
+                if( $rfqs != null ) {
+                    $rfqs->doc_type_po = $header->doc_type;
+                    $rfqs->update();
+                    
+                    RfqDetail::where('rfq_number',$rfqs->rfq_number )
+                        ->update([
+                            'po_number'   => $poNumber
+                        ]);
+                }
 
-                    $poServiceChild->save();
+
+                $detail = PurchaseOrdersDetail::create([
+                    'purchase_order_id'         => $poId->id,
+                    'description'               => $rows->description ?? '-',
+                    'qty'                       => $rows->qty,
+                    'unit'                      => $rows->unit,
+                    'notes'                     => $rows->notes ?? '-',
+                    'price'                     => $rows->price ?? 0,
+                    'material_id'               => $rows->material,
+                    'assets_no'                 => $rows->assets_no,
+                    'material_group'            => $rows->material_group,
+                    'preq_item'                 => $rows->PREQ_ITEM,
+                    'purchasing_document'       => $rows->purchasing_document ?? 0,
+                    'PR_NO'                     => $rows->PR_NO,
+                    'assets_no'                 => $rows->assets_no,
+                    'acp_id'                    => $rows->acp_id,
+                    'short_text'                => $rows->short_text,
+                    'text_id'                   => $rows->text_id,
+                    'text_form'                 => $rows->text_form,
+                    'text_line'                 => $rows->text_line,
+                    'delivery_date_category'    => $rows->delivery_date_category,
+                    'account_assignment'        => $rows->account_assignment,
+                    'purchasing_group_code'     => $rows->purchasing_group_code,
+                    'gl_acct_code'              => $rows->gl_acct_code,
+                    'cost_center_code'          => $rows->cost_center_code,
+                    'profit_center_code'        => $rows->profit_center_code,
+                    'storage_location'          => $rows->storage_location,
+                    'PO_ITEM'                   => $rows->PO_ITEM,
+                    'request_no'                => $rows->request_no,
+                    'original_price'            => $rows->orginal_price,
+                    'currency'                  => $rows->currency,
+                    'preq_name'                 => $rows->preq_name,
+                    'delivery_date'             => $rows->delivery_date,
+                    'item_category'             => $rows->item_category,
+                    'request_no'                => $rows->request_no,
+                    'plant_code'                => $rows->plant_code,
+                    'tax_code'                  => $rows->tax_code,
+                    'package_no'                => $rows->package_no,
+                    'subpackage_no'             => $rows->subpackage_no,
+                    'line_no'                   => $rows->line_no,
+                    'SCHED_LINE'                => $sched->SCHED_LINE,
+                    'request_detail_id'         => $rows->request_detail_id,
+                    'is_free_item'              => $rows->is_free_item ?? 0
+                ]);
+
+                if( $rows->item_category == QuotationDetail::SERVICE ) {
+                    $service = QuotationServiceChild::where('quotation_id', $header->id)->get();
+
+                    foreach($service as $key => $value ) {
+                        $poServiceChild = new \App\Models\PurchaseOrderServiceChild;
+                        $poServiceChild->purchase_order_id          = $poId->id;
+                        $poServiceChild->purchase_order_detail_id   = $detail->id;
+                        $poServiceChild->preq_item                  = $value->preq_item;
+                        $poServiceChild->po_item                    = $value->po_item;
+                        $poServiceChild->package_no                 = $value->package_no;
+                        $poServiceChild->subpackage_no              = $value->subpackage_no;
+                        $poServiceChild->short_text                 = $value->short_text;
+
+                        $poServiceChild->save();
+                    }
                 }
             }
-        }
-        
-        $quotDelivery = QuotationDelivery::where('quotation_id', $header->id)->get();
-        foreach( $quotDelivery as $rec ) {
-            $poDel = new \App\Models\PurchaseOrderDelivery;
-            $poDel->purchase_order_id           = $po->id;
-            $poDel->purchase_order_detail_id    = 9999;
-            $poDel->sched_line                  = $rec->SCHED_LINE;
-            $poDel->po_item                     = $rec->PO_ITEM;
-            $poDel->delivery_date               = $rec->DELIVERY_DATE;
-            $poDel->preq_no                     = $rec->PREQ_NO;
-            $poDel->preq_item                   = $rec->PREQ_ITEM;
-            $poDel->qty                         = $rec->QUANTITY;
-            $poDel->save();
-        }
+            
+            $quotDelivery = QuotationDelivery::where('quotation_id', $header->id)->get();
+            foreach( $quotDelivery as $rec ) {
+                $poDel = new \App\Models\PurchaseOrderDelivery;
+                $poDel->purchase_order_id           = $po->id;
+                $poDel->purchase_order_detail_id    = 9999;
+                $poDel->sched_line                  = $rec->SCHED_LINE;
+                $poDel->po_item                     = $rec->PO_ITEM;
+                $poDel->delivery_date               = $rec->DELIVERY_DATE;
+                $poDel->preq_no                     = $rec->PREQ_NO;
+                $poDel->preq_item                   = $rec->PREQ_ITEM;
+                $poDel->qty                         = $rec->QUANTITY;
+                $poDel->save();
+            }
 
-        $print = false;
-        $pdf = PDF::loadview('print', \compact('po', 'print'))
-            ->setPaper('A4', 'potrait')
-            ->setOptions(['debugCss' => true, 'isPhpEnabled' => true])
-            ->setWarnings(true);
-        $pdf->save(public_path("storage/{$po->id}_print.pdf"));
-        if (\App\Models\BaseModel::Development == $configEnv->type) {
-            $email = $configEnv->value;
+            $print = false;
+            $pdf = PDF::loadview('print', \compact('po', 'print'))
+                ->setPaper('A4', 'potrait')
+                ->setOptions(['debugCss' => true, 'isPhpEnabled' => true])
+                ->setWarnings(true);
+            $pdf->save(public_path("storage/{$po->id}_print.pdf"));
+            if (\App\Models\BaseModel::Development == $configEnv->type) {
+                $email = $configEnv->value;
+            } else {
+                $email = $po->vendors['email'] ?? 'diditriawan13@gmail.com';
+            }
+            \Mail::to($email)->send(new SendMail($po));
+            \Mail::to('farid.hidayat@enesis.com')->send(new SendMail($po));
+            \Mail::to('diditriawan13@gmail.com')->send(new SendMail($po));
         } else {
-            $email = $po->vendors['email'] ?? 'diditriawan13@gmail.com';
+            $quotation = Quotation::find($header->id);
+            $quotation->approval_status     = Quotation::ApprovalHead;
+            $quotation->approved_head       = \Auth::user()->user_id;
+            $quotation->approved_date_head  = date('Y-m-d');
+            $quotation->save();
         }
-        \Mail::to($email)->send(new SendMail($po));
-        \Mail::to('farid.hidayat@enesis.com')->send(new SendMail($po));
-        \Mail::to('diditriawan13@gmail.com')->send(new SendMail($po));
     }
 
     private function _insert_details($details, $id)
