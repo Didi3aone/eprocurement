@@ -216,16 +216,16 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="">Payment Term</label>
-                                <input type="text" class="payment_term form-control" name="payment_terms" id="payment_terms" value="" readonly>
-                                <input type="hidden" class="payment_term form-control" name="payment_term" id="payment_term" value="" readonly>
-                                {{-- <select name="payment_term" id="payment_term" class="form-control select2" disabled>
-                                    <option value="">-- Select --</option>
+                                {{-- <input type="text" class="payment_term form-control" name="payment_terms" id="payment_terms" value="" readonly> --}}
+                                {{-- <input type="hidden" class="payment_term form-control" name="payment_term" id="payment_term" value="" readonly> --}}
+                                <select name="payment_term" id="payment_term" class="form-control select2" disabled>
+                                    {{-- <option value="">-- Select --</option>
                                     @foreach ($top as $val)
                                     <option value="{{ $val->payment_terms }}">
                                         {{ $val->no_of_days ." days" }}
                                     </option>
-                                    @endforeach
-                                </select> --}}
+                                    @endforeach --}}
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -388,7 +388,7 @@
         const $payment_term = $("#payment_term")
         $.getJSON(url, function(items) {
             let newOptions = ''
-           // $("#payment_term").attr('disabled',true);
+            $("#payment_term").attr('disabled',false);
 
              for (var id in items) {
                 let selected = ''
