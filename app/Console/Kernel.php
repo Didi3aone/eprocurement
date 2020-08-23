@@ -4,7 +4,7 @@ namespace App\Console;
 
 use App\Console\Commands\PoGrGet;
 use App\Console\Commands\PoGrGetMin;
-use App\Console\Commands\PoMrpGet;
+use App\Console\Commands\PrMrpGet;
 use App\Console\Commands\ClonePrMrp;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -19,7 +19,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         PoGrGet::class,
         PoGrGetMin::class,
-        PoMrpGet::class,
+        PrMrpGet::class,
         ClonePrMrp::class  
     ];
 
