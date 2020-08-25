@@ -374,6 +374,18 @@ class QuotationRepeatController extends Controller
      */
     public function destroy($id)
     {
+        $quotationDetail = QuotationDetail::where('quotation_order_id', $id)
+                        ->get();
+        //update lagi qty ke awal 
+        foreach( $quotationDetail as $key => $rows ) {
+            $poDetail = PurchaseRequestsDetail::where('id', $rows->request_detail_id)->first();
+            // dd($poDetail);
+            if( $poDetail != null ) {
+                $poDetail->qty += $rows->qty;
+                $poDetail->update();
+            }
+        }
+        
         $quotation = Quotation::find($id);
         $quotation->delete();
 
@@ -383,6 +395,7 @@ class QuotationRepeatController extends Controller
         if( null != $service ) {
             $service->delete();
         }
+
         
         return redirect()->route('admin.quotation-repeat.index')->with('status', 'Direct Order has been successfully deleted !');
     }
