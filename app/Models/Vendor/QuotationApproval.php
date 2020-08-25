@@ -45,4 +45,10 @@ class QuotationApproval extends Model
     {
         return $this->hasOne(\App\Models\User::class,'nik','nik');
     }
+
+    public static function getReasonReject($quotId)
+    {
+        return QuotationApproval::where('acp_id', $quotId)
+            ->whereNotNull('reason_reject')->first();
+    }
 }

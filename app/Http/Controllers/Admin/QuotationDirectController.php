@@ -42,6 +42,7 @@ class QuotationDirectController extends Controller
                     ->where('quotation.status',Quotation::QuotationDirect)
                     ->where('quotation.approval_status',Quotation::Waiting) 
                     ->orWhere('quotation.approval_status', Quotation::ApprovalAss)
+                    ->orWhere('quotation.approval_status', Quotation::Rejected)
                     ->whereIn('quotation_details.purchasing_group_code', $userMapping)
                     ->select(
                         'quotation.id',

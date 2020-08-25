@@ -217,12 +217,15 @@
         quantities = btoa(quantities)
         docs = btoa(docs)
         groups = btoa(groups)
+        console.log(ids)
 
         $('.bidding-online').attr('href', '{{ url("admin/purchase-request-online") }}/' + ids + '/' + quantities)
 
         if (check_pr.length > 0) {
-            $('.bidding-repeat').attr('href', '{{ url("admin/purchase-request-repeat") }}/' + ids + '/' + quantities +'/'+ docs + '/' + groups)
-            $('.bidding-direct').attr('href', '{{ url("admin/purchase-request-direct") }}/' + ids + '/' + quantities +'/'+ docs + '/' + groups)
+           // $('.bidding-repeat').attr('href', '{{ url("admin/purchase-request-repeat") }}/' + ids + '/' + quantities +'/'+ docs + '/' + groups)
+            $('.bidding-repeat').attr('href', '{{ url("admin/purchase-request-repeat") }}/' + ids + '/' + quantities)
+            $('.bidding-direct').attr('href', '{{ url("admin/purchase-request-direct") }}/' + ids + '/' + quantities)
+            //$('.bidding-direct').attr('href', '{{ url("admin/purchase-request-direct") }}/' + ids + '/' + quantities +'/'+ docs + '/' + groups)
         } else {
             alert('Please check your material!')
             $('#modal_create_po').modal('hide')

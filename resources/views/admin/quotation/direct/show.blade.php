@@ -64,6 +64,12 @@
                                         @endif
                                     @endif
                                 </tr>
+                                @if($quotation->reason_reject)
+                                <tr>
+                                    <th>Reason Rejected</th>
+                                    <td>{{ $quotation->reason_reject }}</td>
+                                </tr>
+                                @endif
                             </tbody>
                         </table>
                     </div>

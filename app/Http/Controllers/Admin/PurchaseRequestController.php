@@ -125,6 +125,7 @@ class PurchaseRequestController extends Controller
                             $q->where('PR_NO', 'ILIKE', "%{$search}%")
                             // ->whereIn('purchase_requests_details.purchasing_group_code', $userMapping)
                                 ->orWhere('material_id', 'ILIKE', "%{$search}%")
+                                ->orWhere('doc_type', 'ILIKE', "%{$search}%")
                                 ->orWhere('short_text', 'ILIKE', "%{$search}%")
                                 ->orWhere('purchasing_group_code', 'ILIKE', "%{$search}%");
                         });
@@ -332,22 +333,38 @@ class PurchaseRequestController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function repeat(Request $request, $ids, $quantities, $docs, $groups)
+    public function repeat(Request $request, $ids, $quantities)
     {
         ini_set('memory_limit', '20000M');
         //ini_set('memory_limit', '-1');
         set_time_limit(0);
         $ids = base64_decode($ids);
         $quantities = base64_decode($quantities);
-        $docs = base64_decode($docs);
-        $docs = explode(',', $docs);
+        // $docs = base64_decode($docs);
+        // $docs = explode(',', $docs);
 
-        $groups = base64_decode($groups);
-        $groups = explode(',', $groups);
+        // $groups = base64_decode($groups);
+        // $groups = explode(',', $groups);
 
-        $checkDoc = checkArraySame($docs);
+        // $checkDoc = checkArraySame($docs);
+        // $checkGroup = \checkArraySame($groups);
+
+        $groups = PurchaseRequestsDetail::select(
+                    'purchase_requests_details.purchasing_group_code',
+                )
+                ->whereIn('purchase_requests_details.id', explode(',',$ids))
+                ->get()
+                ->toArray();
+
+        $docs = PurchaseRequestsDetail::select(
+                    'purchase_requests.doc_type',
+                )
+                ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
+                ->whereIn('purchase_requests_details.id', explode(',',$ids))
+                ->get()
+                ->toArray();
+        $checkDoc   = \checkArraySame($docs);
         $checkGroup = \checkArraySame($groups);
-
         if (false == $checkDoc) {
             return redirect()->route('admin.purchase-request.index')->with('error', 'Doc type. must be the same');
         }
@@ -408,16 +425,31 @@ class PurchaseRequestController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function direct(Request $request, $ids, $quantities, $docs, $groups)
+    public function direct(Request $request, $ids, $quantities)
     {
         $ids = base64_decode($ids);
         $quantities = base64_decode($quantities);
-        $docs = base64_decode($docs);
-        $docs = explode(',', $docs);
+        // $docs = base64_decode($docs);
+        // $docs = explode(',', $docs);
 
-        $groups = base64_decode($groups);
-        $groups = explode(',', $groups);
+        // $groups = base64_decode($groups);
+        // $groups = explode(',', $groups);
 
+       
+        $groups = PurchaseRequestsDetail::select(
+                'purchase_requests_details.purchasing_group_code',
+            )
+            ->whereIn('purchase_requests_details.id', explode(',',$ids))
+            ->get()
+            ->toArray();
+
+        $docs = PurchaseRequestsDetail::select(
+            'purchase_requests.doc_type',
+        )
+            ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
+            ->whereIn('purchase_requests_details.id', explode(',',$ids))
+            ->get()
+            ->toArray();
         $checkDoc = checkArraySame($docs);
         $checkGroup = \checkArraySame($groups);
 

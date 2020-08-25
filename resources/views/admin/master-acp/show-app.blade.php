@@ -59,6 +59,12 @@
                                         <th>Description</th>
                                         <td>{{ $acp->description }}</td>
                                     </tr>
+                                    @if($acp->reason_reject != null)
+                                    <tr>
+                                        <th>Reason Rejected</th>
+                                        <td>{{  \getplan($acp->plant_id)->description }}</td>
+                                    </tr>
+                                    @endif
                                 </div>
                                 </tbody>
                             </table>

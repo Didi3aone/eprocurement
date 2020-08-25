@@ -55,6 +55,12 @@
                                             </td>
                                         @endif
                                     </tr>
+                                    {{-- @if(\App\Models\Vendor\QuotationApproval::getReasonReject($acp->id) ) --}}
+                                    <tr>
+                                        <th>Reason Rejected</th>
+                                        <td>{{ \App\Models\Vendor\QuotationApproval::getReasonReject($acp->id)->reason_reject  ?? '-'}}</td>
+                                    </tr>
+                                    {{-- @endif --}}
                                 </div>
                                 </tbody>
                             </table>
