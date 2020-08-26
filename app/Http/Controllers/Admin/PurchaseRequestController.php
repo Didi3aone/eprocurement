@@ -266,9 +266,7 @@ class PurchaseRequestController extends Controller
         $po_no = 'PO/'.date('m').'/'.date('Y').'/'.sprintf('%07d', ++$max);
         $ids = explode(',', $ids);
 
-        if ($quantities) {
-            $quantities = explode(',', $quantities);
-        }
+        $quantities = explode(',', $quantities);
 
         $data = [];
         foreach ($ids as $i => $id) {
@@ -339,19 +337,12 @@ class PurchaseRequestController extends Controller
      */
     public function repeat(Request $request, $ids, $quantities)
     {
+        $qty = explode(',', $quantities);
+        // dd(count($qty));
         ini_set('memory_limit', '20000M');
         //ini_set('memory_limit', '-1');
         set_time_limit(0);
         $ids = base64_decode($ids);
-        $quantities = base64_decode($quantities);
-        // $docs = base64_decode($docs);
-        // $docs = explode(',', $docs);
-
-        // $groups = base64_decode($groups);
-        // $groups = explode(',', $groups);
-
-        // $checkDoc = checkArraySame($docs);
-        // $checkGroup = \checkArraySame($groups);
 
         $groups = PurchaseRequestsDetail::select(
                     'purchase_requests_details.purchasing_group_code',
@@ -369,13 +360,13 @@ class PurchaseRequestController extends Controller
                 ->toArray();
         $checkDoc   = \checkArraySame($docs);
         $checkGroup = \checkArraySame($groups);
-        // if (false == $checkDoc) {
-        //     return redirect()->route('admin.purchase-request.index')->with('error', 'Doc type. must be the same');
-        // }
+        if (false == $checkDoc) {
+            return redirect()->route('admin.purchase-request.index')->with('error', 'Doc type. must be the same');
+        }
 
-        // if (false == $checkGroup) {
-        //     return redirect()->route('admin.purchase-request.index')->with('error', 'Purchasing group. must be the same');
-        // }
+        if (false == $checkGroup) {
+            return redirect()->route('admin.purchase-request.index')->with('error', 'Purchasing group. must be the same');
+        }
 
         $return = $this->createPrPo($ids, $quantities);
 
@@ -432,12 +423,6 @@ class PurchaseRequestController extends Controller
     public function direct(Request $request, $ids, $quantities)
     {
         $ids = base64_decode($ids);
-        $quantities = base64_decode($quantities);
-        // $docs = base64_decode($docs);
-        // $docs = explode(',', $docs);
-
-        // $groups = base64_decode($groups);
-        // $groups = explode(',', $groups);
 
        
         $groups = PurchaseRequestsDetail::select(
