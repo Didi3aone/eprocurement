@@ -3,9 +3,11 @@
 namespace App\Models\Vendor;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class QuotationApproval extends Model
 {
+    use softDeletes;
     protected $connection = 'pgsql';
 
     public $table = 'quotation_approvals';
