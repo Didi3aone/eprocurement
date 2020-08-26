@@ -44,6 +44,7 @@ class RfqDetail extends Model
     public static function getLastPo($materialId)
     {
         return RfqDetail::where('material_id', $materialId)
+        ->orWhere('short_text', $materialId)
         ->orderBy('id','desc')
         ->first();
     }
