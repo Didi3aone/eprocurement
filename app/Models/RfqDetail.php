@@ -22,6 +22,7 @@ class RfqDetail extends Model
         //     ->get();
 
         $rfq = RfqDetail::where('material_id', $materialId)
+            ->orWhere('short_text', $materialId)
             ->select(DB::Raw('po_number, rfq_number, net_price, vendor_id, currency, is_from_po'))
             ->orderBy('id','desc');
             // ->get();

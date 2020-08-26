@@ -184,7 +184,7 @@
                                 <input type="hidden" class="acp_id" name="acp_id[]" id="acp_id" value="0">
                                 <td>{!! $value->material_id .'<br>'.$value->description !!}
                                     @php
-                                        $materialId = $value->description;
+                                        $materialId = $value->short_text;
                                         if( $value->material_id != '' ) {
                                             $materialId = $value->material_id;
                                         }
