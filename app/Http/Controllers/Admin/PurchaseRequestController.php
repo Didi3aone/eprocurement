@@ -365,13 +365,13 @@ class PurchaseRequestController extends Controller
                 ->toArray();
         $checkDoc   = \checkArraySame($docs);
         $checkGroup = \checkArraySame($groups);
-        if (false == $checkDoc) {
-            return redirect()->route('admin.purchase-request.index')->with('error', 'Doc type. must be the same');
-        }
+        // if (false == $checkDoc) {
+        //     return redirect()->route('admin.purchase-request.index')->with('error', 'Doc type. must be the same');
+        // }
 
-        if (false == $checkGroup) {
-            return redirect()->route('admin.purchase-request.index')->with('error', 'Purchasing group. must be the same');
-        }
+        // if (false == $checkGroup) {
+        //     return redirect()->route('admin.purchase-request.index')->with('error', 'Purchasing group. must be the same');
+        // }
 
         $return = $this->createPrPo($ids, $quantities);
 
@@ -380,7 +380,7 @@ class PurchaseRequestController extends Controller
         $vendor = $return['vendor'];
         $top = $return['top'];
 
-        $docType = $docs[0];
+        $docType = $docs[0]['doc_type'];
         $type = '';
         if ('SY01' == $docType || 'SY02' == $docType || 'Z102' == $docType) {
             $type = 'Z300';
@@ -468,7 +468,7 @@ class PurchaseRequestController extends Controller
         $vendor = $return['vendor'];
         $top = $return['top'];
 
-        $docType = $docs[0];
+        $docType = $docs[0]['doc_type'];
         $type = '';
         if ('SY01' == $docType || 'SY02' == $docType || 'Z102' == $docType) {
             $type = 'Z300';
@@ -482,6 +482,7 @@ class PurchaseRequestController extends Controller
             $type = 'Z304';
         }
 
+        // dd($docs);
         $docTypes = DocumentType::where('type', '2')
                 ->where('code', $type)
                 ->get();
