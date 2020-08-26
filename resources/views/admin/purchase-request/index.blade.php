@@ -82,15 +82,17 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    {{-- <div class="col-lg-4 text-center">
-                        <a href="#" class="bidding-online btn btn-primary btn-lg">Online</a>
-                    </div> --}}
-                    <div class="col-lg-6 text-center">
-                        <a href="#" class="bidding-repeat btn btn-info btn-lg">Repeat Order</a>
-                    </div>
-                    <div class="col-lg-6 text-center">
-                        <a href="#" class="bidding-direct btn btn-success btn-lg">Direct Order</a>
-                    </div>
+                    {{-- <form action=""> --}}
+                        {{-- <div class="col-lg-4 text-center">
+                            <a href="#" class="bidding-online btn btn-primary btn-lg">Online</a>
+                        </div> --}}
+                        <div class="col-lg-6 text-center">
+                            <a href="#" class="bidding-repeat btn btn-info btn-lg">Repeat Order</a>
+                        </div>
+                        <div class="col-lg-6 text-center">
+                            <a href="#" class="bidding-direct btn btn-success btn-lg">Direct Order</a>
+                        </div>
+                    {{-- </form> --}}
                 </div>
             </div>
             <div class="modal-footer">
@@ -214,7 +216,7 @@
         console.log('ids', ids, 'quantities', quantities,'docs',docs,'groups',groups)
 
         ids = btoa(ids)
-        quantities = btoa(quantities)
+        quantities = (quantities)
         docs = btoa(docs)
         groups = btoa(groups)
         console.log(ids)
