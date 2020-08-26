@@ -150,7 +150,11 @@ class PurchaseRequestController extends Controller
                             }
                         } else {
                             $getLast = '';
+                            if (null != \App\Models\RfqDetail::getLastPo($value->short_text)) {
+                                $getLast = \App\Models\RfqDetail::getLastPo($value->short_text)->po_number;
+                            }
                         }
+                        // dd($getLast);
 
                         $other = \App\Models\PurchaseRequestApprovalHistory::getHistoryApproval($value->uuid);
                         $other = $other->map(function ($row) {
