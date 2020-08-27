@@ -5492,8 +5492,16 @@ class SapHelper {
                 'is_error' => false,
                 'error'    => []
             ];
+            
         } else {
             // dd('2');
+            \App\Models\employeeApps\SapLogSoap::create([
+                'log_type' => 'PO TEST RUN',
+                'log_type_id' => 'TEST_RUN_'.date('Y-m-d H:i:s'),
+                'log_params_employee' => \json_encode($params),
+                'log_response_sap' => \json_encode($result),
+                'status' => 'FAILED',
+            ]); 
             return [
                 'is_error' => true,
                 'error'    => $result->RETURN
@@ -7584,7 +7592,7 @@ class SapHelper {
             'log_type_id' => $poHeader->PO_NUMBER,
             'log_params_employee' => \json_encode($params),
             'log_response_sap' => \json_encode($result),
-            'status' => 'FAILED',
+            'status' => 'SUCCESS',
         ]); 
         // dd($result);
         return $result;
@@ -9655,7 +9663,7 @@ class SapHelper {
             'log_type_id' => $poHeader->PO_NUMBER,
             'log_params_employee' => \json_encode($params),
             'log_response_sap' => \json_encode($result),
-            'status' => 'FAILED',
+            'status' => 'SUCCESS',
         ]); 
         // dd($result);
         return $result;
