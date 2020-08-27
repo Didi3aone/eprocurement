@@ -3196,7 +3196,7 @@ class SapHelper {
                 $params[0]['POSCHEDULEX']['item'][$i] = $POSCHEDULEX;
                 $params[0]['POACCOUNT']['item'][$i] = $POACCOUNT;
                 $params[0]['POACCOUNTX']['item'][$i] = $POACCOUNTX;
-                // $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
+                $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
             } elseif( $quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::SERVICE ) {
                 $params[0]['POITEM']['item'][$i] = $POITEM;
                 $params[0]['POITEMX']['item'][$i] = $POITEMX;
@@ -3204,7 +3204,7 @@ class SapHelper {
                 $params[0]['POSCHEDULEX']['item'][$i] = $POSCHEDULEX;
                 $params[0]['POACCOUNT']['item'][$i] = $POACCOUNT;
                 $params[0]['POACCOUNTX']['item'][$i] = $POACCOUNTX;
-                // $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
+                $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
             }
         } 
         
@@ -5438,7 +5438,7 @@ class SapHelper {
                 $params[0]['POSCHEDULEX']['item'][$i] = $POSCHEDULEX;
                 $params[0]['POACCOUNT']['item'][$i] = $POACCOUNT;
                 $params[0]['POACCOUNTX']['item'][$i] = $POACCOUNTX;
-                // $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
+                $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
             } elseif( $quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::SERVICE ) {
                 $params[0]['POITEM']['item'][$i] = $POITEM;
                 $params[0]['POITEMX']['item'][$i] = $POITEMX;
@@ -5446,7 +5446,7 @@ class SapHelper {
                 $params[0]['POSCHEDULEX']['item'][$i] = $POSCHEDULEX;
                 $params[0]['POACCOUNT']['item'][$i] = $POACCOUNT;
                 $params[0]['POACCOUNTX']['item'][$i] = $POACCOUNTX;
-                // $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
+                $params[0]['POSRVACCESSVALUES']['item'][$i] = $POSRVACCESSVALUES;
             }
         } 
         
