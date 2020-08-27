@@ -1236,7 +1236,12 @@ class SapHelper {
 
             //Cek Price Per
             $cek_purc_doc       = substr($quotationDetail[$i]->purchasing_document,0,1);
-            $material_id        = $quotationDetail[$i]->material;
+
+            if( $quotationDetail[$i]->material ) {
+                $material_id = $quotationDetail[$i]->material;
+            } else {
+                $material_id = $quotationDetail[$i]->short_text;
+            }
             // dd($quotationDetail[$i]);
             if($cek_purc_doc == 1 ){
                 if($quotationDetail[$i]->item_category == \App\Models\Vendor\QuotationDetail::SERVICE)
@@ -3474,7 +3479,11 @@ class SapHelper {
 
             //Cek Price Per
             $cek_purc_doc       = substr($quotationDetail[$i]->purchasing_document,0,1);
-            $material_id        = $quotationDetail[$i]->material;
+            if( $quotationDetail[$i]->material ) {
+                $material_id = $quotationDetail[$i]->material;
+            } else {
+                $material_id = $quotationDetail[$i]->short_text;
+            }
             // dd($quotationDetail[$i]);
             if($cek_purc_doc == 1 ){
 
