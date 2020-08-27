@@ -15,6 +15,7 @@
             <div class="card">
                 <div class="card-body">
                     @csrf
+                    <input type="hidden" class="form-control" name="vendors" id="vendors" value="">
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="form-group">
@@ -61,6 +62,34 @@
                                 <input type="text" class="form-control form-control-line exchange_rate" name="exchange_rate" value="{{ old('exchange_rate', '') }}" disabled> 
                             </div>
                         </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="">Vendor</label>
+                                <select name="vendor_id" id="vendor_id" class="form-control select2 {{ $errors->has('vendor_id') ? 'is-invalid' : '' }}" required>
+                                </select>
+                                @if($errors->has('vendor_id'))
+                                    <div class="invalid-feedback">
+                                        {{ $errors->first('vendor_id') }}
+                                    </div>
+                                @endif
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="">Payment Term</label>
+                                {{-- <input type="text" class="payment_term form-control" name="payment_terms" id="payment_terms" value="" readonly> --}}
+                                {{-- <input type="hidden" class="payment_term form-control" name="payment_term" id="payment_term" value="" readonly> --}}
+                                <select name="payment_term" id="payment_term" class="form-control select2" disabled>
+                                    {{-- <option value="">-- Select --</option>
+                                    @foreach ($top as $val)
+                                    <option value="{{ $val->payment_terms }}">
+                                        {{ $val->no_of_days ." days" }}
+                                    </option>
+                                    @endforeach --}}
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Term Of Payment Desciption</label>
@@ -102,6 +131,7 @@
                             <table id="datatables-run" class="table table-striped table-responsive">
                                 <thead>
                                     <tr>
+                                        <th>No</th>
                                         <th style="width: 30%;padding-right:15px;">Material</th>
                                         <th style="width: 30%;padding-right:15px;">Spesification</th>
                                         <th style="width: 10%;padding-right:15px;">Unit</th>
@@ -119,6 +149,7 @@
                                 <tbody>
                                     @foreach($data as $key => $value)
                                         <tr>
+                                            <td>{{ $key + 1 }}</td>
                                             <input type="hidden" name="doc_type_pr[]" id="doc_type" value="{{ $value->doc_type }}">
                                             <input type="hidden" name="idDetail[]" id="idDetail" value="{{ $value->id }}">
                                             <input type="hidden" name="plant_code[]" id="plant_code" value="{{ $value->plant_code }}">
@@ -199,36 +230,6 @@
                             </table>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <label for="">Vendor</label>
-                                <select name="vendor_id" id="vendor_id" class="form-control select2 {{ $errors->has('vendor_id') ? 'is-invalid' : '' }}" required>
-                                </select>
-                                @if($errors->has('vendor_id'))
-                                    <div class="invalid-feedback">
-                                        {{ $errors->first('vendor_id') }}
-                                    </div>
-                                @endif
-                                <span class="help-block"></span>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <label for="">Payment Term</label>
-                                {{-- <input type="text" class="payment_term form-control" name="payment_terms" id="payment_terms" value="" readonly> --}}
-                                {{-- <input type="hidden" class="payment_term form-control" name="payment_term" id="payment_term" value="" readonly> --}}
-                                <select name="payment_term" id="payment_term" class="form-control select2" disabled>
-                                    {{-- <option value="">-- Select --</option>
-                                    @foreach ($top as $val)
-                                    <option value="{{ $val->payment_terms }}">
-                                        {{ $val->no_of_days ." days" }}
-                                    </option>
-                                    @endforeach --}}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
                     <div class="form-group">
                         <label class="required" for="upload_file">{{ trans('cruds.purchase-order.fields.upload_file') }}</label>
                         <input class="form-control {{ $errors->has('upload_file') ? 'is-invalid' : '' }}" type="file" name="upload_file[]" multiple id="upload_file">
@@ -255,13 +256,13 @@
 @section('scripts')
 @parent
 <script>
-    $('#datatables-run').DataTable({
+   /* $('#datatables-run').DataTable({
         "searching": false,
         "bPaginate": false,
         "bLengthChange": false,
         "bInfo": false,
         "ordering": false
-    });
+    });*/
     let index = 1
     $(".exchange_rate").attr('disabled',true)
     $("#currency").on('change',function(e) {
@@ -345,6 +346,7 @@
 
         getVendor(code)
         getCurrency(ori_curr)
+        $("#vendors").val(code)
 
         $.getJSON(url,{'master_acp_id': acp_id ,'material' : materials,'vendor_id' : code}, function (items) {
             $("#image_loading").hide()

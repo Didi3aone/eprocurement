@@ -5484,7 +5484,7 @@ class SapHelper {
         // echo "</pre>";
         $result = $client->__soapCall('ZFM_WS_PO', $params, NULL, $header);
 
-        // dd($result->POSCHEDULE);
+        // dd($result);
         // echo "<pre>".print_r($params);die;"</pre>";
         if( empty($result->RETURN->item)  ) {
             // dd('1');
