@@ -101,6 +101,12 @@
         </div>
     </div>
 </div>
+<form action="{{ route('admin.purchase-request-posting') }}" id="form-posting" method="post">
+    @csrf
+    <input type="hidden" name="tipe" id="tipe" value="">
+    <input type="hidden" name="qty" id="qty" value="">
+    <input type="hidden" name="id" id="ids" value="">
+</form>
 @endsection
 
 @section('scripts')
@@ -215,7 +221,7 @@
         }
         console.log('ids', ids, 'quantities', quantities,'docs',docs,'groups',groups)
 
-        ids = btoa(ids)
+        ids = (ids)
         quantities = (quantities)
         docs = btoa(docs)
         groups = btoa(groups)
@@ -224,9 +230,11 @@
         $('.bidding-online').attr('href', '{{ url("admin/purchase-request-online") }}/' + ids + '/' + quantities)
 
         if (check_pr.length > 0) {
+            $("#qty").val(quantities)
+            $("#ids").val(ids)
            // $('.bidding-repeat').attr('href', '{{ url("admin/purchase-request-repeat") }}/' + ids + '/' + quantities +'/'+ docs + '/' + groups)
-            $('.bidding-repeat').attr('href', '{{ url("admin/purchase-request-repeat") }}/' + ids + '/' + quantities)
-            $('.bidding-direct').attr('href', '{{ url("admin/purchase-request-direct") }}/' + ids + '/' + quantities)
+            //$('.bidding-repeat').attr('href', '{{ url("admin/purchase-request-repeat") }}/' + ids + '/' + quantities)
+            //$('.bidding-direct').attr('href', '{{ url("admin/purchase-request-direct") }}/' + ids + '/' + quantities)
             //$('.bidding-direct').attr('href', '{{ url("admin/purchase-request-direct") }}/' + ids + '/' + quantities +'/'+ docs + '/' + groups)
         } else {
             alert('Please check your material!')
@@ -234,6 +242,20 @@
             
             return false
         }
+    })
+
+    $(".bidding-repeat").click(function(e) {
+        e.preventDefault()
+        $("#tipe").val('repeat')
+        //alert();
+        $("#form-posting").submit()
+    })
+
+    $(".bidding-direct").click(function(e) {
+        e.preventDefault()
+        $("#tipe").val('direct')
+        $("#form-posting").submit()
+        //alert();
     })
 
     $('#datatables-run').DataTable({

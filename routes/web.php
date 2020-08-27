@@ -141,8 +141,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::put('purchase-request-approval/{id}', 'PurchaseRequestController@approvalPr')->name('purchase-request-approval');
     Route::get('purchase-request-show/{id}', 'PurchaseRequestController@showDetail')->name('purchase-request-show');
     Route::get('purchase-request-online/{ids}/{quantities}', 'PurchaseRequestController@online')->name('purchase-request-online');
-    Route::get('purchase-request-repeat/{ids}/{quantities}', 'PurchaseRequestController@repeat')->name('purchase-request-repeat');
-    Route::get('purchase-request-direct/{ids}/{quantities}', 'PurchaseRequestController@direct')->name('purchase-request-direct');
+    Route::post('purchase-request-repeat', 'PurchaseRequestController@repeat')->name('purchase-request-repeat');
+    Route::post('purchase-request-direct', 'PurchaseRequestController@direct')->name('purchase-request-direct');
+    Route::post('purchase-request-posting', 'PurchaseRequestController@posting')->name('purchase-request-posting');
     Route::get('purchase-request-project', 'PurchaseRequestController@approvalProject')->name('purchase-request-project');
     Route::put('purchase-request-project-approval', 'PurchaseRequestController@approvalPrStaffPurchasing')->name('purchase-request-project-approval');
     Route::put('purchase-request-project-rejected', 'PurchaseRequestController@rejectedPr')->name('purchase-request-project-rejected');

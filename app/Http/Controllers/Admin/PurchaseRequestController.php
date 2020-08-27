@@ -253,6 +253,100 @@ class PurchaseRequestController extends Controller
     }
 
     /**
+     * Show the form for creating a new resource.
+     *
+     * @param mixed $ids
+     * @param mixed $quantities
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function posting(Request $request)
+    {
+        ini_set('memory_limit', '20000M');
+        set_time_limit(0);
+
+        $ids = ($request->id);
+        // dd($request);
+        $groups = PurchaseRequestsDetail::select(
+                    'purchase_requests_details.purchasing_group_code',
+                )
+                ->whereIn('purchase_requests_details.id', explode(',',$ids))
+                ->get()
+                ->toArray();
+
+        $docs = PurchaseRequestsDetail::select(
+                    'purchase_requests.doc_type',
+                )
+                ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
+                ->whereIn('purchase_requests_details.id', explode(',',$ids))
+                ->get()
+                ->toArray();
+        $checkDoc   = \checkArraySame($docs);
+        $checkGroup = \checkArraySame($groups);
+        // if (false == $checkDoc) {
+        //     return redirect()->route('admin.purchase-request.index')->with('error', 'Doc type. must be the same');
+        // }
+
+        // if (false == $checkGroup) {
+        //     return redirect()->route('admin.purchase-request.index')->with('error', 'Purchasing group. must be the same');
+        // }
+
+        $return = $this->createPrPo($ids, $request->qty);
+
+        $data = $return['data'];
+        $po_no = $return['po_no'];
+        $vendor = $return['vendor'];
+        $top = $return['top'];
+
+        $docType = $docs[0]['doc_type'];
+        $type = '';
+        if ('SY01' == $docType || 'SY02' == $docType || 'Z102' == $docType) {
+            $type = 'Z300';
+        } elseif ('Z100' == $docType) {
+            $type = 'Z301';
+        } elseif ('Z104' == $docType) {
+            $type = 'Z302';
+        } elseif ('Z101' == $docType) {
+            $type = 'Z303';
+        } elseif ('Z107' == $docType) {
+            $type = 'Z304';
+        }
+
+        $docTypes = DocumentType::where('type', '2')
+                ->where('code', $type)
+                ->get();
+        $shipTo   = \App\Models\MasterShipToAdress::all()->pluck('name','id');
+
+        $uri = [
+            'ids' => base64_encode($ids),
+            'quantities' => base64_encode($request->quantities),
+        ];
+        if( $request->tipe == 'repeat') {
+
+            return view('admin.purchase-request.repeat', compact(
+                'data',
+                'docTypes',
+                'po_no',
+                'vendor',
+                'uri',
+                'top',
+                'shipTo'
+            ));
+        } else {
+            return view('admin.purchase-request.direct', compact(
+                'data',
+                'docTypes',
+                'po_no',
+                'vendor',
+                'uri',
+                'top',
+                'shipTo'
+            ));
+        }
+        // dd($request);
+    }
+
+    /**
      * resource for create po.
      *
      * @param mixed      $ids
@@ -335,14 +429,13 @@ class PurchaseRequestController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function repeat(Request $request, $ids, $quantities)
+    public function repeat(Request $request)
     {
-        $qty = explode(',', $quantities);
-        // dd(count($qty));
+        dd($request);
         ini_set('memory_limit', '20000M');
         //ini_set('memory_limit', '-1');
         set_time_limit(0);
-        $ids = base64_decode($ids);
+        $ids = ($request->id);
 
         $groups = PurchaseRequestsDetail::select(
                     'purchase_requests_details.purchasing_group_code',
@@ -368,7 +461,7 @@ class PurchaseRequestController extends Controller
             return redirect()->route('admin.purchase-request.index')->with('error', 'Purchasing group. must be the same');
         }
 
-        $return = $this->createPrPo($ids, $quantities);
+        $return = $this->createPrPo($ids, $request->quantities);
 
         $data = $return['data'];
         $po_no = $return['po_no'];
@@ -396,7 +489,7 @@ class PurchaseRequestController extends Controller
 
         $uri = [
             'ids' => base64_encode($ids),
-            'quantities' => base64_encode($quantities),
+            'quantities' => base64_encode($request->quantities),
         ];
 
         return view('admin.purchase-request.repeat', compact(
@@ -442,13 +535,13 @@ class PurchaseRequestController extends Controller
         $checkDoc = checkArraySame($docs);
         $checkGroup = \checkArraySame($groups);
 
-        if (false == $checkDoc) {
-            return redirect()->route('admin.purchase-request.index')->with('error', 'Doc type. must be the same');
-        }
+        // if (false == $checkDoc) {
+        //     return redirect()->route('admin.purchase-request.index')->with('error', 'Doc type. must be the same');
+        // }
 
-        if (false == $checkGroup) {
-            return redirect()->route('admin.purchase-request.index')->with('error', 'Purchasing group. must be the same');
-        }
+        // if (false == $checkGroup) {
+        //     return redirect()->route('admin.purchase-request.index')->with('error', 'Purchasing group. must be the same');
+        // }
 
         $return = $this->createPrPo($ids, $quantities);
 
