@@ -9942,6 +9942,7 @@ class SapHelper {
                 ->table('rfq_details')
                 ->where('rfq_number', $acp_or_rfq_id)
                 ->where('material_id', $material_id)
+                ->orWhere('short_text', $material_id)
                 // ->where('plant_code', $plant )
                 ->first();
             // dd($query);
