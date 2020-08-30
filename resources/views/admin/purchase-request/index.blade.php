@@ -32,6 +32,7 @@
                 >
                     <i class="fa fa-truck"></i> Create PO
                 </a>
+                <button class="checkall">Check All</button>
                 <div class="row" style="margin-bottom: 20px">
                     <div class="col-lg-12">
                         <div class="table-responsive m-t-40">
@@ -162,6 +163,14 @@
 </div>
 </script>
 <script>
+    $(function(){
+        $('.checkall').click(function(){
+            $.each($('table#datatables-run.table > tbody > tr'), function(){
+                var $pr = $(this).find('input.check_pr')
+                $pr.trigger('click')
+            });
+        })
+    })
     $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
         $("#success-alert").slideUp(500);
     });
