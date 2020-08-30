@@ -9688,6 +9688,7 @@ class SapHelper {
         } else {
             $wsdl = public_path() ."/xml/". $soapFile->xml_file;
         }
+        // dd($wsdl);
         
         
         $username = "IT_02";
@@ -9735,7 +9736,7 @@ class SapHelper {
             'CURRENCY_ISO' => '',
             'EXCH_RATE' =>$billing->exchange_rate,// $billing->exchange_rate,
             'EXCH_RATE_V' => '',
-            'GROSS_AMOUNT' => $billing->nominal_inv_after_ppn,
+            'GROSS_AMOUNT' => $billing->currency == 'IDR' ? floor($billing->nominal_inv_after_ppn) : $billing->nominal_inv_after_ppn,
             'CALC_TAX_IND' => $billing->ppn == 'V1' ? 'X' : '',
             'PMNTTRMS' => $billing->payment_term_claim,//'Z003',
             'BLINE_DATE' => $billing->base_line_date,//'2020-05-01',
@@ -9763,7 +9764,7 @@ class SapHelper {
             'PO_CHECKDG' => '',
             'PO_REF_NO' => '',
             'PAYEE_PAYER' => '',
-            'PARTNER_BK' => '000'.$billing->partner_bank,
+            'PARTNER_BK' =>$billing->partner_bank,
             'HOUSEBANKID' => $billing->house_bank,
             'ALLOC_NMBR' => '',
             'PAYMT_REF' => '',
@@ -9894,6 +9895,7 @@ class SapHelper {
         $params[0]['RETURN'] = $RETURN;
         // dd($params);
         $result = $client->__soapCall('ZFM_WS_MIRO', $params, null, $header);
+        // dd($result);
         if( $result->INVOICEDOCNUMBER != '' ) {
             $billing->document_no       = $result->INVOICEDOCNUMBER;
             $billing->fiscal_year       = $result->FISCALYEAR;
@@ -9910,7 +9912,7 @@ class SapHelper {
                 'log_response_sap' => \json_encode($result),
                 'status' => 'FAILED',
             ]); 
-            dd($result);
+            // dd($result);
             return 'NO';
         }
     }
