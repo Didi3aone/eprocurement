@@ -94,7 +94,7 @@ class PoGrGetMin extends Command
                                             ->where('po_item',$value[$i]->EBELP)
                                             ->first();
                             
-                            if( $value[$i]->BWART == '102' ) {
+                            if( $value[$i]->BWART == '102' && $value[$i]->BWART != '321') {
                                 if( $checkExistData == null ) {
                                     $poDetail = \App\Models\PurchaseOrdersDetail::where('purchase_order_id', $poHeader->id)
                                             ->where('PO_ITEM', $value[$i]->EBELP)
@@ -115,6 +115,13 @@ class PoGrGetMin extends Command
                                     $amount = $value[$i]->WRBTR;
                                     if( $value[$i]->WAERS == 'IDR' ) {
                                         $amount = ($value[$i]->WRBTR * 100);
+                                    }
+
+                                    $pricePer = 0;
+                                    if( $qty == '0.0' ) {
+                                        $pricePer = (($value[$i]->WRBTR)/ (1) * 100);
+                                    } else {
+                                        $pricePer = (($value[$i]->WRBTR)/ ($qty) * 100);
                                     }
 
                                     $insertGr = \App\Models\PurchaseOrderGr::create([
@@ -142,14 +149,14 @@ class PoGrGetMin extends Command
                                         'gl_account'                => $value[$i]->SAKTO ?? '',
                                         'profit_center'             => $value[$i]->PRCTR ?? '',
                                         'purchase_order_detail_id'  => $poDetail->id ?? 0,
-                                        'price_per_pc'              => ($value[$i]->WRBTR/$qty) * 100,
+                                        'price_per_pc'              => $pricePer,//($value[$i]->WRBTR/$qty) * 100,
                                         'cost_center_code'          => $value[$i]->KOSTL, 
                                         'posting_date'              => $value[$i]->BUDAT == '0000-00-00' ? date('Y-m-d') : $value[$i]->BUDAT, 
                                         'item_category'             => $poDetail->item_category,
                                         'description'               => $poDetail->short_text,
                                     ]);
 
-                                    $gr = \App\Models\PurchaseOrderGr::where('debet_credit','S')
+                                    $gr = \App\Models\PurchaseOrderGr::where('movement_type','101')
                                         ->where('doc_gr',$value[$i]->LFBNR)
                                         ->where('po_item',$value[$i]->EBELP)
                                         ->first();
@@ -167,7 +174,7 @@ class PoGrGetMin extends Command
                                     ->where('doc_gr',$value->MBLNR)
                                     ->where('po_item',$value->EBELP)
                                     ->first();
-                        if( $value->BWART == '102' ) {
+                        if( $value->BWART == '102' && $value->BWART != '321') {
                             if( $checkExistData == null ) {
                                 $poDetail = \App\Models\PurchaseOrdersDetail::where('purchase_order_id', $poHeader->id)
                                             ->where('PO_ITEM', $value->EBELP)
@@ -187,6 +194,15 @@ class PoGrGetMin extends Command
                                 $amount = $value->WRBTR;
                                 if( $value->WAERS == 'IDR' ) {
                                     $amount = ($value->WRBTR * 100);//jika IDR dikali 100
+                                }
+
+                                $pricePer = 0;
+                                if( $value->WRBTR != '' OR $value->WRBTR != 0) {
+                                    if( $qty == '0.0' ) {
+                                        $pricePer = (($value->WRBTR)/ (1) * 100);
+                                    } else {
+                                        $pricePer = (($value->WRBTR)/ ($qty) * 100);
+                                    }
                                 }
 
                                 $insertGr = \App\Models\PurchaseOrderGr::create([
@@ -214,14 +230,14 @@ class PoGrGetMin extends Command
                                     'gl_account'                => $value->SAKTO ?? '',
                                     'profit_center'             => $value->PRCTR ?? '',
                                     'purchase_order_detail_id'  => $poDetail->id ?? 0,
-                                    'price_per_pc'              => ($value->WRBTR/$qty) * 100,
+                                    'price_per_pc'              => $pricePer,//($value->WRBTR/$qty) * 100,
                                     'cost_center_code'          => $value->KOSTL, 
                                     'posting_date'              => $value->BUDAT == '0000-00-00' ? date('Y-m-d') : $value->BUDAT, 
                                     'item_category'             => $poDetail->item_category,
                                     'description'               => $poDetail->short_text,
                                 ]);
 
-                                $gr = \App\Models\PurchaseOrderGr::where('debet_credit','S')
+                                $gr = \App\Models\PurchaseOrderGr::where('movement_type','101')
                                     ->where('doc_gr',$value->LFBNR)
                                     ->where('po_item',$value->EBELP)
                                     ->first();
