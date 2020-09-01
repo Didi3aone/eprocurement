@@ -21,8 +21,9 @@ class UpdateBankDetails implements ToCollection
             $vendor = \App\Models\Vendor::where('code', $row[0])->first();
 
             \App\Models\Vendor\VendorBankDetails::where('vendor_id', $vendor->id)
+                ->where('account_no', $row[1])
                 ->update([
-                    'partner_bank' => $row[1]
+                    'partner_bank' => $row[2]
                 ]);
         }
     }
