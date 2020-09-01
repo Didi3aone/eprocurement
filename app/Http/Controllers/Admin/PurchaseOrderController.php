@@ -22,6 +22,7 @@ use App\Models\PurchaseOrderChangeHistoryDetail;
 
 class PurchaseOrderController extends Controller
 {
+    const Approved = 1;
     /**
      * Display a listing of the resource.
      *
@@ -702,7 +703,7 @@ class PurchaseOrderController extends Controller
     {
         $purchaseOrder = PurchaseOrder::findOrFail($request->id);
 
-        if (1 == $request->is_approve) {
+        if ( Self::Approved == $request->is_approve) {
             $purchaseOrder->is_approve_head = PurchaseOrder::ApproveHead;
             $purchaseOrder->save();
 
@@ -710,9 +711,20 @@ class PurchaseOrderController extends Controller
 
             return \redirect()->route('admin.purchase-order-change-ass');
         }
+
+        $poDetail = PurchaseOrdersDetail::where('purchase_order_id', $request->id)->first();
+        $getOldHistory = PurchaseOrderChangeHistoryDetail::where('po_detail_id',$poDetail->id )->first();
+
+        //roll back
+        $poDetail->price                = $getOldHistory->price_old;
+        $poDetail->qty                  = $getOldHistory->qty_old;
+        $poDetail->delivery_date        = $getOldHistory->delivery_date_old;
+        $poDetail->update();
+
+        //
         $purchaseOrder->is_approve_head = PurchaseOrder::ApproveAss;
-        $purchaseOrder->reject_reason = $request->reason;
-        $purchaseOrder->status_approval = PurchaseOrder::Rejected;
+        $purchaseOrder->reject_reason   = $request->reason;
+        $purchaseOrder->status_approval = PurchaseOrder::Approved;
         $purchaseOrder->save();
         \Session::flash('status', 'Po change Has been rejected');
     }
@@ -728,7 +740,7 @@ class PurchaseOrderController extends Controller
     {
         $purchaseOrder = PurchaseOrder::findOrFail($request->id);
 
-        if (1 == $request->is_approve) {
+        if (Self::Approved == $request->is_approve) {
             $purchaseOrder->is_approve_head = PurchaseOrder::ApproveHead;
             $purchaseOrder->status_approval = PurchaseOrder::Approved;
             $purchaseOrder->save();
@@ -739,9 +751,19 @@ class PurchaseOrderController extends Controller
 
             return \redirect()->route('admin.purchase-order-change-head');
         }
+
+        $poDetail = PurchaseOrdersDetail::where('purchase_order_id', $request->id)->first();
+        $getOldHistory = PurchaseOrderChangeHistoryDetail::where('po_detail_id',$poDetail->id )->first();
+
+        //roll back
+        $poDetail->price                = $getOldHistory->price_old;
+        $poDetail->qty                  = $getOldHistory->qty_old;
+        $poDetail->delivery_date        = $getOldHistory->delivery_date_old;
+        $poDetail->update();
+        
         $purchaseOrder->is_approve_head = PurchaseOrder::ApproveHead;
-        $purchaseOrder->reject_reason = $request->reason;
-        $purchaseOrder->status_approval = PurchaseOrder::Rejected;
+        $purchaseOrder->reject_reason   = $request->reason;
+        $purchaseOrder->status_approval = PurchaseOrder::Approved;
         $purchaseOrder->save();
         \Session::flash('status', 'Po change Has been rejected');
     }
