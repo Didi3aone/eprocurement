@@ -427,7 +427,8 @@ class SapHelper {
                 $params[0]['REQUISITION_SERVICES']['item'][$i] = $REQUISITION_ITEM_SERVICE_item;
                 $params[0]['REQUISITION_SRV_ACCASS_VALUES']['item'][$i] = $REQUISISTION_ITEMS_SRV_ACCASS_VALUES_item;
 
-            } elseif($row['DOC_TYPE'] == 'Z104' && $row['CATEGORY'] == PurchaseRequest::SERVICE ) {
+            // } elseif($row['DOC_TYPE'] == 'Z104' && $row['CATEGORY'] == PurchaseRequest::SERVICE ) {
+            } elseif($row['CATEGORY'] == PurchaseRequest::SERVICE ) {
 
                 if( $row['LINE_NO'] == '0000000001' ) {
                     $package_no = $row['PACKAGE_NO'];
