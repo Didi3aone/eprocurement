@@ -32,7 +32,7 @@
                                         <th>&nbsp;</th>
                                         <th>PO Eprocurement</th>
                                         <th>Created at</th>
-                                        {{-- <th>#</th> --}}
+                                        <th>Vendor</th>
                                         <th>Po Item</th>
                                         <th>Free Item</th>
                                         <th>Material</th>
@@ -97,7 +97,7 @@
                                                 <td colspan="{{ $cols }}" style="text-align:right;">
                                                     {{ \Carbon\Carbon::parse($value->created_at)->format('d-m-Y') }}
                                                 </td>
-                                                {{-- <td>{{ $value->status }}</td> --}}
+                                                <td>{{ $value->name }}</td>
                                                 <td>{{ $value->PO_ITEM }}</td>
                                                 <td>{{ $free }}</td>
                                                 <td>{{ $value->material ?? '-' }}</td>
