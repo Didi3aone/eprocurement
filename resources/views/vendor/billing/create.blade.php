@@ -152,7 +152,7 @@
                                             <div class="form-group">
                                                 <select name="search-po" id="search-po" class="choose-po form-control select2">
                                                     @foreach ($po_gr as $gr)
-                                                        <option value="{{ $gr->doc_gr }}">{{ $gr->doc_gr }}</option>
+                                                        <option value="{{ $gr->doc_gr }}">{{ $gr->doc_gr."/".$gr->reference_document }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
