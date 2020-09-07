@@ -82,11 +82,20 @@ class BillingController extends Controller
 
     public function edit ($id)
     {
+        
         $billing    = Billing::find($id);
+        $plantCode = "";
+        if( $billing->detail[0]->plant_code == "1101" ) {
+            $plantCode = '1101';
+        } else if( $billing->detail[0]->plant_code == "1201" OR $billing->detail[0]->plant_code == "1202") {
+            $plantCode = '1201';
+        } else if( $billing->detail[0]->plant_code == '2101' ) {
+            $plantCode = '2101';
+        }
         $payments   = PaymentTerm::all();
         $tipePphs   = MasterPph::all();
         $currency   = Currency::all();
-        $bankHouse  = MasterBankHouse::where('plant_code', $billing->detail[0]->plant_code)->get();
+        $bankHouse  = MasterBankHouse::where('plant_code', $plantCode)->get();
 
         return view('admin.billing.edit', compact('billing', 'bankHouse','payments', 'tipePphs','currency'));
     }
