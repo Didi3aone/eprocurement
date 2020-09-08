@@ -32,6 +32,7 @@
                                         <th>&nbsp;</th>
                                         <th>PO Eprocurement</th>
                                         <th>Created at</th>
+                                        <th>Vendor</th>
                                         {{-- <th>#</th> --}}
                                         <th>Po Item</th>
                                         <th>Free Item</th>
@@ -66,6 +67,7 @@
                                                 <label for="check_{{ $key ?? '' }}">&nbsp;</label>
                                             </td>
                                             <td>{{ $key }}</td>
+                                            {{-- <td>{{ $val->name }}</td> --}}
                                             {{-- <td>{{ $key }}</td> --}}
                                             @php
                                                 $sumTotal = 0;
@@ -82,7 +84,7 @@
                                                     $sumTotal += $totalPrice;
 
                                                     $free = ' - ' ;
-                                                    if ($value->is_free_item) {
+                                                    if ($value->is_free_item == 1) {
                                                         $free = 'Free Of Charge' ;
                                                     }
 
@@ -99,7 +101,7 @@
                                                 <td colspan="{{ $cols }}" style="text-align:right;">
                                                     {{ \Carbon\Carbon::parse($value->created_at)->format('d-m-Y') }}
                                                 </td>
-                                                {{-- <td>{{ $value->status }}</td> --}}
+                                                <td>{{ $value->name }}</td>
                                                 <td>{{ $value->PO_ITEM }}</td>
                                                 <td>{{ $free }}</td>
                                                 <td>{{ $value->material ?? '-' }}</td>
