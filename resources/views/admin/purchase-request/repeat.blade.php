@@ -199,16 +199,22 @@
                                         <option> -- Select --</option>
                                         @foreach(\App\Models\RfqDetail::getRfq($materialId) as $key => $rows)
                                             {{-- {{ dd($rows) }} --}}
-                                            @if($rows->po_number != '')
-                                                <option value="{{ $rows->rfq_number }}"
+                                            @if($rows->po != '')
+                                                @php
+                                                    $rfq = $rows->acp;
+                                                    if( $rows->rfq_number != '') {
+                                                        $rfq = $rows->rfq_number;
+                                                    }
+                                                @endphp
+                                                <option value="{{ $rfq }}"
                                                     data-price="{{ $rows->net_price }}"
-                                                    data-rfq_number="{{ $rows->rfq_number }}"
+                                                    data-rfq_number="{{ $rfq }}"
                                                     {{-- data-price="{{ number_format((float)$rows->net_price, 2, '.', '') }}" --}}
                                                     data-vendor="{{ $rows->vendor_id }}"
                                                     data-currency="{{ $rows->currency }}"
-                                                    data-is-from-po="{{ $rows->is_from_po }}"
+                                                    {{-- data-is-from-po="{{ $rows->is_from_po }}" --}}
                                                     >
-                                                    {{ $rows->po_number."/".$rows->rfq_number }}
+                                                    {{ $rows->po."/".$rfq }}
                                                 </option>
                                             @endif
                                         @endforeach
