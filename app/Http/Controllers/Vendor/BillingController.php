@@ -62,6 +62,7 @@ class BillingController extends Controller
                 'purchase_requests_details.profit_center_code',
                 'purchase_requests_details.storage_location',
                 'purchase_requests_details.co_area',
+                'purchase_orders.PO_NUMBER', 
             )
             ->get();
 
