@@ -322,7 +322,7 @@ class BillingController extends Controller
                 $po_gr = PurchaseOrderGr::where('po_no', $po_no)
                         ->where('po_item', $PO_ITEM)
                         ->where('doc_gr', $request->get('doc_gr')[$key])
-                        // ->where('material_no', $material_no)
+                        ->where('debet_credit','S')
                         ->first();
 
                 $po_gr->qty_billing = $qty;
