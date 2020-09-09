@@ -2448,6 +2448,9 @@ class SapHelper {
                     } else {
                         $unit = $quotationDetail[$i]->unit;
                     }
+
+                    $netPrice = QuotationDetail::where('id', $dataChild[$k]->quotation_detail_id)->first();
+
                     $POSERVICES = [
                         "PCKG_NO" => $dataChild[$k]->package_no,//0 = 9X 1; CHILD = 2 DST 
                         "LINE_NO" => $quotationDetail[$i]->line_no,// '000000000'.$createLine,//0 = 9X 1; CHILD = 2 DST
@@ -2467,7 +2470,7 @@ class SapHelper {
                         "OVF_TOL" => "",
                         "OVF_UNLIM" => "",    
                         "PRICE_UNIT" => "",
-                        "GR_PRICE" =>  $quotationDetail[$i]->price,//NET PRICE 
+                        "GR_PRICE" =>  $netPrice->price,//$quotationDetail[$i]->price,//NET PRICE 
                         "FROM_LINE" => "",    
                         "TO_LINE" => "",    
                         "SHORT_TEXT" => $dataChild[$k]->short_text,// DARI PR
@@ -3099,6 +3102,9 @@ class SapHelper {
                     } else {
                         $unit = $quotationDetail[$i]->unit;
                     }
+
+                    $netPrice = QuotationDetail::where('id', $dataChild[$k]->quotation_detail_id)->first();
+
                     $POSERVICES = [
                         "PCKG_NO" => $dataChild[$k]->package_no,//0 = 9X 1; CHILD = 2 DST 
                         "LINE_NO" =>  $quotationDetail[$i]->line_no,//'000000000'.$createLine,//0 = 9X 1; CHILD = 2 DST
@@ -3118,7 +3124,7 @@ class SapHelper {
                         "OVF_TOL" => "",
                         "OVF_UNLIM" => "",    
                         "PRICE_UNIT" => "",
-                        "GR_PRICE" =>  $quotationDetail[$i]->price,//NET PRICE 
+                        "GR_PRICE" =>  $netPrice->price,//$quotationDetail[$i]->price,//NET PRICE 
                         "FROM_LINE" => "",    
                         "TO_LINE" => "",    
                         "SHORT_TEXT" => $dataChild[$k]->short_text,// DARI PR
