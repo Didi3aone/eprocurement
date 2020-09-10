@@ -9806,14 +9806,14 @@ class SapHelper {
                 $sheetNo = $rows->reference_document;
             }
 
-            $uomCode1 = \App\Models\UomConvert::where('uom_1',$rows[$i]->unit)->first();
-            $uomCode2 = \App\Models\UomConvert::where('uom_2',$rows[$i]->unit)->first();
+            $uomCode1 = \App\Models\UomConvert::where('uom_1',$rows->unit)->first();
+            $uomCode2 = \App\Models\UomConvert::where('uom_2',$rows->unit)->first();
             if( null != $uomCode1 ) {
                 $unit = $uomCode1->uom_2;
             } else if( null != $uomCode2 ) {
                 $unit = $uomCode2->uom_1;
             } else {
-                $unit = $rows[$i]->unit;
+                $unit = $rows->unit;
             }
 
             $ITEMDATA = [
@@ -9828,7 +9828,7 @@ class SapHelper {
                 'TAXJURCODE' => '',
                 'ITEM_AMOUNT' => $rows->amount,//20000
                 'QUANTITY' => $rows->qty,//20
-                'PO_UNIT' => $unit,//$rows->unit,//ST
+                'PO_UNIT' => $rows->unit,//$unit,//$rows->unit,//ST
                 'PO_UNIT_ISO' => '',
                 'PO_PR_QNT' => '',
                 'PO_PR_UOM' => '',
