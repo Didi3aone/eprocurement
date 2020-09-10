@@ -85,7 +85,7 @@ class AcpTableMaterial extends Model
                 'master_acps.acp_no',
                 'master_acps.id',
                 'master_acp_materials.currency',
-                'master_acp_materials.qty',
+                'master_acp_materials.qty'
             )
             // ->distinct()
             ->get();

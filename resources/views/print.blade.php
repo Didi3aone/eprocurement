@@ -179,7 +179,7 @@
             <div class="left">
                 <div class="row">
                     <div style="width: 25%;">
-                        <img src="{{ $print ? asset('index.jpg') : public_path('index.jpg') }}" style="position:absolute; top: -4px;" height="70">
+                        <img src="{{ asset('index.jpg') }}" style="position:absolute; top: -4px;" height="70">
                     </div>
                     <div style="width: 74%;">
                         @if($po->orderDetail[0]['plant_code'] == '1101')

@@ -66,7 +66,7 @@ class PurchaseOrderController extends Controller
                     'purchase_orders.id',
                     'purchase_orders.vendor_id',
                     'master_acps.acp_no',
-                    'vendors.name as vendor',
+                    'vendors.name as vendor'
                 );
         if( \Auth::user()->roles[0]->title == 'staff-accounting'
             || \Auth::user()->roles[0]->title == 'Admin' ) {
@@ -342,7 +342,7 @@ class PurchaseOrderController extends Controller
                     'purchase_orders.created_at',
                     'purchase_orders.PO_NUMBER',
                     'purchase_orders.notes',
-                    'vendors.name as vendor',
+                    'vendors.name as vendor'
                 )
                 ->orderBy('purchase_orders.created_at', 'desc')->get(); 
 
@@ -368,7 +368,7 @@ class PurchaseOrderController extends Controller
                 'purchase_orders.created_at',
                 'purchase_orders.PO_NUMBER',
                 'purchase_orders.notes',
-                'vendors.name as vendor',
+                'vendors.name as vendor'
             )
             ->orderBy('purchase_orders.created_at', 'desc')->get();
 
@@ -937,7 +937,7 @@ class PurchaseOrderController extends Controller
         $print = false;
         $pdf = PDF::loadview('print', \compact('po', 'print'))
             ->setPaper('A4', 'potrait')
-            ->setOptions(['debugCss' => true, 'isPhpEnabled' => true])
+            ->setOptions(['debugCss' => true, 'isPhpEnabled' => true,'isRemoteEnabled' => true])
             ->setWarnings(true);
         // $pdf->save(public_path("storage/{$id}_print.pdf"));
         // Mail::to('jul14n4v@gmail.com')->send(new SendMail($po));
@@ -946,5 +946,29 @@ class PurchaseOrderController extends Controller
         return $pdf->stream();
 
         // return view('admin.purchase-order.print', compact('po', 'print'));
+    }
+
+    public function resend($id)
+    {
+        $configEnv = \configEmailNotification();
+        $po = PurchaseOrder::find($id);
+
+        $print = false;
+            $pdf = PDF::loadview('print', \compact('po', 'print'))
+                ->setPaper('A4', 'potrait')
+                ->setOptions(['debugCss' => true, 'isPhpEnabled' => true,'isRemoteEnabled' => true])
+                ->setWarnings(true);
+            $pdf->save(public_path("storage/{$po->id}_print.pdf"));
+            if (\App\Models\BaseModel::Development == $configEnv->type) {
+                $email = $configEnv->value;
+            } else {
+                $email = $po->vendors['email'] ?? 'diditriawan13@gmail.com';
+            }
+            \Mail::to($email)->send(new SendMail($po));
+            \Mail::to('farid.hidayat@enesis.com')->send(new SendMail($po));
+            \Mail::to('diditriawan13@gmail.com')->send(new SendMail($po));
+            \Mail::to('nanang.fajar@enesis.com')->send(new SendMail($po));
+
+            return redirect()->route('admin.purchase-order.index')->with('status', 'Resend Email Successfully');
     }
 }
