@@ -9,18 +9,25 @@
         </ol>
     </div>
 </div>
+
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
                 <form method="POST" enctype="multipart/form-data">
                     @csrf
-                    {{-- <div class="form-group">
-                        <label>{{ trans('cruds.user.fields.name') }}</label>
-                        <input class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" type="text" name="name" id="name" value="{{ old('name', '') }}" required>
-                    </div> --}}
+                    <div class="row col-12">
+                        <div class="form-group">
+                            <label>Current Date</label>
+                            <input class="form-control" type="text" name="name" id="name" value="{{date('d-m-Y')}}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Total Doc Out Standing</label>
+                            <input class="form-control" type="text" name="name" id="name" value="{{ $total_doc }}" readonly>
+                        </div>
+                    </div>
                 </form>
-                <div class="table-responsive m-t-40">
+                <div class="table-responsive m-t">
                     <table id="datatables-run" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                             <tr>
@@ -29,16 +36,20 @@
                                <th>Doc Outstanding</th>
                                <th>Average (Days)</th>
                                <th>Max Outstanding</th>
+                               <th>Detail</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($service as $key => $value)
                                 <tr>
-                                    <td>{{ $value->PurchasingGroup }}</td>
-                                    <td>{{ $value->description }}</td>
-                                    <td>{{ $value->docoutstanding }}</td>
-                                    <td>{{ '' }}</td>
-                                    <td>{{ '' }}</td>
+                                    <td>{{ $value->purchasing_group_code }}</td>
+                                    <td>{{ $value->pg_desc }}</td>
+                                    <td>{{ $value->total }}</td>
+                                    <td>{{ $value->rata }}</td>
+                                    <td>{{ $value->max_date }}</td>
+                                    <td>
+                                        <a href="{{ route('admin.report-service-level-detail', $value->purchasing_group_code) }}" class="btn btn-primary" >Detail</a>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -54,6 +65,7 @@
 <script>
 $('#datatables-run').DataTable({
     dom: 'Bfrtip',
+    pageLength: 50,
     buttons: [
         'copy', 'csv', 'excel', 'pdf', 'print'
     ]
