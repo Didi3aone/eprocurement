@@ -68,7 +68,7 @@ return [
             'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST_PGSQL', '192.168.1.38'),
             'port' => env('DB_PORT_PGSQL', '5432'),
-            'database' => env('DB_DATABASE_PGSQL', 'db_eprocurement'),
+            'database' => env('DB_DATABASE_PGSQL', 'db_eprocurement_live'),
             'username' => env('DB_USERNAME_PGSQL', 'postgres'),
             'password' => env('DB_PASSWORD_PGSQL', 'employee2020'),
             'charset' => 'utf8',
@@ -76,6 +76,11 @@ return [
             'prefix_indexes' => true,
             'schema' => 'public',
             'sslmode' => 'prefer',
+            'options' => [
+                PDO::ATTR_PERSISTENT => true,
+                PDO::ATTR_EMULATE_PREPARES => true,
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            ],
         ],
 
         'pgsql2' => [
