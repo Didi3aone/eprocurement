@@ -294,6 +294,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('ship-to', 'MasterShipToController');
 
     Route::get('report-service-level','ReportController@index')->name('report-service-level');
+    Route::get('report-service-level-detail/{id}','ReportController@detail')->name('report-service-level-detail');
     // SOAP
     // Route::get('soap', 'SoapController@show')->name('soap');
 });
