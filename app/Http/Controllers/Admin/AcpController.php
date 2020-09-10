@@ -104,7 +104,7 @@ class AcpController extends Controller
     public function showAcpApproval($id)
     {
         $acp   = AcpTable::find($id);
-        // dd($acp->detail);
+        // dd($acp);
 
         return view('admin.acp.show-acp-approval', compact('acp'));   
     }
