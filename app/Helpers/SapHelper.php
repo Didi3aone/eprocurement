@@ -2449,7 +2449,7 @@ class SapHelper {
                         $unit = $quotationDetail[$i]->unit;
                     }
 
-                    $netPrice = QuotationDetail::where('id', $dataChild[$k]->quotation_detail_id)->first();
+                    $netPrice = \App\Models\Vendor\QuotationDetail::where('id', $dataChild[$k]->quotation_detail_id)->first();
 
                     $POSERVICES = [
                         "PCKG_NO" => $dataChild[$k]->package_no,//0 = 9X 1; CHILD = 2 DST 
@@ -3103,7 +3103,7 @@ class SapHelper {
                         $unit = $quotationDetail[$i]->unit;
                     }
 
-                    $netPrice = QuotationDetail::where('id', $dataChild[$k]->quotation_detail_id)->first();
+                    $netPrice = \App\Models\Vendor\QuotationDetail::where('id', $dataChild[$k]->quotation_detail_id)->first();
 
                     $POSERVICES = [
                         "PCKG_NO" => $dataChild[$k]->package_no,//0 = 9X 1; CHILD = 2 DST 
