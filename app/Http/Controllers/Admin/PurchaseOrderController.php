@@ -937,7 +937,7 @@ class PurchaseOrderController extends Controller
         $print = false;
         $pdf = PDF::loadview('print', \compact('po', 'print'))
             ->setPaper('A4', 'potrait')
-            ->setOptions(['debugCss' => true, 'isPhpEnabled' => true])
+            ->setOptions(['debugCss' => true, 'isPhpEnabled' => true,'isRemoteEnabled' => true])
             ->setWarnings(true);
         // $pdf->save(public_path("storage/{$id}_print.pdf"));
         // Mail::to('jul14n4v@gmail.com')->send(new SendMail($po));

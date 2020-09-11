@@ -179,7 +179,7 @@
             <div class="left">
                 <div class="row">
                     <div style="width: 25%;">
-                        <img src="{{ $print ? asset('index.jpg') : public_path('index.jpg') }}" style="position:absolute; top: -4px;" height="70">
+                        <img src="{{ asset('index.jpg') }}" style="position:absolute; top: -4px;" height="70">
                     </div>
                     <div style="width: 74%;">
                         @if($po->orderDetail[0]['plant_code'] == '1101')
@@ -404,7 +404,7 @@
                         <p>
                             Amount <br>
                             <br>
-                            {{ ucfirst(Terbilang::make($grandTotal)) ." ".$terbilang }}
+                            {{-- {{ ucfirst(Terbilang::make(floor($grandTotal))) ." ".$terbilang }} --}}
                             <br>
                             <br>
                         </p>
@@ -442,7 +442,7 @@
                     <td colspan="3" style="text-align:center">
                         Approve By *) <br>
                         <br>
-                        <p>{{ date('d.m.y H:i:s',strtotime($po->updated_at)) }}</p>
+                        <p>PROCUREMENT HEAD {{ date('d.m.y H:i:s',strtotime($po->updated_at)) }}</p>
                         <p>
                             This document has been electronically approved. <br>
                             Signature is no longer required
