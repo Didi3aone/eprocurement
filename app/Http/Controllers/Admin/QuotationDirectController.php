@@ -52,7 +52,14 @@ class QuotationDirectController extends Controller
                         'vendors.company_name',
                         'quotation.status'
                     )
-                    ->groupBy('quotation.id','vendors.company_name')
+                    ->groupBy(
+                        'quotation.id',
+                        'quotation.po_no',
+                        'quotation.vendor_id',
+                        'quotation.approval_status',
+                        'vendors.company_name',
+                        'quotation.status'
+                    )
                     ->orderBy('id', 'desc');
                     
         if( \Auth::user()->roles[0]->title == 'Admin' ) {
@@ -93,7 +100,15 @@ class QuotationDirectController extends Controller
                         'quotation.status',
                         \DB::raw('sum(quotation_details.price) as totalValue')
                     )
-                    ->groupBy('quotation.id','vendors.company_name','vendors.email')
+                    ->groupBy(
+                        'quotation.id',
+                        'quotation.po_no',
+                        'quotation.approval_status',
+                        'quotation.acp_id',
+                        'vendors.company_name',
+                        'vendors.email',
+                        'quotation.status',
+                    )
                     ->orderBy('id', 'desc')
                     ->get();
 

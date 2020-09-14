@@ -72,6 +72,8 @@ class AcpController extends Controller
                     ->groupBy(
                         'master_acps.id',
                         'quotation_approvals.nik',
+                        'master_acps.acp_no',
+                        'master_acps.status_approval',
                         'quotation_approvals.flag'
                     )
                     ->get();

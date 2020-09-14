@@ -239,7 +239,13 @@ class PurchaseRequestController extends Controller
                         'purchase_requests.notes',
                         'purchase_requests.id',
                     )
-                    ->groupBy('purchase_requests.id')
+                    ->groupBy(
+                        'purchase_requests.request_no',
+                        'purchase_requests.request_date',
+                        'purchase_requests.is_urgent',
+                        'purchase_requests.notes',
+                        'purchase_requests.id',
+                    )
                     ->get();
 
         return view('admin.purchase-request.approval-project', compact('prProject'));
