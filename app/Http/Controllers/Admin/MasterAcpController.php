@@ -50,7 +50,7 @@ class MasterAcpController extends Controller
                     )
                     ->orderBy('master_acps.created_at', 'desc');
 
-        if( \Auth::user()->roles[0]->title == 'Admin' ) {
+        if( \Auth::user()->roles[0]->id == 1 ) {
             $model = $model;
         } else {
             $model = $model->where('created_by', \Auth::user()->nik);
