@@ -6,6 +6,7 @@ class HomeController
 {
     public function index()
     {
+        //dd(\Auth::user()->roles[0]->id);
         $userMapping = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first();
         $userMapping = explode(',', $userMapping->purchasing_group_code);
         $prTotal = \App\Models\PurchaseRequest::where('purchase_requests_details.qty','>',0)
@@ -21,7 +22,35 @@ class HomeController
         }
 
         if( \Auth::user()->roles[0]->title == 'Admin' ) {
-            $acpTotal = \App\Models\AcpTable::count();
+            //$acpTotal = \App\Models\AcpTable::count();
+            $query = \App\Models\AcpTable::select(
+                        'master_acps.id',
+                        'master_acps.acp_no',
+                        'master_acps.status_approval',
+                        'master_acps.is_project',
+                        'master_acps.created_at',
+                        'vendors.company_name',
+                        'master_acp_materials.currency',
+                        \DB::raw('sum(master_acp_materials.total_price) as total'),
+                    )
+                    ->join('master_acp_vendors','master_acp_vendors.master_acp_id', '=', 'master_acps.id')
+                    ->join('vendors','vendors.code', '=', 'master_acp_vendors.vendor_code')
+                    ->join('master_acp_materials', function($join)
+                        {
+                            $join->on('master_acp_materials.master_acp_id', '=', 'master_acp_vendors.master_acp_id');
+                            $join->on('master_acp_materials.master_acp_vendor_id', '=', 'master_acp_vendors.vendor_code');
+                        })
+                    ->where('master_acp_vendors.is_winner' , 1)
+                    ->groupBy(
+                        'master_acps.id',
+                        'master_acps.acp_no',
+                        'master_acps.status_approval',
+                        'master_acps.is_project',
+                        'master_acps.created_at',
+                        'vendors.company_name',
+                        'master_acp_materials.currency',
+                    )->get();
+                $acpTotal = count($query);
         } else {
             $acpTotal = \App\Models\Vendor\QuotationApproval::where('nik', \Auth::user()->user_id)
                     ->join('master_acps','master_acps.id','=','quotation_approvals.acp_id')

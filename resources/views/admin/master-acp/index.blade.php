@@ -30,6 +30,9 @@
                                 <th>{{ trans('cruds.master-acp.fields.acp_no') }}</th>
                                 <th>Approval</th>
                                 <th>Project</th>
+                                <th>Vendor</th>
+                                <th>Currency</th>
+                                <th>Total Value</th>
                                 <th>Created At</th>
                                 <th>&nbsp;</th>
                             </tr>
@@ -41,6 +44,9 @@
                                     <td>{{ $acp->acp_no ?? '' }}</td>
                                     <td>{{ \App\Models\AcpTable::Type_Status[$acp->status_approval] }}</td>
                                     <td>{{ \App\Models\AcpTable::Type_Project[$acp->is_project] }}</td>
+                                    <td>{{ $acp->company_name }}</td>
+                                    <td>{{ $acp->currency }}</td>
+                                    <td style="text-align:right;">{{ \toDecimal($acp->total) }}</td>
                                     <td>{{ $acp->created_at }}</td>
                                     <td>
                                         @can('master_acp_show')
