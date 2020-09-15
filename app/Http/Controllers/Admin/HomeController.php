@@ -9,7 +9,7 @@ class HomeController
         $userMapping = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first();
         $userMapping = explode(',', $userMapping->purchasing_group_code);
 
-        //PR TOTAL
+        //HITUNG COUNT PR
         $prTotalBefore = \App\Models\PurchaseRequest::where('purchase_requests_details.qty','>',0)
                     ->join('purchase_requests_details','purchase_requests_details.request_id','=','purchase_requests.id')
                     ->whereIn('purchase_requests_details.purchasing_group_code', $userMapping)
@@ -57,12 +57,11 @@ class HomeController
             // })
             ->whereIn('purchase_requests.status_approval', [\App\Models\PurchaseRequest::ApprovedDept, \App\Models\PurchaseRequest::ApprovedProc])
             ->get();
-
         $prTotal = count($queryPr);
 
 
-        //PO TOTAL
-        if( \Auth::user()->roles[0]->id == 1 ) {
+        //HITUNG COUNT PO
+        if( \Auth::user()->roles[0]->id == 1 || \Auth::user()->roles[0]->id == 7) {
             $queryPo = \App\Models\PurchaseOrdersDetail::join('purchase_orders', 'purchase_orders.id', '=', 'purchase_orders_details.purchase_order_id')
                 ->leftJoin('master_acps', 'master_acps.id', '=', 'purchase_orders_details.acp_id')
                 ->leftJoin('vendors', 'vendors.code', '=', 'purchase_orders.vendor_id')
@@ -105,7 +104,7 @@ class HomeController
                 // ->join('quotation','quotation.id','=','purchase_orders.quotation_id')
                 ->where('purchase_orders.status_approval', \App\Models\PurchaseOrder::Approved)
                 ->where('is_active', \App\Models\PurchaseOrdersDetail::Active)
-                ->where('purchase_orders.created_by',\Auth::user()->user_id)
+                ->whereIn('purchase_orders_details.purchasing_group_code', $userMapping)
                 // ->where('quotation.status',PurchaseOrder::POrepeat)
                 ->select(
                     'purchase_orders_details.purchasing_document',
@@ -133,11 +132,13 @@ class HomeController
                     'master_acps.acp_no',
                     'vendors.name as vendor'
                 )->get();
+            //dd($queryPo);
             $poTotal = count($queryPo);
             //$poTotal = \App\Models\PurchaseOrder::where('created_by',\Auth::user()->user_id)->count();
         }
 
-        //ACP TOTAL
+
+        //HITUNG COUNT ACP
         if( \Auth::user()->roles[0]->id == 1 ) {
             //$acpTotal = \App\Models\AcpTable::count();
             $query = \App\Models\AcpTable::select(
@@ -186,7 +187,7 @@ class HomeController
                     )
                     ->count();
             //$acpTotal = \App\Models\AcpTable::where('created_by',\Auth::user()->user_id)->count();
-        }elseif(\Auth::user()->roles[0]->id == 3){
+        }elseif(\Auth::user()->roles[0]->id == 3)   {
             $query = \App\Models\AcpTable::select(
                         'master_acps.id',
                         'master_acps.acp_no',
@@ -215,6 +216,34 @@ class HomeController
                         'vendors.company_name',
                         'master_acp_materials.currency',
                     )->get();
+                $acpTotal = count($query);
+        }elseif(\Auth::user()->roles[0]->id == 5) {
+            $query = \App\Models\Vendor\QuotationApproval::where('nik', \Auth::user()->nik)
+                    ->join('master_acps','master_acps.id', '=', 'quotation_approvals.acp_id')
+                    ->join('master_acp_materials', 'master_acp_materials.master_acp_id', '=', 'master_acps.id')
+                    ->join('vendors','vendors.code', '=', 'master_acp_materials.master_acp_vendor_id')
+                    ->where('flag', \App\Models\Vendor\QuotationApproval::NotYetApproval)
+                    ->where('acp_type', 'ACP')
+                    ->select(
+                        'master_acps.id',
+                        'quotation_approvals.nik',
+                        'master_acps.acp_no',
+                        'vendors.company_name',
+                        'master_acps.status_approval',
+                        'master_acp_materials.currency',
+                        \DB::raw('sum(master_acp_materials.total_price) as totalvalue'),
+                        'quotation_approvals.flag'
+                    )
+                    ->groupBy(
+                        'master_acps.id',
+                        'quotation_approvals.nik',
+                        'master_acps.acp_no',
+                        'vendors.company_name',
+                        'master_acps.status_approval',
+                        'master_acp_materials.currency',
+                        'quotation_approvals.flag'
+                    )
+                    ->get();
                 $acpTotal = count($query);
         }else{
             $acpTotal = 0;

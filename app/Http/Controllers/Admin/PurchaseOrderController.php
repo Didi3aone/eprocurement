@@ -68,15 +68,15 @@ class PurchaseOrderController extends Controller
                     'master_acps.acp_no',
                     'vendors.name as vendor'
                 );
-        if( \Auth::user()->roles[0]->title == 'staff-accounting'
-            || \Auth::user()->roles[0]->title == 'Admin' ) {
-                $cache = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first()->purchasing_group_code;
-                $po = $po;
-            } else {
-                $cache = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first()->purchasing_group_code;
-                $po = $po->whereIn('purchase_orders_details.purchasing_group_code', $userMapping);
-
-            }
+        if( \Auth::user()->roles[0]->title == 'staff-accounting' || \Auth::user()->roles[0]->title == 'Admin' ) {
+            $cache = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first()->purchasing_group_code;
+            $po = $po;
+            //dd(count($po->get()));
+        } else {
+            $cache = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first()->purchasing_group_code;
+            $po = $po->whereIn('purchase_orders_details.purchasing_group_code', $userMapping);
+            //dd(count($po->get()));
+        }
  
         
         if (\request()->ajax()) {

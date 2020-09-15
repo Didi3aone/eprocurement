@@ -68,7 +68,7 @@
     <!-- Column -->
     <div class="col-lg-3 col-md-6">
         <div class="card">
-            @if(\Auth::user()->roles[0]->title == 'Admin')
+            @if(\Auth::user()->roles[0]->id == 1 || \Auth::user()->roles[0]->id == 3)
                 <a href="{{ route('admin.master-acp.index') }}">
             @else
                 <a href="{{ route('admin.acp-approval') }}">
