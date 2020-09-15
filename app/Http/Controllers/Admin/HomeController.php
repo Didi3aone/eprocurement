@@ -217,7 +217,7 @@ class HomeController
                         'master_acp_materials.currency',
                     )->get();
                 $acpTotal = count($query);
-        }elseif(\Auth::user()->roles[0]->id == 5) {
+        }elseif(\Auth::user()->roles[0]->id == 5 || \Auth::user()->roles[0]->id == 6) {
             $query = \App\Models\Vendor\QuotationApproval::where('nik', \Auth::user()->nik)
                     ->join('master_acps','master_acps.id', '=', 'quotation_approvals.acp_id')
                     ->join('master_acp_materials', 'master_acp_materials.master_acp_id', '=', 'master_acps.id')
