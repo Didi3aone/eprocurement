@@ -68,7 +68,11 @@
     <!-- Column -->
     <div class="col-lg-3 col-md-6">
         <div class="card">
-            <a href="{{ route('admin.master-acp.index') }}">
+            @if(\Auth::user()->roles[0]->title == 'Admin')
+                <a href="{{ route('admin.master-acp.index') }}">
+            @else
+                <a href="{{ route('admin.acp-approval') }}">
+            @endif
             <div class="card-body">
                 <div class="d-flex flex-row">
                     <div class="round round-lg align-self-center round-primary"><i class="fa fa-money"></i></div>

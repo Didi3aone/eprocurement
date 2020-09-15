@@ -23,7 +23,23 @@ class HomeController
         if( \Auth::user()->roles[0]->title == 'Admin' ) {
             $acpTotal = \App\Models\AcpTable::count();
         } else {
-            $acpTotal = \App\Models\AcpTable::where('created_by',\Auth::user()->user_id)->count();
+            $acpTotal = \App\Models\Vendor\QuotationApproval::where('nik', \Auth::user()->user_id)
+                    ->join('master_acps','master_acps.id','=','quotation_approvals.acp_id')
+                    ->join('master_acp_materials','master_acp_materials.master_acp_id','master_acps.id')
+                    ->join('vendors','vendors.code','master_acp_materials.master_acp_vendor_id')
+                    ->where('flag', \App\Models\Vendor\QuotationApproval::NotYetApproval)
+                    ->where('acp_type', 'ACP')
+                    ->groupBy(
+                        'master_acps.id',
+                        'quotation_approvals.nik',
+                        'master_acps.acp_no',
+                        'vendors.company_name',
+                        'master_acps.status_approval',
+                        'master_acp_materials.currency',
+                        'quotation_approvals.flag'
+                    )
+                    ->count();
+            //$acpTotal = \App\Models\AcpTable::where('created_by',\Auth::user()->user_id)->count();
         }
         return view('home',\compact('prTotal','poTotal','acpTotal'));
     }
