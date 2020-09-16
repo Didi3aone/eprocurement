@@ -59,7 +59,8 @@ class PurchaseRequestController extends Controller
             'purchase_requests.PR_NO',
             'purchase_requests.total',
             'purchase_requests.doc_type',
-            'purchase_requests.id as uuid'
+            'purchase_requests.id as uuid',
+            'purchase_requests.upload_file'
         )
             ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
             ->whereNotNull('purchase_requests.PR_NO')
@@ -173,9 +174,18 @@ class PurchaseRequestController extends Controller
                             $unit = \App\Models\UomConvert::where('uom_1', $value->unit)->first()->uom_2;
                         }
 
+                        //FILE DI KOLOM
+                        $filePurchase = '';
+                        if(!empty($value->upload_file)){
+                            $filePurchase = '<button type="button" class="btn" id="btnPurchase"><i class="fa fa-file"></i></button>';
+                        }else{
+                            $filePurchase = '-';
+                        }
+
                         return [
                             ($key + 1) + $start, //0
                             $value->PR_NO, //1
+                            $filePurchase, //1
                             $value->doc_type, //2
                             $value->preq_item, //3
                             $value->release_date, //4
