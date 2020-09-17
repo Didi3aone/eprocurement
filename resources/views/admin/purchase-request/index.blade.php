@@ -73,11 +73,11 @@
     </div>
 </div>
 
-<div class="modal fade" id="modalFilePurchase" tabindex="-1" role="dialog" aria-labelledby="modalCreatePO" aria-hidden="true">
+<div class="modal fade" id="modal_create_po" tabindex="-1" role="dialog" aria-labelledby="modalCreatePO" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalImport">Test</h5>
+                <h5 class="modal-title" id="modalImport">{{ 'Purchase Order Model' }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -149,6 +149,7 @@
                             <th>Employee ID</th>
                             <th>Status</th>
                             <th>Approved Date</th>
+                            <th>Purchase Group</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -168,11 +169,11 @@
     class="modal_link"
     href="javascript:;"
 >value</a>
-<div class="modal fade"  tabindex="-1" role="dialog" aria-labelledby="modalCreatePO" aria-hidden="true">
+<div class="modal fade"  id="modalFilePurchase tabindex="-1" role="dialog" aria-labelledby="modalFile" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalImport">List File</h5>
+                <h5 class="modal-title" id="modalImportFile">List File</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -181,18 +182,40 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Employee ID</th>
-                            <th>Status</th>
-                            <th>Approved Date</th>
+                            <th>No</th>
+                            <th>Filename</th>
                         </tr>
                     </thead>
                     <tbody>
-                        
+                        @foreach( $dataFile as $key => $values)
+                            @if($values->upload_file != 'NO_FILE')
+                                @if(isset($values->upload_file))
+                                    @php
+                                        $files = @unserialize($values->upload_file);
+                                    @endphp
+                                    @if( is_array($files))
+                                        @foreach( unserialize((string)$values->upload_file) as $fileUpload)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>
+                                                <a href="https://employee.enesis.com/uploads/{{ $fileUpload  }}" target="_blank" download>
+                                                    {{ $fileUpload ??'' }}
+                                                </a>
+                                                <br>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    @else 
+                                        No File found
+                                    @endif
+                                @endif
+                            @endif
+                        @endforeach
                     </tbody>
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="tutupModal">Close</button>
             </div>
         </div>
     </div>
@@ -328,16 +351,33 @@
             $($modalFile).children('a').html(data[2])
             $tbody = $($modal).find('.modal tbody')
             $tbody.append('<tr></tr>')
+            // $tbodyFile = $($modalFile).find('.modal tbody')
+            // $tbodyFile.append('<tr></tr>')
             data[21].map(function(list){
                 $tbody.children('tr').append(`<td>${list}</td>`)
             })
+            // data[22].map(function(listFile){
+            //     $tbodyFile.children('tr').append(`<td>${listFile}</td>`)
+            // })
             $($modal).children('a').on('click', function() {
                 $(this).parent().children('.modal').modal('toggle')
             })
             $($modalFile).children('a').on('click', function() {
                 $(this).parent().children('.modal').modal('toggle')
+                // $.ajax({
+                //     method: 'POST', 
+                //     url: '/admin/clear_session',
+                // });
+                console.log(data[22])
+                $uuid =  data[22];
+                //ajax call 
+                $.ajax({
+                    method: 'POST', 
+                    url: '/admin/set_session',
+                    data: { uuid: $uuid }
+                });    
+
             })
-            console.log(data[21][2])
             $tp1 = $(row).children('td')[0]
             $tp2 = $(row).children('td')[11]
             $tp4 = $(row).children('td')[3]

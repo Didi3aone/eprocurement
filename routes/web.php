@@ -149,6 +149,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::put('purchase-request-project-rejected', 'PurchaseRequestController@rejectedPr')->name('purchase-request-project-rejected');
     Route::get('get-material-pr', 'PurchaseRequestController@getMaterialPr')->name('get-material-pr');
     Route::post('purchase-request-repeat/confirmation', 'PurchaseRequestController@confirmation')->name('purchase-request-repeat-confirmation');
+    Route::post('set_session', 'PurchaseRequestController@createSession');
+    Route::post('get-file', 'PurchaseRequestController@getFile');
+    Route::post('clear_session', 'PurchaseRequestController@clearSession');
     Route::resource('purchase-request', 'PurchaseRequestController');
 
     // request note
