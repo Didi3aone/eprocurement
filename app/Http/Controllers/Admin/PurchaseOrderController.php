@@ -136,8 +136,8 @@ class PurchaseOrderController extends Controller
                                 $value->doc_type,
                                 $value->purchasing_group_code
                             ],
-                            $value->PO_NUMBER,
                             $value->po_no,
+                            $value->PO_NUMBER,
                             $value->PO_ITEM,
                             $value->acp_no ?? $value->purchasing_document,
                             $value->purchasing_group_code,
