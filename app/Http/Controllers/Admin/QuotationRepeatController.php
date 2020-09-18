@@ -30,15 +30,22 @@ class QuotationRepeatController extends Controller
      */
     public function index()
     {
-        $userMapping = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first();
-        $userMapping = explode(',', $userMapping->purchasing_group_code);
+        
+        // $userMapping = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first();
+        // $userMapping = explode(',', $userMapping->purchasing_group_code);
         $quotation = QuotationDetail::join('quotation','quotation.id','=','quotation_details.quotation_order_id')
                     ->join('vendors','vendors.code','=','quotation.vendor_id')
-                    ->where('quotation.status',Quotation::QuotationRepeat)
-                    ->where('quotation.approval_status',Quotation::Waiting)
-                    ->orWhere('quotation.approval_status', Quotation::ApprovalAss)
-                    ->orWhere('quotation.approval_status', Quotation::Rejected)
-                    ->whereIn('quotation_details.purchasing_group_code', $userMapping)
+                    ->where('quotation.status', '=', Quotation::QuotationRepeat)
+                    ->where(function ($query){
+
+                        $userMapping = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first();
+                        $userMapping = explode(',', $userMapping->purchasing_group_code);
+
+                        $query->where('quotation.approval_status',Quotation::Waiting);
+                        $query->orWhere('quotation.approval_status', Quotation::ApprovalAss);
+                        $query->orWhere('quotation.approval_status', Quotation::Rejected);
+                        $query->whereIn('quotation_details.purchasing_group_code', $userMapping);
+                    })
                     ->select(
                         'quotation.id',
                         'quotation.po_no',
@@ -56,7 +63,7 @@ class QuotationRepeatController extends Controller
                         'quotation.status',
                     )
                     ->orderBy('id', 'desc');
-                    
+        
         if( \Auth::user()->roles[0]->title == 'Admin' ) {
             $quotation = $quotation;
         } else {
@@ -64,7 +71,6 @@ class QuotationRepeatController extends Controller
         }
 
         $quotation = $quotation->get();
-
         return view('admin.quotation.repeat.index', compact('quotation'));
     }
 
