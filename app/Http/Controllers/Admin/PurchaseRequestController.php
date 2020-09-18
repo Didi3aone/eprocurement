@@ -179,16 +179,21 @@ class PurchaseRequestController extends Controller
                         $filePurchase = '';
                         $listFile = '';
                         if($value->upload_file != 'NO_FILE'){
-                            if(isset($value->upload_file)){
+                            if(!empty($value->upload_file)){
                                 $filePurchase = '<button type="button" class="btn" id="btnPurchase"><i class="fa fa-file"></i></button>';
-                                $listFile = unserialize((string)$value->upload_file);
+                                $file = @unserialize($value->upload_file);
+                                if( is_array($file)){
+                                    foreach (unserialize((string)$value->upload_file) as $fileUpload) {
+                                        $list = '<a href="https://employee.enesis.com/uploads/'.$fileUpload.'" target="_blank" download>'.$fileUpload.'
+                                                        </a><br>';
+                                        $listFile .= $list;
+                                    }
+                                }                                               
                             }
                         }else{
-                            $filePurchase = '-';
-                            $listFile = '-';
+                            $filePurchase = '';
+                            $listFile = '';
                         }
-
-                        //Session::put('sess_uuid', $value->uuid);
 
                         return [
                             ($key + 1) + $start, //0
@@ -219,7 +224,10 @@ class PurchaseRequestController extends Controller
                                 $value->doc_type,
                                 $value->purchasing_group_code,
                             ], //19
-                            $value->uuid, //19
+                            [
+                                $listFile, //19
+                            ],
+                            $value->uuid,
                             $other,
                         ];
                     }),
@@ -231,54 +239,8 @@ class PurchaseRequestController extends Controller
 
             return \response()->json($result);
         }
-        
-        //dd(session('uuid'));
-        $dataFile = PurchaseRequestsDetail::select(
-            'purchase_requests.id as uuid',
-            'purchase_requests.upload_file'
-        )
-            ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
-            ->whereNotNull('purchase_requests.PR_NO')
-            ->where('purchase_requests_details.qty', '>', 0)
-            ->where('purchase_requests_details.is_validate', PurchaseRequestsDetail::YesValidate)
-            ->whereIn('purchase_requests_details.purchasing_group_code', $userMapping)
-            ->whereIn('purchase_requests_details.status_approval', [PurchaseRequestsDetail::Approved, PurchaseRequestsDetail::ApprovedPurchasing])
-            ->whereIn('purchase_requests.status_approval', [PurchaseRequest::ApprovedDept, PurchaseRequest::ApprovedProc])
-            ->where('purchase_requests.upload_file', '!=', 'NO_FILE')
-            ->where('purchase_requests.upload_file', '!=', '')
-            ->where('purchase_requests.id', '=', session('uuid'))
-            ->groupBy('purchase_requests.id')
-            ->groupBy('purchase_requests.upload_file')
-            ->get();
-        //dd($dataFile);
-        return view('admin.purchase-request.index', compact('dataFile'));
-    }
 
-    public function getFile(Request $request)
-    {
-        dd($request);
-
-        $userMapping = UserMap::where('user_id', Auth::user()->user_id)->first();
-        $userMapping = explode(',', $userMapping->purchasing_group_code);
-
-        //dd(session('uuid'));
-        $dataFile = PurchaseRequestsDetail::select(
-            'purchase_requests.id as uuid',
-            'purchase_requests.upload_file'
-        )
-            ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
-            ->whereNotNull('purchase_requests.PR_NO')
-            ->where('purchase_requests_details.qty', '>', 0)
-            ->where('purchase_requests_details.is_validate', PurchaseRequestsDetail::YesValidate)
-            ->whereIn('purchase_requests_details.purchasing_group_code', $userMapping)
-            ->whereIn('purchase_requests_details.status_approval', [PurchaseRequestsDetail::Approved, PurchaseRequestsDetail::ApprovedPurchasing])
-            ->whereIn('purchase_requests.status_approval', [PurchaseRequest::ApprovedDept, PurchaseRequest::ApprovedProc])
-            ->where('purchase_requests.upload_file', '!=', 'NO_FILE')
-            ->where('purchase_requests.upload_file', '!=', '')
-            ->where('purchase_requests.id', '=', $request->input('uuid'))
-            ->groupBy('purchase_requests.id')
-            ->groupBy('purchase_requests.upload_file')
-            ->get();
+        return view('admin.purchase-request.index');
     }
 
     /**
@@ -287,16 +249,6 @@ class PurchaseRequestController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-
-    public function createSession(Request $request)
-    {
-        Session::put('uuid', $request->input('uuid') );
-    }
-
-    public function clearSession(Request $request)
-    {
-        Session::forget('uuid');
-    }
 
     public function approvalProject()
     {

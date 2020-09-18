@@ -182,35 +182,11 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th>Filename</th>
+                            <th>File</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach( $dataFile as $key => $values)
-                            @if($values->upload_file != 'NO_FILE')
-                                @if(isset($values->upload_file))
-                                    @php
-                                        $files = @unserialize($values->upload_file);
-                                    @endphp
-                                    @if( is_array($files))
-                                        @foreach( unserialize((string)$values->upload_file) as $fileUpload)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>
-                                                <a href="https://employee.enesis.com/uploads/{{ $fileUpload  }}" target="_blank" download>
-                                                    {{ $fileUpload ??'' }}
-                                                </a>
-                                                <br>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    @else 
-                                        No File found
-                                    @endif
-                                @endif
-                            @endif
-                        @endforeach
+                        
                     </tbody>
                 </table>
             </div>
@@ -351,32 +327,20 @@
             $($modalFile).children('a').html(data[2])
             $tbody = $($modal).find('.modal tbody')
             $tbody.append('<tr></tr>')
-            // $tbodyFile = $($modalFile).find('.modal tbody')
-            // $tbodyFile.append('<tr></tr>')
+            $tbodyFile = $($modalFile).find('.modal tbody')
+            $tbodyFile.append('<tr></tr>')
             data[21].map(function(list){
                 $tbody.children('tr').append(`<td>${list}</td>`)
             })
-            // data[22].map(function(listFile){
-            //     $tbodyFile.children('tr').append(`<td>${listFile}</td>`)
-            // })
+            data[22].map(function(listFile){
+                $tbodyFile.children('tr').append(`<td>${listFile}</td>`)
+            })
             $($modal).children('a').on('click', function() {
                 $(this).parent().children('.modal').modal('toggle')
             })
             $($modalFile).children('a').on('click', function() {
                 $(this).parent().children('.modal').modal('toggle')
-                // $.ajax({
-                //     method: 'POST', 
-                //     url: '/admin/clear_session',
-                // });
-                console.log(data[22])
-                $uuid =  data[22];
-                //ajax call 
-                $.ajax({
-                    method: 'POST', 
-                    url: '/admin/set_session',
-                    data: { uuid: $uuid }
-                });    
-
+                console.log(data[23])
             })
             $tp1 = $(row).children('td')[0]
             $tp2 = $(row).children('td')[11]
