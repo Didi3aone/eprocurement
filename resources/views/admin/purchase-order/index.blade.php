@@ -21,6 +21,7 @@
                                     &nbsp;
                                 </th>
                                 <th>Purchasing Document</th>
+                                <th>PO Number</th>
                                 <th>Item Po Line</th>
                                 <th>Rfq/ACP Document</th>
                                 <th>Purchasing Group</th>

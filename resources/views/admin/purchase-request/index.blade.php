@@ -41,7 +41,7 @@
                                     <tr>
                                         <th>&nbsp;</th>
                                         <th>Purchase Requisition</th>
-                                        <th>File</th>
+                                        <th>Attachment</th>
                                         <th>Doc. Type</th>
                                         <th>Item Of Requisition</th>
                                         <th>Release Date</th>
