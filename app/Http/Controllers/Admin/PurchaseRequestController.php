@@ -20,6 +20,7 @@ use App\Models\PurchaseRequestsDetail;
 use App\Mail\enesisPurchaseRequestAdminDpj;
 use App\Models\PurchaseRequestApprovalHistory;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Session;
 
 class PurchaseRequestController extends Controller
 {
@@ -59,7 +60,8 @@ class PurchaseRequestController extends Controller
             'purchase_requests.PR_NO',
             'purchase_requests.total',
             'purchase_requests.doc_type',
-            'purchase_requests.id as uuid'
+            'purchase_requests.id as uuid',
+            'purchase_requests.upload_file'
         )
             ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
             ->whereNotNull('purchase_requests.PR_NO')
@@ -173,9 +175,30 @@ class PurchaseRequestController extends Controller
                             $unit = \App\Models\UomConvert::where('uom_1', $value->unit)->first()->uom_2;
                         }
 
+                        //FILE DI KOLOM
+                        $filePurchase = '';
+                        $listFile = '';
+                        if($value->upload_file != 'NO_FILE'){
+                            if(!empty($value->upload_file)){
+                                $filePurchase = '<button type="button" class="btn" id="btnPurchase"><i class="fa fa-file"></i></button>';
+                                $file = @unserialize($value->upload_file);
+                                if( is_array($file)){
+                                    foreach (unserialize((string)$value->upload_file) as $fileUpload) {
+                                        $list = '<a href="https://employee.enesis.com/uploads/'.$fileUpload.'" target="_blank" download>'.$fileUpload.'
+                                                        </a><br>';
+                                        $listFile .= $list;
+                                    }
+                                }                                               
+                            }
+                        }else{
+                            $filePurchase = '';
+                            $listFile = '';
+                        }
+
                         return [
                             ($key + 1) + $start, //0
                             $value->PR_NO, //1
+                            $filePurchase, //1
                             $value->doc_type, //2
                             $value->preq_item, //3
                             $value->release_date, //4
@@ -201,6 +224,10 @@ class PurchaseRequestController extends Controller
                                 $value->doc_type,
                                 $value->purchasing_group_code,
                             ], //19
+                            [
+                                $listFile, //19
+                            ],
+                            $value->uuid,
                             $other,
                         ];
                     }),
@@ -222,6 +249,7 @@ class PurchaseRequestController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function approvalProject()
     {
         $userMapping = UserMap::where('user_id', Auth::user()->user_id)->first();
@@ -239,7 +267,13 @@ class PurchaseRequestController extends Controller
                         'purchase_requests.notes',
                         'purchase_requests.id',
                     )
-                    ->groupBy('purchase_requests.id')
+                    ->groupBy(
+                        'purchase_requests.request_no',
+                        'purchase_requests.request_date',
+                        'purchase_requests.is_urgent',
+                        'purchase_requests.notes',
+                        'purchase_requests.id',
+                    )
                     ->get();
 
         return view('admin.purchase-request.approval-project', compact('prProject'));
@@ -354,6 +388,7 @@ class PurchaseRequestController extends Controller
      *
      * @return array
      */
+
     protected function createPrPo($ids, $quantities = null)
     {
         $max = PurchaseRequest::select(\DB::raw('count(id) as id'))->first()->id;

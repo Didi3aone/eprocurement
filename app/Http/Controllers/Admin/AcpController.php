@@ -26,25 +26,30 @@ class AcpController extends Controller
 
     public function acpApproval()
     {
+
         $quotation = QuotationApproval::where('nik', \Auth::user()->nik)
-                    ->join('master_acps','master_acps.id','=','quotation_approvals.acp_id')
-                    ->join('master_acp_materials','master_acp_materials.master_acp_id','master_acps.id')
+                    ->join('master_acps','master_acps.id', '=', 'quotation_approvals.acp_id')
+                    ->join('master_acp_materials', 'master_acp_materials.master_acp_id', '=', 'master_acps.id')
+                    ->join('vendors','vendors.code', '=', 'master_acp_materials.master_acp_vendor_id')
                     ->where('flag', QuotationApproval::NotYetApproval)
                     ->where('acp_type', 'ACP')
                     ->select(
                         'master_acps.id',
                         'quotation_approvals.nik',
                         'master_acps.acp_no',
+                        'vendors.company_name',
                         'master_acps.status_approval',
-                        \DB::raw('sum(master_acp_materials.price) as totalvalue'),
+                        'master_acp_materials.currency',
+                        \DB::raw('sum(master_acp_materials.total_price) as totalvalue'),
                         'quotation_approvals.flag'
                     )
                     ->groupBy(
                         'master_acps.id',
                         'quotation_approvals.nik',
                         'master_acps.acp_no',
+                        'vendors.company_name',
                         'master_acps.status_approval',
-                        // \DB::raw('sum(master_acp_materials.price) as totalvalue'),
+                        'master_acp_materials.currency',
                         'quotation_approvals.flag'
                     )
                     ->get();
@@ -72,6 +77,8 @@ class AcpController extends Controller
                     ->groupBy(
                         'master_acps.id',
                         'quotation_approvals.nik',
+                        'master_acps.acp_no',
+                        'master_acps.status_approval',
                         'quotation_approvals.flag'
                     )
                     ->get();
@@ -107,7 +114,7 @@ class AcpController extends Controller
     public function showAcpApproval($id)
     {
         $acp   = AcpTable::find($id);
-        // dd($acp);
+        //dd($acp);
 
         return view('admin.acp.show-acp-approval', compact('acp'));   
     }

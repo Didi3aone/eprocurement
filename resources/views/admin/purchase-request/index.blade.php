@@ -41,6 +41,7 @@
                                     <tr>
                                         <th>&nbsp;</th>
                                         <th>Purchase Requisition</th>
+                                        <th>Attachment</th>
                                         <th>Doc. Type</th>
                                         <th>Item Of Requisition</th>
                                         <th>Release Date</th>
@@ -148,6 +149,7 @@
                             <th>Employee ID</th>
                             <th>Status</th>
                             <th>Approved Date</th>
+                            <th>Purchase Group</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -157,6 +159,39 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+</script>
+<script id="hidden_file" type="text-x-custom-template">
+<a 
+    class="modal_link"
+    href="javascript:;"
+>value</a>
+<div class="modal fade"  id="modalFilePurchase tabindex="-1" role="dialog" aria-labelledby="modalFile" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalImportFile">List File</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>File</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="tutupModal">Close</button>
             </div>
         </div>
     </div>
@@ -281,23 +316,35 @@
             var tp3 = $('#hidden_dialog').html()
             var tp4 = $("#hidden_doc").html()
             var tp5 = $("#hidden_group").html()
+            var tpFile = $("#hidden_file").html()
 
             // console.log(row,data,dataIndex)
             $modal = $(row).children('td')[1]
+            $modalFile = $(row).children('td')[2]
             $($modal).html(tp3)
+            $($modalFile).html(tpFile)
             $($modal).children('a').text(data[1])
+            $($modalFile).children('a').html(data[2])
             $tbody = $($modal).find('.modal tbody')
             $tbody.append('<tr></tr>')
-            data[20].map(function(list){
+            $tbodyFile = $($modalFile).find('.modal tbody')
+            $tbodyFile.append('<tr></tr>')
+            data[21].map(function(list){
                 $tbody.children('tr').append(`<td>${list}</td>`)
+            })
+            data[22].map(function(listFile){
+                $tbodyFile.children('tr').append(`<td>${listFile}</td>`)
             })
             $($modal).children('a').on('click', function() {
                 $(this).parent().children('.modal').modal('toggle')
             })
-            console.log(data[20][3])
+            $($modalFile).children('a').on('click', function() {
+                $(this).parent().children('.modal').modal('toggle')
+                console.log(data[23])
+            })
             $tp1 = $(row).children('td')[0]
             $tp2 = $(row).children('td')[11]
-            $tp4 = $(row).children('td')[2]
+            $tp4 = $(row).children('td')[3]
             $tp5 = $(row).children('td')[15]
             $open = $(row).children('td')[12]
             $($open).addClass('qty_open_text')
@@ -308,22 +355,22 @@
             $input = $($tp2).children('input')
             $inputs = $($tp4).children('input')
             $inputss = $($tp5).children('input')
-            $input.addClass(`qty_${data[20][0]}`)
-            $input.val(data[20][1])
-            $inputs.addClass(`docs_${data[20][0]}`)
-            $inputs.val(data[20][2])
-            $inputss.addClass(`groups_${data[20][0]}`)
-            $inputss.val(data[20][3])
+            $input.addClass(`qty_${data[21][0]}`)
+            $input.val(data[21][1])
+            $inputs.addClass(`docs_${data[21][0]}`)
+            $inputs.val(data[21][2])
+            $inputss.addClass(`groups_${data[21][0]}`)
+            $inputss.val(data[21][3])
             $input.on('change blur keyup', function (e) {
                 e.preventDefault()
                 countQty($(this))
             })
             $check = $($tp1).children('.check_pr')
-            $check.attr('id', `check_${data[20][0]}`)
-            $check.val(data[20][0])
+            $check.attr('id', `check_${data[21][0]}`)
+            $check.val(data[21][0])
             $pr = $($tp1).children('.qty_pr')
-            $pr.val(data[20][1])
-            $($tp1).children('label').attr('for', `check_${data[20][0]}`)
+            $pr.val(data[21][1])
+            $($tp1).children('label').attr('for', `check_${data[21][0]}`)
         },
         searchDelay: 750,
         order: [[0, 'desc']],
