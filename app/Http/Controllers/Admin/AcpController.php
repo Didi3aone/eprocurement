@@ -30,9 +30,11 @@ class AcpController extends Controller
         $quotation = QuotationApproval::where('nik', \Auth::user()->nik)
                     ->join('master_acps','master_acps.id', '=', 'quotation_approvals.acp_id')
                     ->join('master_acp_materials', 'master_acp_materials.master_acp_id', '=', 'master_acps.id')
-                    ->join('vendors','vendors.code', '=', 'master_acp_materials.master_acp_vendor_id')
+                    ->join('master_acp_vendors','master_acp_vendors.master_acp_id','master_acps.id')
+                    ->join('vendors','vendors.code', '=', 'master_acp_vendors.vendor_code')
                     ->where('flag', QuotationApproval::NotYetApproval)
                     ->where('acp_type', 'ACP')
+                    ->where('master_acp_vendors.is_winner', '=', '1')
                     ->select(
                         'master_acps.id',
                         'quotation_approvals.nik',
@@ -63,14 +65,18 @@ class AcpController extends Controller
                     ->join('master_acps','master_acps.id','=','quotation_approvals.acp_id')
                     ->join('master_acp_materials','master_acp_materials.master_acp_id','master_acps.id')
                     ->join('master_acp_vendors','master_acp_vendors.master_acp_id','master_acps.id')
+                    ->join('vendors','vendors.code', '=', 'master_acp_vendors.vendor_code')
                     ->where('flag', QuotationApproval::alreadyApproval)
                     ->where('acp_type', 'ACP')
+                    ->where('master_acp_vendors.is_winner', '=', '1')
                     // ->where('master_acps.status_approval','<>','0')
                     ->select(
                         'master_acps.id',
                         'quotation_approvals.nik',
                         'master_acps.acp_no',
                         'master_acps.status_approval',
+                        'vendors.company_name',
+                        'master_acp_materials.currency',
                         \DB::raw('sum(master_acp_materials.price) as totalvalue'),
                         'quotation_approvals.flag'
                     )
@@ -79,6 +85,8 @@ class AcpController extends Controller
                         'quotation_approvals.nik',
                         'master_acps.acp_no',
                         'master_acps.status_approval',
+                        'vendors.company_name',
+                        'master_acp_materials.currency',
                         'quotation_approvals.flag'
                     )
                     ->get();

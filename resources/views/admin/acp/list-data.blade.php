@@ -21,7 +21,9 @@
                                     <tr>
                                         <th>{{ trans('cruds.quotation.fields.id') }}</th>
                                         <th>Acp No</th>
+                                        <th>Vendor</th>
                                         <th>{{ trans('cruds.quotation.fields.status') }}</th>
+                                        <th>Currency</th>
                                         <th>Total Value</th>
                                         <th>&nbsp;</th>
                                     </tr> 
@@ -31,6 +33,7 @@
                                          <tr data-entry-id="{{ $val->id }}">
                                             <td>{{ $val->id ?? '' }}</td>
                                             <td>{{ $val->acp_no ?? '' }}</td>
+                                            <td>{{ $val->company_name ?? '' }}</td>
                                             <td>
                                                 @if($val->status_approval == 0)
                                                     <span class="badge badge-primary">Waiting For Approval</span>
@@ -40,6 +43,7 @@
                                                     <span class="badge badge-primary">Rejected</span>
                                                 @endif
                                             </td>
+                                            <td>{{ $val->currency ?? '' }}</td>
                                             <td>{{ $val->totalvalue ?? '' }}</td>
                                             <td>
                                                 <a class="btn btn-xs btn-warning" href="{{ route('admin.show-acp-approval-finish', $val->id) }}">

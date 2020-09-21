@@ -2,6 +2,7 @@ npm-debug.log
 yarn-error.log
 
 # Laravel 6
+config/database.php
 public/xls/*
 public/files/*
 public/quotation/*
