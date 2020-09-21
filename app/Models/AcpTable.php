@@ -42,19 +42,19 @@ class AcpTable extends Model
     public const Rejected        = 3;
     public const MaterialPr      = 1;
 
-    public static function boot()
-    {
-        parent::boot();
-        static::creating(function ($model) {
-            try {
-                $user              = \Auth::user();
-                $model->created_by = $user->nik;
-                $model->updated_by = $user->nik;
-            } catch (UnsatisfiedDependencyException $e) {
-                abort(500, $e->getMessage());
-            }
-        });
-    }
+    // public static function boot()
+    // {
+    //     parent::boot();
+    //     static::creating(function ($model) {
+    //         try {
+    //             $user              = \Auth::user();
+    //             $model->created_by = $user->nik;
+    //             $model->updated_by = $user->nik;
+    //         } catch (UnsatisfiedDependencyException $e) {
+    //             abort(500, $e->getMessage());
+    //         }
+    //     });
+    // }
 
     public function detail ()
     {

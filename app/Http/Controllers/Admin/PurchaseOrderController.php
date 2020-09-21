@@ -38,7 +38,7 @@ class PurchaseOrderController extends Controller
         $po = PurchaseOrdersDetail::join('purchase_orders', 'purchase_orders.id', '=', 'purchase_orders_details.purchase_order_id')
                 ->leftJoin('master_acps', 'master_acps.id', '=', 'purchase_orders_details.acp_id')
                 ->leftJoin('vendors', 'vendors.code', '=', 'purchase_orders.vendor_id')
-                // ->join('quotation','quotation.id','=','purchase_orders.quotation_id')
+                ->join('quotation','quotation.id','=','purchase_orders.quotation_id')
                 ->where('purchase_orders.status_approval', PurchaseOrder::Approved)
                 ->where('is_active',PurchaseOrdersDetail::Active)
                 // ->where('quotation.status',PurchaseOrder::POrepeat)
@@ -66,17 +66,18 @@ class PurchaseOrderController extends Controller
                     'purchase_orders.id',
                     'purchase_orders.vendor_id',
                     'master_acps.acp_no',
-                    'vendors.name as vendor'
+                    'vendors.name as vendor',
+                    'quotation.po_no'
                 );
-        if( \Auth::user()->roles[0]->title == 'staff-accounting'
-            || \Auth::user()->roles[0]->title == 'Admin' ) {
-                $cache = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first()->purchasing_group_code;
-                $po = $po;
-            } else {
-                $cache = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first()->purchasing_group_code;
-                $po = $po->whereIn('purchase_orders_details.purchasing_group_code', $userMapping);
-
-            }
+        if( \Auth::user()->roles[0]->title == 'staff-accounting' || \Auth::user()->roles[0]->title == 'Admin' ) {
+            $cache = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first()->purchasing_group_code;
+            $po = $po;
+            //dd(count($po->get()));
+        } else {
+            $cache = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first()->purchasing_group_code;
+            $po = $po->whereIn('purchase_orders_details.purchasing_group_code', $userMapping);
+            //dd(count($po->get()));
+        }
  
         
         if (\request()->ajax()) {
@@ -135,6 +136,7 @@ class PurchaseOrderController extends Controller
                                 $value->doc_type,
                                 $value->purchasing_group_code
                             ],
+                            $value->po_no,
                             $value->PO_NUMBER,
                             $value->PO_ITEM,
                             $value->acp_no ?? $value->purchasing_document,

@@ -20,16 +20,44 @@ class MasterAcpController extends Controller
 {
     public function index()
     {
-        $model = AcpTable::orderBy('created_at', 'desc');
+        //$model = AcpTable::orderBy('created_at', 'desc');
+        $model = AcpTable::select(
+                        'master_acps.id',
+                        'master_acps.acp_no',
+                        'master_acps.status_approval',
+                        'master_acps.is_project',
+                        'master_acps.created_at',
+                        'vendors.company_name',
+                        'master_acp_materials.currency',
+                        \DB::raw('sum(master_acp_materials.total_price) as total'),
+                    )
+                    ->join('master_acp_vendors','master_acp_vendors.master_acp_id', '=', 'master_acps.id')
+                    ->join('vendors','vendors.code', '=', 'master_acp_vendors.vendor_code')
+                    ->join('master_acp_materials', function($join)
+                        {
+                            $join->on('master_acp_materials.master_acp_id', '=', 'master_acp_vendors.master_acp_id');
+                            $join->on('master_acp_materials.master_acp_vendor_id', '=', 'master_acp_vendors.vendor_code');
+                        })
+                    ->where('master_acp_vendors.is_winner' , 1)
+                    ->groupBy(
+                        'master_acps.id',
+                        'master_acps.acp_no',
+                        'master_acps.status_approval',
+                        'master_acps.is_project',
+                        'master_acps.created_at',
+                        'vendors.company_name',
+                        'master_acp_materials.currency',
+                    )
+                    ->orderBy('master_acps.created_at', 'desc');
 
-        if( \Auth::user()->roles[0]->title == 'Admin' ) {
+        if( \Auth::user()->roles[0]->id == 1 ) {
             $model = $model;
         } else {
             $model = $model->where('created_by', \Auth::user()->nik);
         }
 
         $model = $model->get();
-
+        //dd($model[0]);
         return view('admin.master-acp.index', compact('model'));
     }
 
