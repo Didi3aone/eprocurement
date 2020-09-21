@@ -69,6 +69,9 @@
     <a class="btn btn-xs btn-warning" href="{{ route('admin.purchase-order-delivery', "REPLACE") }}">
         <i class="fa fa-truck"></i> Delivery Complete
     </a>
+    <a class="btn btn-xs btn-secondary" href="{{ route('admin.purchase-order-resend', "REPLACE") }}">
+        <i class="fa fa-envelope"></i> Resend
+    </a>
 </script>
 <script>
 $('#datatables-run').DataTable({

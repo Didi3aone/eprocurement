@@ -50,7 +50,7 @@ class QuotationDirectController extends Controller
                         'quotation.vendor_id',
                         'quotation.approval_status',
                         'vendors.company_name',
-                        'quotation.status',
+                        'quotation.status'
                     )
                     ->groupBy('quotation.id','vendors.company_name')
                     ->orderBy('id', 'desc');
