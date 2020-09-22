@@ -70,7 +70,7 @@
                         </div>
                         <div class="form-group col-lg-4">
                             <label>No. Invoice</label>
-                            <input type="text" class="form-control form-control-line" name="no_invoice" value="{{ $billing->no_invoice ?? old('no_invoice', '') }}" readonly> 
+                            <input type="text" class="form-control form-control-line" name="no_invoice" value="{{ $billing->no_invoice ?? old('no_invoice', '') }}"> 
                         </div>
                         <div class="form-group col-lg-4">
                             <label>Tanggal Invoice</label>
