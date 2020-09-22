@@ -118,6 +118,7 @@ class BillingController extends Controller
             $billing->currency              = $request->currency;
             $billing->perihal_claim         = $request->perihal_claim;
             $billing->house_bank            = $request->house_bank;
+            $billing->no_invoice            = $request->no_invoice;
             $billing->exchange_rate         = $request->exchange_rate ? str_replace(',', '',$request->exchange_rate) : "00.00";
             $billing->base_line_date        = $request->base_line_date;
             $billing->ref_key_3             = $request->ref_key_3 ?? '-';
