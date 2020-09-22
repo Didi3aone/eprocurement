@@ -142,14 +142,14 @@ class BillingController extends Controller
                 $detail->update();
             }
             
-            // $postSap = \sapHelp::sendBillingToSap($request);
-            // if( $postSap == 'YES') {
-            //     \Session::flash('status','Billing has been submitted');
-            //     // \DB::commit();
-            // } else {
-            //     \Session::flash('error','Internal server error !!!');
-            //     //\DB::rollback();
-            // }
+            $postSap = \sapHelp::sendBillingToSap($request);
+            if( $postSap == 'YES') {
+                \Session::flash('status','Billing has been submitted');
+                // \DB::commit();
+            } else {
+                \Session::flash('error','Internal server error !!!');
+                //\DB::rollback();
+            }
             \DB::commit();
         } catch (\Throwable $th) {
             throw $th;
