@@ -44,7 +44,7 @@
                                                 @endif
                                             </td>
                                             <td>{{ $val->currency ?? '' }}</td>
-                                            <td>{{ $val->totalvalue ?? '' }}</td>
+                                            <td>{{ \toDecimal($val->totalvalue)  ?? '' }}</td>
                                             <td>
                                                 <a class="btn btn-xs btn-warning" href="{{ route('admin.show-acp-approval-finish', $val->id) }}">
                                                     <i class="fa fa-eye"></i> Show
