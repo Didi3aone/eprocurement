@@ -9715,18 +9715,27 @@ class SapHelper {
         $billing = Billing::find($data->id);
         // dd($billing);
         $billingDetail = BillingDetail::where('billing_id', $data->id)->get();
+        // dd($billingDetail[0]->plant_code);
         $params[0]['HEADERDATA'] = [];
         $params[0]['ITEMDATA'] = [];
         $params[0]['RETURN'] = [];
 
         $compCode = "";
+        // dd($billingDetail[0]->plant_code);
         if( $billingDetail[0]->plant_code == '1101' ) {
             $compCode = '1100';
-        } else if( $billingDetail[0]->plant_code == '1201' ) {
-            $compCode = '1200';
-        } else if( $billingDetail[0]->plant_code == '2101' ) {
+        } else if($billingDetail[0]->plant_code == 2101) {
             $compCode = '2100';
+        } else if( $billingDetail[0]->plant_code == '1202' ) {
+       
+        // if( $billingDetail[0]->plant_code == '1201' OR $billingDetail[0]->plant_code = '1202' ) {
+        //     // dd($billingDetail[0]->plant_code);
+            $compCode = '1200';
+        }  else {
+            $compCode = '1200';
         }
+        // dd($compCode);
+        // dd($billingDetail[0]->plant_code);
 
         $TAXDATA = [];
         $WITHTAXDATA = [];
