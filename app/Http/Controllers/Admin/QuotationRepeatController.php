@@ -45,6 +45,9 @@ class QuotationRepeatController extends Controller
                         $query->orWhere('quotation.approval_status', Quotation::ApprovalAss);
                         $query->orWhere('quotation.approval_status', Quotation::Rejected);
                         $query->whereIn('quotation_details.purchasing_group_code', $userMapping);
+                        if( \Auth::user()->roles[0]->title !== 'Admin' ) {
+                            $query->where('created_by', \Auth::user()->nik);
+                        }
                     })
                     ->select(
                         'quotation.id',
@@ -64,11 +67,11 @@ class QuotationRepeatController extends Controller
                     )
                     ->orderBy('id', 'desc');
         
-        if( \Auth::user()->roles[0]->title == 'Admin' ) {
-            $quotation = $quotation;
-        } else {
-            $quotation = $quotation->where('created_by', \Auth::user()->nik);
-        }
+        // if( \Auth::user()->roles[0]->title == 'Admin' ) {
+        //     $quotation = $quotation;
+        // } else {
+        //     $quotation = $quotation->where('created_by', \Auth::user()->nik);
+        // }
 
         $quotation = $quotation->get();
         return view('admin.quotation.repeat.index', compact('quotation'));
