@@ -9762,7 +9762,7 @@ class SapHelper {
             'DSCT_PCT1' => '',
             'DSCT_PCT2' => '',
             'IV_CATEGORY' => '',
-            'HEADER_TXT' => '',
+            'HEADER_TXT' => $billing->no_faktur ?? '',
             'PMNT_BLOCK' => $billing->payment_block == 1 ? "B" : "",
             'DEL_COSTS' => '', 
             'DEL_COSTS_TAXC' => '',
