@@ -36,6 +36,15 @@ class PurchaseRequestController extends Controller
         $userMapping = UserMap::where('user_id', Auth::user()->user_id)->first();
         $userMapping = explode(',', $userMapping->purchasing_group_code);
         // dd($userMapping);
+
+        $docs = PurchaseRequestsDetail::select(
+                    'purchase_requests.doc_type',
+                )
+                ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
+                ->groupBy('purchase_requests.doc_type')
+                ->orderBy('purchase_requests.doc_type', 'ASC')
+                ->get();
+
         $materials = PurchaseRequestsDetail::select(
             \DB::raw('purchase_requests_details.id as id'),
             'purchase_requests_details.request_id',
@@ -240,7 +249,7 @@ class PurchaseRequestController extends Controller
             return \response()->json($result);
         }
 
-        return view('admin.purchase-request.index');
+        return view('admin.purchase-request.index', compact('docs'));
     }
 
     /**

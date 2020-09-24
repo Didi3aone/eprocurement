@@ -33,6 +33,36 @@
                     <i class="fa fa-truck"></i> Create PO
                 </a>
                 <button class="checkall">Check All</button>
+                <div class="col-lg-3" style="padding-top: 20px;">
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="text" class="mdate form-control form-control-line {{ $errors->has('start_date') ? 'is-invalid' : '' }}" name="start_date" id="start_release_date" value="{{ date('Y-m-d') }}"> 
+                        @if($errors->has('start_date'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('start_date') }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label>End Date</label>
+                        <input type="text" class="mdate form-control form-control-line {{ $errors->has('end_date') ? 'is-invalid' : '' }}" name="end_date" id="end_release_date" value="{{ date('Y-m-d') }}" > 
+                        @if($errors->has('end_date'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('end_date') }}
+                            </div>
+                        @endif
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="form-group">
+                        <label>Doc Type</label>
+                        <select class="form-control form-control-line select2 {{ $errors->has('doc_type') ? 'is-invalid' : '' }}" name="doc_type" id="tipe_dokumen">
+                            @foreach ($docs as $type)
+                                <option value="{{ $type->doc_type }}">{{ $type->doc_type }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
                 <div class="row" style="margin-bottom: 20px">
                     <div class="col-lg-12">
                         <div class="table-responsive m-t-40">
