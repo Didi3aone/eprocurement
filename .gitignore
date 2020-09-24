@@ -38,3 +38,5 @@ Homestead.json
 
 composer.lock
 # public
+
+/config/database.php

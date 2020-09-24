@@ -2449,7 +2449,7 @@ class SapHelper {
                         $unit = $quotationDetail[$i]->unit;
                     }
 
-                    $netPrice = QuotationDetail::where('id', $dataChild[$k]->quotation_detail_id)->first();
+                    $netPrice = \App\Models\Vendor\QuotationDetail::where('id', $dataChild[$k]->quotation_detail_id)->first();
 
                     $POSERVICES = [
                         "PCKG_NO" => $dataChild[$k]->package_no,//0 = 9X 1; CHILD = 2 DST 
@@ -3103,7 +3103,7 @@ class SapHelper {
                         $unit = $quotationDetail[$i]->unit;
                     }
 
-                    $netPrice = QuotationDetail::where('id', $dataChild[$k]->quotation_detail_id)->first();
+                    $netPrice = \App\Models\Vendor\QuotationDetail::where('id', $dataChild[$k]->quotation_detail_id)->first();
 
                     $POSERVICES = [
                         "PCKG_NO" => $dataChild[$k]->package_no,//0 = 9X 1; CHILD = 2 DST 
@@ -9715,18 +9715,27 @@ class SapHelper {
         $billing = Billing::find($data->id);
         // dd($billing);
         $billingDetail = BillingDetail::where('billing_id', $data->id)->get();
+        // dd($billingDetail[0]->plant_code);
         $params[0]['HEADERDATA'] = [];
         $params[0]['ITEMDATA'] = [];
         $params[0]['RETURN'] = [];
 
         $compCode = "";
+        // dd($billingDetail[0]->plant_code);
         if( $billingDetail[0]->plant_code == '1101' ) {
             $compCode = '1100';
-        } else if( $billingDetail[0]->plant_code == '1201' ) {
-            $compCode = '1200';
-        } else if( $billingDetail[0]->plant_code == '2101' ) {
+        } else if($billingDetail[0]->plant_code == 2101) {
             $compCode = '2100';
+        } else if( $billingDetail[0]->plant_code == '1202' ) {
+       
+        // if( $billingDetail[0]->plant_code == '1201' OR $billingDetail[0]->plant_code = '1202' ) {
+        //     // dd($billingDetail[0]->plant_code);
+            $compCode = '1200';
+        }  else {
+            $compCode = '1200';
         }
+        // dd($compCode);
+        // dd($billingDetail[0]->plant_code);
 
         $TAXDATA = [];
         $WITHTAXDATA = [];
@@ -9753,7 +9762,7 @@ class SapHelper {
             'DSCT_PCT1' => '',
             'DSCT_PCT2' => '',
             'IV_CATEGORY' => '',
-            'HEADER_TXT' => '',
+            'HEADER_TXT' => $billing->no_faktur ?? '',
             'PMNT_BLOCK' => $billing->payment_block == 1 ? "B" : "",
             'DEL_COSTS' => '', 
             'DEL_COSTS_TAXC' => '',
@@ -9812,14 +9821,14 @@ class SapHelper {
                 $sheetNo = $rows->reference_document;
             }
 
-            $uomCode1 = \App\Models\UomConvert::where('uom_1',$rows[$i]->unit)->first();
-            $uomCode2 = \App\Models\UomConvert::where('uom_2',$rows[$i]->unit)->first();
+            $uomCode1 = \App\Models\UomConvert::where('uom_1',$rows->unit)->first();
+            $uomCode2 = \App\Models\UomConvert::where('uom_2',$rows->unit)->first();
             if( null != $uomCode1 ) {
                 $unit = $uomCode1->uom_2;
             } else if( null != $uomCode2 ) {
                 $unit = $uomCode2->uom_1;
             } else {
-                $unit = $rows[$i]->unit;
+                $unit = $rows->unit;
             }
 
             $ITEMDATA = [
@@ -9834,7 +9843,7 @@ class SapHelper {
                 'TAXJURCODE' => '',
                 'ITEM_AMOUNT' => $rows->amount,//20000
                 'QUANTITY' => $rows->qty,//20
-                'PO_UNIT' => $unit,//$rows->unit,//ST
+                'PO_UNIT' => $rows->unit,//$unit,//$rows->unit,//ST
                 'PO_UNIT_ISO' => '',
                 'PO_PR_QNT' => '',
                 'PO_PR_UOM' => '',

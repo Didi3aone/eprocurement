@@ -404,7 +404,7 @@
                         <p>
                             Amount <br>
                             <br>
-                            {{ ucfirst(Terbilang::make($grandTotal)) ." ".$terbilang }}
+                            {{-- {{ ucfirst(Terbilang::make(floor($grandTotal))) ." ".$terbilang }} --}}
                             <br>
                             <br>
                         </p>
@@ -442,7 +442,7 @@
                     <td colspan="3" style="text-align:center">
                         Approve By *) <br>
                         <br>
-                        <p>{{ date('d.m.y H:i:s',strtotime($po->updated_at)) }}</p>
+                        <p>PROCUREMENT HEAD {{ date('d.m.y H:i:s',strtotime($po->updated_at)) }}</p>
                         <p>
                             This document has been electronically approved. <br>
                             Signature is no longer required

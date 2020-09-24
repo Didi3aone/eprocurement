@@ -41,7 +41,7 @@
                                 </div>
                                 <div class="form-group col-lg-4">
                                     <label>Invoice Number</label>
-                                    <input type="text" class="form-control form-control-line {{ $errors->has('no_invoice') ? 'is-invalid' : '' }}" name="no_invoice" value="{{ old('no_invoice', '') }}"> 
+                                    <input type="text" class="form-control form-control-line {{ $errors->has('no_invoice') ? 'is-invalid' : '' }}" maxlength="16" name="no_invoice" value="{{ old('no_invoice', '') }}"> 
                                     @if($errors->has('no_invoice'))
                                         <div class="invalid-feedback">
                                             {{ $errors->first('no_invoice') }}

@@ -164,7 +164,8 @@ class QuotationDirectController extends Controller
                         'quotation_details.material_group',
                         'quotation_details.PREQ_ITEM',
                         'quotation_details.acp_id',
-                        'quotation.status'
+                        'quotation_details.is_free_item',
+                        'quotation.status',
                     )
                     ->orderBy('id', 'desc')
                     ->get();
@@ -272,7 +273,12 @@ class QuotationDirectController extends Controller
             $max    = Quotation::select(\DB::raw('count(id) as id'))->first()->id;
             $unique = substr(time(),6);
             $poNo   = 'PO/' . date('m') . '/' . date('Y') . '/' . $unique . '/' .sprintf('%07d', ++$max);
-            $payVendor = \App\Models\Vendor::where('code', $request->vendor_id)->first()->payment_terms;
+            // $payVendor = \App\Models\Vendor::where('code', $request->vendor_id)->first()->payment_terms;
+            $payVendor = \App\Models\Vendor::where('code', $request->vendor_id)->first();
+            $term = 'Z000';
+            if( $payVendor != null ) {
+                $term = $payVendor->payment_terms;
+            }
                 
             $quotation = new Quotation;
             $quotation->po_no           = $poNo;
@@ -281,8 +287,8 @@ class QuotationDirectController extends Controller
             $quotation->upload_file     = $file_upload;
             $quotation->status          = Quotation::QuotationDirect;
             $quotation->currency        = $request->get('currency');
-            $quotation->payment_term    = $request->get('payment_term') ?? $payVendor;
-            $quotation->vendor_id       = $request->vendor_id;
+            $quotation->payment_term    = $request->get('payment_term') ?? $term;
+            $quotation->vendor_id       = $request->get('vendor_id');
             $quotation->exchange_rate   = $request->exchange_rate;
             $quotation->ship_id         = $request->ship_id;
             $quotation->approved_head   = 'PROCUREMENT01';
@@ -685,10 +691,11 @@ class QuotationDirectController extends Controller
                 $poDel->save();
             }
 
+            
             $print = false;
             $pdf = PDF::loadview('print', \compact('po', 'print'))
                 ->setPaper('A4', 'potrait')
-                ->setOptions(['debugCss' => true, 'isPhpEnabled' => true])
+                ->setOptions(['debugCss' => true, 'isPhpEnabled' => true,'isRemoteEnabled' => true])
                 ->setWarnings(true);
             $pdf->save(public_path("storage/{$po->id}_print.pdf"));
             if (\App\Models\BaseModel::Development == $configEnv->type) {
@@ -772,7 +779,7 @@ class QuotationDirectController extends Controller
 
             $totalPrices = 0;
 
-            if( $detail['is_free_item'] == 1 ){
+            if( $detail['is_free_item'] == '1' ){
                 $price_v2 = 0 ;
             }else {
                 $price_v2 = $detail['price'] ;
