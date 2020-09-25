@@ -236,7 +236,6 @@ class PurchaseRequestController extends Controller
                             [
                                 $listFile, //19
                             ],
-                            $value->uuid,
                             $other,
                         ];
                     }),

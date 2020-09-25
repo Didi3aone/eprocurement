@@ -370,13 +370,12 @@
             })
             $($modalFile).children('a').on('click', function() {
                 $(this).parent().children('.modal').modal('toggle')
-                console.log(data[23])
             })
             $tp1 = $(row).children('td')[0]
-            $tp2 = $(row).children('td')[11]
+            $tp2 = $(row).children('td')[12]
             $tp4 = $(row).children('td')[3]
-            $tp5 = $(row).children('td')[15]
-            $open = $(row).children('td')[12]
+            $tp5 = $(row).children('td')[16]
+            $open = $(row).children('td')[13]
             $($open).addClass('qty_open_text')
             $($tp1).html(tp1)
             $($tp2).html(tp2)
