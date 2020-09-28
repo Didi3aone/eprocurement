@@ -19,6 +19,7 @@ use App\Models\Vendor\QuotationDetail;
 use App\Models\PurchaseOrderChangeHistory;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\PurchaseOrderChangeHistoryDetail;
+use DataTables;
 
 class PurchaseOrderController extends Controller
 {
@@ -35,67 +36,117 @@ class PurchaseOrderController extends Controller
         $userMapping = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first();
         $userMapping = explode(',', $userMapping->purchasing_group_code);
 
-        $po = PurchaseOrdersDetail::join('purchase_orders', 'purchase_orders.id', '=', 'purchase_orders_details.purchase_order_id')
-                ->leftJoin('master_acps', 'master_acps.id', '=', 'purchase_orders_details.acp_id')
-                ->leftJoin('vendors', 'vendors.code', '=', 'purchase_orders.vendor_id')
-                ->join('quotation','quotation.id','=','purchase_orders.quotation_id')
-                ->where('purchase_orders.status_approval', PurchaseOrder::Approved)
-                ->where('is_active',PurchaseOrdersDetail::Active)
-                // ->where('quotation.status',PurchaseOrder::POrepeat)
-                ->select(
-                    'purchase_orders_details.purchasing_document',
-                    'purchase_orders_details.PO_ITEM',
-                    'purchase_orders_details.material_id',
-                    'purchase_orders_details.short_text',
-                    'purchase_orders_details.storage_location',
-                    'purchase_orders_details.qty',
-                    'purchase_orders_details.qty_gr',
-                    'purchase_orders_details.qty_billing',
-                    'purchase_orders_details.unit',
-                    'purchase_orders_details.currency as original_currency',
-                    'purchase_orders_details.original_price',
-                    'purchase_orders.currency',
-                    'purchase_orders_details.price',
-                    'purchase_orders_details.tax_code',
-                    'purchase_orders_details.id as detail_id',
-                    'purchase_orders_details.request_no',
-                    'purchase_orders_details.plant_code',
-                    'purchase_orders_details.purchasing_group_code',
-                    'purchase_orders.po_date',
-                    'purchase_orders.PO_NUMBER',
-                    'purchase_orders.id',
-                    'purchase_orders.vendor_id',
-                    'master_acps.acp_no',
-                    'vendors.name as vendor',
-                    'quotation.po_no'
-                );
-        if( \Auth::user()->roles[0]->title == 'staff-accounting' || \Auth::user()->roles[0]->title == 'Admin' ) {
-            $cache = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first()->purchasing_group_code;
-            $po = $po;
-            //dd(count($po->get()));
-        } else {
-            $cache = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first()->purchasing_group_code;
-            $po = $po->whereIn('purchase_orders_details.purchasing_group_code', $userMapping);
-            //dd(count($po->get()));
+        if(!empty($request->start_date) && !empty($request->end_date)){
+            $po = PurchaseOrdersDetail::join('purchase_orders', 'purchase_orders.id', '=', 'purchase_orders_details.purchase_order_id')
+                    ->leftJoin('master_acps', 'master_acps.id', '=', 'purchase_orders_details.acp_id')
+                    ->leftJoin('vendors', 'vendors.code', '=', 'purchase_orders.vendor_id')
+                    ->join('quotation','quotation.id','=','purchase_orders.quotation_id')
+                    ->where('purchase_orders.status_approval', PurchaseOrder::Approved)
+                    ->where('is_active',PurchaseOrdersDetail::Active)
+                    ->whereBetween('purchase_orders_details.created_at', [$request->start_date, $request->end_date])
+                    // ->where('quotation.status',PurchaseOrder::POrepeat)
+                    ->select(
+                        'purchase_orders_details.purchasing_document',
+                        'purchase_orders_details.PO_ITEM',
+                        'purchase_orders_details.material_id',
+                        'purchase_orders_details.short_text',
+                        'purchase_orders_details.storage_location',
+                        'purchase_orders_details.qty',
+                        'purchase_orders_details.qty_gr',
+                        'purchase_orders_details.qty_billing',
+                        'purchase_orders_details.unit',
+                        'purchase_orders_details.currency as original_currency',
+                        'purchase_orders_details.original_price',
+                        'purchase_orders.currency',
+                        'purchase_orders_details.price',
+                        'purchase_orders_details.tax_code',
+                        'purchase_orders_details.id as detail_id',
+                        'purchase_orders_details.request_no',
+                        'purchase_orders_details.plant_code',
+                        'purchase_orders_details.purchasing_group_code',
+                        'purchase_orders_details.created_at as tgl_dibuat',
+                        'purchase_orders.po_date',
+                        'purchase_orders.PO_NUMBER',
+                        'purchase_orders.id',
+                        'purchase_orders.vendor_id',
+                        'master_acps.acp_no',
+                        'vendors.name as vendor',
+                        'quotation.po_no'
+                    );
+            if( \Auth::user()->roles[0]->title == 'staff-accounting' || \Auth::user()->roles[0]->title == 'Admin' ) {
+                $cache = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first()->purchasing_group_code;
+                $po = $po;
+                //dd(count($po->get()));
+            } else {
+                $cache = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first()->purchasing_group_code;
+                $po = $po->whereIn('purchase_orders_details.purchasing_group_code', $userMapping);
+                //dd(count($po->get()));
+            }
+        }else{
+            $po = PurchaseOrdersDetail::join('purchase_orders', 'purchase_orders.id', '=', 'purchase_orders_details.purchase_order_id')
+                    ->leftJoin('master_acps', 'master_acps.id', '=', 'purchase_orders_details.acp_id')
+                    ->leftJoin('vendors', 'vendors.code', '=', 'purchase_orders.vendor_id')
+                    ->join('quotation','quotation.id','=','purchase_orders.quotation_id')
+                    ->where('purchase_orders.status_approval', PurchaseOrder::Approved)
+                    ->where('is_active',PurchaseOrdersDetail::Active)
+                    // ->where('quotation.status',PurchaseOrder::POrepeat)
+                    ->select(
+                        'purchase_orders_details.purchasing_document',
+                        'purchase_orders_details.PO_ITEM',
+                        'purchase_orders_details.material_id',
+                        'purchase_orders_details.short_text',
+                        'purchase_orders_details.storage_location',
+                        'purchase_orders_details.qty',
+                        'purchase_orders_details.qty_gr',
+                        'purchase_orders_details.qty_billing',
+                        'purchase_orders_details.unit',
+                        'purchase_orders_details.currency as original_currency',
+                        'purchase_orders_details.original_price',
+                        'purchase_orders.currency',
+                        'purchase_orders_details.price',
+                        'purchase_orders_details.tax_code',
+                        'purchase_orders_details.id as detail_id',
+                        'purchase_orders_details.request_no',
+                        'purchase_orders_details.plant_code',
+                        'purchase_orders_details.purchasing_group_code',
+                        'purchase_orders_details.created_at as tgl_dibuat',
+                        'purchase_orders.po_date',
+                        'purchase_orders.PO_NUMBER',
+                        'purchase_orders.id',
+                        'purchase_orders.vendor_id',
+                        'master_acps.acp_no',
+                        'vendors.name as vendor',
+                        'quotation.po_no'
+                    );
+            if( \Auth::user()->roles[0]->title == 'staff-accounting' || \Auth::user()->roles[0]->title == 'Admin' ) {
+                $cache = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first()->purchasing_group_code;
+                $po = $po;
+                //dd(count($po->get()));
+            } else {
+                $cache = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first()->purchasing_group_code;
+                $po = $po->whereIn('purchase_orders_details.purchasing_group_code', $userMapping);
+                //dd(count($po->get()));
+            }
         }
- 
-        
+
         if (\request()->ajax()) {
             $q = \collect($request->all())->forget('draw')->forget('_')->toJson();
             $result = \Cache::remember($q.$cache, 60, function () use ($request, $po, $q) {
                 $columns = [
-                    0 => 'PO_NUMBER',
-                    1 => 'PO_ITEM',
-                    2 => 'acp_no',
-                    3 => 'purchasing_group_code',
-                    4 => 'po_date',
+                    0 => 'po_no',
+                    1 => 'PO_NUMBER',
+                    2 => 'PO_ITEM',
+                    3 => 'acp_no',
+                    4 => 'purchasing_group_code',
+                    5 => 'po_date',
                 ];
                 $totalData = $po->count();
 
                 $totalFiltered = $po
                     ->when($request->input('search.value'), function ($q) use ($request) {
                         $search = $request->input('search.value');
-                        $q->where('PO_NUMBER', 'ILIKE', "%{$search}%")
+                        $q->where('po_no', 'ILIKE', "%{$search}%")
+                            ->orwhere('PO_NUMBER', 'ILIKE', "%{$search}%")
                             ->orWhere('PO_ITEM', 'ILIKE', "%{$search}%")
                             ->orWhere('acp_no', 'ILIKE', "%{$search}%")
                             ->orWhere('purchasing_document', 'ILIKE', "%{$search}%")
@@ -109,7 +160,8 @@ class PurchaseOrderController extends Controller
                 $items = $po
                     ->when($request->input('search.value'), function ($q) use ($request) {
                         $search = $request->input('search.value');
-                        $q->where('PO_NUMBER', 'ILIKE', "%{$search}%")
+                        $q->where('po_no', 'ILIKE', "%{$search}%")
+                            ->orwhere('PO_NUMBER', 'ILIKE', "%{$search}%")
                         // ->whereIn('purchase_requests_details.purchasing_group_code', $userMapping)
                             ->orWhere('PO_ITEM', 'ILIKE', "%{$search}%")
                             ->orWhere('acp_no', 'ILIKE', "%{$search}%")
@@ -172,6 +224,121 @@ class PurchaseOrderController extends Controller
         return view('admin.purchase-order.index', [
             'po' => $po->orderBy('purchase_orders_details.created_at', 'desc')->limit(10)->get()
         ]);
+    }
+
+    public function index2(Request $request)
+    {
+        abort_if(Gate::denies('purchase_order_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $userMapping = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first();
+        $userMapping = explode(',', $userMapping->purchasing_group_code);
+
+        if(request()->ajax())
+        {
+            if(!empty($request->start_date) && !empty($request->end_date))
+            {
+                $po = PurchaseOrdersDetail::join('purchase_orders', 'purchase_orders.id', '=', 'purchase_orders_details.purchase_order_id')
+                        ->leftJoin('master_acps', 'master_acps.id', '=', 'purchase_orders_details.acp_id')
+                        ->leftJoin('vendors', 'vendors.code', '=', 'purchase_orders.vendor_id')
+                        ->join('quotation','quotation.id','=','purchase_orders.quotation_id')
+                        ->where('purchase_orders.status_approval', PurchaseOrder::Approved)
+                        ->where('is_active',PurchaseOrdersDetail::Active)
+                        ->whereBetween('purchase_orders_details.created_at', [$request->start_date, $request->end_date])
+                        ->select(
+                            'purchase_orders_details.purchasing_document',
+                            'purchase_orders_details.PO_ITEM',
+                            'purchase_orders_details.material_id',
+                            'purchase_orders_details.short_text',
+                            'purchase_orders_details.storage_location',
+                            'purchase_orders_details.qty',
+                            'purchase_orders_details.qty_gr',
+                            'purchase_orders_details.qty_billing',
+                            'purchase_orders_details.unit',
+                            'purchase_orders_details.currency as original_currency',
+                            'purchase_orders_details.original_price',
+                            'purchase_orders.currency',
+                            'purchase_orders_details.price',
+                            'purchase_orders_details.tax_code',
+                            'purchase_orders_details.id as detail_id',
+                            'purchase_orders_details.request_no',
+                            'purchase_orders_details.plant_code',
+                            'purchase_orders_details.purchasing_group_code',
+                            'purchase_orders_details.created_at as tgl_dibuat',
+                            'purchase_orders.po_date',
+                            'purchase_orders.PO_NUMBER',
+                            'purchase_orders.id',
+                            'purchase_orders.vendor_id',
+                            'master_acps.acp_no',
+                            'vendors.name as vendor',
+                            'quotation.po_no'
+                        );
+                if(!empty($request->start_date) && !empty($request->end_date)){
+                    $po = $po->whereBetween('purchase_orders_details.created_at', [$request->start_date, $request->end_date]);
+                }else{
+                    $po = $po;
+                }
+
+                if( \Auth::user()->roles[0]->title == 'staff-accounting' || \Auth::user()->roles[0]->title == 'Admin' ) {
+                    $cache = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first()->purchasing_group_code;
+                    $po = $po->get();
+                    //dd(count($po->get()));
+                } else {
+                    $cache = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first()->purchasing_group_code;
+                    $po = $po->whereIn('purchase_orders_details.purchasing_group_code', $userMapping)->get();
+                    //dd(count($po->get()));
+                }
+
+            }
+            else
+            {
+                $po = PurchaseOrdersDetail::join('purchase_orders', 'purchase_orders.id', '=', 'purchase_orders_details.purchase_order_id')
+                        ->leftJoin('master_acps', 'master_acps.id', '=', 'purchase_orders_details.acp_id')
+                        ->leftJoin('vendors', 'vendors.code', '=', 'purchase_orders.vendor_id')
+                        ->join('quotation','quotation.id','=','purchase_orders.quotation_id')
+                        ->where('purchase_orders.status_approval', PurchaseOrder::Approved)
+                        ->where('is_active',PurchaseOrdersDetail::Active)
+                        ->select(
+                            'purchase_orders_details.purchasing_document',
+                            'purchase_orders_details.PO_ITEM',
+                            'purchase_orders_details.material_id',
+                            'purchase_orders_details.short_text',
+                            'purchase_orders_details.storage_location',
+                            'purchase_orders_details.qty',
+                            'purchase_orders_details.qty_gr',
+                            'purchase_orders_details.qty_billing',
+                            'purchase_orders_details.unit',
+                            'purchase_orders_details.currency as original_currency',
+                            'purchase_orders_details.original_price',
+                            'purchase_orders.currency',
+                            'purchase_orders_details.price',
+                            'purchase_orders_details.tax_code',
+                            'purchase_orders_details.id as detail_id',
+                            'purchase_orders_details.request_no',
+                            'purchase_orders_details.plant_code',
+                            'purchase_orders_details.purchasing_group_code',
+                            'purchase_orders_details.created_at as tgl_dibuat',
+                            'purchase_orders.po_date',
+                            'purchase_orders.PO_NUMBER',
+                            'purchase_orders.id',
+                            'purchase_orders.vendor_id',
+                            'master_acps.acp_no',
+                            'vendors.name as vendor',
+                            'quotation.po_no'
+                        );
+                if( \Auth::user()->roles[0]->title == 'staff-accounting' || \Auth::user()->roles[0]->title == 'Admin' ) {
+                    $cache = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first()->purchasing_group_code;
+                    $po = $po->get();
+                    //dd(count($po->get()));
+                } else {
+                    $cache = \App\Models\UserMap::where('user_id', \Auth::user()->user_id)->first()->purchasing_group_code;
+                    $po = $po->whereIn('purchase_orders_details.purchasing_group_code', $userMapping)->get();
+                    //dd(count($po->get()));
+                }
+            }
+            return datatables()->of($po)->make(true);
+        }
+        
+        return view('admin.purchase-order.index');
     }
 
     /**
