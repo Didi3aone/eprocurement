@@ -35,8 +35,8 @@
                 </div>
                 <div class="col-lg-3">
                     <div class="form-group">
-                        <button type="button" name="filter" id="filter" class="btn btn-success">Filter</button>
-                        <button type="button" name="reset" id="reset" class="btn btn-default">Reset</button>
+                        <button type="button" name="filter" id="filter" class="btn btn-info">Filter</button>
+                        <button type="button" name="reset" id="reset" class="btn btn-warning">Reset</button>
                     </div>
                 </div>
                 <div class="table-responsive m-t-40">

@@ -45,46 +45,94 @@ class PurchaseRequestController extends Controller
                 ->orderBy('purchase_requests.doc_type', 'ASC')
                 ->get();
 
-        $materials = PurchaseRequestsDetail::select(
-            \DB::raw('purchase_requests_details.id as id'),
-            'purchase_requests_details.request_id',
-            'purchase_requests_details.description',
-            'purchase_requests_details.qty',
-            'purchase_requests_details.unit',
-            'purchase_requests_details.notes',
-            'purchase_requests_details.price',
-            'purchase_requests_details.preq_item',
-            'purchase_requests_details.preq_name',
-            'purchase_requests_details.plant_code',
-            'purchase_requests_details.short_text',
-            'purchase_requests_details.storage_location',
-            'purchase_requests_details.material_group',
-            'purchase_requests_details.purchasing_group_code',
-            'purchase_requests_details.material_id',
-            'purchase_requests_details.delivery_date',
-            \DB::raw('purchase_requests_details.request_no as rn_no'),
-            'purchase_requests_details.release_date',
-            \DB::raw('purchase_requests.request_no as pr_no'),
-            'purchase_requests.request_date',
-            'purchase_requests.PR_NO',
-            'purchase_requests.total',
-            'purchase_requests.doc_type',
-            'purchase_requests.id as uuid',
-            'purchase_requests.upload_file'
-        )
-            ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
-            ->whereNotNull('purchase_requests.PR_NO')
-            ->where('purchase_requests_details.qty', '>', 0)
-            ->where('purchase_requests_details.is_validate', PurchaseRequestsDetail::YesValidate)
-            ->whereIn('purchase_requests_details.purchasing_group_code', $userMapping)
-            ->whereIn('purchase_requests_details.status_approval', [PurchaseRequestsDetail::Approved, PurchaseRequestsDetail::ApprovedPurchasing])
-            // ->where('purchase_requests_details.line_no', '0000000001')
-            //     ->orWhere('purchase_requests_details.line_no', '000000000')
-            // ->where(function ($query) {
-            //     $query->where('purchase_requests_details.status_approval', PurchaseRequestsDetail::Approved)
-            //         ->orWhere('purchase_requests_details.status_approval', PurchaseRequestsDetail::ApprovedPurchasing);
-            // })
-            ->whereIn('purchase_requests.status_approval', [PurchaseRequest::ApprovedDept, PurchaseRequest::ApprovedProc]);
+        if( (!empty($request->start_date) && !empty($request->end_date)) || !empty($request->tipe_dokumen)){
+            $materials = PurchaseRequestsDetail::select(
+                \DB::raw('purchase_requests_details.id as id'),
+                'purchase_requests_details.request_id',
+                'purchase_requests_details.description',
+                'purchase_requests_details.qty',
+                'purchase_requests_details.unit',
+                'purchase_requests_details.notes',
+                'purchase_requests_details.price',
+                'purchase_requests_details.preq_item',
+                'purchase_requests_details.preq_name',
+                'purchase_requests_details.plant_code',
+                'purchase_requests_details.short_text',
+                'purchase_requests_details.storage_location',
+                'purchase_requests_details.material_group',
+                'purchase_requests_details.purchasing_group_code',
+                'purchase_requests_details.material_id',
+                'purchase_requests_details.delivery_date',
+                \DB::raw('purchase_requests_details.request_no as rn_no'),
+                'purchase_requests_details.release_date',
+                \DB::raw('purchase_requests.request_no as pr_no'),
+                'purchase_requests.request_date',
+                'purchase_requests.PR_NO',
+                'purchase_requests.total',
+                'purchase_requests.doc_type',
+                'purchase_requests.id as uuid',
+                'purchase_requests.upload_file'
+            )
+                ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
+                ->whereNotNull('purchase_requests.PR_NO')
+                ->where('purchase_requests_details.qty', '>', 0)
+                ->where('purchase_requests_details.is_validate', PurchaseRequestsDetail::YesValidate)
+                ->whereIn('purchase_requests_details.purchasing_group_code', $userMapping)
+                ->whereIn('purchase_requests_details.status_approval', [PurchaseRequestsDetail::Approved, PurchaseRequestsDetail::ApprovedPurchasing])
+                // ->where('purchase_requests_details.line_no', '0000000001')
+                //     ->orWhere('purchase_requests_details.line_no', '000000000')
+                // ->where(function ($query) {
+                //     $query->where('purchase_requests_details.status_approval', PurchaseRequestsDetail::Approved)
+                //         ->orWhere('purchase_requests_details.status_approval', PurchaseRequestsDetail::ApprovedPurchasing);
+                // })
+                ->whereIn('purchase_requests.status_approval', [PurchaseRequest::ApprovedDept, PurchaseRequest::ApprovedProc])
+                ->where(function ($query) use ($request){
+                    $query->whereBetween('purchase_requests_details.created_at', [$request->start_date, $request->end_date])
+                        ->orWhere('purchase_requests.doc_type', $request->tipe_dokumen);
+                });
+        }else{
+            $materials = PurchaseRequestsDetail::select(
+                \DB::raw('purchase_requests_details.id as id'),
+                'purchase_requests_details.request_id',
+                'purchase_requests_details.description',
+                'purchase_requests_details.qty',
+                'purchase_requests_details.unit',
+                'purchase_requests_details.notes',
+                'purchase_requests_details.price',
+                'purchase_requests_details.preq_item',
+                'purchase_requests_details.preq_name',
+                'purchase_requests_details.plant_code',
+                'purchase_requests_details.short_text',
+                'purchase_requests_details.storage_location',
+                'purchase_requests_details.material_group',
+                'purchase_requests_details.purchasing_group_code',
+                'purchase_requests_details.material_id',
+                'purchase_requests_details.delivery_date',
+                \DB::raw('purchase_requests_details.request_no as rn_no'),
+                'purchase_requests_details.release_date',
+                \DB::raw('purchase_requests.request_no as pr_no'),
+                'purchase_requests.request_date',
+                'purchase_requests.PR_NO',
+                'purchase_requests.total',
+                'purchase_requests.doc_type',
+                'purchase_requests.id as uuid',
+                'purchase_requests.upload_file'
+            )
+                ->join('purchase_requests', 'purchase_requests.id', '=', 'purchase_requests_details.request_id')
+                ->whereNotNull('purchase_requests.PR_NO')
+                ->where('purchase_requests_details.qty', '>', 0)
+                ->where('purchase_requests_details.is_validate', PurchaseRequestsDetail::YesValidate)
+                ->whereIn('purchase_requests_details.purchasing_group_code', $userMapping)
+                ->whereIn('purchase_requests_details.status_approval', [PurchaseRequestsDetail::Approved, PurchaseRequestsDetail::ApprovedPurchasing])
+                // ->where('purchase_requests_details.line_no', '0000000001')
+                //     ->orWhere('purchase_requests_details.line_no', '000000000')
+                // ->where(function ($query) {
+                //     $query->where('purchase_requests_details.status_approval', PurchaseRequestsDetail::Approved)
+                //         ->orWhere('purchase_requests_details.status_approval', PurchaseRequestsDetail::ApprovedPurchasing);
+                // })
+                ->whereIn('purchase_requests.status_approval', [PurchaseRequest::ApprovedDept, PurchaseRequest::ApprovedProc]);    
+        }
+        
         // ->where(function ($query) {
         //     $query->where('purchase_requests.status_approval', PurchaseRequest::ApprovedDept)
         //         ->orWhere('purchase_requests.status_approval', PurchaseRequest::ApprovedProc);

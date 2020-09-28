@@ -63,6 +63,12 @@
                         </select>
                     </div>
                 </div>
+                <div class="col-lg-3">
+                    <div class="form-group">
+                        <button type="button" name="filter" id="filter" class="btn btn-info">Filter</button>
+                        <button type="button" name="reset" id="reset" class="btn btn-warning">Reset</button>
+                    </div>
+                </div>
                 <div class="row" style="margin-bottom: 20px">
                     <div class="col-lg-12">
                         <div class="table-responsive m-t-40">
@@ -227,7 +233,7 @@
     </div>
 </div>
 </script>
-<script>
+<script type="text/javascript">
     $(function(){
         $('.checkall').click(function(){
             $.each($('table#datatables-run.table > tbody > tr'), function(){
@@ -332,80 +338,191 @@
         //alert();
     })
 
-    $('#datatables-run').DataTable({
-        dom: 'Bfrtip',
-        processing: true,
-        serverSide: true,
-        pageLength: 200,
-        scrollY         : "800px",
-        scrollCollapse  : true,
-        ajax: "/admin/purchase-request",
-        "createdRow": function( row, data, dataIndex ) {
-            var tp1 = $('#hidden_input').html()
-            var tp2 = $('#hidden_qty').html()
-            var tp3 = $('#hidden_dialog').html()
-            var tp4 = $("#hidden_doc").html()
-            var tp5 = $("#hidden_group").html()
-            var tpFile = $("#hidden_file").html()
+    // $('#datatables-run').DataTable({
+    //     dom: 'Bfrtip',
+    //     processing: true,
+    //     serverSide: true,
+    //     pageLength: 10,
+    //     scrollY         : "800px",
+    //     scrollCollapse  : true,
+    //     ajax: "/admin/purchase-request",
+    //     "createdRow": function( row, data, dataIndex ) {
+    //         var tp1 = $('#hidden_input').html()
+    //         var tp2 = $('#hidden_qty').html()
+    //         var tp3 = $('#hidden_dialog').html()
+    //         var tp4 = $("#hidden_doc").html()
+    //         var tp5 = $("#hidden_group").html()
+    //         var tpFile = $("#hidden_file").html()
 
-            // console.log(row,data,dataIndex)
-            $modal = $(row).children('td')[1]
-            $modalFile = $(row).children('td')[2]
-            $($modal).html(tp3)
-            $($modalFile).html(tpFile)
-            $($modal).children('a').text(data[1])
-            $($modalFile).children('a').html(data[2])
-            $tbody = $($modal).find('.modal tbody')
-            $tbody.append('<tr></tr>')
-            $tbodyFile = $($modalFile).find('.modal tbody')
-            $tbodyFile.append('<tr></tr>')
-            data[21].map(function(list){
-                $tbody.children('tr').append(`<td>${list}</td>`)
-            })
-            data[22].map(function(listFile){
-                $tbodyFile.children('tr').append(`<td>${listFile}</td>`)
-            })
-            $($modal).children('a').on('click', function() {
-                $(this).parent().children('.modal').modal('toggle')
-            })
-            $($modalFile).children('a').on('click', function() {
-                $(this).parent().children('.modal').modal('toggle')
-            })
-            $tp1 = $(row).children('td')[0]
-            $tp2 = $(row).children('td')[12]
-            $tp4 = $(row).children('td')[3]
-            $tp5 = $(row).children('td')[16]
-            $open = $(row).children('td')[13]
-            $($open).addClass('qty_open_text')
-            $($tp1).html(tp1)
-            $($tp2).html(tp2)
-            $($tp4).html(tp4)
-            $($tp5).html(tp5)
-            $input = $($tp2).children('input')
-            $inputs = $($tp4).children('input')
-            $inputss = $($tp5).children('input')
-            $input.addClass(`qty_${data[21][0]}`)
-            $input.val(data[21][1])
-            $inputs.addClass(`docs_${data[21][0]}`)
-            $inputs.val(data[21][2])
-            $inputss.addClass(`groups_${data[21][0]}`)
-            $inputss.val(data[21][3])
-            $input.on('change blur keyup', function (e) {
-                e.preventDefault()
-                countQty($(this))
-            })
-            $check = $($tp1).children('.check_pr')
-            $check.attr('id', `check_${data[21][0]}`)
-            $check.val(data[21][0])
-            $pr = $($tp1).children('.qty_pr')
-            $pr.val(data[21][1])
-            $($tp1).children('label').attr('for', `check_${data[21][0]}`)
-        },
-        searchDelay: 750,
-        order: [[0, 'desc']],
-        buttons: [
-            'copy', 'csv', 'excel', 'pdf', 'print'
-        ],
+    //         // console.log(row,data,dataIndex)
+    //         $modal = $(row).children('td')[1]
+    //         $modalFile = $(row).children('td')[2]
+    //         $($modal).html(tp3)
+    //         $($modalFile).html(tpFile)
+    //         $($modal).children('a').text(data[1])
+    //         $($modalFile).children('a').html(data[2])
+    //         $tbody = $($modal).find('.modal tbody')
+    //         $tbody.append('<tr></tr>')
+    //         $tbodyFile = $($modalFile).find('.modal tbody')
+    //         $tbodyFile.append('<tr></tr>')
+    //         data[21].map(function(list){
+    //             $tbody.children('tr').append(`<td>${list}</td>`)
+    //         })
+    //         data[22].map(function(listFile){
+    //             $tbodyFile.children('tr').append(`<td>${listFile}</td>`)
+    //         })
+    //         $($modal).children('a').on('click', function() {
+    //             $(this).parent().children('.modal').modal('toggle')
+    //         })
+    //         $($modalFile).children('a').on('click', function() {
+    //             $(this).parent().children('.modal').modal('toggle')
+    //         })
+    //         $tp1 = $(row).children('td')[0]
+    //         $tp2 = $(row).children('td')[12]
+    //         $tp4 = $(row).children('td')[3]
+    //         $tp5 = $(row).children('td')[16]
+    //         $open = $(row).children('td')[13]
+    //         $($open).addClass('qty_open_text')
+    //         $($tp1).html(tp1)
+    //         $($tp2).html(tp2)
+    //         $($tp4).html(tp4)
+    //         $($tp5).html(tp5)
+    //         $input = $($tp2).children('input')
+    //         $inputs = $($tp4).children('input')
+    //         $inputss = $($tp5).children('input')
+    //         $input.addClass(`qty_${data[21][0]}`)
+    //         $input.val(data[21][1])
+    //         $inputs.addClass(`docs_${data[21][0]}`)
+    //         $inputs.val(data[21][2])
+    //         $inputss.addClass(`groups_${data[21][0]}`)
+    //         $inputss.val(data[21][3])
+    //         $input.on('change blur keyup', function (e) {
+    //             e.preventDefault()
+    //             countQty($(this))
+    //         })
+    //         $check = $($tp1).children('.check_pr')
+    //         $check.attr('id', `check_${data[21][0]}`)
+    //         $check.val(data[21][0])
+    //         $pr = $($tp1).children('.qty_pr')
+    //         $pr.val(data[21][1])
+    //         $($tp1).children('label').attr('for', `check_${data[21][0]}`)
+    //     },
+    //     searchDelay: 750,
+    //     order: [[0, 'desc']],
+    //     buttons: [
+    //         'copy', 'csv', 'excel', 'pdf', 'print'
+    //     ],
+    // });
+
+    $(document).ready(function(){
+
+        fill_datatable();
+
+        function fill_datatable(start_date = '', end_date = '', tipe_dokumen = '')
+        {
+            var dataTable = $('#datatables-run').DataTable({
+                dom: 'Bfrtip',
+                processing: true,
+                serverSide: true,
+                processing: true,
+                pageLength: 10,
+                ajax:{
+                    url: "/admin/purchase-request",
+                    data:{start_date:start_date, end_date:end_date, tipe_dokumen:tipe_dokumen}
+                },
+                "createdRow": function( row, data, dataIndex ) {
+                    var tp1 = $('#hidden_input').html()
+                    var tp2 = $('#hidden_qty').html()
+                    var tp3 = $('#hidden_dialog').html()
+                    var tp4 = $("#hidden_doc").html()
+                    var tp5 = $("#hidden_group").html()
+                    var tpFile = $("#hidden_file").html()
+
+                    // console.log(row,data,dataIndex)
+                    $modal = $(row).children('td')[1]
+                    $modalFile = $(row).children('td')[2]
+                    $($modal).html(tp3)
+                    $($modalFile).html(tpFile)
+                    $($modal).children('a').text(data[1])
+                    $($modalFile).children('a').html(data[2])
+                    $tbody = $($modal).find('.modal tbody')
+                    $tbody.append('<tr></tr>')
+                    $tbodyFile = $($modalFile).find('.modal tbody')
+                    $tbodyFile.append('<tr></tr>')
+                    data[21].map(function(list){
+                        $tbody.children('tr').append(`<td>${list}</td>`)
+                    })
+                    data[22].map(function(listFile){
+                        $tbodyFile.children('tr').append(`<td>${listFile}</td>`)
+                    })
+                    $($modal).children('a').on('click', function() {
+                        $(this).parent().children('.modal').modal('toggle')
+                    })
+                    $($modalFile).children('a').on('click', function() {
+                        $(this).parent().children('.modal').modal('toggle')
+                    })
+                    $tp1 = $(row).children('td')[0]
+                    $tp2 = $(row).children('td')[12]
+                    $tp4 = $(row).children('td')[3]
+                    $tp5 = $(row).children('td')[16]
+                    $open = $(row).children('td')[13]
+                    $($open).addClass('qty_open_text')
+                    $($tp1).html(tp1)
+                    $($tp2).html(tp2)
+                    $($tp4).html(tp4)
+                    $($tp5).html(tp5)
+                    $input = $($tp2).children('input')
+                    $inputs = $($tp4).children('input')
+                    $inputss = $($tp5).children('input')
+                    $input.addClass(`qty_${data[21][0]}`)
+                    $input.val(data[21][1])
+                    $inputs.addClass(`docs_${data[21][0]}`)
+                    $inputs.val(data[21][2])
+                    $inputss.addClass(`groups_${data[21][0]}`)
+                    $inputss.val(data[21][3])
+                    $input.on('change blur keyup', function (e) {
+                        e.preventDefault()
+                        countQty($(this))
+                    })
+                    $check = $($tp1).children('.check_pr')
+                    $check.attr('id', `check_${data[21][0]}`)
+                    $check.val(data[21][0])
+                    $pr = $($tp1).children('.qty_pr')
+                    $pr.val(data[21][1])
+                    $($tp1).children('label').attr('for', `check_${data[21][0]}`)
+                },
+                searchDelay: 750,
+                order: [[0, 'desc']],
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ]
+            });
+        }
+
+        $('#filter').click(function(){
+            var start_date = $('#start_date').val();
+            var end_date = $('#end_date').val();
+            var tipe_dokumen = $('#tipe_dokumen').val();
+
+            if((start_date != '' &&  end_date != '') || tipe_dokumen != '')
+            {
+                $('#datatables-run').DataTable().destroy();
+                fill_datatable(start_date, end_date, tipe_dokumen);
+            }
+            else
+            {
+                alert('Select Both filter option');
+            }
+        });
+
+        $('#reset').click(function(){
+            $('#start_date').val('');
+            $('#end_date').val('');
+            $('#tipe_dokumen').val('');
+            $('#datatables-run').DataTable().destroy();
+            fill_datatable();
+        });
+
     });
 </script>
 @endsection
