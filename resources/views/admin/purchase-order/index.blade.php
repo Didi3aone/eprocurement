@@ -13,30 +13,34 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <div class="col-lg-3" style="padding-top: 20px;">
-                    <div class="form-group">
-                        <label>Start Date</label>
-                        <input type="text" class="mdate form-control form-control-line {{ $errors->has('start_date') ? 'is-invalid' : '' }}" name="start_date" id="start_date" value="{{ date('Y-m-d') }}"> 
-                        @if($errors->has('start_date'))
-                            <div class="invalid-feedback">
-                                {{ $errors->first('start_date') }}
-                            </div>
-                        @endif
+                <div class="row">
+                    <div class="col-lg-3" style="padding-top: 20px;">
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="text" class="mdate form-control form-control-line {{ $errors->has('start_date') ? 'is-invalid' : '' }}" name="start_date" id="start_date" value="{{ date('Y-m-d') }}"> 
+                            @if($errors->has('start_date'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('start_date') }}
+                                </div>
+                            @endif
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>End Date</label>
-                        <input type="text" class="mdate form-control form-control-line {{ $errors->has('end_date') ? 'is-invalid' : '' }}" name="end_date" id="end_date" value="{{ date('Y-m-d') }}" > 
-                        @if($errors->has('end_date'))
-                            <div class="invalid-feedback">
-                                {{ $errors->first('end_date') }}
-                            </div>
-                        @endif
+                    <div class="col-lg-3" style="padding-top: 20px;">
+                        <div class="form-group">
+                            <label>End Date</label>
+                            <input type="text" class="mdate form-control form-control-line {{ $errors->has('end_date') ? 'is-invalid' : '' }}" name="end_date" id="end_date" value="{{ date('Y-m-d') }}" > 
+                            @if($errors->has('end_date'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('end_date') }}
+                                </div>
+                            @endif
+                        </div>
                     </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="form-group">
-                        <button type="button" name="filter" id="filter" class="btn btn-info">Filter</button>
-                        <button type="button" name="reset" id="reset" class="btn btn-warning">Reset</button>
+                    <div class="col-lg-3" style="padding-top: 55px;">
+                        <div class="form-group">
+                            <button type="button" name="filter" id="filter" class="btn btn-info">Filter</button>
+                            <button type="button" name="reset" id="reset" class="btn btn-warning">Reset</button>
+                        </div>
                     </div>
                 </div>
                 <div class="table-responsive m-t-40">
@@ -280,10 +284,18 @@ $(document).ready(function(){
     });
 
     $('#reset').click(function(){
-        $('#start_date').val('');
-        $('#end_date').val('');
+        $('#start_date').val(new Date().toISOString().slice(0,10));
+        $('#end_date').val(new Date().toISOString().slice(0,10));
         $('#datatables-run').DataTable().destroy();
         fill_datatable();
+    });
+
+    $('#end_date').change(function(){
+        if($('#end_date').val() < $('#start_date').val()){
+            alert('Invalid date.');
+            $('#start_date').val(new Date().toISOString().slice(0,10));
+            $('#end_date').val(new Date().toISOString().slice(0,10));
+        }
     });
 
 });

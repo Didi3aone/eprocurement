@@ -33,40 +33,46 @@
                     <i class="fa fa-truck"></i> Create PO
                 </a>
                 <button class="checkall">Check All</button>
-                <div class="col-lg-3" style="padding-top: 20px;">
-                    <div class="form-group">
-                        <label>Start Date</label>
-                        <input type="text" class="mdate form-control form-control-line {{ $errors->has('start_date') ? 'is-invalid' : '' }}" name="start_date" id="start_release_date" value="{{ date('Y-m-d') }}"> 
-                        @if($errors->has('start_date'))
-                            <div class="invalid-feedback">
-                                {{ $errors->first('start_date') }}
-                            </div>
-                        @endif
+                <div class="row">
+                    <div class="col-lg-3" style="padding-top: 20px;">
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="text" class="mdate form-control form-control-line {{ $errors->has('start_date') ? 'is-invalid' : '' }}" name="start_date" id="start_date" value="{{ date('Y-m-d') }}"> 
+                            @if($errors->has('start_date'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('start_date') }}
+                                </div>
+                            @endif
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>End Date</label>
-                        <input type="text" class="mdate form-control form-control-line {{ $errors->has('end_date') ? 'is-invalid' : '' }}" name="end_date" id="end_release_date" value="{{ date('Y-m-d') }}" > 
-                        @if($errors->has('end_date'))
-                            <div class="invalid-feedback">
-                                {{ $errors->first('end_date') }}
-                            </div>
-                        @endif
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="form-group">
-                        <label>Doc Type</label>
-                        <select class="form-control form-control-line select2 {{ $errors->has('doc_type') ? 'is-invalid' : '' }}" name="doc_type" id="tipe_dokumen">
-                            @foreach ($docs as $type)
-                                <option value="{{ $type->doc_type }}">{{ $type->doc_type }}</option>
-                            @endforeach
-                        </select>
+                    <div class="col-lg-3" style="padding-top: 20px;">
+                        <div class="form-group">
+                            <label>End Date</label>
+                            <input type="text" class="mdate form-control form-control-line {{ $errors->has('end_date') ? 'is-invalid' : '' }}" name="end_date" id="end_date" value="{{ date('Y-m-d') }}" > 
+                            @if($errors->has('end_date'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('end_date') }}
+                                </div>
+                            @endif
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-3">
-                    <div class="form-group">
-                        <button type="button" name="filter" id="filter" class="btn btn-info">Filter</button>
-                        <button type="button" name="reset" id="reset" class="btn btn-warning">Reset</button>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <label>Doc Type</label>
+                            <select class="form-control form-control-line select2 {{ $errors->has('doc_type') ? 'is-invalid' : '' }}" name="doc_type" id="tipe_dokumen">
+                                @foreach ($docs as $type)
+                                    <option value="{{ $type->doc_type }}">{{ $type->doc_type }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-3" style="padding-top: 28px;">
+                        <div class="form-group">
+                            <button type="button" name="filter" id="filter" class="btn btn-info">Filter</button>
+                            <button type="button" name="reset" id="reset" class="btn btn-warning">Reset</button>
+                        </div>
                     </div>
                 </div>
                 <div class="row" style="margin-bottom: 20px">
@@ -516,11 +522,19 @@
         });
 
         $('#reset').click(function(){
-            $('#start_date').val('');
-            $('#end_date').val('');
+            $('#start_date').val(new Date().toISOString().slice(0,10));
+            $('#end_date').val(new Date().toISOString().slice(0,10));
             $('#tipe_dokumen').val('');
             $('#datatables-run').DataTable().destroy();
             fill_datatable();
+        });
+
+        $('#end_date').change(function(){
+            if($('#end_date').val() < $('#start_date').val()){
+                alert('Invalid date.');
+                $('#start_date').val(new Date().toISOString().slice(0,10));
+                $('#end_date').val(new Date().toISOString().slice(0,10));
+            }
         });
 
     });
